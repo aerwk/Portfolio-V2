@@ -314,7 +314,10 @@
       <h2 id="contact-t">Get in touch.</h2>
       <p class="sub">Full-stack development, network architecture, and infrastructure engineering.</p>
     </div>
-    <form class="formcard rv rv-d1" action="#" method="post">
+    <form class="formcard rv rv-d1" id="contact-form" action="https://formsubmit.co/eric@n5hq.me" method="post">
+      <input type="hidden" name="_subject" value="New message via www.n5hq.me">
+      <input type="hidden" name="_next" value="https://www.n5hq.me/#contact">
+      <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-200vw;height:1px;width:1px;overflow:hidden">
       <div class="field">
         <label for="f-name">Your Name</label>
         <input id="f-name" name="name" type="text" autocomplete="name" required>
@@ -328,6 +331,7 @@
         <textarea id="f-msg" name="message" required></textarea>
       </div>
       <button class="btn btn-violet" type="submit">Send Message <span class="arr" aria-hidden="true">↗</span></button>
+      <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
     </form>
   </div>
 </section>
@@ -385,6 +389,37 @@
     });
   }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
   els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const form = document.getElementById('contact-form');
+  if (!form) return;
+  const msg = document.getElementById('form-msg');
+  const btn = form.querySelector('button[type="submit"]');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    btn.disabled = true;
+    btn.firstChild.textContent = 'Sending... ';
+    msg.textContent = '';
+    msg.className = 'form-msg';
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+      if (!res.ok) throw new Error(res.status);
+      msg.textContent = "Message sent successfully! I'll get back to you soon.";
+      msg.classList.add('ok');
+      form.reset();
+    } catch {
+      msg.textContent = 'Failed to send message. Please try again or email eric@n5hq.me directly.';
+      msg.classList.add('err');
+    } finally {
+      btn.disabled = false;
+      btn.firstChild.textContent = 'Send Message ';
+    }
+  });
 })();
 </script>
 </body>
