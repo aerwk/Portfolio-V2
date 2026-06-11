@@ -401,3 +401,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 .form-msg.ok{color:oklch(45% 0.13 152)}
 .form-msg.err{color:oklch(48% 0.16 30)}
 button[type="submit"]:disabled{opacity:.6;cursor:wait;transform:none}
+
+/* ---------- marquee brand logos ---------- */
+.marq-track span{display:inline-flex;align-items:center;gap:.55rem}
+.marq-track img{width:1.15em;height:1.15em;opacity:.55}
