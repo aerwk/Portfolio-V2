@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Automating the Blog & Cleaning Up the Portfolio — N5HQ</title>
+<meta name="description" content="Wired up GitHub Actions to auto-publish blog posts, stripped placeholder content, and cleaned up the portfolio tiles to show only what&#x27;s real.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/lab/">Lab</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Automating the Blog &amp; Cleaning Up the Portfolio</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Projects</span>
+      <span class="chip">2026-06-09 · Tuesday</span>
+      <span class="chip">3 min read</span>
+      <span class="chip badge-ai">30% AI</span>
+    </div>
+  </div>
+</section>
+<article class="band" style="padding-top:0">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Energy: 4/10. Mood: 7/10. Tired but not in a bad headspace — the kind of day where you know you won't break new ground but you can still do useful work. Ended up being exactly that: a focused cleanup session that tightened things without adding anything new.</p>
+<h2>Automating the Blog</h2>
+<p>The blog publishing workflow from the day before was functional but manual — run a script locally, commit, push, done. Got it one step cleaner. Set up a GitHub Actions workflow (<code>.github/workflows/blog-publish.yml</code>) that triggers whenever a <code>.md</code> file lands in <code>blog/posts/</code> on main, then runs a CI-safe version of the manifest generator (<code>scripts/regenerate-manifest.js</code>) to regenerate <code>posts.json</code> automatically. The result: write the journal in Obsidian, run <code>npm run blog:generate</code> locally to copy the file, push, and GitHub handles the rest.</p>
+<p>Getting the push through wasn't entirely smooth. First attempt was rejected — the PAT was missing the <code>workflow</code> scope needed to write to <code>.github/workflows/</code>. Second attempt was also rejected — the GitHub Action had already fired on the first push and committed a <code>posts.json</code> update, so remote was ahead of local. A stash → rebase → pop → push sequence sorted it out.</p>
+<h2>Clearing Out the Placeholders</h2>
+<p>The blog was still showing three posts that were never real journal entries — old placeholder files left over from early development that had been sitting in <code>blog/posts/</code> since the initial build, pretending to be content. Deleted all three. The blog now shows one post — the June 8 entry — which is what it should show.</p>
+<h2>Portfolio Cleanup</h2>
+<p>Removed three static tiles from the Portfolio Showcase section on the homepage — Certifications, Experience, Tech Stack. They were filling grid space without linking anywhere and cluttering the layout alongside the real project tiles. The three actual project tiles (In Progress, Upcoming, Completed) are now always visible by default. The Show Projects button is gone. Also updated the portfolio description to specifically mention deploying networks for homes and small businesses up to 1,000m² — more specific and more honest than the generic placeholder that was there before.</p>
+<h2>What's Next</h2>
+<ul>
+<li class="task-open">Write more journal entries so the blog actually has content</li>
+<li class="task-open">Update the About Me stats with real numbers (certificates, years of experience)</li>
+<li class="task-open">Real bio copy — the current About Me text is still placeholder-ish</li>
+<li class="task-open">Point n5hq.me DNS CNAME to Vercel (custom domain still pending)</li>
+<li class="task-open">Decide on Cloudflare Access for Immich</li>
+</ul>
+<p>Low energy day but still got through a clean session. The automation work is the kind of thing that pays back immediately — one less manual step every time a post goes up. The blog placeholder situation was embarrassing in retrospect; good to have that cleaned up before anyone actually visits.</p>
+    </div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-08.html">← Building Momentum: Homelab Services + Website Launch</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-10.html">Network Fixes, Tailscale, and a NIC Upgrade →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+        <p>Full Stack Developer — web apps, firewalls, VLANs, and enterprise systems.</p>
+      </div>
+      <nav class="fcol" aria-label="Footer sections">
+        <h4>Sections</h4>
+        <ul>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#portfolio">Portfolio</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/lab/">Lab</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <nav class="fcol" aria-label="Footer services">
+        <h4>Lab Services</h4>
+        <ul>
+          <li><a href="https://photo.n5hq.me">Photos</a></li>
+          <li><a href="https://status.n5hq.me">Status</a></li>
+          <li><a href="/blog/">The Journey</a></li>
+        </ul>
+      </nav>
+      <div class="promo">
+        <h4>Personal Homelab — always learning, always building.</h4>
+        <p>Networking, compute, storage, surveillance, and smart home automation running 24/7.</p>
+        <a class="btn btn-ghost" href="/lab/" style="margin-top:.4rem">View Lab</a>
+      </div>
+    </div>
+    <div class="legal"><p>© 2026 N5HQ. All rights reserved.</p></div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>

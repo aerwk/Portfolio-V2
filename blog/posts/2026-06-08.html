@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Building Momentum: Homelab Services + Website Launch — N5HQ</title>
+<meta name="description" content="Deployed the monitoring stack (Prometheus, Grafana, Loki), made Immich publicly accessible, and completed the N5HQ website with portfolio and contact sections.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/lab/">Lab</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Building Momentum: Homelab Services + Website Launch</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Projects</span>
+      <span class="chip">2026-06-08 · Sunday</span>
+      <span class="chip">4 min read</span>
+      <span class="chip badge-ai">80% AI</span>
+    </div>
+  </div>
+</section>
+<article class="band" style="padding-top:0">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Energy sitting at 6/10, mood a flat <em>meh</em> — not the conditions you'd associate with what turned out to be one of the more productive days in recent memory. Between waking up and the end of the night, a full observability stack came online, two services became publicly accessible behind Cloudflare tunnels, and a portfolio website went from a blank folder to live on Vercel. Six sessions. One day.</p>
+<h2>The Monitoring Stack</h2>
+<p>Started with the homelab. The goal was proper observability — something that would tell me what's actually happening on the OptiPlex rather than just assuming everything's fine. Spun up Prometheus, Grafana, Loki, Promtail, Node Exporter, cAdvisor, and UnPoller as a full Docker stack, then built a custom Homelab Overview dashboard through the Grafana Python API. Panels for WAN uptime, device count, container count, CPU, memory, disk, network throughput, and PoE power draw. It went live at <strong>status.n5hq.me</strong>.</p>
+<p>Not everything was clean. The dashboard imports were a mess — wrong metric prefixes, corrupted variables — and needed patch scripts to sort out. cAdvisor on cgroup v2 doesn't emit container name labels, so Docker containers show up as hash paths instead of readable names. The WAN uptime panel also has a query bug: the failover interface returns -1 when inactive and drags the average down. Workarounds in place but the clean fixes are queued for next session.</p>
+<h2>Immich Goes Public</h2>
+<p>While the monitoring stack was still fresh, got Immich publicly accessible at <strong>photo.n5hq.me</strong> through the existing Cloudflare Zero Trust tunnel — added a second hostname to the same cloudflared instance that was already routing Home Assistant. No Docker changes needed, just configuration. Satisfying because of how simple it was.</p>
+<h2>Website: Zero to Live in a Day</h2>
+<p>The rest of the day was six sessions of website work.</p>
+<p>Session one built the initial landing page: a single <code>index.html</code> with a Navy/Teal/Beige colour palette, Poppins display paired with Inter body, responsive mobile-first, and deployed to GitHub and Vercel before the session closed. Sessions three through six expanded it into a full portfolio system — About Me with career goal and stat cards, expandable portfolio tiles, dedicated project pages for in-progress and upcoming work, a full HomeLab showcase page with all the infrastructure detail, and a Contact form routing to FormSubmit.co.</p>
+<p>Session four built the blog publishing system from the ground up. A Node script scans the Obsidian vault journals, extracts frontmatter, copies the markdown files to <code>blog/posts/</code>, and generates a <code>posts.json</code> manifest. The blog index and reader are live on the site. This journal entry was the first post published. Session five was almost entirely bug fixes — the reader was fetching wrong file paths, the sidebar was showing duplicate entries, and the blog index was broken from calling undefined functions. All fixed, but it took a full session. Session six added the <code>claude_pct</code> frontmatter field, which controls the AI disclosure badge shown on each post. Honest, and genuinely interesting context for anyone reading.</p>
+<h2>What's Next</h2>
+<ul>
+<li class="task-done">Fix WAN uptime panel query (<code>wan_networkgroup="WAN"</code> filter)</li>
+<li class="task-open">Decide on Cloudflare Access for Immich (photos are sensitive)</li>
+<li class="task-done">Update Cloudflare DNS — point n5hq.me root + www to Vercel CNAME</li>
+<li class="task-done">Verify domain shows valid in Vercel after DNS update</li>
+<li class="task-done">Replace website placeholder copy with real bio and project descriptions</li>
+<li class="task-done">Add real project screenshots to portfolio tiles</li>
+</ul>
+<p>A 6/10 energy day that produced more than most high-energy days. Monitoring stack live, two services behind proper tunnels, full portfolio site from nothing to deployed — all in one go. It's easy to take for granted in the moment because you're just moving from one task to the next, but stepping back it's a lot. The blog being wired directly to the Obsidian vault is the detail I'm most pleased about. Zero friction between writing and publishing is worth more than it sounds.</p>
+    </div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-07.html">← Home Assistant Goes Public</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-09.html">Automating the Blog &amp; Cleaning Up the Portfolio →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+        <p>Full Stack Developer — web apps, firewalls, VLANs, and enterprise systems.</p>
+      </div>
+      <nav class="fcol" aria-label="Footer sections">
+        <h4>Sections</h4>
+        <ul>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#portfolio">Portfolio</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/lab/">Lab</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <nav class="fcol" aria-label="Footer services">
+        <h4>Lab Services</h4>
+        <ul>
+          <li><a href="https://photo.n5hq.me">Photos</a></li>
+          <li><a href="https://status.n5hq.me">Status</a></li>
+          <li><a href="/blog/">The Journey</a></li>
+        </ul>
+      </nav>
+      <div class="promo">
+        <h4>Personal Homelab — always learning, always building.</h4>
+        <p>Networking, compute, storage, surveillance, and smart home automation running 24/7.</p>
+        <a class="btn btn-ghost" href="/lab/" style="margin-top:.4rem">View Lab</a>
+      </div>
+    </div>
+    <div class="legal"><p>© 2026 N5HQ. All rights reserved.</p></div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>

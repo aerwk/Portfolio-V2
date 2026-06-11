@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home Assistant Goes Public — N5HQ</title>
+<meta name="description" content="Got Home Assistant accessible remotely via Cloudflare Zero Trust tunnel — after about 1.5 hours of chasing a silent 502.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/lab/">Lab</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Home Assistant Goes Public</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-06-07 · Saturday</span>
+      <span class="chip">2 min read</span>
+      <span class="chip badge-ai">50% AI</span>
+    </div>
+  </div>
+</section>
+<article class="band" style="padding-top:0">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>The goal for the session was simple: get Home Assistant accessible from outside the network without opening ports. Added <code>cloudflared</code> as a Docker service in the Home Assistant compose file, configured a Cloudflare Zero Trust tunnel to route <code>ha.n5hq.me</code> to <code>localhost:8123</code>, and expected it to just work. It did not just work.</p>
+<h2>The Silent 502</h2>
+<p>The first 502 Bad Gateway was easy enough — the service URL in the Cloudflare dashboard was set to <code>homeassistant:8123</code> (the container name). Since both containers run with <code>network_mode: host</code>, Docker's internal DNS doesn't resolve container names — that only works on bridge networks. Changed it to <code>http://localhost:8123</code> and restarted.</p>
+<p>Still 502. But this time cloudflared wasn't logging anything at all. No requests showing up, no errors, nothing. The tunnel showed connected but the logs were completely silent. That silence is what cost the most time — it looked like traffic wasn't arriving at all, and without evidence of where it was failing there wasn't much to go on. Eventually added <code>--protocol http2 --loglevel debug</code> to the cloudflared command. With debug logging on, the picture became clear: requests <em>were</em> arriving, but HA was returning 400.</p>
+<h2>The 400 Stack</h2>
+<p>Three causes, all stacked on top of each other. First, <code>trusted_proxies</code> was set to <code>172.20.0.3</code> — an old Docker bridge IP that was no longer valid. Second, when correcting it, typed <code>172.0.0.1</code> instead of <code>127.0.0.1</code>. One wrong digit, another restart, still broken. Third, <code>external_url</code> wasn't set at all — Home Assistant rejects requests where the <code>Host</code> header doesn't match a configured external URL, so every request through <code>ha.n5hq.me</code> was being rejected regardless.</p>
+<p>Fixed all three: <code>trusted_proxies</code> corrected to <code>127.0.0.1</code> and <code>::1</code>, <code>external_url</code> set to <code>https://ha.n5hq.me</code>, HA restarted. Tunnel came up cleanly.</p>
+<h2>What's Next</h2>
+<ul>
+<li class="task-open">Expose Immich the same way — same cloudflared instance, second public hostname</li>
+<li class="task-open">Consider Cloudflare Access in front of HA for authentication layer</li>
+</ul>
+<p>About 1.5 hours total — almost all of it on the silent 502 before debug logging was enabled. The lesson that stuck: on a <code>host</code> network, you always use <code>localhost</code>, and debug logging should be the first thing you turn on when there's nothing to look at.</p>
+    </div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <span></span>
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-08.html">Building Momentum: Homelab Services + Website Launch →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+        <p>Full Stack Developer — web apps, firewalls, VLANs, and enterprise systems.</p>
+      </div>
+      <nav class="fcol" aria-label="Footer sections">
+        <h4>Sections</h4>
+        <ul>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#portfolio">Portfolio</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/lab/">Lab</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <nav class="fcol" aria-label="Footer services">
+        <h4>Lab Services</h4>
+        <ul>
+          <li><a href="https://photo.n5hq.me">Photos</a></li>
+          <li><a href="https://status.n5hq.me">Status</a></li>
+          <li><a href="/blog/">The Journey</a></li>
+        </ul>
+      </nav>
+      <div class="promo">
+        <h4>Personal Homelab — always learning, always building.</h4>
+        <p>Networking, compute, storage, surveillance, and smart home automation running 24/7.</p>
+        <a class="btn btn-ghost" href="/lab/" style="margin-top:.4rem">View Lab</a>
+      </div>
+    </div>
+    <div class="legal"><p>© 2026 N5HQ. All rights reserved.</p></div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>

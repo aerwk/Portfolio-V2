@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Journey — N5HQ</title>
+<meta name="description" content="Notes from the transition — infrastructure, learning, and building in public.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/lab/">Lab</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Blog header">
+  <div class="wrap hero-in">
+    <span class="chip rv on">Latest Adventures</span>
+    <h1 class="rv on rv-d1">The Journey</h1>
+    <p class="hero-sub rv on rv-d2">Notes from the transition — infrastructure, learning, and building in public.</p>
+  </div>
+</section>
+<section class="band" style="padding-top:0" aria-label="All posts">
+  <div class="wrap">
+    <ul class="posts">
+      <li><a class="postcard rv" href="/blog/posts/2026-06-11.html">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-06-11</span></span>
+        <h3>Storage Fixes, Vault Cleanup, and the Reboot That Bit Back</h3>
+        <p>Renamed the external drive mount, set up Samba shares, fixed the T7 Shield&#x27;s UAS instability — then the reboot that fix required quietly took down Home Assistant and the website dev server. Recovery story included.</p>
+      </a></li>
+      <li><a class="postcard rv rv-d1" href="/blog/posts/2026-06-10.html">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-06-10</span></span>
+        <h3>Network Fixes, Tailscale, and a NIC Upgrade</h3>
+        <p>Diagnosed the Aqara doorbell and Canon printer issues via UniFi MCP, got Tailscale running across all devices, installed Claude CLI on the MacBook, and swapped the server NIC to 2.5GbE.</p>
+      </a></li>
+      <li><a class="postcard rv rv-d2" href="/blog/posts/2026-06-09.html">
+        <span class="postmeta"><span class="cat">Projects</span><span>2026-06-09</span></span>
+        <h3>Automating the Blog &amp; Cleaning Up the Portfolio</h3>
+        <p>Wired up GitHub Actions to auto-publish blog posts, stripped placeholder content, and cleaned up the portfolio tiles to show only what&#x27;s real.</p>
+      </a></li>
+      <li><a class="postcard rv rv-d2" href="/blog/posts/2026-06-08.html">
+        <span class="postmeta"><span class="cat">Projects</span><span>2026-06-08</span></span>
+        <h3>Building Momentum: Homelab Services + Website Launch</h3>
+        <p>Deployed the monitoring stack (Prometheus, Grafana, Loki), made Immich publicly accessible, and completed the N5HQ website with portfolio and contact sections.</p>
+      </a></li>
+      <li><a class="postcard rv rv-d2" href="/blog/posts/2026-06-07.html">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-06-07</span></span>
+        <h3>Home Assistant Goes Public</h3>
+        <p>Got Home Assistant accessible remotely via Cloudflare Zero Trust tunnel — after about 1.5 hours of chasing a silent 502.</p>
+      </a></li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+        <p>Full Stack Developer — web apps, firewalls, VLANs, and enterprise systems.</p>
+      </div>
+      <nav class="fcol" aria-label="Footer sections">
+        <h4>Sections</h4>
+        <ul>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#portfolio">Portfolio</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/lab/">Lab</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <nav class="fcol" aria-label="Footer services">
+        <h4>Lab Services</h4>
+        <ul>
+          <li><a href="https://photo.n5hq.me">Photos</a></li>
+          <li><a href="https://status.n5hq.me">Status</a></li>
+          <li><a href="/blog/">The Journey</a></li>
+        </ul>
+      </nav>
+      <div class="promo">
+        <h4>Personal Homelab — always learning, always building.</h4>
+        <p>Networking, compute, storage, surveillance, and smart home automation running 24/7.</p>
+        <a class="btn btn-ghost" href="/lab/" style="margin-top:.4rem">View Lab</a>
+      </div>
+    </div>
+    <div class="legal"><p>© 2026 N5HQ. All rights reserved.</p></div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>

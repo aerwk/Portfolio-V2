@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Network Fixes, Tailscale, and a NIC Upgrade — N5HQ</title>
+<meta name="description" content="Diagnosed the Aqara doorbell and Canon printer issues via UniFi MCP, got Tailscale running across all devices, installed Claude CLI on the MacBook, and swapped the server NIC to 2.5GbE.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/lab/">Lab</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Network Fixes, Tailscale, and a NIC Upgrade</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-06-10 · Wednesday</span>
+      <span class="chip">4 min read</span>
+      <span class="chip badge-ai">60% AI</span>
+    </div>
+  </div>
+</section>
+<article class="band" style="padding-top:0">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>More happened today than the energy levels would suggest. Went into it wanting to knock out some network issues that had been sitting on the list, ended up also getting Tailscale properly sorted across all devices and swapping the server NIC while things were already open.</p>
+<h2>UniFi Troubleshooting — Aqara Doorbell</h2>
+<p>The Aqara G410 doorbell at <code>10.10.10.9</code> (Camera Network, VLAN 80) hadn't been viewable in the Aqara App or HomeKit since setup. Ran a proper diagnosis through the UniFi MCP tools in the terminal. The mDNS repeater was already enabled across the relevant VLANs — that wasn't the issue. Traffic inspection showed the camera was reaching Aqara's P2P relay servers via UDP, but only tiny 76-byte signalling packets — no video stream establishing.</p>
+<p>Found the real problem: the "Allow IoT to Apple TV" firewall rule only covered IoT Network (VLAN 70), not Camera Network (VLAN 80). The doorbell had no path to the Apple TV HomeKit hub at <code>10.1.1.112</code>. The camera was generating zero traffic toward the Apple TV, which confirmed the HomeKit pairing session was stale or broken. Added Camera Network as a source to the firewall rule.</p>
+<p>The firewall is now correct but the HomeKit pairing itself still needs to be re-established — the camera won't automatically reconnect. Fix: remove the doorbell accessory in the Home app and re-add it with the HomeKit code on the device.</p>
+<h2>UniFi Troubleshooting — Canon Printer</h2>
+<p>The Canon G4610 had been offline since June 9. Found it connected to the IoT SSID (Potato Network, VLAN 70) but with a virtual network override already in place forcing it onto VLAN 30 (Home Network) — that's the correct setup for a 2.4 GHz-only device that can't connect to the main SSIDs.</p>
+<p>The fixed IP was set to <code>10.0.0.99</code> — wrong subnet entirely (Management Network range, not Home Network). Also no firewall rule existed for the PC to initiate connections to the printer, and zero historical traffic confirmed print jobs had never been completing.</p>
+<p>Fixed the IP to <code>10.1.1.5</code> (Home Network, below the DHCP pool), enabled the fixed assignment, and created a new "PC to Printer" firewall rule allowing the PC MAC to reach <code>10.1.1.5</code>. Printer came back online, 1.3 MB of TCP print data confirmed flowing through. Network is good. The remaining issue is on the driver side — the correct driver is Canon G4600 Series, and the printer port on the PC needs updating to <code>10.1.1.5</code>.</p>
+<h2>Tailscale Setup and Cleanup</h2>
+<p>Tailscale was technically installed but in a messy state — three separate installs found on the server: a snap version (1.92.5), a Docker container, and an apt package. Cleaned it up: removed the snap (it was holding the <code>tailscale0</code> interface), removed the Docker container (the host install covers all containers), kept the apt install running as a proper systemd service.</p>
+<p>Tailnet is now clean — OptiPlex (<code>n5ubuntu</code>, <code>100.78.149.70</code>) and MacBook Pro (<code>erics-macbook-pro</code>, <code>100.99.153.21</code>) both confirmed online. The Samba share on the server is accessible from the MacBook via <code>smb://100.78.149.70/shared</code> through Tailscale when off the local network.</p>
+<h2>Claude CLI on MacBook</h2>
+<p>Installed Claude CLI on the MacBook via Homebrew and npm. Node v26.3.0, npm 11.16.0, binary at <code>/opt/homebrew/bin/claude</code>. Claudian plugin path set to match. One unresolved issue: Claudian showing a session ID error on first use — likely a stale session in the plugin state, needs clearing or re-auth.</p>
+<h2>NIC Upgrade to 2.5GbE</h2>
+<p>Swapped the OptiPlex from the onboard 1GbE NIC (<code>eno1</code>) to a 2.5GbE USB-C adapter (<code>enx7419f8195c7c</code>). IP held at <code>10.0.0.5</code> via UniFi fixed DHCP reservation. The old NIC stays configured in Netplan but unused — available for future use if needed (Proxmox management network, etc.). The 1GbE ceiling would've become a real bottleneck the moment a NAS or Kubernetes cluster enters the picture. Better removed now.</p>
+<h2>What's Next</h2>
+<ul>
+<li class="task-open">Re-establish HomeKit pairing for Aqara doorbell (remove + re-add in Home app)</li>
+<li class="task-open">Install Canon G4600 Series driver on PC, update printer port to <code>10.1.1.5</code></li>
+<li class="task-open">Fix Claudian session ID error on MacBook</li>
+<li class="task-open">Fix WAN uptime panel in Grafana (<code>wan_networkgroup="WAN"</code> filter)</li>
+<li class="task-open">Cloudflare Access in front of Immich</li>
+</ul>
+<p>A lot of ground covered for a low-energy day. The UniFi MCP tooling made the network diagnosis much faster than it would've been manually — being able to inspect traffic flows and firewall hits directly from the terminal is genuinely useful. The printer issue was satisfying to close out, even with the driver side still pending.</p>
+    </div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-09.html">← Automating the Blog &amp; Cleaning Up the Portfolio</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-11.html">Storage Fixes, Vault Cleanup, and the Reboot That Bit Back →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+        <p>Full Stack Developer — web apps, firewalls, VLANs, and enterprise systems.</p>
+      </div>
+      <nav class="fcol" aria-label="Footer sections">
+        <h4>Sections</h4>
+        <ul>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#portfolio">Portfolio</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/lab/">Lab</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <nav class="fcol" aria-label="Footer services">
+        <h4>Lab Services</h4>
+        <ul>
+          <li><a href="https://photo.n5hq.me">Photos</a></li>
+          <li><a href="https://status.n5hq.me">Status</a></li>
+          <li><a href="/blog/">The Journey</a></li>
+        </ul>
+      </nav>
+      <div class="promo">
+        <h4>Personal Homelab — always learning, always building.</h4>
+        <p>Networking, compute, storage, surveillance, and smart home automation running 24/7.</p>
+        <a class="btn btn-ghost" href="/lab/" style="margin-top:.4rem">View Lab</a>
+      </div>
+    </div>
+    <div class="legal"><p>© 2026 N5HQ. All rights reserved.</p></div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>

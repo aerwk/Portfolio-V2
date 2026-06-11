@@ -1,0 +1,8 @@
+# vault-side project files — never publish
+CLAUDE.md
+01 Design/
+05 Iteration Logs/
+.obsidian/
+.claudian/
+.claude/
+.trash/

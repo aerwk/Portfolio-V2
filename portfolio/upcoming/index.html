@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upcoming — N5HQ</title>
+<meta name="description" content="Projects that are scoped, planned, and queued up — real work that's coming down the line.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/lab/">Lab</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Page header">
+  <div class="wrap hero-in">
+    <a class="crumb rv on" href="/#portfolio">← Portfolio Showcase</a>
+    <span class="chip rv on">Coming Soon</span>
+    <h1 class="rv on rv-d1">Upcoming</h1>
+    <p class="hero-sub rv on rv-d2">Projects that are scoped, planned, and queued up — real work that's coming down the line.</p>
+  </div>
+</section>
+<section class="band" style="padding-top:0"><div class="wrap">
+<div class="cards cards-2">
+      <article class="pcard rv">
+        <span class="num">04</span>
+        <h3>Hotel IPTV System — 100+ Rooms</h3>
+        <p class="desc">End-to-end overhaul of a hotel's network and TV infrastructure across 100+ rooms. Rebuilding the network topology from the ground up, deploying an IPTV headend with encoders, and automating network health and recovery workflows.</p>
+        <dl class="facts">
+          <div class="frow"><dt>Network Redesign</dt><dd>Reconfiguring the existing network to a clean VLAN and firewall architecture — a healthier, more maintainable topology across the property</dd></div>
+          <div class="frow"><dt>IPTV Headend</dt><dd>A dedicated IPTV headend with encoders distributing live TV to all 100+ rooms over the network — replacing legacy coax infrastructure</dd></div>
+          <div class="frow"><dt>Automated Recovery</dt><dd>Containerised services continuously monitor network health, troubleshoot issues automatically, and restore connectivity without manual intervention</dd></div>
+        </dl>
+        <div class="tags">
+          <span class="tag">IPTV</span><span class="tag">VLANs</span><span class="tag">Firewall</span><span class="tag">Network Design</span><span class="tag">Docker</span><span class="tag">Automation</span><span class="tag">100+ Rooms</span>
+        </div>
+      </article>
+      <article class="pcard rv rv-d1">
+        <span class="num">05</span>
+        <h3>Multi-Site Network Unification</h3>
+        <p class="desc">Connecting three geographically separate sites into a single unified network — making remote devices feel local. Combined with a dedicated camera network across the sites and seamless cross-site access for all users.</p>
+        <dl class="facts">
+          <div class="frow"><dt>Site Unification</dt><dd>Three separate physical locations operating as a single logical network — transparent "local" access to devices regardless of site</dd></div>
+          <div class="frow"><dt>Camera Network</dt><dd>A unified surveillance camera network spanning all three sites, accessible and manageable from a single interface</dd></div>
+          <div class="frow"><dt>Cross-Site Access</dt><dd>Users on any site can reach printers, servers, and devices on any other site without VPN friction — same network, different locations</dd></div>
+        </dl>
+        <div class="tags">
+          <span class="tag">Multi-Site</span><span class="tag">Network Design</span><span class="tag">Site-to-Site</span><span class="tag">Surveillance</span><span class="tag">VLANs</span><span class="tag">Routing</span>
+        </div>
+      </article>
+    </div>
+</div></section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+        <p>Full Stack Developer — web apps, firewalls, VLANs, and enterprise systems.</p>
+      </div>
+      <nav class="fcol" aria-label="Footer sections">
+        <h4>Sections</h4>
+        <ul>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#portfolio">Portfolio</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/lab/">Lab</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <nav class="fcol" aria-label="Footer services">
+        <h4>Lab Services</h4>
+        <ul>
+          <li><a href="https://photo.n5hq.me">Photos</a></li>
+          <li><a href="https://status.n5hq.me">Status</a></li>
+          <li><a href="/blog/">The Journey</a></li>
+        </ul>
+      </nav>
+      <div class="promo">
+        <h4>Personal Homelab — always learning, always building.</h4>
+        <p>Networking, compute, storage, surveillance, and smart home automation running 24/7.</p>
+        <a class="btn btn-ghost" href="/lab/" style="margin-top:.4rem">View Lab</a>
+      </div>
+    </div>
+    <div class="legal"><p>© 2026 N5HQ. All rights reserved.</p></div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>
