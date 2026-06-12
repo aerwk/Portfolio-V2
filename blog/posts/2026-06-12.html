@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three Designs, a Domain Cutover, and the Media Stack Comes Home — N5HQ</title>
+<meta name="description" content="The portfolio redesign shipped to n5hq.me after three full rebuilds — then the bigger job: pulling the whole media automation stack off the rented seedbox and onto the home server, with the 22TB of storage staying put and the file moves still happening at the source.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/lab/">Lab</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Three Designs, a Domain Cutover, and the Media Stack Comes Home</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Projects</span>
+      <span class="chip">2026-06-12 · Friday</span>
+      <span class="chip">8 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+    </div>
+  </div>
+</section>
+<article class="band" style="padding-top:0">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>The new n5hq.me shipped today. Not the way I expected it to — the design got rebuilt from scratch twice before it earned the domain — but by the end of the day the redesign was live in production with a working contact form and its own repo. And that was only half the day. The other half was bigger: moving the entire media stack off the rented seedbox and onto the home server.</p>
+<h2>Three Versions Before It Stuck</h2>
+<p>Version one was an "engineering field notebook": warm paper, drafting grid, serif headlines, mono annotations, a network topology in the hero. Technically clean, but not what I wanted. I pointed at premiercs.com as the reference and asked for a rebuild.</p>
+<p>Version two came back close-but-wrong. It was built by reading Premier's HTML and CSS — the palette and font were right on paper, but the tone wasn't: too purple, too bold, layout pointed the wrong way. The problem was obvious in hindsight: you can't infer how a design <em>feels</em> from its stylesheet.</p>
+<p>The fix turned out to be the best trick of the day. The server can't run a browser (missing libraries, no sudo), so screenshots were off the table. Instead I recorded premiercs.com scrolling in Firefox with OBS, dropped the 60-second video into the vault, and ffmpeg pulled thirty frames out of it for Claude to read as images. Version three landed it: near-black ground with the violet held back for buttons and glows, a floating pill nav, a centered hero, and Premier's product-screenshot move recreated as a pure CSS dashboard mockup showing real lab numbers.</p>
+<h2>From a Page to a Site</h2>
+<p>Once the homepage held up, the rest followed. Section order got locked to the nav (About, Portfolio, Blog, Lab, Contact). The shared CSS moved into a stylesheet, and every path got built in the same language: a blog index, a static page for each journal entry — markdown converted to styled prose, with the AI % badge straight from the frontmatter — four portfolio pages, and a lab page. The portfolio pages reuse the exact card markup from the homepage, extracted by script, so the two can never drift apart. An HTML parser pass over all twelve pages caught one stray closing div, and a link crawl confirmed every internal path resolves.</p>
+<h2>The Cutover</h2>
+<p>The site got its own repo: <code>aerwk/Portfolio-V2</code>, site files only. The old repo taught the lesson here — vault notes and session logs ended up public last time, so this one gitignores all of it, and every push gets a scan for emails, tokens, and credentials first. Vercel imported the repo, the domains moved across, and within minutes www.n5hq.me was serving the new site with security headers on every response. The apex redirects to www. The Vercel CLI is now authenticated on the server too, so deploy checks no longer need the dashboard.</p>
+<h2>Finishing Touches</h2>
+<p>The contact form went from a dead placeholder to a working FormSubmit integration — honeypot for bots, a no-JavaScript fallback, and the old site's status messages carried over. Then the tech-stack marquee got real brand logos: fourteen from Simple Icons, with Loki and Prowlarr tracked down separately and recoloured to match the grey of the text. All sixteen are self-hosted, scanned, and verified live.</p>
+<h2>Reaching Home From Anywhere</h2>
+<p>The other thread of the day started with a smaller annoyance: I couldn't reach the home server when I was off the network. Tailscale was installed and the server was online, but nothing connected from outside. The cause was mundane — the laptop and phone weren't staying on the tailnet, and half my bookmarks pointed at the LAN address, which only works at home. Once the devices were actually connected and pointed at the Tailscale name instead of <code>10.0.0.5</code>, a phone on mobile data and the laptop on a different network both reached the server directly in about 50ms — no relay, straight through. Turning on connect-on-demand on the phone and login-at-boot on the laptop means it stays that way.</p>
+<h2>The Seedbox Goes on a Diet</h2>
+<p>The main job. I rent a seedbox — a slice of a fast server with a 22TB disk and upload speed that embarrasses Australian internet. It runs Plex plus the full request-and-download stack: Radarr and Sonarr for the library, Prowlarr for indexers, Overseerr for requests, qBittorrent for the downloads, and a Discord bot so other people can ask for things. The trouble is that all of that automation competes with Plex for the slot's CPU and memory. The plan: keep the seedbox doing only what it's uniquely good at — storage, seeding, and streaming — and move every "brain" app home, running as Docker containers on the home server, pointing back at the seedbox.</p>
+<h2>The One Hard Problem</h2>
+<p>There's exactly one hard part. Normally those apps sit right next to the files, so importing a finished download into the library is an instant hardlink — the file seeds and shows up in the library at the same time, using the disk once. Move the apps home and leave the 22TB remote, and every import would want to drag the file down over the slow link and push it back up. The fix is to mount the seedbox's disk over sshfs at the exact same paths the apps expect, so they think they're working locally — but the actual move and hardlink run on the seedbox itself. I proved it before trusting it: made a hardlink through the mount, then checked the file on the seedbox directly. Same inode, link count two, not a single byte across the wire. That one number retired the whole project's risk.</p>
+<h2>Moving Without Losing Anything</h2>
+<p>The apps' databases weren't sitting on the part of the seedbox I could reach, so the move went through each app's own backup export, restored into the fresh local copies. Because the mounted paths matched exactly, the restored databases recognised every existing movie and show with nothing to re-import — hundreds of films and shows, every quality profile and indexer, kept. The seedbox's security tripped a few times along the way and banned the home server for connecting too fast; routing everything over a single shared SSH connection stopped that. By the end the local stack was driving the remote downloader, the Discord bot was back online wired through the request manager, and the people who use it kept their accounts and history.</p>
+<h2>Proof, End to End</h2>
+<p>The convincing moment was a real request. Someone asked the Discord bot for a film; it went to the request manager, to Radarr, to the downloader on the seedbox, which pulled the movie down on the fast link — then the local Radarr hardlinked it into the library at the source and Plex showed it. Every decision made at home, every byte staying on the seedbox. The bot also needed a Terms and Privacy page before it could be verified, so I built a small two-page site and put it on Vercel — which fit neatly next to the morning's other Vercel work.</p>
+<h2>The Stats Tool That Had Quietly Died</h2>
+<p>One surprise along the way: the watch-stats tool had stopped recording three weeks ago and nobody had noticed. Its link to Plex was pinned to an internal address that changed when a container restarted, and it had been blind ever since. I moved its history — sixteen thousand watches — into the local copy and pointed that one at a stable address, so it's both caught up and won't drift again. The three-week gap is gone for good, but everything before it is preserved.</p>
+<h2>Open to the World, Carefully</h2>
+<p>Last piece: getting at these apps from outside the house. They went onto subdomains of n5hq.me — radarr, sonarr, tautulli, overseerr — through the same Cloudflare tunnel that already carries Home Assistant and the photos. No ports opened, no home address exposed, TLS handled at the edge, each app still behind its own login. Before turning it on I checked that every app actually enforces that login, because an exposed admin tool with the door open is worse than not exposing it at all. A small systemd service keeps the seedbox mount alive across reboots, so none of this quietly falls over the next time the server restarts.</p>
+<h2>What's Next</h2>
+<ul>
+<li class="task-open">Send a test message through the contact form and confirm it lands</li>
+<li class="task-open">Visual pass on the live site at mobile widths</li>
+<li class="task-open">Decide what happens to the old n5hq-test-website repo and Vercel project</li>
+<li class="task-open">Decide whether to retire the now-redundant stats tool still sitting on the seedbox</li>
+<li class="task-open">Remove the leftover indexer-proxy from the seedbox in a later session</li>
+<li class="task-open">Revoke the temporary Cloudflare and Vercel deploy tokens</li>
+</ul>
+<p>Two lessons from one day. The design one: describing a look in words produced two rejected versions; thirty frames pulled from a screen recording produced the right one in a single pass — when the thing doing the work can't see, give it eyes. The infrastructure one came down to a single number. The whole migration rode on whether a hardlink would run at the far end instead of dragging gigabytes across the world, and the honest move was to test that first, before building anything on top of it. The file came back with a link count of two, and the rest was just plumbing.</p>
+    </div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-11.html">← Storage Fixes, Vault Cleanup, and the Reboot That Bit Back</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+        <p>Full Stack Developer — web apps, firewalls, VLANs, and enterprise systems.</p>
+      </div>
+      <nav class="fcol" aria-label="Footer sections">
+        <h4>Sections</h4>
+        <ul>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#portfolio">Portfolio</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/lab/">Lab</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <nav class="fcol" aria-label="Footer services">
+        <h4>Lab Services</h4>
+        <ul>
+          <li><a href="https://photo.n5hq.me">Photos</a></li>
+          <li><a href="https://status.n5hq.me">Status</a></li>
+          <li><a href="/blog/">The Journey</a></li>
+        </ul>
+      </nav>
+      <div class="promo">
+        <h4>Personal Homelab — always learning, always building.</h4>
+        <p>Networking, compute, storage, surveillance, and smart home automation running 24/7.</p>
+        <a class="btn btn-ghost" href="/lab/" style="margin-top:.4rem">View Lab</a>
+      </div>
+    </div>
+    <div class="legal"><p>© 2026 N5HQ. All rights reserved.</p></div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>
