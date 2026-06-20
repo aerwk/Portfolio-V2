@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sharper Words, Smaller Cards: A Copy Pass on the Portfolio — N5HQ</title>
+<meta name="description" content="Went back to the portfolio that shipped yesterday and fixed the part I&#x27;d skimmed: the writing. Stripped the filler out of the copy, rewrote it to talk to an employer, shrank the project cards down to a title and a Details button, and made the dead buttons actually work — all kept local for review, nothing pushed yet.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/lab/">Lab</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Sharper Words, Smaller Cards: A Copy Pass on the Portfolio</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Projects</span>
+      <span class="chip">2026-06-13 · Saturday</span>
+      <span class="chip">4 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+    </div>
+  </div>
+</section>
+<article class="band" style="padding-top:0">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>The site shipped yesterday, but the words on it were the part I'd rushed. Today was about going back over the copy with the same care the design got, simplifying the project cards, and fixing a couple of buttons that looked clickable but did nothing. None of it is live yet — it's all sitting on the local server on port 3002 for me to review before any of it touches the real domain.</p>
+<h2>The Copy Was Failing My Own Rules</h2>
+<p>The clearest problem was the About paragraph. It opened with "a passionate full-stack developer and network enthusiast with deep expertise in infrastructure, automation, and building scalable solutions." Every one of those phrases is on my own banned list — the vague, inflated language that says nothing a hiring manager can check. I'd written a rule against exactly this and then walked straight into it.</p>
+<p>Before rewriting anything I had a research agent go and read the best IT, infrastructure, and SRE portfolios it could find and pull out what actually works: lead with what you build, replace adjectives with artifacts, replace claims with numbers, and never use a sentence that would fit on anyone else's site. It came back with a tight playbook, and the throughline matched my writing rules almost word for word.</p>
+<h2>Writing It for an Employer, Keeping It True</h2>
+<p>The rewrite rule I held to was simple: sharper, but never inventing anything I can't back up. No fake uptime figures, no metrics I don't have. The About now leads with the real homelab — five isolated VLANs, twenty-odd containers, monitoring running around the clock, all built from scratch — and ends on the honest version of where I am: moving into tech by 2027, and happier to prove it with systems that run than with a title I don't hold yet. The stat captions lost their "innovative solutions crafted" padding. The portfolio heading went from "building solutions that matter" to "work that ships and runs."</p>
+<p>The contact section did the most useful single change. It used to be a fragment of buzzwords; now it says plainly that I'm open to roles and projects in networking, infrastructure, and full-stack work, and that I usually reply within a day. That one line does more for a recruiter than the rest of the page combined.</p>
+<p>I also stopped pretending to be only one thing. The site branded me "Full Stack Developer," but the strongest evidence on it is all infrastructure. I settled on a hybrid — "Full-Stack &amp; Infrastructure" — across the title, the hero, and the footer, so the dev projects and the network direction both stay in view.</p>
+<h2>The Buttons That Did Nothing</h2>
+<p>Under the portfolio heading sat three pills — Completed, In Progress, Upcoming — that looked like controls but were inert text. They now jump to the matching group further down the page, landing cleanly below the floating nav. And the hero had a "Lab" button next to "Projects" that I never liked; it's gone for now, and I'll decide what belongs there later.</p>
+<h2>Shrinking the Cards</h2>
+<p>The project cards were doing too much. Each one dumped a paragraph, a full spec breakdown, and a row of tags all at once, so the section was a wall of text. The fix was to collapse it: every card now shows just a title, one sentence, and a small "Details" button. Press it and the tags and the full breakdown unfold underneath. It's built on the browser's own expandable element, so it works with a keyboard and needs no JavaScript.</p>
+<p>Getting the button to look right took a few passes, and most of the trouble was a detail I should have known. The browser draws its own triangle marker on these expandable elements, and my first attempt only blanked it instead of removing it, so a stray arrow kept sitting off to the left. Once that was properly gone the button centred itself, and I shrank it down to a small pill with the text in the same purple the rest of the site uses, a little arrow underneath pointing down that flips up when the card opens. Small thing, but it's the difference between looking deliberate and looking unfinished.</p>
+<h2>What's Next</h2>
+<ul>
+<li class="task-open">Review the whole copy pass and the new cards on the local server before deciding to push</li>
+<li class="task-open">Decide whether the portfolio subpages should get the same simplified cards or stay as the detailed view</li>
+<li class="task-open">Work out what replaces the removed "Lab" button in the hero</li>
+<li class="task-open">Push to n5hq.me once I'm happy with it</li>
+</ul>
+<p>The lesson is one I keep relearning: it's easy to get the design polished and leave the words as an afterthought, but on a portfolio the words are doing the actual selling. A rule is only worth something if you check your own work against it, and I'd shipped a paragraph that broke mine. Fixing it cost an afternoon. Leaving it would have cost the first impression.</p>
+    </div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-12.html">← Three Designs, a Domain Cutover, and the Media Stack Comes Home</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-20.html">The Copy Goes Live, and the Lab Page Turns Personal →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+        <p>Full-Stack &amp; Infrastructure — web apps, firewalls, VLANs, and enterprise systems.</p>
+      </div>
+      <nav class="fcol" aria-label="Footer sections">
+        <h4>Sections</h4>
+        <ul>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#portfolio">Portfolio</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/lab/">Lab</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="foot-note">
+        <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+        <a class="foot-lab" href="/lab/">Lab dashboard →</a>
+      </div>
+    </div>
+    <div class="legal"><p>© 2026 N5HQ. All rights reserved.</p></div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>
