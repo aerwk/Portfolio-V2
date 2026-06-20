@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Copy Goes Live, and the Lab Page Turns Personal — N5HQ</title>
+<meta name="description" content="Shipped the copy and card rework that had been sitting on the local server, matched the portfolio subpages to it, then rebuilt the Lab as a personal launcher that only links the services already safe to be public.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/lab/">Lab</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">The Copy Goes Live, and the Lab Page Turns Personal</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Projects</span>
+      <span class="chip">2026-06-20 · Saturday</span>
+      <span class="chip">5 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+    </div>
+  </div>
+</section>
+<article class="band" style="padding-top:0">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>The copy pass from last week had been waiting on the local server for me to look at it before it went anywhere. Today I looked, shipped it, and then spent the rest of the session on a part of the site I'd been quietly unhappy with: the Lab.</p>
+<h2>Shipping What I'd Sat On</h2>
+<p>The review went quickly because the work held up. The rewritten About, the smaller project cards, the status pills that finally jump to their section — all of it read the way I wanted on screen, so it went to production. Before pushing I scanned the whole change for anything that shouldn't be public, found nothing beyond the contact email that's meant to be there, and let it deploy.</p>
+<p>One thing was inconsistent. The homepage cards had been collapsed down to a title and a Details button, but the four portfolio subpages still showed the old full-length versions. I matched them to the homepage card, with one deliberate difference: on the subpages the details start open. A page you reach by clicking "view full details" shouldn't then hide the details behind a second click. Same component, same styling, just expanded by default, and still collapsible if you want. While I was in there I caught a dead link on the completed page — the homelab card pointed at an anchor that didn't exist — and sent it to the right place.</p>
+<h2>The Lab Was Performing for the Wrong Audience</h2>
+<p>The Lab section had always sat awkwardly. On the homepage it was a long wall of components and a couple of service tiles, written like a pitch. But the lab isn't a pitch. It's the thing I actually use, and most of what runs on it has no business being advertised to a recruiter reading my portfolio.</p>
+<p>So I took it apart. The homepage Lab section is gone, which leaves a cleaner run from Portfolio to Blog to Contact. The footer lost its "Lab Services" column, and the loud gradient card that announced the homelab is now a single quiet line with a small link. The point was to stop selling the lab and let it go back to being mine.</p>
+<h2>A Launcher, Not a Showcase</h2>
+<p>The rebuild of the <code>/lab</code> page is where the real thinking went. What I wanted was simple: one page that gives me one-click access to everything I run, with some live numbers from the host. The problem is where that page lives.</p>
+<p>This repo is public on GitHub, and the site is indexed. If I list every container with its address, I'm committing a map of my whole setup to a public record that never really goes away, and pointing at services that aren't meant to be reachable from outside anyway. The honest answer is that a personal launcher belongs on a private dashboard inside the network, not on a public site. For now I took the safe middle: the page only links the handful of services already exposed through the Cloudflare tunnel and already behind their own logins. Nothing internal, no home network addresses, nothing that wasn't already public.</p>
+<p>The stats panel pulls real Docker counts — stacks, containers, images, volumes, networks — and I wired them into the same commit hook that already refreshes the homepage numbers, so they stay current on their own. I wanted live graphs from Grafana too, but Grafana isn't public, and putting it online just to decorate a page is the exact mistake I'd just talked myself out of. The counts and the hardware specs are the honest version until I stand up a proper private dashboard.</p>
+<p>By the end it was all live: the copy, the matched subpages, the stripped-back Lab, and the new launcher, confirmed on the real domain.</p>
+<h2>What's Next</h2>
+<ul>
+<li class="task-open">Decide whether Lab still belongs in the main nav now that it's a personal page, or should only be reachable from the footer</li>
+<li class="task-open">Stand up a real self-hosted dashboard inside the network for the full container list, with live Grafana panels</li>
+<li class="task-open">Publish the June 13 entry so the blog timeline isn't missing a day</li>
+<li class="task-open">Decide whether the portfolio subpage cards stay open by default or collapse to match the homepage</li>
+</ul>
+<p>The lesson is about a page trying to serve two people at once. The Lab wanted to be both a thing I show off and a tool I use, and it did neither well. Splitting them — keep the showing-off in the portfolio, make the lab page a plain launcher — was the fix, and the only honest place to draw the line was what's already public. The rest waits until it has a private home to live in.</p>
+    </div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-12.html">← Three Designs, a Domain Cutover, and the Media Stack Comes Home</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+        <p>Full-Stack &amp; Infrastructure — web apps, firewalls, VLANs, and enterprise systems.</p>
+      </div>
+      <nav class="fcol" aria-label="Footer sections">
+        <h4>Sections</h4>
+        <ul>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#portfolio">Portfolio</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/lab/">Lab</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="foot-note">
+        <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+        <a class="foot-lab" href="/lab/">Lab dashboard →</a>
+      </div>
+    </div>
+    <div class="legal"><p>© 2026 N5HQ. All rights reserved.</p></div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>
