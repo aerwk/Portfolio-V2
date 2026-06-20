@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Copy Goes Live, and the Lab Page Turns Personal — N5HQ</title>
-<meta name="description" content="Shipped the copy and card rework that had been sitting on the local server, matched the portfolio subpages to it, then rebuilt the Lab as a personal launcher that only links the services already safe to be public.">
+<meta name="description" content="Shipped the copy and card rework that had been sitting on the local server, matched the portfolio subpages to it, then pulled the Lab out of the public site and rebuilt it as a personal launcher that only links the services already safe to be public. Finished by catching the blog up and writing a small script to generate posts from journals.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -56,11 +56,14 @@
 <p>This repo is public on GitHub, and the site is indexed. If I list every container with its address, I'm committing a map of my whole setup to a public record that never really goes away, and pointing at services that aren't meant to be reachable from outside anyway. The honest answer is that a personal launcher belongs on a private dashboard inside the network, not on a public site. For now I took the safe middle: the page only links the handful of services already exposed through the Cloudflare tunnel and already behind their own logins. Nothing internal, no home network addresses, nothing that wasn't already public.</p>
 <p>The stats panel pulls real Docker counts — stacks, containers, images, volumes, networks — and I wired them into the same commit hook that already refreshes the homepage numbers, so they stay current on their own. I wanted live graphs from Grafana too, but Grafana isn't public, and putting it online just to decorate a page is the exact mistake I'd just talked myself out of. The counts and the hardware specs are the honest version until I stand up a proper private dashboard.</p>
 <p>By the end it was all live: the copy, the matched subpages, the stripped-back Lab, and the new launcher, confirmed on the real domain.</p>
+<h2>Catching the Blog Up, and Building the Missing Piece</h2>
+<p>With today's entry written, two loose ends on the blog were worth closing. The June 13 entry had been written but never turned into a page, so the public blog jumped from June 12 straight to today, missing a day. Publishing it exposed the bigger problem: there was no tool doing the conversion. Every post page so far had been built by hand, one at a time, which is exactly why one of them had quietly never been built at all.</p>
+<p>So I wrote a small script to do the job properly. It reads the journals, turns each one into its page, rebuilds the index, and keeps the previous and next links pointing the right way. No dependencies, nothing clever, just the repeatable version of what I'd been doing by hand and occasionally forgetting. Adding a post is now three steps: write the journal, run the script, push. This very update is the first time the loop has run on itself, which is the only real way to know it works.</p>
 <h2>What's Next</h2>
 <ul>
 <li class="task-open">Decide whether Lab still belongs in the main nav now that it's a personal page, or should only be reachable from the footer</li>
 <li class="task-open">Stand up a real self-hosted dashboard inside the network for the full container list, with live Grafana panels</li>
-<li class="task-open">Publish the June 13 entry so the blog timeline isn't missing a day</li>
+<li class="task-open">Wire the blog script into the commit flow so a new journal publishes without the manual step</li>
 <li class="task-open">Decide whether the portfolio subpage cards stay open by default or collapse to match the homepage</li>
 </ul>
 <p>The lesson is about a page trying to serve two people at once. The Lab wanted to be both a thing I show off and a tool I use, and it did neither well. Splitting them — keep the showing-off in the portfolio, make the lab page a plain launcher — was the fix, and the only honest place to draw the line was what's already public. The rest waits until it has a private home to live in.</p>
