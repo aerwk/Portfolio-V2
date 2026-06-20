@@ -32,35 +32,55 @@
 <section class="hero hero-sm" aria-label="Page header">
   <div class="wrap hero-in">
     <span class="chip rv on">Personal Homelab</span>
-    <h1 class="rv on rv-d1">Always learning, <span class="vio">always building.</span></h1>
-    <p class="hero-sub rv on rv-d2">Self-hosted infrastructure &amp; services running on the personal network.</p>
+    <h1 class="rv on rv-d1">Self-hosted, <span class="vio">always on.</span></h1>
+    <p class="hero-sub rv on rv-d2">A launcher for the services I run, with live counts straight from the Docker host.</p>
   </div>
 </section>
 <section class="band" style="padding-top:0"><div class="wrap">
-<div class="svcs">
-      <a class="svc rv" href="https://photo.n5hq.me">
-        <h3>Photos</h3><p>Photo management &amp; library</p>
+<div class="sec-head rv"><span class="chip">Services</span><h2>Jump straight <span class="vio">in.</span></h2></div>
+    <div class="svcs">
+      <a class="svc rv" href="https://photo.n5hq.me" target="_blank" rel="noopener">
+        <h3>Photos</h3><p>Immich — self-hosted photo library</p>
         <span class="url">photo.n5hq.me ↗</span>
       </a>
-      <a class="svc rv rv-d1" href="https://status.n5hq.me">
+      <a class="svc rv rv-d1" href="https://status.n5hq.me" target="_blank" rel="noopener">
         <h3>Status</h3><p>System health &amp; uptime</p>
         <span class="url">status.n5hq.me ↗</span>
       </a>
-      <div class="svc svc-soon rv rv-d2">
-        <h3>Containers</h3><p>Docker stack overview</p>
-        <span class="url">Coming soon</span>
-      </div>
+      <a class="svc rv rv-d2" href="https://overseerr.n5hq.me" target="_blank" rel="noopener">
+        <h3>Overseerr</h3><p>Media request portal</p>
+        <span class="url">overseerr.n5hq.me ↗</span>
+      </a>
+      <a class="svc rv" href="https://radarr.n5hq.me" target="_blank" rel="noopener">
+        <h3>Radarr</h3><p>Movie library manager</p>
+        <span class="url">radarr.n5hq.me ↗</span>
+      </a>
+      <a class="svc rv rv-d1" href="https://sonarr.n5hq.me" target="_blank" rel="noopener">
+        <h3>Sonarr</h3><p>TV library manager</p>
+        <span class="url">sonarr.n5hq.me ↗</span>
+      </a>
+      <a class="svc rv rv-d2" href="https://tautulli.n5hq.me" target="_blank" rel="noopener">
+        <h3>Tautulli</h3><p>Plex usage &amp; stats</p>
+        <span class="url">tautulli.n5hq.me ↗</span>
+      </a>
     </div>
     <div class="sec-head rv" style="margin-top:var(--sp-4)"><span class="chip">Homelab Environment</span><h2>Running <span class="vio">24/7.</span></h2></div>
     <div class="mock" style="margin-top:0">
       <div class="mock-frame" style="border-radius:var(--r-lg);border-bottom:1px solid var(--line-2)">
-        <div class="mock-bar"><span class="mock-dots"><i></i><i></i><i></i></span><span class="mock-url">status.n5hq.me</span><span style="width:2.6rem"></span></div>
-        <div class="mock-main" style="padding:1.1rem">
+        <div class="mock-bar"><span class="mock-dots"><i></i><i></i><i></i></span><span class="mock-url">n5ubuntu · docker</span><span style="width:2.6rem"></span></div>
+        <div class="mock-main" style="padding:1.1rem;display:flex;flex-direction:column;gap:.55rem">
           <div class="mock-stats">
-            <div class="mtile"><b>5</b><span>Stacks</span></div>
-            <div class="mtile"><b>19</b><span>Containers</span></div>
-            <div class="mtile"><b>8</b><span>Volumes</span></div>
-            <div class="mtile"><b>19</b><span>Images</span></div>
+            <div class="mtile" data-stat="stacks"><b>6</b><span>Stacks</span></div>
+            <div class="mtile" data-stat="containers"><b>26</b><span>Containers</span></div>
+            <div class="mtile" data-stat="images"><b>30</b><span>Images</span></div>
+            <div class="mtile" data-stat="volumes"><b>9</b><span>Volumes</span></div>
+            <div class="mtile" data-stat="networks"><b>12</b><span>Networks</span></div>
+          </div>
+          <div class="spec-stats">
+            <div class="mtile"><b>i5-9500T</b><span>CPU</span></div>
+            <div class="mtile"><b>6</b><span>Cores</span></div>
+            <div class="mtile"><b>32 GB</b><span>Memory</span></div>
+            <div class="mtile"><b>Ubuntu</b><span>OS</span></div>
           </div>
         </div>
       </div>
@@ -85,7 +105,7 @@
     <div class="foot-grid">
       <div class="foot-brand">
         <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
-        <p>Full Stack Developer — web apps, firewalls, VLANs, and enterprise systems.</p>
+        <p>Full-Stack &amp; Infrastructure — web apps, firewalls, VLANs, and enterprise systems.</p>
       </div>
       <nav class="fcol" aria-label="Footer sections">
         <h4>Sections</h4>
@@ -97,18 +117,9 @@
           <li><a href="/#contact">Contact</a></li>
         </ul>
       </nav>
-      <nav class="fcol" aria-label="Footer services">
-        <h4>Lab Services</h4>
-        <ul>
-          <li><a href="https://photo.n5hq.me">Photos</a></li>
-          <li><a href="https://status.n5hq.me">Status</a></li>
-          <li><a href="/blog/">The Journey</a></li>
-        </ul>
-      </nav>
-      <div class="promo">
-        <h4>Personal Homelab — always learning, always building.</h4>
-        <p>Networking, compute, storage, surveillance, and smart home automation running 24/7.</p>
-        <a class="btn btn-ghost" href="/lab/" style="margin-top:.4rem">View Lab</a>
+      <div class="foot-note">
+        <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+        <a class="foot-lab" href="/lab/">Lab dashboard →</a>
       </div>
     </div>
     <div class="legal"><p>© 2026 N5HQ. All rights reserved.</p></div>

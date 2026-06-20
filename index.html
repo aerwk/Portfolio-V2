@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>N5HQ — Full Stack Developer</title>
+<title>N5HQ — Full-Stack &amp; Infrastructure</title>
 <meta name="description" content="Full-stack development, network architecture, and infrastructure engineering. From web apps to firewalls, VLANs, and enterprise systems.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,7 +21,7 @@
         <li><a href="#about">About</a></li>
         <li><a href="#portfolio">Portfolio</a></li>
         <li><a href="#blog">Blog</a></li>
-        <li><a href="#lab">Lab</a></li>
+        <li><a href="/lab/">Lab</a></li>
       </ul>
     </nav>
     <a class="btn btn-violet nav-cta" href="#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
@@ -32,12 +32,11 @@
 <!-- ================= HERO ================= -->
 <section class="hero" id="top" aria-label="Introduction">
   <div class="wrap hero-in">
-    <span class="chip rv on">Eric Li · Full Stack Developer</span>
+    <span class="chip rv on">Eric Li · Full-Stack &amp; Infrastructure</span>
     <h1 class="rv on rv-d1">From web apps to firewalls, VLANs, and enterprise systems.</h1>
     <p class="hero-sub rv on rv-d2">Full-stack development, network architecture, and infrastructure engineering.</p>
     <div class="hero-cta rv on rv-d3">
       <a class="btn btn-violet" href="#portfolio">Projects <span class="arr" aria-hidden="true">↗</span></a>
-      <a class="btn btn-ghost" href="#lab">Lab</a>
     </div>
   </div>
 
@@ -114,11 +113,11 @@
       <h2 id="about-t">Eric Li</h2>
     </div>
     <div class="about-in">
-      <p class="about-copy rv">I'm a passionate full-stack developer and network enthusiast with deep expertise in infrastructure, automation, and building scalable solutions. My goal is to transition into the IT industry by <span class="vio">2027</span>, with a focus on <span class="vio">networking and data science</span>.</p>
+      <p class="about-copy rv">I design, deploy, and maintain real infrastructure. My homelab runs five isolated VLANs, 20+ containerised services, and a full monitoring stack 24/7 — every piece built and documented from scratch. I'm moving into tech full-time by <span class="vio">2027</span>, focused on <span class="vio">networking and data science</span>, and I'd rather prove it with systems that run than a job title I don't hold yet.</p>
       <div class="about-side">
-        <div class="astat rv"><b>5</b><span><span class="t">Total Projects</span><p>Innovative web &amp; mobile solutions crafted</p></span></div>
-        <div class="astat rv rv-d1"><b>4</b><span><span class="t">Certificates</span><p>Professional skills validated (ongoing)</p></span></div>
-        <div class="astat rv rv-d2"><b>3</b><span><span class="t">Years of Experience</span><p>My learning journey</p></span></div>
+        <div class="astat rv"><b>5</b><span><span class="t">Projects Built</span><p>Across web, mobile, and network infrastructure</p></span></div>
+        <div class="astat rv rv-d1"><b>4</b><span><span class="t">Certifications</span><p>Industry credentials, in progress</p></span></div>
+        <div class="astat rv rv-d2"><b>3</b><span><span class="t">Years Hands-On</span><p>Self-directed, building and breaking real systems</p></span></div>
       </div>
     </div>
   </div>
@@ -128,38 +127,41 @@
   <div class="wrap">
     <div class="sec-head rv">
       <span class="chip">Portfolio Showcase</span>
-      <h2 id="folio-t">Building solutions <span class="vio">that matter.</span></h2>
-      <p class="sub">Each project represents a commitment to continuous learning — from web applications to network infrastructure.</p>
-      <div class="pilltabs" aria-hidden="true">
-        <span class="ptab ptab-green">Completed</span>
-        <span class="ptab ptab-amber">In Progress</span>
-        <span class="ptab ptab-violet">Upcoming</span>
+      <h2 id="folio-t">Work that <span class="vio">ships and runs.</span></h2>
+      <p class="sub">Real projects across web, mobile, and network infrastructure — each one solving an actual problem, not following a tutorial.</p>
+      <div class="pilltabs">
+        <a class="ptab ptab-green" href="#grp-completed">Completed</a>
+        <a class="ptab ptab-amber" href="#grp-in-progress">In Progress</a>
+        <a class="ptab ptab-violet" href="#grp-upcoming">Upcoming</a>
       </div>
     </div>
 
     <!-- completed -->
-    <div class="grouplbl rv">
+    <div class="grouplbl rv" id="grp-completed">
       <a class="ptab ptab-green" href="/portfolio/completed/" style="text-decoration:none">Completed</a>
       <p>Shipped projects that are live and running — battle-tested in the real world.</p>
     </div>
     <article class="pcard feature rv">
       <span class="num">01</span>
       <h3>HomeLab</h3>
-      <p class="desc">A production-grade self-hosted infrastructure running 24/7 — networking, compute, storage, smart home automation, surveillance, and a full media stack. Everything from the UniFi network to the monitoring dashboards is designed, deployed, and maintained from scratch.</p>
-      <div class="fgrid">
-        <div class="fcell"><h4>Networking</h4><p>UniFi Cloud Gateway Fiber with five isolated VLANs, inter-VLAN firewall policies, Pi-hole DNS filtering, DDNS, and 40+ connected clients</p></div>
-        <div class="fcell"><h4>Containers &amp; Services</h4><p>20+ containerised services on a Dell OptiPlex — Immich, Grafana, Prometheus, Loki, Home Assistant, and more, managed via Portainer</p></div>
-        <div class="fcell"><h4>Observability</h4><p>Prometheus metrics, Grafana dashboards, and Loki log aggregation — custom overview dashboard built via the Grafana API</p></div>
-        <div class="fcell"><h4>Smart Home</h4><p>Matter and Thread over Matter for local device control, HomeKit, Philips Hue, and Meross unified through Home Assistant</p></div>
-      </div>
-      <div class="tags">
-        <span class="tag">UniFi</span><span class="tag">Docker</span><span class="tag">Linux</span><span class="tag">Grafana</span><span class="tag">Home Assistant</span><span class="tag">VLANs</span><span class="tag">Pi-hole</span>
-      </div>
-      <a class="feature-link" href="/portfolio/homelab/">View full details →</a>
+      <p class="desc">Production-grade self-hosted infrastructure running 24/7 — networking, compute, storage, monitoring, smart home, and a full media stack, all built from scratch.</p>
+      <details class="more">
+        <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
+        <div class="tags">
+          <span class="tag">UniFi</span><span class="tag">Docker</span><span class="tag">Linux</span><span class="tag">Grafana</span><span class="tag">Home Assistant</span><span class="tag">VLANs</span><span class="tag">Pi-hole</span>
+        </div>
+        <div class="fgrid">
+          <div class="fcell"><h4>Networking</h4><p>UniFi Cloud Gateway Fiber with five isolated VLANs, inter-VLAN firewall policies, Pi-hole DNS filtering, DDNS, and 40+ connected clients</p></div>
+          <div class="fcell"><h4>Containers &amp; Services</h4><p>20+ containerised services on a Dell OptiPlex — Immich, Grafana, Prometheus, Loki, Home Assistant, and more, managed via Portainer</p></div>
+          <div class="fcell"><h4>Observability</h4><p>Prometheus metrics, Grafana dashboards, and Loki log aggregation — custom overview dashboard built via the Grafana API</p></div>
+          <div class="fcell"><h4>Smart Home</h4><p>Matter and Thread over Matter for local device control, HomeKit, Philips Hue, and Meross unified through Home Assistant</p></div>
+        </div>
+        <a class="feature-link" href="/portfolio/homelab/">View full details →</a>
+      </details>
     </article>
 
     <!-- in progress -->
-    <div class="grouplbl rv">
+    <div class="grouplbl rv" id="grp-in-progress">
       <a class="ptab ptab-amber" href="/portfolio/in-progress/" style="text-decoration:none">In Progress</a>
       <p>Active projects currently being developed and refined.</p>
     </div>
@@ -167,33 +169,39 @@
       <article class="pcard rv">
         <span class="num">02</span>
         <h3>Family Home Dashboard</h3>
-        <p class="desc">A touchscreen home dashboard built to keep the whole household in sync. Displays a shared family calendar, live weather forecast, current time, upcoming and overdue events, and countdowns to the next event — all at a glance from a wall-mounted display.</p>
-        <dl class="facts">
-          <div class="frow"><dt>Hardware</dt><dd>Raspberry Pi 5 running the dashboard as a containerised service, with a touchscreen display for interaction</dd></div>
-          <div class="frow"><dt>Architecture</dt><dd>Containerised deployment allows Home Assistant to run alongside the dashboard on the same device — enabling smart device control directly from the screen</dd></div>
-          <div class="frow"><dt>Integrations</dt><dd>Custom calendar sync keeping shared family events up to date; weather API for live local forecast data</dd></div>
-        </dl>
-        <div class="tags">
-          <span class="tag">Raspberry Pi 5</span><span class="tag">Docker</span><span class="tag">Home Assistant</span><span class="tag">Touchscreen</span><span class="tag">Calendar Sync</span><span class="tag">Weather API</span>
-        </div>
+        <p class="desc">A wall-mounted touchscreen that keeps the household in sync — shared calendar, live weather, and event countdowns at a glance.</p>
+        <details class="more">
+          <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
+          <div class="tags">
+            <span class="tag">Raspberry Pi 5</span><span class="tag">Docker</span><span class="tag">Home Assistant</span><span class="tag">Touchscreen</span><span class="tag">Calendar Sync</span><span class="tag">Weather API</span>
+          </div>
+          <dl class="facts">
+            <div class="frow"><dt>Hardware</dt><dd>Raspberry Pi 5 running the dashboard as a containerised service, with a touchscreen display for interaction</dd></div>
+            <div class="frow"><dt>Architecture</dt><dd>Containerised deployment allows Home Assistant to run alongside the dashboard on the same device — enabling smart device control directly from the screen</dd></div>
+            <div class="frow"><dt>Integrations</dt><dd>Custom calendar sync keeping shared family events up to date; weather API for live local forecast data</dd></div>
+          </dl>
+        </details>
       </article>
       <article class="pcard rv rv-d1">
         <span class="num">03</span>
         <h3>Caddy Rating App</h3>
-        <p class="desc">A production-ready mobile application for submitting and tracking caddy ratings. Clients submit 5-star ratings that flow through a live Firebase backend into a provider dashboard with real-time synchronisation across devices.</p>
-        <dl class="facts">
-          <div class="frow"><dt>Frontend</dt><dd>React Native with Expo SDK 51, TypeScript, and Expo Router — tab-based navigation between a Rating screen and a Provider Dashboard</dd></div>
-          <div class="frow"><dt>Backend</dt><dd>Firebase Firestore for real-time data storage, Cloud Functions v2 for server-side logic, and EAS Build for deployment</dd></div>
-          <div class="frow"><dt>Real-Time Sync</dt><dd>Ratings submitted by clients appear instantly on the provider dashboard — no refresh required, synchronised live across all connected devices</dd></div>
-        </dl>
-        <div class="tags">
-          <span class="tag">React Native</span><span class="tag">Expo</span><span class="tag">TypeScript</span><span class="tag">Firebase</span><span class="tag">Firestore</span><span class="tag">Cloud Functions</span><span class="tag">Mobile</span>
-        </div>
+        <p class="desc">A mobile app for submitting and tracking caddy ratings, with 5-star submissions syncing live to a provider dashboard.</p>
+        <details class="more">
+          <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
+          <div class="tags">
+            <span class="tag">React Native</span><span class="tag">Expo</span><span class="tag">TypeScript</span><span class="tag">Firebase</span><span class="tag">Firestore</span><span class="tag">Cloud Functions</span><span class="tag">Mobile</span>
+          </div>
+          <dl class="facts">
+            <div class="frow"><dt>Frontend</dt><dd>React Native with Expo SDK 51, TypeScript, and Expo Router — tab-based navigation between a Rating screen and a Provider Dashboard</dd></div>
+            <div class="frow"><dt>Backend</dt><dd>Firebase Firestore for real-time data storage, Cloud Functions v2 for server-side logic, and EAS Build for deployment</dd></div>
+            <div class="frow"><dt>Real-Time Sync</dt><dd>Ratings submitted by clients appear instantly on the provider dashboard — no refresh required, synchronised live across all connected devices</dd></div>
+          </dl>
+        </details>
       </article>
     </div>
 
     <!-- upcoming -->
-    <div class="grouplbl rv">
+    <div class="grouplbl rv" id="grp-upcoming">
       <a class="ptab ptab-violet" href="/portfolio/upcoming/" style="text-decoration:none">Upcoming</a>
       <p>Projects that are scoped, planned, and queued up — real work coming down the line.</p>
     </div>
@@ -201,28 +209,34 @@
       <article class="pcard rv">
         <span class="num">04</span>
         <h3>Hotel IPTV System — 100+ Rooms</h3>
-        <p class="desc">End-to-end overhaul of a hotel's network and TV infrastructure across 100+ rooms. Rebuilding the network topology from the ground up, deploying an IPTV headend with encoders, and automating network health and recovery workflows.</p>
-        <dl class="facts">
-          <div class="frow"><dt>Network Redesign</dt><dd>Reconfiguring the existing network to a clean VLAN and firewall architecture — a healthier, more maintainable topology across the property</dd></div>
-          <div class="frow"><dt>IPTV Headend</dt><dd>A dedicated IPTV headend with encoders distributing live TV to all 100+ rooms over the network — replacing legacy coax infrastructure</dd></div>
-          <div class="frow"><dt>Automated Recovery</dt><dd>Containerised services continuously monitor network health, troubleshoot issues automatically, and restore connectivity without manual intervention</dd></div>
-        </dl>
-        <div class="tags">
-          <span class="tag">IPTV</span><span class="tag">VLANs</span><span class="tag">Firewall</span><span class="tag">Network Design</span><span class="tag">Docker</span><span class="tag">Automation</span><span class="tag">100+ Rooms</span>
-        </div>
+        <p class="desc">End-to-end overhaul of a hotel's network and TV across 100+ rooms — new topology, an IPTV headend, and automated recovery.</p>
+        <details class="more">
+          <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
+          <div class="tags">
+            <span class="tag">IPTV</span><span class="tag">VLANs</span><span class="tag">Firewall</span><span class="tag">Network Design</span><span class="tag">Docker</span><span class="tag">Automation</span><span class="tag">100+ Rooms</span>
+          </div>
+          <dl class="facts">
+            <div class="frow"><dt>Network Redesign</dt><dd>Reconfiguring the existing network to a clean VLAN and firewall architecture — a healthier, more maintainable topology across the property</dd></div>
+            <div class="frow"><dt>IPTV Headend</dt><dd>A dedicated IPTV headend with encoders distributing live TV to all 100+ rooms over the network — replacing legacy coax infrastructure</dd></div>
+            <div class="frow"><dt>Automated Recovery</dt><dd>Containerised services continuously monitor network health, troubleshoot issues automatically, and restore connectivity without manual intervention</dd></div>
+          </dl>
+        </details>
       </article>
       <article class="pcard rv rv-d1">
         <span class="num">05</span>
         <h3>Multi-Site Network Unification</h3>
-        <p class="desc">Connecting three geographically separate sites into a single unified network — making remote devices feel local. Combined with a dedicated camera network across the sites and seamless cross-site access for all users.</p>
-        <dl class="facts">
-          <div class="frow"><dt>Site Unification</dt><dd>Three separate physical locations operating as a single logical network — transparent "local" access to devices regardless of site</dd></div>
-          <div class="frow"><dt>Camera Network</dt><dd>A unified surveillance camera network spanning all three sites, accessible and manageable from a single interface</dd></div>
-          <div class="frow"><dt>Cross-Site Access</dt><dd>Users on any site can reach printers, servers, and devices on any other site without VPN friction — same network, different locations</dd></div>
-        </dl>
-        <div class="tags">
-          <span class="tag">Multi-Site</span><span class="tag">Network Design</span><span class="tag">Site-to-Site</span><span class="tag">Surveillance</span><span class="tag">VLANs</span><span class="tag">Routing</span>
-        </div>
+        <p class="desc">Three separate sites joined into one network so remote devices feel local, with a unified camera network and consistent cross-site access.</p>
+        <details class="more">
+          <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
+          <div class="tags">
+            <span class="tag">Multi-Site</span><span class="tag">Network Design</span><span class="tag">Site-to-Site</span><span class="tag">Surveillance</span><span class="tag">VLANs</span><span class="tag">Routing</span>
+          </div>
+          <dl class="facts">
+            <div class="frow"><dt>Site Unification</dt><dd>Three separate physical locations operating as a single logical network — transparent "local" access to devices regardless of site</dd></div>
+            <div class="frow"><dt>Camera Network</dt><dd>A unified surveillance camera network spanning all three sites, accessible and manageable from a single interface</dd></div>
+            <div class="frow"><dt>Cross-Site Access</dt><dd>Users on any site can reach printers, servers, and devices on any other site without VPN friction — same network, different locations</dd></div>
+          </dl>
+        </details>
       </article>
     </div>
   </div>
@@ -270,50 +284,13 @@
   </div>
 </section>
 
-<!-- ================= LAB ================= -->
-<section class="band" id="lab" aria-labelledby="lab-t">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <span class="chip">Personal Homelab</span>
-      <h2 id="lab-t">Always learning, <span class="vio">always building.</span></h2>
-      <p class="sub">A production-grade homelab with networking, compute, storage, surveillance, and smart home automation running 24/7 — self-hosted infrastructure powering all my personal computing needs.</p>
-    </div>
-
-    <div class="comps">
-      <div class="comp rv"><span class="ico" aria-hidden="true"><i></i></span><h3>Networking</h3><p>UniFi Cloud Gateway Fiber, managed switches, WiFi 7 APs, and fiber connectivity — supporting 40+ connected clients across all networks</p></div>
-      <div class="comp rv rv-d1"><span class="ico" aria-hidden="true"><i></i></span><h3>VLANs &amp; Firewall</h3><p>Five isolated networks — Management, Home, Guest, IoT, and Cameras — with inter-VLAN firewall policies enforcing least-privilege traffic rules</p></div>
-      <div class="comp rv rv-d2"><span class="ico" aria-hidden="true"><i></i></span><h3>DNS Routing &amp; DDNS</h3><p>Pi-hole for network-wide DNS filtering and local split-horizon routing; DDNS for dynamic public IP tracking across Cloudflare</p></div>
-      <div class="comp rv"><span class="ico" aria-hidden="true"><i></i></span><h3>Compute &amp; Storage</h3><p>Dell OptiPlex with Intel 9500T, 32GB RAM, running Ubuntu and Docker; remote slot storage + local NVMe, 22TB capacity for media and backups</p></div>
-      <div class="comp rv rv-d1"><span class="ico" aria-hidden="true"><i></i></span><h3>Observability</h3><p>Full monitoring stack with Prometheus metrics, Grafana dashboards, and Loki log aggregation — custom homelab overview dashboard built via the Grafana API</p></div>
-      <div class="comp rv rv-d2"><span class="ico" aria-hidden="true"><i></i></span><h3>*arr Media Automation</h3><p>Radarr, Sonarr, and Prowlarr automating acquisition and organisation of movies and TV; Discord webhooks push real-time notifications on downloads and status changes</p></div>
-      <div class="comp rv"><span class="ico" aria-hidden="true"><i></i></span><h3>Surveillance</h3><p>UniFi Protect cameras + Aqara smart cameras with 24/7 recording</p></div>
-      <div class="comp rv rv-d1"><span class="ico" aria-hidden="true"><i></i></span><h3>Smart Home — Matter &amp; Thread</h3><p>HomeKit, Philips Hue, and Meross devices unified via Home Assistant; Matter and Thread over Matter for local, cloud-independent device control</p></div>
-      <div class="comp rv rv-d2"><span class="ico" aria-hidden="true"><i></i></span><h3>API Integrations</h3><p>Custom automations via Home Assistant REST API, UniFi Network API, Grafana API, Cloudflare API, and Discord webhooks — services talk to each other without manual intervention</p></div>
-    </div>
-
-    <div class="svcs">
-      <a class="svc rv" href="https://photo.n5hq.me">
-        <h3>Photos</h3><p>Photo management &amp; library</p>
-        <span class="url">photo.n5hq.me ↗</span>
-      </a>
-      <a class="svc rv rv-d1" href="https://status.n5hq.me">
-        <h3>Status</h3><p>System health &amp; uptime</p>
-        <span class="url">status.n5hq.me ↗</span>
-      </a>
-      <div class="svc svc-soon rv rv-d2">
-        <h3>Containers</h3><p>Docker stack overview</p>
-        <span class="url">Coming soon</span>
-      </div>
-    </div>
-  </div>
-</section>
 <!-- ================= CONTACT (light CTA band) ================= -->
 <section class="band cta" id="contact" aria-labelledby="contact-t">
   <div class="wrap">
     <div class="rv">
       <span class="chip">Connect With Me</span>
-      <h2 id="contact-t">Get in touch.</h2>
-      <p class="sub">Full-stack development, network architecture, and infrastructure engineering.</p>
+      <h2 id="contact-t">Let's talk.</h2>
+      <p class="sub">Open to roles and projects in networking, infrastructure, and full-stack development. I usually reply within a day.</p>
     </div>
     <form class="formcard rv rv-d1" id="contact-form" action="https://formsubmit.co/eric@n5hq.me" method="post">
       <input type="hidden" name="_subject" value="New message via www.n5hq.me">
@@ -344,7 +321,7 @@
     <div class="foot-grid">
       <div class="foot-brand">
         <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
-        <p>Full Stack Developer — web apps, firewalls, VLANs, and enterprise systems.</p>
+        <p>Full-Stack &amp; Infrastructure — web apps, firewalls, VLANs, and enterprise systems.</p>
       </div>
       <nav class="fcol" aria-label="Footer sections">
         <h4>Sections</h4>
@@ -352,22 +329,13 @@
           <li><a href="#about">About</a></li>
           <li><a href="#portfolio">Portfolio</a></li>
           <li><a href="#blog">Blog</a></li>
-          <li><a href="#lab">Lab</a></li>
+          <li><a href="/lab/">Lab</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
       </nav>
-      <nav class="fcol" aria-label="Footer services">
-        <h4>Lab Services</h4>
-        <ul>
-          <li><a href="https://photo.n5hq.me">Photos</a></li>
-          <li><a href="https://status.n5hq.me">Status</a></li>
-          <li><a href="/blog/">The Journey</a></li>
-        </ul>
-      </nav>
-      <div class="promo">
-        <h4>Personal Homelab — always learning, always building.</h4>
-        <p>Networking, compute, storage, surveillance, and smart home automation running 24/7.</p>
-        <a class="btn btn-ghost" href="/lab/" style="margin-top:.4rem">View Lab</a>
+      <div class="foot-note">
+        <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+        <a class="foot-lab" href="/lab/">Lab dashboard →</a>
       </div>
     </div>
     <div class="legal">

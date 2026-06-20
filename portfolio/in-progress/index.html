@@ -42,28 +42,34 @@
       <article class="pcard rv">
         <span class="num">02</span>
         <h3>Family Home Dashboard</h3>
-        <p class="desc">A touchscreen home dashboard built to keep the whole household in sync. Displays a shared family calendar, live weather forecast, current time, upcoming and overdue events, and countdowns to the next event — all at a glance from a wall-mounted display.</p>
-        <dl class="facts">
-          <div class="frow"><dt>Hardware</dt><dd>Raspberry Pi 5 running the dashboard as a containerised service, with a touchscreen display for interaction</dd></div>
-          <div class="frow"><dt>Architecture</dt><dd>Containerised deployment allows Home Assistant to run alongside the dashboard on the same device — enabling smart device control directly from the screen</dd></div>
-          <div class="frow"><dt>Integrations</dt><dd>Custom calendar sync keeping shared family events up to date; weather API for live local forecast data</dd></div>
-        </dl>
-        <div class="tags">
-          <span class="tag">Raspberry Pi 5</span><span class="tag">Docker</span><span class="tag">Home Assistant</span><span class="tag">Touchscreen</span><span class="tag">Calendar Sync</span><span class="tag">Weather API</span>
-        </div>
+        <p class="desc">A wall-mounted touchscreen that keeps the household in sync — shared calendar, live weather, and event countdowns at a glance.</p>
+        <details class="more" open>
+          <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
+          <div class="tags">
+            <span class="tag">Raspberry Pi 5</span><span class="tag">Docker</span><span class="tag">Home Assistant</span><span class="tag">Touchscreen</span><span class="tag">Calendar Sync</span><span class="tag">Weather API</span>
+          </div>
+          <dl class="facts">
+            <div class="frow"><dt>Hardware</dt><dd>Raspberry Pi 5 running the dashboard as a containerised service, with a touchscreen display for interaction</dd></div>
+            <div class="frow"><dt>Architecture</dt><dd>Containerised deployment allows Home Assistant to run alongside the dashboard on the same device — enabling smart device control directly from the screen</dd></div>
+            <div class="frow"><dt>Integrations</dt><dd>Custom calendar sync keeping shared family events up to date; weather API for live local forecast data</dd></div>
+          </dl>
+        </details>
       </article>
       <article class="pcard rv rv-d1">
         <span class="num">03</span>
         <h3>Caddy Rating App</h3>
-        <p class="desc">A production-ready mobile application for submitting and tracking caddy ratings. Clients submit 5-star ratings that flow through a live Firebase backend into a provider dashboard with real-time synchronisation across devices.</p>
-        <dl class="facts">
-          <div class="frow"><dt>Frontend</dt><dd>React Native with Expo SDK 51, TypeScript, and Expo Router — tab-based navigation between a Rating screen and a Provider Dashboard</dd></div>
-          <div class="frow"><dt>Backend</dt><dd>Firebase Firestore for real-time data storage, Cloud Functions v2 for server-side logic, and EAS Build for deployment</dd></div>
-          <div class="frow"><dt>Real-Time Sync</dt><dd>Ratings submitted by clients appear instantly on the provider dashboard — no refresh required, synchronised live across all connected devices</dd></div>
-        </dl>
-        <div class="tags">
-          <span class="tag">React Native</span><span class="tag">Expo</span><span class="tag">TypeScript</span><span class="tag">Firebase</span><span class="tag">Firestore</span><span class="tag">Cloud Functions</span><span class="tag">Mobile</span>
-        </div>
+        <p class="desc">A mobile app for submitting and tracking caddy ratings, with 5-star submissions syncing live to a provider dashboard.</p>
+        <details class="more" open>
+          <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
+          <div class="tags">
+            <span class="tag">React Native</span><span class="tag">Expo</span><span class="tag">TypeScript</span><span class="tag">Firebase</span><span class="tag">Firestore</span><span class="tag">Cloud Functions</span><span class="tag">Mobile</span>
+          </div>
+          <dl class="facts">
+            <div class="frow"><dt>Frontend</dt><dd>React Native with Expo SDK 51, TypeScript, and Expo Router — tab-based navigation between a Rating screen and a Provider Dashboard</dd></div>
+            <div class="frow"><dt>Backend</dt><dd>Firebase Firestore for real-time data storage, Cloud Functions v2 for server-side logic, and EAS Build for deployment</dd></div>
+            <div class="frow"><dt>Real-Time Sync</dt><dd>Ratings submitted by clients appear instantly on the provider dashboard — no refresh required, synchronised live across all connected devices</dd></div>
+          </dl>
+        </details>
       </article>
     </div>
 </div></section>
@@ -74,7 +80,7 @@
     <div class="foot-grid">
       <div class="foot-brand">
         <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
-        <p>Full Stack Developer — web apps, firewalls, VLANs, and enterprise systems.</p>
+        <p>Full-Stack &amp; Infrastructure — web apps, firewalls, VLANs, and enterprise systems.</p>
       </div>
       <nav class="fcol" aria-label="Footer sections">
         <h4>Sections</h4>
@@ -86,18 +92,9 @@
           <li><a href="/#contact">Contact</a></li>
         </ul>
       </nav>
-      <nav class="fcol" aria-label="Footer services">
-        <h4>Lab Services</h4>
-        <ul>
-          <li><a href="https://photo.n5hq.me">Photos</a></li>
-          <li><a href="https://status.n5hq.me">Status</a></li>
-          <li><a href="/blog/">The Journey</a></li>
-        </ul>
-      </nav>
-      <div class="promo">
-        <h4>Personal Homelab — always learning, always building.</h4>
-        <p>Networking, compute, storage, surveillance, and smart home automation running 24/7.</p>
-        <a class="btn btn-ghost" href="/lab/" style="margin-top:.4rem">View Lab</a>
+      <div class="foot-note">
+        <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+        <a class="foot-lab" href="/lab/">Lab dashboard →</a>
       </div>
     </div>
     <div class="legal"><p>© 2026 N5HQ. All rights reserved.</p></div>
