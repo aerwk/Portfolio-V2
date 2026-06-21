@@ -426,6 +426,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 .postfoot a{max-width:48%}
 
 /* ---------- tags ---------- */
+/* the hidden attribute must win over display:flex on .tagstate / .postcard */
+[hidden]{display:none !important}
 .tagrow{display:flex;flex-wrap:wrap;gap:.4rem;position:relative;z-index:1}
 .postcard .tagrow{margin-top:auto;padding-top:.75rem}
 .tags-foot{max-width:42rem;margin:1.9rem auto 0}

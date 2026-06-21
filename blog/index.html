@@ -37,7 +37,7 @@
 </section>
 <section class="band" style="padding-top:0" aria-label="All posts">
   <div class="wrap">
-    <div class="tagstate" id="tagstate" hidden>Showing posts tagged <b id="tagstate-name"></b><a class="tagclear" href="/blog/">× clear</a></div>
+    <div class="tagstate" id="tagstate" hidden>Showing posts tagged <span class="tagchip is-active" id="tagstate-name"></span><a class="tagclear" href="/blog/">× clear</a></div>
     <ul class="posts">
       <li class="postcard rv" data-tags="website portfolio homelab security tooling ux">
         <span class="postmeta"><span class="cat">Projects</span><span>2026-06-20</span></span>
@@ -141,8 +141,6 @@
     return c ? c.textContent : slug;
   };
   const apply = slug => {
-    document.querySelectorAll('.tagchip').forEach(c =>
-      c.classList.toggle('is-active', !!slug && c.getAttribute('data-tag') === slug));
     cards.forEach(li => {
       const tags = (li.getAttribute('data-tags') || '').split(' ');
       li.hidden = !!slug && tags.indexOf(slug) === -1;
