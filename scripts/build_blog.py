@@ -24,9 +24,12 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 JOURNALS_DIR = os.environ.get("JOURNALS_DIR", os.path.join(REPO, "..", "..", "01 Journals"))
 POSTS_DIR = os.path.join(REPO, "blog", "posts")
 INDEX = os.path.join(REPO, "blog", "index.html")
+HOME = os.path.join(REPO, "index.html")
 FORCE = "--force" in sys.argv
 
 CARD_CLASSES = ["rv", "rv-d1", "rv-d2"]
+HOME_CARD_CLASSES = ["rv", "rv-d1", "rv-d1", "rv-d2", "rv"]
+HOME_POST_COUNT = 5
 
 
 def parse_journal(path):
@@ -372,6 +375,42 @@ def build_index(posts):
     open(INDEX, "w", encoding="utf-8").write(new)
 
 
+def build_home(posts):
+    """Refresh the latest-posts grid in the home page blog section.
+
+    Replaces the five post cards with the newest entries and keeps the
+    trailing call-to-action card. The home grid markup differs from the
+    blog index, so it is built separately rather than reusing build_index.
+    """
+    if not os.path.exists(HOME):
+        return False
+    cards = []
+    for i, fm in enumerate(posts[:HOME_POST_COUNT]):
+        cls = HOME_CARD_CLASSES[min(i, len(HOME_CARD_CLASSES) - 1)]
+        cards.append(
+            f'      <li><a class="postcard {cls}" href="/blog/posts/{fm["date"]}.html">\n'
+            f'        <span class="postmeta"><span class="cat">{esc_attr(fm.get("category","Journal"))}</span>'
+            f'<span>{fm["date"]}</span></span>\n'
+            f'        <h3>{esc_attr(fm["title"])}</h3>\n'
+            f'        <p>{esc_attr(fm.get("excerpt",""))}</p>\n'
+            f"      </a></li>"
+        )
+    cta = (
+        '      <li class="rv rv-d2"><span class="postcard postcard-cta">\n'
+        "        <h3>Blog</h3>\n"
+        '        <a class="btn btn-violet" href="/blog/">Read All Posts '
+        '<span class="arr" aria-hidden="true">↗</span></a>\n'
+        "      </span></li>"
+    )
+    block = '<ul class="posts">\n' + "\n".join(cards) + "\n" + cta + "\n    </ul>"
+    txt = open(HOME, encoding="utf-8").read()
+    new = re.sub(r'<ul class="posts">.*?</ul>', block, txt, flags=re.DOTALL)
+    if new != txt:
+        open(HOME, "w", encoding="utf-8").write(new)
+        return True
+    return False
+
+
 def main():
     journals = []
     for root, _, files in os.walk(JOURNALS_DIR):
@@ -410,6 +449,8 @@ def main():
     posts = [fm for fm, _, _ in journals]
     build_index(posts)
     print(f"index rebuilt with {len(posts)} posts")
+    if build_home(posts):
+        print(f"home blog section refreshed (latest {HOME_POST_COUNT})")
 
 
 if __name__ == "__main__":
