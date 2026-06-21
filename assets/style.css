@@ -123,6 +123,16 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 }
 .hero-sub{color:var(--grey);font-weight:300;max-width:38rem;font-size:clamp(1rem,.95rem + .3vw,1.2rem)}
 .hero-cta{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:.6rem}
+.socials{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-top:1.4rem}
+.social-icon{
+  display:inline-flex;align-items:center;justify-content:center;width:2.6rem;height:2.6rem;
+  border-radius:50%;color:var(--grey);background:oklch(100% 0 0 / .04);border:1px solid var(--line-2);
+  transition:color .25s var(--ease),background-color .25s var(--ease),border-color .25s var(--ease),transform .25s var(--ease),box-shadow .25s var(--ease);
+}
+.social-icon:hover,.social-icon:focus-visible{color:#fff;background:var(--violet);border-color:var(--violet);transform:translateY(-3px);box-shadow:0 10px 26px -8px var(--violet-glo)}
+.social-icon svg{display:block}
+/* light contact band: dark outline at rest, same purple on hover */
+.cta .social-icon{color:var(--ink-mut);background:oklch(0% 0 0 / .03);border-color:oklch(0% 0 0 / .14)}
 
 /* ---------- browser-frame dashboard mockup ---------- */
 .mock{position:relative;z-index:2;max-width:58rem;margin:var(--sp-4) auto 0;padding-inline:clamp(1rem,3vw,2rem)}
@@ -428,6 +438,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 /* ---------- tags ---------- */
 /* the hidden attribute must win over display:flex on .tagstate / .postcard */
 [hidden]{display:none !important}
+/* author byline chip in post meta */
+.chip-author{color:var(--violet-2);border-color:oklch(46% 0.272 282 / .35);background:oklch(46% 0.272 282 / .08);display:inline-flex;align-items:center;gap:.4rem}
+.chip-author::before{content:"";width:.4rem;height:.4rem;border-radius:50%;background:var(--violet-2)}
 .tagrow{display:flex;flex-wrap:wrap;gap:.4rem;position:relative;z-index:1}
 .postcard .tagrow{margin-top:auto;padding-top:.75rem}
 .tags-foot{max-width:42rem;margin:1.9rem auto 0}

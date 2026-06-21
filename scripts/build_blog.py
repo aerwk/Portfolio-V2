@@ -86,6 +86,42 @@ def tagrow_html(tags, foot=False):
     return f'<div class="tagrow">{chips}</div>'
 
 
+DEFAULT_AUTHOR = "Eric Li"
+
+
+def format_time(t):
+    """'14:32' (AWST, stored 24h) -> '2:32 PM'. Returns '' if absent/invalid."""
+    if not t:
+        return ""
+    try:
+        return datetime.datetime.strptime(str(t).strip(), "%H:%M").strftime("%-I:%M %p")
+    except ValueError:
+        return str(t).strip()
+
+
+def when_str(fm, with_day=True):
+    bits = [fm["date"]]
+    if with_day and fm.get("day"):
+        bits.append(esc_attr(fm["day"]))
+    t = format_time(fm.get("time"))
+    if t:
+        bits.append(t)
+    return " · ".join(bits)
+
+
+def meta_html(fm, readtime):
+    parts = [
+        f'<span class="chip">{esc_attr(fm.get("category", "Journal"))}</span>',
+        f'<span class="chip">{when_str(fm)}</span>',
+        f'<span class="chip">{readtime} min read</span>',
+        f'<span class="chip badge-ai">{esc_attr(fm.get("claude_pct", "0"))}% AI</span>',
+    ]
+    author = fm.get("author", DEFAULT_AUTHOR)
+    if author:
+        parts.append(f'<span class="chip chip-author">{esc_attr(author)}</span>')
+    return '<div class="meta rv on rv-d2">\n      ' + "\n      ".join(parts) + "\n    </div>"
+
+
 def inline(text):
     """Inline markdown -> HTML on already &<>-escaped text."""
     text = re.sub(r"`([^`]+)`", r"<code>\1</code>", text)
@@ -203,12 +239,7 @@ POST_TEMPLATE = """<!doctype html>
   <div class="wrap hero-in posthead">
     <a class="crumb rv on" href="/blog/">← The Journey</a>
     <h1 class="rv on rv-d1">{title}</h1>
-    <div class="meta rv on rv-d2">
-      <span class="chip">{category}</span>
-      <span class="chip">{date} · {day}</span>
-      <span class="chip">{readtime} min read</span>
-      <span class="chip badge-ai">{pct}% AI</span>
-    </div>
+    {meta}
   </div>
 </section>
 <article class="band" style="padding-top:0">
@@ -268,9 +299,8 @@ def render_post(fm, body, older, newer):
     return POST_TEMPLATE.format(
         title=esc_attr(fm["title"]),
         desc=esc_attr(fm.get("excerpt", "")),
-        category=esc_attr(fm.get("category", "Journal")),
-        date=fm["date"], day=esc_attr(fm.get("day", "")),
-        readtime=read_time(body), pct=esc_attr(fm.get("claude_pct", "0")),
+        date=fm["date"],
+        meta=meta_html(fm, read_time(body)),
         prose=md_to_html(body), tags=tagrow_html(fm.get("tags", []), foot=True),
         nav=nav_html(older, newer),
     )
@@ -301,6 +331,27 @@ def patch_tags(path, fm):
     return False
 
 
+def patch_meta(path, fm):
+    """Refresh the meta row (date, time, read time, AI %, author) on an existing post."""
+    txt = open(path, encoding="utf-8").read()
+    m = re.search(r'(\d+) min read', txt)
+    readtime = m.group(1) if m else read_time("")
+    new = re.sub(r'<div class="meta[^"]*">.*?</div>', meta_html(fm, readtime), txt, count=1, flags=re.DOTALL)
+    if new != txt:
+        open(path, "w", encoding="utf-8").write(new)
+        return True
+    return False
+
+
+def stamp_time(journal_path, t):
+    """Persist a publish time into a journal's frontmatter (once)."""
+    s = open(journal_path, encoding="utf-8").read()
+    if re.search(r'^time:', s, re.M):
+        return
+    s2 = re.sub(r'^(date:.*)$', r'\1\ntime: "' + t + '"', s, count=1, flags=re.M)
+    open(journal_path, "w", encoding="utf-8").write(s2)
+
+
 def build_index(posts):
     cards = []
     for i, fm in enumerate(posts):
@@ -309,7 +360,7 @@ def build_index(posts):
         cards.append(
             f'      <li class="postcard {cls}" data-tags="{esc_attr(" ".join(tags))}">\n'
             f'        <span class="postmeta"><span class="cat">{esc_attr(fm.get("category","Journal"))}</span>'
-            f'<span>{fm["date"]}</span></span>\n'
+            f'<span>{when_str(fm, with_day=False)}</span></span>\n'
             f'        <h3><a class="stretch" href="/blog/posts/{fm["date"]}.html">{esc_attr(fm["title"])}</a></h3>\n'
             f'        <p>{esc_attr(fm.get("excerpt",""))}</p>\n'
             f"        {tagrow_html(tags)}\n"
@@ -326,30 +377,37 @@ def main():
     for root, _, files in os.walk(JOURNALS_DIR):
         for f in files:
             if f.endswith(".md"):
-                parsed = parse_journal(os.path.join(root, f))
+                jpath = os.path.join(root, f)
+                parsed = parse_journal(jpath)
                 if parsed:
-                    journals.append(parsed)
+                    journals.append((parsed[0], parsed[1], jpath))
     # newest first
     journals.sort(key=lambda p: p[0]["date"], reverse=True)
     if not journals:
         print("No journals found in", JOURNALS_DIR)
         return
 
+    awst_now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).strftime("%H:%M")
     os.makedirs(POSTS_DIR, exist_ok=True)
-    for i, (fm, body) in enumerate(journals):
+    for i, (fm, body, jpath) in enumerate(journals):
         newer = journals[i - 1][0] if i > 0 else None
         older = journals[i + 1][0] if i + 1 < len(journals) else None
         path = os.path.join(POSTS_DIR, f"{fm['date']}.html")
+        # stamp a publish time (AWST) the first time a post is generated
+        if not fm.get("time") and (FORCE or not os.path.exists(path)):
+            fm["time"] = awst_now
+            stamp_time(jpath, awst_now)
         if FORCE or not os.path.exists(path):
             open(path, "w", encoding="utf-8").write(render_post(fm, body, older, newer))
             print(("regenerated " if os.path.exists(path) and FORCE else "created    ") + os.path.relpath(path, REPO))
         else:
             changed = patch_nav(path, older, newer)
             changed = patch_tags(path, fm) or changed
+            changed = patch_meta(path, fm) or changed
             if changed:
                 print("patched    " + os.path.relpath(path, REPO))
 
-    posts = [fm for fm, _ in journals]
+    posts = [fm for fm, _, _ in journals]
     build_index(posts)
     print(f"index rebuilt with {len(posts)} posts")
 
