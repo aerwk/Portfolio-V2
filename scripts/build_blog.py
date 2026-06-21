@@ -63,6 +63,29 @@ def esc_attr(s):
     return html.escape(str(s), quote=True)
 
 
+# slug -> display label; most are title-cased per word, these are special-cased
+TAG_OVERRIDES = {"ux": "UX", "unifi": "UniFi", "github-actions": "GitHub Actions", "api": "API"}
+
+
+def tag_label(slug):
+    if slug in TAG_OVERRIDES:
+        return TAG_OVERRIDES[slug]
+    return " ".join(w.capitalize() for w in slug.split("-"))
+
+
+def tagrow_html(tags, foot=False):
+    """Row of tag tiles. foot=True is the centered version at the end of a post."""
+    if not tags:
+        return ""
+    chips = "".join(
+        f'<a class="tagchip" data-tag="{t}" href="/blog/?tag={t}">{esc_attr(tag_label(t))}</a>'
+        for t in tags
+    )
+    if foot:
+        return f'<div class="tagrow tags-foot" aria-label="Tags">{chips}</div>'
+    return f'<div class="tagrow">{chips}</div>'
+
+
 def inline(text):
     """Inline markdown -> HTML on already &<>-escaped text."""
     text = re.sub(r"`([^`]+)`", r"<code>\1</code>", text)
@@ -193,6 +216,7 @@ POST_TEMPLATE = """<!doctype html>
     <div class="prose rv on rv-d3">
 {prose}
     </div>
+    {tags}
     {nav}
   </div>
 </article>
@@ -247,7 +271,8 @@ def render_post(fm, body, older, newer):
         category=esc_attr(fm.get("category", "Journal")),
         date=fm["date"], day=esc_attr(fm.get("day", "")),
         readtime=read_time(body), pct=esc_attr(fm.get("claude_pct", "0")),
-        prose=md_to_html(body), nav=nav_html(older, newer),
+        prose=md_to_html(body), tags=tagrow_html(fm.get("tags", []), foot=True),
+        nav=nav_html(older, newer),
     )
 
 
@@ -260,17 +285,35 @@ def patch_nav(path, older, newer):
     return False
 
 
+def patch_tags(path, fm):
+    """Insert or refresh the tag row at the end of an existing post page."""
+    row = tagrow_html(fm.get("tags", []), foot=True)
+    if not row:
+        return False
+    txt = open(path, encoding="utf-8").read()
+    if re.search(r'<div class="tagrow tags-foot".*?</div>', txt, re.DOTALL):
+        new = re.sub(r'<div class="tagrow tags-foot".*?</div>', row, txt, flags=re.DOTALL)
+    else:
+        new = txt.replace('    <nav class="postfoot', "    " + row + '\n    <nav class="postfoot', 1)
+    if new != txt:
+        open(path, "w", encoding="utf-8").write(new)
+        return True
+    return False
+
+
 def build_index(posts):
     cards = []
     for i, fm in enumerate(posts):
         cls = CARD_CLASSES[min(i, len(CARD_CLASSES) - 1)]
+        tags = fm.get("tags", [])
         cards.append(
-            f'      <li><a class="postcard {cls}" href="/blog/posts/{fm["date"]}.html">\n'
+            f'      <li class="postcard {cls}" data-tags="{esc_attr(" ".join(tags))}">\n'
             f'        <span class="postmeta"><span class="cat">{esc_attr(fm.get("category","Journal"))}</span>'
             f'<span>{fm["date"]}</span></span>\n'
-            f'        <h3>{esc_attr(fm["title"])}</h3>\n'
+            f'        <h3><a class="stretch" href="/blog/posts/{fm["date"]}.html">{esc_attr(fm["title"])}</a></h3>\n'
             f'        <p>{esc_attr(fm.get("excerpt",""))}</p>\n'
-            f"      </a></li>"
+            f"        {tagrow_html(tags)}\n"
+            f"      </li>"
         )
     block = '<ul class="posts">\n' + "\n".join(cards) + "\n    </ul>"
     txt = open(INDEX, encoding="utf-8").read()
@@ -300,11 +343,15 @@ def main():
         if FORCE or not os.path.exists(path):
             open(path, "w", encoding="utf-8").write(render_post(fm, body, older, newer))
             print(("regenerated " if os.path.exists(path) and FORCE else "created    ") + os.path.relpath(path, REPO))
-        elif patch_nav(path, older, newer):
-            print("nav fixed  " + os.path.relpath(path, REPO))
+        else:
+            changed = patch_nav(path, older, newer)
+            changed = patch_tags(path, fm) or changed
+            if changed:
+                print("patched    " + os.path.relpath(path, REPO))
 
-    build_index([fm for fm, _ in journals])
-    print(f"index rebuilt with {len(journals)} posts")
+    posts = [fm for fm, _ in journals]
+    build_index(posts)
+    print(f"index rebuilt with {len(posts)} posts")
 
 
 if __name__ == "__main__":

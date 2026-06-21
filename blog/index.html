@@ -37,47 +37,56 @@
 </section>
 <section class="band" style="padding-top:0" aria-label="All posts">
   <div class="wrap">
+    <div class="tagstate" id="tagstate" hidden>Showing posts tagged <b id="tagstate-name"></b><a class="tagclear" href="/blog/">× clear</a></div>
     <ul class="posts">
-      <li><a class="postcard rv" href="/blog/posts/2026-06-20.html">
+      <li class="postcard rv" data-tags="website portfolio homelab security tooling ux">
         <span class="postmeta"><span class="cat">Projects</span><span>2026-06-20</span></span>
-        <h3>The Copy Goes Live, and the Lab Page Turns Personal</h3>
+        <h3><a class="stretch" href="/blog/posts/2026-06-20.html">The Copy Goes Live, and the Lab Page Turns Personal</a></h3>
         <p>Shipped the copy and card rework that had been sitting on the local server, matched the portfolio subpages to it, then pulled the Lab out of the public site and rebuilt it as a personal launcher that only links the services already safe to be public. Finished by catching the blog up and writing a small script to generate posts from journals.</p>
-      </a></li>
-      <li><a class="postcard rv-d1" href="/blog/posts/2026-06-13.html">
+        <div class="tagrow"><a class="tagchip" data-tag="website" href="/blog/?tag=website">Website</a><a class="tagchip" data-tag="portfolio" href="/blog/?tag=portfolio">Portfolio</a><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a><a class="tagchip" data-tag="tooling" href="/blog/?tag=tooling">Tooling</a><a class="tagchip" data-tag="ux" href="/blog/?tag=ux">UX</a></div>
+      </li>
+      <li class="postcard rv-d1" data-tags="website portfolio copywriting design ux">
         <span class="postmeta"><span class="cat">Projects</span><span>2026-06-13</span></span>
-        <h3>Sharper Words, Smaller Cards: A Copy Pass on the Portfolio</h3>
+        <h3><a class="stretch" href="/blog/posts/2026-06-13.html">Sharper Words, Smaller Cards: A Copy Pass on the Portfolio</a></h3>
         <p>Went back to the portfolio that shipped yesterday and fixed the part I&#x27;d skimmed: the writing. Stripped the filler out of the copy, rewrote it to talk to an employer, shrank the project cards down to a title and a Details button, and made the dead buttons actually work — all kept local for review, nothing pushed yet.</p>
-      </a></li>
-      <li><a class="postcard rv-d2" href="/blog/posts/2026-06-12.html">
+        <div class="tagrow"><a class="tagchip" data-tag="website" href="/blog/?tag=website">Website</a><a class="tagchip" data-tag="portfolio" href="/blog/?tag=portfolio">Portfolio</a><a class="tagchip" data-tag="copywriting" href="/blog/?tag=copywriting">Copywriting</a><a class="tagchip" data-tag="design" href="/blog/?tag=design">Design</a><a class="tagchip" data-tag="ux" href="/blog/?tag=ux">UX</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="website design deployment vercel homelab plex docker tailscale cloudflare">
         <span class="postmeta"><span class="cat">Projects</span><span>2026-06-12</span></span>
-        <h3>Three Designs, a Domain Cutover, and the Media Stack Comes Home</h3>
+        <h3><a class="stretch" href="/blog/posts/2026-06-12.html">Three Designs, a Domain Cutover, and the Media Stack Comes Home</a></h3>
         <p>The portfolio redesign shipped to n5hq.me after three full rebuilds — then the bigger job: pulling the whole media automation stack off the rented seedbox and onto the home server, with the 22TB of storage staying put and the file moves still happening at the source.</p>
-      </a></li>
-      <li><a class="postcard rv-d2" href="/blog/posts/2026-06-11.html">
+        <div class="tagrow"><a class="tagchip" data-tag="website" href="/blog/?tag=website">Website</a><a class="tagchip" data-tag="design" href="/blog/?tag=design">Design</a><a class="tagchip" data-tag="deployment" href="/blog/?tag=deployment">Deployment</a><a class="tagchip" data-tag="vercel" href="/blog/?tag=vercel">Vercel</a><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="plex" href="/blog/?tag=plex">Plex</a><a class="tagchip" data-tag="docker" href="/blog/?tag=docker">Docker</a><a class="tagchip" data-tag="tailscale" href="/blog/?tag=tailscale">Tailscale</a><a class="tagchip" data-tag="cloudflare" href="/blog/?tag=cloudflare">Cloudflare</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab samba storage immich kernel vault home-assistant recovery">
         <span class="postmeta"><span class="cat">Homelab</span><span>2026-06-11</span></span>
-        <h3>Storage Fixes, Vault Cleanup, and the Reboot That Bit Back</h3>
+        <h3><a class="stretch" href="/blog/posts/2026-06-11.html">Storage Fixes, Vault Cleanup, and the Reboot That Bit Back</a></h3>
         <p>Renamed the external drive mount, set up Samba shares, fixed the T7 Shield&#x27;s UAS instability — then the reboot that fix required quietly took down Home Assistant and the website dev server. Recovery story included.</p>
-      </a></li>
-      <li><a class="postcard rv-d2" href="/blog/posts/2026-06-10.html">
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="samba" href="/blog/?tag=samba">Samba</a><a class="tagchip" data-tag="storage" href="/blog/?tag=storage">Storage</a><a class="tagchip" data-tag="immich" href="/blog/?tag=immich">Immich</a><a class="tagchip" data-tag="kernel" href="/blog/?tag=kernel">Kernel</a><a class="tagchip" data-tag="vault" href="/blog/?tag=vault">Vault</a><a class="tagchip" data-tag="home-assistant" href="/blog/?tag=home-assistant">Home Assistant</a><a class="tagchip" data-tag="recovery" href="/blog/?tag=recovery">Recovery</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab networking unifi tailscale hardware">
         <span class="postmeta"><span class="cat">Homelab</span><span>2026-06-10</span></span>
-        <h3>Network Fixes, Tailscale, and a NIC Upgrade</h3>
+        <h3><a class="stretch" href="/blog/posts/2026-06-10.html">Network Fixes, Tailscale, and a NIC Upgrade</a></h3>
         <p>Diagnosed the Aqara doorbell and Canon printer issues via UniFi MCP, got Tailscale running across all devices, installed Claude CLI on the MacBook, and swapped the server NIC to 2.5GbE.</p>
-      </a></li>
-      <li><a class="postcard rv-d2" href="/blog/posts/2026-06-09.html">
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="unifi" href="/blog/?tag=unifi">UniFi</a><a class="tagchip" data-tag="tailscale" href="/blog/?tag=tailscale">Tailscale</a><a class="tagchip" data-tag="hardware" href="/blog/?tag=hardware">Hardware</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="website blog automation github-actions portfolio">
         <span class="postmeta"><span class="cat">Projects</span><span>2026-06-09</span></span>
-        <h3>Automating the Blog &amp; Cleaning Up the Portfolio</h3>
+        <h3><a class="stretch" href="/blog/posts/2026-06-09.html">Automating the Blog &amp; Cleaning Up the Portfolio</a></h3>
         <p>Wired up GitHub Actions to auto-publish blog posts, stripped placeholder content, and cleaned up the portfolio tiles to show only what&#x27;s real.</p>
-      </a></li>
-      <li><a class="postcard rv-d2" href="/blog/posts/2026-06-08.html">
+        <div class="tagrow"><a class="tagchip" data-tag="website" href="/blog/?tag=website">Website</a><a class="tagchip" data-tag="blog" href="/blog/?tag=blog">Blog</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="github-actions" href="/blog/?tag=github-actions">GitHub Actions</a><a class="tagchip" data-tag="portfolio" href="/blog/?tag=portfolio">Portfolio</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab monitoring website deployment">
         <span class="postmeta"><span class="cat">Projects</span><span>2026-06-08</span></span>
-        <h3>Building Momentum: Homelab Services + Website Launch</h3>
+        <h3><a class="stretch" href="/blog/posts/2026-06-08.html">Building Momentum: Homelab Services + Website Launch</a></h3>
         <p>Deployed the monitoring stack (Prometheus, Grafana, Loki), made Immich publicly accessible, and completed the N5HQ website with portfolio and contact sections.</p>
-      </a></li>
-      <li><a class="postcard rv-d2" href="/blog/posts/2026-06-07.html">
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a><a class="tagchip" data-tag="website" href="/blog/?tag=website">Website</a><a class="tagchip" data-tag="deployment" href="/blog/?tag=deployment">Deployment</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab home-assistant cloudflare networking">
         <span class="postmeta"><span class="cat">Homelab</span><span>2026-06-07</span></span>
-        <h3>Home Assistant Goes Public</h3>
+        <h3><a class="stretch" href="/blog/posts/2026-06-07.html">Home Assistant Goes Public</a></h3>
         <p>Got Home Assistant accessible remotely via Cloudflare Zero Trust tunnel — after about 1.5 hours of chasing a silent 502.</p>
-      </a></li>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="home-assistant" href="/blog/?tag=home-assistant">Home Assistant</a><a class="tagchip" data-tag="cloudflare" href="/blog/?tag=cloudflare">Cloudflare</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a></div>
+      </li>
     </ul>
   </div>
 </section>
@@ -118,6 +127,47 @@
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
   }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
   els.forEach(el => io.observe(el));
+})();
+
+// Tag filtering: ?tag=slug filters the post list in place; without JS the link
+// just loads /blog/ showing every post.
+(() => {
+  const cards = Array.prototype.slice.call(document.querySelectorAll('.posts > li'));
+  if (!cards.length) return;
+  const state = document.getElementById('tagstate');
+  const nameEl = document.getElementById('tagstate-name');
+  const labelFor = slug => {
+    const c = document.querySelector('.tagchip[data-tag="' + (window.CSS && CSS.escape ? CSS.escape(slug) : slug) + '"]');
+    return c ? c.textContent : slug;
+  };
+  const apply = slug => {
+    document.querySelectorAll('.tagchip').forEach(c =>
+      c.classList.toggle('is-active', !!slug && c.getAttribute('data-tag') === slug));
+    cards.forEach(li => {
+      const tags = (li.getAttribute('data-tags') || '').split(' ');
+      li.hidden = !!slug && tags.indexOf(slug) === -1;
+    });
+    if (state) {
+      if (slug) { if (nameEl) nameEl.textContent = labelFor(slug); state.hidden = false; }
+      else state.hidden = true;
+    }
+  };
+  apply(new URLSearchParams(location.search).get('tag'));
+  document.addEventListener('click', e => {
+    if (e.target.closest('.tagclear')) {
+      e.preventDefault();
+      history.replaceState(null, '', location.pathname);
+      apply(null);
+      return;
+    }
+    const a = e.target.closest('a[data-tag]');
+    if (!a) return;
+    e.preventDefault();
+    const slug = a.getAttribute('data-tag');
+    history.replaceState(null, '', '?tag=' + encodeURIComponent(slug));
+    apply(slug);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 })();
 </script>
 </body>
