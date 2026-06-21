@@ -372,12 +372,14 @@
     msg.textContent = '';
     msg.className = 'form-msg';
     try {
-      const res = await fetch(form.action, {
+      const endpoint = form.action.replace('https://formsubmit.co/', 'https://formsubmit.co/ajax/');
+      const res = await fetch(endpoint, {
         method: 'POST',
         body: new FormData(form),
         headers: { 'Accept': 'application/json' }
       });
-      if (!res.ok) throw new Error(res.status);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.success !== 'true') throw new Error(data.message || res.status);
       msg.textContent = "Message sent successfully! I'll get back to you soon.";
       msg.classList.add('ok');
       form.reset();
