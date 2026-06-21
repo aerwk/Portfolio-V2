@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Taking the Email Off the Page, and Knowing When to Undo a Logo — N5HQ</title>
+<meta name="description" content="Pulled my real email out of the contact form and routed it through a masked endpoint, added tag filtering to the blog so posts can be browsed by topic, then spent the evening building a custom logo to replace the placeholder diamond — tried it in the nav and footer, decided it wasn&#x27;t right, and reverted it. Finished by pushing the day&#x27;s work live.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/lab/">Lab</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Taking the Email Off the Page, and Knowing When to Undo a Logo</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Projects</span>
+      <span class="chip">2026-06-21 · Sunday · 4:47 PM</span>
+      <span class="chip">4 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band" style="padding-top:0">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>A day in two halves. The first was about cleaning up things that were quietly wrong on the live site. The second was a small design experiment that I ended up undoing, which turned out to be the more useful part.</p>
+<h2>Getting My Email Off the Page</h2>
+<p>The contact form had my actual address sitting in the HTML. That was a deliberate call when I first built it — it's the same way the old site worked, and it was easier than setting up anything cleverer. But "it's already public" isn't really a reason to keep handing it to every scraper that reads the page, and the site is indexed.</p>
+<p>So I took it out. The form now posts through a masked FormSubmit alias instead of the raw address, and the email no longer appears anywhere in the markup. While I was in there I moved the submission over to FormSubmit's <code>/ajax/</code> endpoint and had it check the JSON response for actual success, rather than assuming the post worked. The form behaves the same to anyone using it; it just no longer leaks the one piece of personal data it didn't need to expose. This is the second time this week a decision I'd justified with "it's already out there" turned out to be worth reversing — the same logic I used on the Lab page yesterday.</p>
+<h2>Tag Filtering on the Blog</h2>
+<p>The blog had grown past the point where a flat list of posts was enough. I added tags to the cards and a row at the end of the posts, and wired them so clicking one filters the list in place — no page reload, no separate archive page. The first version had a couple of rough edges: a filter banner that showed even when nothing was selected, and tiles that looked active but didn't actually narrow anything down. I fixed both, so now the banner only appears once you've picked a tag, the active tag shows as its own tile, and the filtering does what it says.</p>
+<h2>A Logo I Built, Then Threw Away</h2>
+<p>The brand mark in the nav and footer has always been a placeholder — a small purple diamond, a rotated square with a gradient. Fine, but generic, and it doesn't say anything about what the site is. I'd already drawn a proper mark earlier: an N built out of network ports. The N5 variant of it has little dots above the ports, like the link lights on a switch, with one lit green. I wanted that detail on the ports version, so I merged the two: the port mark with a green active light and three dim ones sitting just above the jacks.</p>
+<p>It needed one fix. At its original size the leg of the N dropped straight onto the lights and buried them, so I shrank the letter until it cleared them and the dots read properly. Then I dropped it into the nav in place of the diamond, and into the footer next to the wordmark, across every page.</p>
+<p>And then I looked at it and decided no. So I reverted the whole thing — every page back to the diamond, the styling restored. The mark itself is fine as an asset, but dropped into the live header it didn't sit the way I wanted, and a brand mark you're not sure about is worse than a plain placeholder you've stopped noticing. The SVG is still sitting in the assets folder for whenever I come back to it. The useful part wasn't the logo; it was being willing to undo an hour of work the moment it stopped being an improvement.</p>
+<h2>Shipping the Day</h2>
+<p>With the logo backed out, I pushed the rest of the day's work to production — the copy and card rework that had been waiting on the local server, the blog generator, and the contact-form changes — and confirmed it on the real domain. The hero stat tiles refreshed themselves from the live Docker host on the way out, the way they're set up to.</p>
+<h2>What's Next</h2>
+<ul>
+<li class="task-open">Decide whether the port-light logo is worth finishing properly, and if so, design it to actually sit right in the header instead of forcing the existing mark in</li>
+<li class="task-open">Confirm the masked contact alias is delivering before I trust it fully — send a real test through the live form</li>
+<li class="task-open">Consider a dedicated tag/archive page if the blog keeps growing past in-place filtering</li>
+<li class="task-open">Stand up the private dashboard for the full container list that I keep deferring</li>
+</ul>
+<p>Two reversals in two days — the email and the logo — and both were the right call. The pattern I want to hold onto is that committing to something doesn't mean keeping it. The contact email had a reason once and the reason expired; the logo seemed like an upgrade until it was on the page. Backing out of either was faster and cleaner than talking myself into living with it.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="website" href="/blog/?tag=website">Website</a><a class="tagchip" data-tag="portfolio" href="/blog/?tag=portfolio">Portfolio</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a><a class="tagchip" data-tag="blog" href="/blog/?tag=blog">Blog</a><a class="tagchip" data-tag="design" href="/blog/?tag=design">Design</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-20.html">← The Copy Goes Live, and the Lab Page Turns Personal</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+        <p>Full-Stack &amp; Infrastructure — web apps, firewalls, VLANs, and enterprise systems.</p>
+      </div>
+      <nav class="fcol" aria-label="Footer sections">
+        <h4>Sections</h4>
+        <ul>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#portfolio">Portfolio</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/lab/">Lab</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="foot-note">
+        <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+        <a class="foot-lab" href="/lab/">Lab dashboard →</a>
+      </div>
+    </div>
+    <div class="legal"><p>© 2026 N5HQ. All rights reserved.</p></div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>
