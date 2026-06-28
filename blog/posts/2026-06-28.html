@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moving Immich to the NAS — and the Drive That Tried to Take My Photos With It — N5HQ</title>
+<meta name="description" content="A simple storage migration turned into a genuine scare when the external SSD holding my entire photo library dropped offline mid-copy and the filesystem went into emergency shutdown. SMART was clean though — it was the USB connection all along. One cable swap later: a clean 107 MB/s copy, verified file-for-file, and Immich now living on the NAS.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/lab/">Lab</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Moving Immich to the NAS — and the Drive That Tried to Take My Photos With It</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-06-28 · Sunday · 10:15 PM</span>
+      <span class="chip">4 min read</span>
+      <span class="chip badge-ai">85% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band" style="padding-top:0">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>The plan was small enough that I almost didn't bother sitting down for it: move Immich's photo storage off the external SSD hanging off the server and onto the NAS. One config change, one copy, done. Instead it turned into the most nervous hour I've had with this homelab so far — the kind where you're watching <code>dd</code> output and quietly hoping a drive comes back to life.</p>
+<h2>The actual goal</h2>
+<p>Immich has been storing everything on the Samsung T7 Shield mounted at <code>/mnt/tmpnas</code>. I wanted it on the NAS (<code>/mnt/ugnas01-personal</code>) so the photos sit on the big pool instead of a single bus-powered SSD. Before touching anything I wanted the full picture: what else was on that drive, and everything on the server still pointing at it.</p>
+<p>Turned out the SSD only really held the Immich library (135 GB) plus two empty Samba shares. The things referencing it were the <code>UPLOAD_LOCATION</code> in Immich's <code>.env</code>, the bind mount into the <code>immich_server</code> container, the <code>/etc/fstab</code> entry, and those two <code>smb.conf</code> shares. The Postgres database was never on the SSD — it lives on the internal NVMe, which is exactly where Immich wants it. Good. Clean scope.</p>
+<h2>Where it went sideways</h2>
+<p>Started the copy to the NAS and the numbers were nonsense. Bulk writes to the NAS hit 190 MB/s no problem, but copying actual files crawled — single small files taking twenty, thirty seconds each. I burned a long time blaming the NAS: SMB mount options, file-create latency, even disk spin-down theories. Ran benchmark after benchmark.</p>
+<p>The real answer showed up in a <code>tar</code> run that started spitting <strong><code>Input/output error</code></strong> on hundreds of files — and the errors were on the <em>source</em>, not the destination. Then the smoking gun: the SSD's mount flags had flipped to <code>emergency_ro,shutdown</code>. The ext4 filesystem had detected fatal I/O errors and taken itself offline. <code>/dev/sdb</code> was gone from the bus entirely.</p>
+<p>That's the moment it stopped being a chore. The drive holding the only copy of my photo library had just dropped dead mid-operation, and every read was now returning an error.</p>
+<h2>It wasn't the drive</h2>
+<p>The saving grace: the T7 had re-enumerated on the USB bus as a <em>new</em> device (the device number kept ticking up — 005, 006, 007). That's not the signature of dead flash; that's a connection dropping and coming back. SMART confirmed it — overall health <strong>PASSED</strong>, 0% wear. <code>fsck</code> only needed to replay the journal; no corruption, all 121,599 files intact.</p>
+<p>So this was the T7's old party trick again — the same USB instability under load I'd already fought once earlier this month. UAS is already disabled for it and autosuspend is off, so the remaining suspects were power, heat, or the cable. The fix was almost insultingly physical: stop Immich, unmount cleanly, <strong>swap to a different cable on a rear port</strong>, remount.</p>
+<p>After that, the exact same copy that had been dying ran at a steady <strong>107 MB/s and never flinched.</strong> All that "the NAS is slow" analysis had been the failing USB link the whole time.</p>
+<h2>Doing it properly the second time</h2>
+<p>With the drive stable, the rest went the way it should have the first time. Stopped Immich for a clean, consistent snapshot, rsynced the whole library across, and verified it file-for-file rather than trusting byte totals:</p>
+<ul>
+<li>library: 25,125 → 25,125</li>
+<li>thumbs: 49,341 → 49,341</li>
+<li>encoded-video, backups, upload, profile — all exact</li>
+</ul>
+<p>Repointed <code>UPLOAD_LOCATION</code> to the NAS (with a backup of the <code>.env</code>), brought Immich back up, and watched it come up healthy with <code>/data</code> now resolving to the NAS share. Pinged the API — <code>pong</code>. By the time I checked, the library count had already ticked <em>up</em> past the migration number, which was oddly reassuring: it meant Immich was live and writing to the NAS, the new copy already the source of truth.</p>
+<p>Then the cleanup, since I wanted to actually unplug the drive: deleted the now-stale SSD copy, pulled the two Samba shares pointing at it, removed the fstab entry, and unmounted. Wrapped it in a script with config backups and a <code>testparm</code> check so a bad edit couldn't take Samba down with it. The T7 is now fully decommissioned and free to repurpose.</p>
+<h2>What I'm sitting with</h2>
+<p>The migration is done and it's genuinely better — photos on the pool, drive freed, no dangling references. But the honest takeaway isn't the move, it's the reminder that my "backup" was a single bus-powered SSD on a flaky cable. For a stretch tonight that drive <em>was</em> my photo library, and it chose that moment to fall off the bus.</p>
+<p>I deleted the SSD copy in the end — iCloud is the other copy — but the NAS pool has no redundancy, which means iCloud is now genuinely the only second copy. That's a thread to pull on soon: a real, redundant backup of the photos, not a hand-wave. Tonight ended fine. It came closer to not ending fine than I'd like.</p>
+<p>And the T7 Shield is officially on notice. Healthy flash, lovely speeds, drops off the bus the second you ask it to work hard. Fine as scratch space; never again as the only home for anything I care about.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="immich" href="/blog/?tag=immich">Immich</a><a class="tagchip" data-tag="storage" href="/blog/?tag=storage">Storage</a><a class="tagchip" data-tag="nas" href="/blog/?tag=nas">Nas</a><a class="tagchip" data-tag="ssd" href="/blog/?tag=ssd">Ssd</a><a class="tagchip" data-tag="recovery" href="/blog/?tag=recovery">Recovery</a><a class="tagchip" data-tag="usb" href="/blog/?tag=usb">Usb</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-21.html">← Taking the Email Off the Page, and Knowing When to Undo a Logo</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+        <p>Full-Stack &amp; Infrastructure — web apps, firewalls, VLANs, and enterprise systems.</p>
+      </div>
+      <nav class="fcol" aria-label="Footer sections">
+        <h4>Sections</h4>
+        <ul>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#portfolio">Portfolio</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/lab/">Lab</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="foot-note">
+        <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+        <a class="foot-lab" href="/lab/">Lab dashboard →</a>
+      </div>
+    </div>
+    <div class="legal"><p>© 2026 N5HQ. All rights reserved.</p></div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>
