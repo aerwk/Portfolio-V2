@@ -14,6 +14,8 @@
     { "source": "/", "has": [{ "type": "host", "value": "www.n5hq.me" }], "destination": "/lab/index.html" },
     { "source": "/sitemap.xml", "has": [{ "type": "host", "value": "www.n5hq.me" }], "destination": "/sitemap-www.xml" },
     { "source": "/robots.txt", "has": [{ "type": "host", "value": "www.n5hq.me" }], "destination": "/robots-www.txt" },
+    { "source": "/sitemap.xml", "has": [{ "type": "host", "value": "ericli.n5hq.me" }], "destination": "/sitemap-ericli.xml" },
+    { "source": "/robots.txt", "has": [{ "type": "host", "value": "ericli.n5hq.me" }], "destination": "/robots-ericli.txt" },
     { "source": "/blog", "destination": "/blog/index.html" },
     { "source": "/lab", "destination": "/lab/index.html" },
     { "source": "/portfolio/in-progress", "destination": "/portfolio/in-progress/index.html" },
