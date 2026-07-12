@@ -5,10 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>I Built a Status Page, and It Caught My NAS Crashing Before I Finished Setting It Up — N5HQ</title>
 <meta name="description" content="The plan was a quiet evening standing up Uptime Kuma to watch the homelab. On its very first round of checks it flagged Immich as down — a real outage, not a config mistake. That kicked off a four-hour hunt that ran through stale CIFS mounts and a misbehaving Samba service before SSH into the NAS finally gave a straight answer: the disks were perfect, and smbd was segfaulting on a corrupted database held in RAM. The monitoring&#x27;s first job turned out to be catching its own storage backend falling over.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-07-01.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="I Built a Status Page, and It Caught My NAS Crashing Before I Finished Setting It Up — N5HQ">
+<meta property="og:description" content="The plan was a quiet evening standing up Uptime Kuma to watch the homelab. On its very first round of checks it flagged Immich as down — a real outage, not a config mistake. That kicked off a four-hour hunt that ran through stale CIFS mounts and a misbehaving Samba service before SSH into the NAS finally gave a straight answer: the disks were perfect, and smbd was segfaulting on a corrupted database held in RAM. The monitoring&#x27;s first job turned out to be catching its own storage backend falling over.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-07-01.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css?v=d3">
+<link rel="stylesheet" href="/assets/style.css?v=d26">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -24,6 +39,18 @@
       </ul>
     </nav>
     <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
   </div>
 </header>
 
@@ -98,7 +125,7 @@
         </div>
         <div class="foot-note">
           <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
-          <a class="foot-lab" href="/lab/">Lab dashboard →</a>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
         </div>
       </div>
       <div class="foot-bottom">
@@ -123,6 +150,13 @@
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
   }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
   els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
 })();
 </script>
 </body>
