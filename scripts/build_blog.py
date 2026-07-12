@@ -24,7 +24,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 JOURNALS_DIR = os.environ.get("JOURNALS_DIR", os.path.join(REPO, "..", "..", "01 Journals"))
 POSTS_DIR = os.path.join(REPO, "blog", "posts")
 INDEX = os.path.join(REPO, "blog", "index.html")
-HOME = os.path.join(REPO, "index.html")
+HOME = os.path.join(REPO, "home", "index.html")
 FORCE = "--force" in sys.argv
 
 CARD_CLASSES = ["rv", "rv-d1", "rv-d2"]

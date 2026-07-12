@@ -8,10 +8,14 @@
     { "source": "/blog/:path(.*)", "has": [{ "type": "host", "value": "www.n5hq.me" }], "destination": "https://ericli.n5hq.me/blog/:path", "permanent": true },
     { "source": "/portfolio/:path(.*)", "has": [{ "type": "host", "value": "www.n5hq.me" }], "destination": "https://ericli.n5hq.me/portfolio/:path", "permanent": true },
     { "source": "/lab", "has": [{ "type": "host", "value": "ericli.n5hq.me" }], "destination": "https://www.n5hq.me/", "permanent": true },
-    { "source": "/lab/:path(.*)", "has": [{ "type": "host", "value": "ericli.n5hq.me" }], "destination": "https://www.n5hq.me/", "permanent": true }
+    { "source": "/lab/:path(.*)", "has": [{ "type": "host", "value": "ericli.n5hq.me" }], "destination": "https://www.n5hq.me/", "permanent": true },
+    { "source": "/index.html", "destination": "/", "permanent": true },
+    { "source": "/home", "destination": "/", "permanent": true },
+    { "source": "/home/:path(.*)", "destination": "/", "permanent": true }
   ],
   "rewrites": [
     { "source": "/", "has": [{ "type": "host", "value": "www.n5hq.me" }], "destination": "/lab/index.html" },
+    { "source": "/", "destination": "/home/index.html" },
     { "source": "/sitemap.xml", "has": [{ "type": "host", "value": "www.n5hq.me" }], "destination": "/sitemap-www.xml" },
     { "source": "/robots.txt", "has": [{ "type": "host", "value": "www.n5hq.me" }], "destination": "/robots-www.txt" },
     { "source": "/sitemap.xml", "has": [{ "type": "host", "value": "ericli.n5hq.me" }], "destination": "/sitemap-ericli.xml" },
