@@ -219,8 +219,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 @media (max-width:520px){.hero-display{font-size:clamp(2rem,10.5vw,2.6rem)!important}}
 .hero-display .line{
   color:transparent;
-  -webkit-text-stroke:clamp(1.2px,.14vw,2px) var(--white);
-  text-stroke:clamp(1.2px,.14vw,2px) var(--white);
+  -webkit-text-stroke:1.3px var(--white);
+  text-stroke:1.3px var(--white);
+  font-weight:600;letter-spacing:.005em!important;word-spacing:normal;
 }
 .hero-sub{max-width:46rem}
 .hero-sub{color:var(--grey);font-weight:300;max-width:38rem;font-size:clamp(1rem,.95rem + .3vw,1.2rem);line-height:1.62}
