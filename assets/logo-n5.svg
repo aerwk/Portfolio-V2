@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="N5HQ">
+  <title>N5HQ — trace mark</title>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#100d18"/>
+  <rect x="2.7" y="2.7" width="58.6" height="58.6" rx="13.3" fill="none" stroke="#ffffff24" stroke-width="1.4"/>
+  <path d="M18 46 V19 L33 46 V19 H45 M33 32.5 H39 Q46 32.5 46 38.5 Q46 45 39.5 45 H35"
+        fill="none" stroke="#e9e6f2" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="35" cy="45" r="2.1" fill="#8b5cf6"/>
+</svg>
