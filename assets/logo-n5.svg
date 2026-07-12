@@ -1,8 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="N5HQ">
-  <title>N5HQ — trace mark</title>
+  <title>N5HQ — layered N5 mark</title>
   <rect x="2" y="2" width="60" height="60" rx="14" fill="#100d18"/>
   <rect x="2.7" y="2.7" width="58.6" height="58.6" rx="13.3" fill="none" stroke="#ffffff24" stroke-width="1.4"/>
-  <path d="M18 46 V19 L33 46 V19 H45 M33 32.5 H39 Q46 32.5 46 38.5 Q46 45 39.5 45 H35"
-        fill="none" stroke="#e9e6f2" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="35" cy="45" r="2.1" fill="#8b5cf6"/>
+  <path d="M12 50 V14 H21 L33 37.5 V14 H42 V50 H33 L21 26.5 V50 Z" fill="#6d28ff"/>
+  <path d="M52 24 H38 V35 H45.5 Q52.5 35 52.5 41.5 Q52.5 49 45 49 H37"
+        fill="none" stroke="#100d18" stroke-width="14" stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M52 24 H38 V35 H45.5 Q52.5 35 52.5 41.5 Q52.5 49 45 49 H37"
+        fill="none" stroke="#f5f4f7" stroke-width="8.5" stroke-linecap="square" stroke-linejoin="miter"/>
 </svg>
