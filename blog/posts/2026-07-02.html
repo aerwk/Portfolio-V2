@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I Sat Down to Add One Button and Rebuilt Half My Smart Home — N5HQ</title>
+<meta name="description" content="The plan was small: wire a few Home Assistant controls onto my Stream Deck. Opening Home Assistant to do it exposed the real state of things — five broken integrations, and a chunk of the house that lived in Apple Home but had never made it into HA at all. So the button waited. What followed was a day of standing up a Matter server, untangling why my devices were spread across three VLANs that Matter can&#x27;t see across, migrating the whole Meross fleet to local control, and clearing every broken integration off the board. Classic me: I went in for a light switch and came out having rebuilt the foundation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d3">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">I Sat Down to Add One Button and Rebuilt Half My Smart Home</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-07-02 · Thursday · 11:04 AM</span>
+      <span class="chip">5 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>The task I actually wanted to do today was small and fun: put some Home Assistant controls on my Stream Deck+ so I could tap and twist a dial to run the house. I got as far as opening Home Assistant and realised I couldn't build on it, because the thing underneath was a mess. Five integrations were sitting there broken, and half my smart home wasn't even in Home Assistant — it lived in Apple Home and had never been connected. You can't automate a foundation that isn't there. So the button waited, and I spent the day fixing the floor before decorating the room.</p>
+<h2>The honest shape of the day</h2>
+<p>This is the failure mode I know I have: I go in to change a light switch and come out having re-plumbed the house. I'm not going to pretend it was a tidy plan. But this particular rabbit hole was the right one, because everything I wanted the Stream Deck to control had to actually exist in Home Assistant first, and most of it didn't.</p>
+<h2>Matter needed a server I never ran</h2>
+<p>Home Assistant runs on my server as a plain Docker container, not the full appliance version. The difference matters: the appliance can install a Matter server as an add-on with one click, and the container can't. So the Matter integration had been quietly failing since forever, trying to reach a helper that was never there. The fix was to run that helper myself as its own container and point Home Assistant at it. Once it came up, Matter finally had something to talk to.</p>
+<h2>Three VLANs that can't hear each other</h2>
+<p>Then the interesting problem. My network is segmented on purpose: Home Assistant sits on the management network, my Apple TV and HomePods live on the home network, and every smart plug and sensor is on a locked-down IoT network. Good for security. Terrible for Matter, because the way Matter and Thread find devices is with a kind of local broadcast that stops dead at a VLAN boundary. Home Assistant literally could not see the plugs on the other side of the fence.</p>
+<p>The clean fix was two targeted changes on the UniFi side rather than tearing down the segmentation: one firewall rule letting Home Assistant reach the IoT network, and turning on the mDNS reflector so device discovery could cross between the three networks. No devices moved, the walls stayed up, and Home Assistant could suddenly see across them. I did briefly move the Apple TV to sort out the Thread side and immediately broke a pile of firewall rules that were scoped to its old address, so I put it straight back. Lesson logged: don't move the thing every other rule points at.</p>
+<h2>The Meross detour, and knowing when to switch tactics</h2>
+<p>I started bringing my Meross plugs in the "proper" Matter way, sharing each one from Apple Home into Home Assistant. It worked for a few, then turned into a slog: pairing windows timing out, a couple of plugs refusing outright, and — the real tell — several plugs that weren't in Apple Home at all, so there was nothing to share. I was nursing fifteen devices through a process that fought me on every third one.</p>
+<p>So I stopped and changed approach. There's a local integration, meross_lan, that talks to Meross devices directly over the network with no Apple Home middleman and no pairing dance. I pulled the seven I'd already done back off Matter and let meross_lan take the whole fleet at once. All fifteen came in together — every plug, both cinema light strips, the garage opener, the presence sensors — with richer data than Matter gave me, and locked their IP addresses so they can't drift. The lesson I want to keep: the "correct" method isn't the right one if it costs you an hour per device and still misses a third of them.</p>
+<h2>The 150-degree mystery that wasn't a bug</h2>
+<p>My ducted air conditioning showed every room at over 150 degrees. It looked like a broken temperature reading, and I went down into the library code convinced it was a decoding error. It wasn't. My air con simply has no temperature sensors in the zones — it controls airflow by damper percentage, not by temperature — so the controller reports a placeholder value that, read as a temperature, comes out as nonsense. Nothing to fix in software; the data doesn't exist. Good to know before I spend money: if I want real per-room temperatures, I need to add actual sensors, and I've got a plan to hang cheap ones off my Aqara hubs later.</p>
+<h2>Clearing the rest of the board</h2>
+<p>The cameras came back with a fresh local account after the integration had rate-limited itself into a lockout by hammering a bad password for hours. The air con reconnected once I pointed it at its new address on the IoT network. The Bluetooth entry was for a radio the server doesn't even have, so it went in the bin. And with the mess gone, I did the satisfying part: renamed forty-odd devices to something sane, so each one is just what it is — "Sim Rig Plug", "Downlight 1" — and lets the room it's in carry the location, which is exactly how Apple Home and voice control want it.</p>
+<h2>Where this leaves me</h2>
+<p>The foundation is solid now. Everything I own answers to Home Assistant, it's named properly, and the broken-integration list is finally empty. The whole reason I started — controlling the house from a dial on my desk — is unblocked, and the cinema light strips that kicked off this entire thread three requests ago are now real, controllable entities.</p>
+<p>The homework I'm not going to pretend away: I still want real temperature sensors in the rooms that matter, the smart lock is stuck behind the same Thread-across-VLANs wall and is parked until I add a dedicated radio, and my NAS backup story from earlier this week still isn't where it needs to be. But today was foundation work, and foundation work is the kind of thing that's invisible right up until everything you build on top of it just works. Tomorrow, the button.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="home-assistant" href="/blog/?tag=home-assistant">Home Assistant</a><a class="tagchip" data-tag="matter" href="/blog/?tag=matter">Matter</a><a class="tagchip" data-tag="meross" href="/blog/?tag=meross">Meross</a><a class="tagchip" data-tag="smart-home" href="/blog/?tag=smart-home">Smart Home</a><a class="tagchip" data-tag="vlan" href="/blog/?tag=vlan">VLAN</a><a class="tagchip" data-tag="homekit" href="/blog/?tag=homekit">Homekit</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-01.html">← I Built a Status Page, and It Caught My NAS Crashing Before I Finished Setting It Up</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-13.html">I Gave the AI a Browser, and We Shipped the Redesign →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+          <p>Full-Stack &amp; Infrastructure — web apps, firewalls, VLANs, and enterprise systems.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="/lab/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>

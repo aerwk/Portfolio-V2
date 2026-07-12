@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I Gave the AI a Browser, and We Shipped the Redesign — N5HQ</title>
+<meta name="description" content="The redesign had been sitting on a preview port waiting for my eyes, because I was the only one in the loop who could see pixels. That changed today: headless Chromium went onto the server, and suddenly every change came back with screenshots attached. What followed was the most productive day this site has ever had — a rebuilt footer, a scroll-driven purple Earth with ethernet cables patching into world capitals, my actual rack photo on the homelab page, live Docker stats on three pages, and the whole thing pushed to production before bed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d3">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">I Gave the AI a Browser, and We Shipped the Redesign</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Projects</span>
+      <span class="chip">2026-07-13 · Monday · 2:30 AM</span>
+      <span class="chip">4 min read</span>
+      <span class="chip badge-ai">95% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>The redesign I'd been chasing for two days had one bottleneck left, and it was me. Claude built the thing on a preview port, but it couldn't see what it built — every visual check meant me opening a browser, squinting, and describing what looked wrong. Today we fixed the loop itself: Playwright and a headless Chromium went onto the server. Five missing system libraries and one sudo later, the AI could take its own screenshots at any viewport width. The very first automated pass caught a bug my eyes had missed for a week: the hero says I've deployed networks across homes "up to 1,000 m²", and that area symbol was a single exotic Unicode character no font on the server could draw. Visitors with the wrong font stack were seeing a tofu box in the middle of my headline. One character swap, verified with a fresh screenshot, done.</p>
+<h2>The footer taught me about caches</h2>
+<p>First real job: rebuild the footer to match the getlayers.ai reference — a floating glass card instead of a full-width slab, brand and socials on the left, my homelab status line on the right, one horizontal link row underneath. The first version I loaded looked like a ransom note: gigantic pink GitHub and Instagram icons stacked down the page. The cause was a compound one — my browser had cached the old stylesheet, and the new social icons had no fallback dimensions of their own, so without the fresh CSS they exploded to full width. The fix was both: hard sizes on every SVG, and a version stamp on the stylesheet URL so nobody's cache can serve the old design against the new markup again. I also pulled the Lab link out of the top navigation while we were in there. That page is my door into my own containers, not a menu item for visitors; it now lives quietly in the footer.</p>
+<h2>A purple planet with ethernet cables</h2>
+<p>The About section used to have a giant N5HQ watermark behind it. It now has a scene. Scroll toward About and a server rack flies in from the left edge, spinning exactly twice, while a small violet dot grows into a planet. When the section centres, the whole backdrop locks in place as a fixed background for the rest of the site, and the rack keeps rotating with your scroll — forward when you scroll down, backwards when you scroll up.</p>
+<p>The planet went through four versions in one evening. Flat gradient blobs looked cheap. So we pulled NASA's Blue Marble map, converted it to a purple duotone in a canvas — dark seas, pale lavender continents — and wrapped it around the sphere with real proportions, 180 degrees facing you at a time. A fractal cloud layer drifts faster than the terrain underneath, which is the trick that makes a sliding texture read as a turning sphere. Then the detail I'm most pleased with: the rack in front of the planet has nine port squares drawn on it, and nine thin cables now patch out of those ports to world capitals, which sparkle like their lights just came on. When a city drifts toward the planet's edge, its cable reels back in and the port picks up the next capital rising on the other side. My homelab, cabled into the world. It's the most literal logo my setup will ever have.</p>
+<h2>The homelab pages got honest</h2>
+<p>The homelab case-study page had nine identical text cards and nothing to look at. It now opens with a photo of the actual rack — gateway, patch panel, switch, the OptiPlex, the UGREEN NAS beside it — next to a terminal-styled panel of live numbers: 7 stacks, 27 containers, 39 images, 11 volumes, 12 networks, plus spec cards for compute and storage. Those numbers aren't hand-typed anymore either; the pre-commit hook that already stamped the homepage tiles from the Docker daemon now updates all three pages that show them, on every push. The green constellation of services from the homepage hero — UniFi, Docker, Grafana, Immich and friends — became the fixed background for both homelab pages. And the blog section's old subtitle, "Notes from the transition", is now "Notes from the journey", because the original phrasing could read as a very different kind of transition than the career one I meant.</p>
+<h2>Ship it</h2>
+<p>The whole thing went out tonight: one big commit, fast-forwarded to main, deployed, then verified against production — right stylesheet version, the Earth texture serving, the NAS card live. After that we cleaned up the loose ends: a proper social-preview image so links to the site stop unfurling as plain text, and a local dev copy of the site moved onto the port where the old, retired version of the site had been quietly running for two weeks. The old server is gone; the current site is now what I edit locally before anything goes public.</p>
+<p>There's a logo brewing too — a research pass across twenty-odd tech and letter-N marks, distilled into three original directions for an N5 mark. That decision is tomorrow's problem. Today the site finally looks like the thing I've been describing to people, and for the first time the AI that builds it can see it too.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="website" href="/blog/?tag=website">Website</a><a class="tagchip" data-tag="portfolio" href="/blog/?tag=portfolio">Portfolio</a><a class="tagchip" data-tag="design" href="/blog/?tag=design">Design</a><a class="tagchip" data-tag="playwright" href="/blog/?tag=playwright">Playwright</a><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="deployment" href="/blog/?tag=deployment">Deployment</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-02.html">← I Sat Down to Add One Button and Rebuilt Half My Smart Home</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+          <p>Full-Stack &amp; Infrastructure — web apps, firewalls, VLANs, and enterprise systems.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="/lab/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>

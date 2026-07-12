@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I Built a Status Page, and It Caught My NAS Crashing Before I Finished Setting It Up — N5HQ</title>
+<meta name="description" content="The plan was a quiet evening standing up Uptime Kuma to watch the homelab. On its very first round of checks it flagged Immich as down — a real outage, not a config mistake. That kicked off a four-hour hunt that ran through stale CIFS mounts and a misbehaving Samba service before SSH into the NAS finally gave a straight answer: the disks were perfect, and smbd was segfaulting on a corrupted database held in RAM. The monitoring&#x27;s first job turned out to be catching its own storage backend falling over.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d3">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">I Built a Status Page, and It Caught My NAS Crashing Before I Finished Setting It Up</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-07-01 · Wednesday · 1:25 AM</span>
+      <span class="chip">7 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>A few nights ago I moved Immich onto the NAS and ended that journal with a nagging thought: the NAS pool has no redundancy, so it's now the single thing my photos depend on. Tonight the NAS reminded me it was listening. I sat down to do something completely unrelated — finally put proper monitoring on the homelab — and the monitoring's first act was to tell me the NAS had quietly taken Immich down with it.</p>
+<h2>The thing I meant to build</h2>
+<p>I wanted Uptime Kuma running: a self-hosted status page that pings every service and tells me when something stops answering. Up to now my "monitoring" has been noticing things are broken when I try to use them, which is a terrible way to find out. The goal was simple visibility across the whole stack.</p>
+<p>It went up cleanly as another Docker stack on the server, on its own port, joined to the monitoring network so it can reach the Prometheus and Grafana containers by name. Rather than click 30-odd monitors into the web UI by hand, I drove its API from a throwaway Python container and provisioned the lot in one script: the gateway and WAN, the media stack, the NAS, the public <code>n5hq.me</code> endpoints, the seedbox. By the end it was watching <strong>33 services across seven groups</strong>.</p>
+<p>The cameras were their own small puzzle. The five UniFi Protect cameras sit on an isolated VLAN that the server can't reach by design, so the first round of pings all failed. The clean fix was one tightly scoped firewall rule — allow only the server's IP through to the camera VLAN, nothing else — added through the UniFi API. After that, all five answered.</p>
+<h2>It caught a real outage on the first run</h2>
+<p>While I was still checking the new monitors, one of them was already red: <code>photo.n5hq.me</code> returning a <strong>502</strong>. My first assumption was that I'd pointed the check at the wrong place. I hadn't. The <code>immich_server</code> container had exited hours earlier and was sitting there unhealthy. Uptime Kuma had been live for about five minutes and immediately earned its keep by surfacing an outage I had no idea was happening.</p>
+<p>The container log was blunt about it: an <code>EIO: i/o error</code> trying to write into <code>/data/upload</code>, which is the NAS share. So Immich wasn't really the problem; its storage was.</p>
+<h2>Chasing the wrong layer for a while</h2>
+<p>This is where I spent more time than I'd like, looking at the right symptom from the wrong angle. The CIFS mount to the NAS had dropped into an I/O-error state. The systemd automount that's meant to mount it on demand had hit its retry limit and given up, so the path was falling through to an empty folder — which is exactly what the Immich container saw, and why it kept crash-looping.</p>
+<p>I cleared the failed mount units, and the mount started failing outright with the connection getting dropped mid-negotiation. The NAS itself was up the whole time: it answered pings instantly, its web UI was fine, the SMB port was open. But every attempt to actually mount a share got cut off. That pattern — healthy box, dead file service — pointed at the NAS's SMB service rather than the network or my client. A toggle of the SMB service in the NAS UI brought it back, the mount came good, and Immich started cleanly.</p>
+<p>Then a few hours later it died again, the same way. A fix that doesn't hold isn't a fix, so I stopped patching the symptom and went looking for the actual cause.</p>
+<h2>Into the NAS itself</h2>
+<p>I turned on SSH for the NAS and went straight for the things that would either convict or clear the hardware. First the disks, because the whole pool is RAID0 with no parity to fall back on — a single sick drive would explain everything. Both 8 TB drives came back <strong>PASSED</strong>, zero reallocated sectors, zero pending, zero read errors. The filesystem's own error counters were all zero too: no I/O errors, no corruption. The data was never in danger. That was a relief I didn't fully feel until I saw the numbers.</p>
+<p>So if the storage was clean, what was Samba choking on? The Samba logs answered it. There was a <code>cores</code> directory full of crash dumps, and the service log showed smbd restarting over and over. The connection log spelled it out:</p>
+<p>&gt; <code>smbXsrv_open_create: ... NT_STATUS_INTERNAL_DB_CORRUPTION</code> &gt; <code>INTERNAL ERROR: Signal 11: Segmentation fault</code></p>
+<p>smbd was reading one of its own internal databases, finding it corrupt, and crashing on it. That's the "server abruptly closed the connection" my client kept seeing — the server process was dying mid-handshake.</p>
+<p>The detail that made everything click: that database lives in <code>/run/samba</code>, which is a RAM-backed filesystem. Restarting the SMB service does not clear it, so smbd just re-attached to the same corrupt file and crashed again. That's precisely why my earlier toggle never held and why it came back hours later. Only a full reboot wipes that folder — or deleting the file by hand while the service is stopped. The most likely trigger was an unclean power event; there'd been a batch of network gear reboot itself earlier in the day that fits a brief power blip.</p>
+<h2>Making it not happen the same way again</h2>
+<p>Two changes. First, the mount itself: I switched both NAS shares from the on-demand, fail-fast setup to a permanent, retry-on-blip mount. The old setup would error out the instant the NAS hiccuped and then leave a stale mount that the container clung to; the new one rides out a wobble and reconnects, and never swaps the mount out from under a running container. After a reboot cleared the corrupt database, everything came back healthy: Immich running, the photo endpoint returning 200, the mount writable.</p>
+<p>Second, and the reason this matters going forward: the new status page now pings me on <strong>Discord</strong> the moment anything goes down or recovers. I already live in that Discord server, so the alerts land next to everything else. I wired the webhook up using the bot token that's already on the server, and it now watches all 33 services. Next time the NAS sulks, I'll know in a minute instead of finding out when I open the photo app.</p>
+<h2>The part that was just satisfying</h2>
+<p>With the fire out, I made the status page actually look like mine. I pulled the exact colours and font off the live <code>n5hq.me</code> site and themed the whole thing to match — the near-black violet background, the Outfit type, hairline cards in a tight grid, green heartbeats. It's published behind <code>uptime.n5hq.me</code>. The site, the alerts, and the dashboard now all speak the same visual language, which is a small thing that makes the whole setup feel like one project instead of a pile of separate tools.</p>
+<h2>What's next, and why</h2>
+<p>The honest gap tonight was that all of this only worked because I was at a keyboard. If the NAS had fallen over while I was away from home, I'd have been stuck reading a Discord alert I couldn't act on. So I spent the end of the session researching how to drive a full Claude Code session from Discord on my phone — turns out there's now a first-party way to do exactly that, plus a mobile remote-control option for approving the riskier commands. I've got a plan written and the server already meets the requirements. The idea is simple: get the alert and fix the thing from the same phone, from anywhere.</p>
+<p>A few nights ago I wrote that the NAS having no redundancy was a thread to pull on. It pulled itself. The difference this time is that I wasn't guessing — I had logs, I had eyes on it, and I walked it all the way back to a corrupt file in RAM instead of stopping at "the disks must be dying." The disks are fine. The backup story still isn't where it needs to be, and that's still the real homework. But tonight the homelab told me when it broke, told me why, and is now set up to tell me faster next time. That's the whole point of the watchtower.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a><a class="tagchip" data-tag="uptime-kuma" href="/blog/?tag=uptime-kuma">Uptime Kuma</a><a class="tagchip" data-tag="nas" href="/blog/?tag=nas">NAS</a><a class="tagchip" data-tag="samba" href="/blog/?tag=samba">Samba</a><a class="tagchip" data-tag="debugging" href="/blog/?tag=debugging">Debugging</a><a class="tagchip" data-tag="discord" href="/blog/?tag=discord">Discord</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-28.html">← Moving Immich to the NAS — and the Drive That Tried to Take My Photos With It</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-02.html">I Sat Down to Add One Button and Rebuilt Half My Smart Home →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+          <p>Full-Stack &amp; Infrastructure — web apps, firewalls, VLANs, and enterprise systems.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="/lab/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>
