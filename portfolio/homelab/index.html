@@ -5,13 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>HomeLab — N5HQ</title>
 <meta name="description" content="Self-hosted infrastructure powering all my personal computing needs. A production-grade homelab running 24/7.">
+<link rel="canonical" href="https://www.n5hq.me/portfolio/homelab/">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="HomeLab — N5HQ">
+<meta property="og:description" content="Self-hosted infrastructure powering all my personal computing needs. A production-grade homelab running 24/7.">
+<meta property="og:url" content="https://www.n5hq.me/portfolio/homelab/">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="/assets/style.css?v=d14">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
+
+<canvas class="page-constellation" id="page-constellation" aria-hidden="true"></canvas>
 
 <header class="nav" aria-label="Primary">
   <div class="nav-in">
@@ -24,6 +36,18 @@
       </ul>
     </nav>
     <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
   </div>
 </header>
 
@@ -36,13 +60,58 @@
     <p class="hero-sub rv on rv-d2">Self-hosted infrastructure powering all my personal computing needs. A production-grade homelab with networking, compute, storage, surveillance, and smart home automation running 24/7.</p>
   </div>
 </section>
-<section class="band" style="padding-top:0"><div class="wrap">
+<section class="band band-tight" aria-label="The lab at a glance"><div class="wrap">
+  <div class="sec-head rv"><span class="chip">At a Glance</span><h2>The rack, <span class="vio">by the numbers.</span></h2></div>
+  <div class="hl-bento">
+    <figure class="photo-fig rv">
+      <img src="/assets/homelab-rack.webp" width="1080" height="1440" alt="The N5HQ homelab rack — UniFi Cloud Gateway Fibre, patch panel and Flex switch cabled above a Dell OptiPlex 7070 node, with the UGREEN DH4300 Plus NAS alongside.">
+      <figcaption>The actual rack — gateway · patch panel · switch · compute, NAS alongside</figcaption>
+    </figure>
+    <div class="hl-col">
+      <div class="mock rv rv-d1" style="margin-top:0">
+        <div class="mock-frame" style="border-radius:var(--r-lg);border-bottom:1px solid var(--line-2)">
+          <div class="mock-bar"><span class="mock-dots"><i></i><i></i><i></i></span><span class="mock-url">n5ubuntu · docker</span><span style="width:2.6rem"></span></div>
+          <div class="mock-main" style="padding:1.1rem">
+            <div class="mock-stats">
+              <div class="mtile" data-stat="stacks"><b>7</b><span>Stacks</span></div>
+              <div class="mtile" data-stat="containers"><b>27</b><span>Containers</span></div>
+              <div class="mtile" data-stat="images"><b>39</b><span>Images</span></div>
+              <div class="mtile" data-stat="volumes"><b>11</b><span>Volumes</span></div>
+              <div class="mtile" data-stat="networks"><b>12</b><span>Networks</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hl-duo">
+        <div class="comp hl-card rv rv-d1">
+          <h3>Compute</h3>
+          <div class="spec-stats">
+            <div class="mtile"><b>i5-9500T</b><span>CPU</span></div>
+            <div class="mtile"><b>6</b><span>Cores</span></div>
+            <div class="mtile"><b>32 GB</b><span>Memory</span></div>
+            <div class="mtile"><b>Ubuntu</b><span>OS</span></div>
+          </div>
+        </div>
+        <div class="comp hl-card rv rv-d2">
+          <h3>Storage — UGREEN NAS</h3>
+          <div class="spec-stats">
+            <div class="mtile"><b>DH4300 Plus</b><span>Model</span></div>
+            <div class="mtile"><b>16 TB</b><span>HDD Volume</span></div>
+            <div class="mtile"><b>3 TB</b><span>SSD Volume</span></div>
+            <div class="mtile"><b>4</b><span>Bays</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></section>
+<section class="band band-tight"><div class="wrap">
     <div class="sec-head rv"><span class="chip">Key Components</span><h2>Always learning, <span class="vio">always building.</span></h2></div>
 <div class="comps">
       <div class="comp rv"><span class="ico" aria-hidden="true"><i></i></span><h3>Networking</h3><p>UniFi Cloud Gateway Fiber, managed switches, WiFi 7 APs, and fiber connectivity — supporting 40+ connected clients across all networks</p></div>
       <div class="comp rv rv-d1"><span class="ico" aria-hidden="true"><i></i></span><h3>VLANs &amp; Firewall</h3><p>Five isolated networks — Management, Home, Guest, IoT, and Cameras — with inter-VLAN firewall policies enforcing least-privilege traffic rules</p></div>
       <div class="comp rv rv-d2"><span class="ico" aria-hidden="true"><i></i></span><h3>DNS Routing &amp; DDNS</h3><p>Pi-hole for network-wide DNS filtering and local split-horizon routing; DDNS for dynamic public IP tracking across Cloudflare</p></div>
-      <div class="comp rv"><span class="ico" aria-hidden="true"><i></i></span><h3>Compute &amp; Storage</h3><p>Dell OptiPlex with Intel 9500T, 32GB RAM, running Ubuntu and Docker; remote slot storage + local NVMe, 22TB capacity for media and backups</p></div>
+      <div class="comp rv"><span class="ico" aria-hidden="true"><i></i></span><h3>Compute &amp; Storage</h3><p>Dell OptiPlex with Intel i5-9500T, 32GB RAM, running Ubuntu and Docker; UGREEN DH4300 Plus NAS alongside — 16TB HDD volume + 3TB SSD volume for media, backups, and photos</p></div>
       <div class="comp rv rv-d1"><span class="ico" aria-hidden="true"><i></i></span><h3>Observability</h3><p>Full monitoring stack with Prometheus metrics, Grafana dashboards, and Loki log aggregation — custom homelab overview dashboard built via the Grafana API</p></div>
       <div class="comp rv rv-d2"><span class="ico" aria-hidden="true"><i></i></span><h3>*arr Media Automation</h3><p>Radarr, Sonarr, and Prowlarr automating acquisition and organisation of movies and TV; Discord webhooks push real-time notifications on downloads and status changes</p></div>
       <div class="comp rv"><span class="ico" aria-hidden="true"><i></i></span><h3>Surveillance</h3><p>UniFi Protect cameras + Aqara smart cameras with 24/7 recording</p></div>
@@ -54,27 +123,35 @@
 
 <footer class="footer">
   <div class="wrap">
-    <div class="foot-grid">
-      <div class="foot-brand">
-        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
-        <p>Full-Stack &amp; Infrastructure — web apps, firewalls, VLANs, and enterprise systems.</p>
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+          <p>Full-Stack &amp; Infrastructure — web apps, firewalls, VLANs, and enterprise systems.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="/lab/">Lab dashboard →</a>
+        </div>
       </div>
-      <nav class="fcol" aria-label="Footer sections">
-        <h4>Sections</h4>
-        <ul>
-          <li><a href="/#about">About</a></li>
-          <li><a href="/#portfolio">Portfolio</a></li>
-          <li><a href="/blog/">Blog</a></li>
-          <li><a href="/lab/">Lab</a></li>
-          <li><a href="/#contact">Contact</a></li>
-        </ul>
-      </nav>
-      <div class="foot-note">
-        <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
-        <a class="foot-lab" href="/lab/">Lab dashboard →</a>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
       </div>
     </div>
-    <div class="legal"><p>© 2026 N5HQ. All rights reserved.</p></div>
   </div>
 </footer>
 
@@ -88,6 +165,14 @@
   }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
   els.forEach(el => io.observe(el));
 })();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
 </script>
+<script src="/assets/constellation.js" defer></script>
 </body>
 </html>

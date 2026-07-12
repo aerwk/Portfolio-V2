@@ -5,13 +5,75 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>N5HQ — Full-Stack &amp; Infrastructure</title>
 <meta name="description" content="Full-stack development, network architecture, and infrastructure engineering. From web apps to firewalls, VLANs, and enterprise systems.">
+<link rel="canonical" href="https://www.n5hq.me/">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="N5HQ — Full-Stack &amp; Infrastructure">
+<meta property="og:description" content="Full-stack development, network architecture, and infrastructure engineering. From web apps to firewalls, VLANs, and enterprise systems.">
+<meta property="og:url" content="https://www.n5hq.me/">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="/assets/style.css?v=d14">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
+
+<div class="scene-bg" id="scene-bg" aria-hidden="true">
+  <i class="stars s1"></i>
+  <i class="stars s2"></i>
+  <i class="nebula"></i>
+  <i class="about-orb"><b class="orb-globe"><u class="orb-map"></u><u class="orb-clouds"></u><u class="orb-shade"></u></b></i>
+  <canvas class="orb-net" id="orb-net"></canvas>
+  <svg class="about-rack" viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="6" y="6" width="188" height="268" rx="12" stroke="#cfcbdb" stroke-opacity=".55" stroke-width="2" fill="#0b0a10" fill-opacity=".9"/>
+    <rect x="18" y="18" width="164" height="244" rx="6" stroke="#cfcbdb" stroke-opacity=".18" stroke-width="1"/>
+    <g>
+      <rect x="26" y="26" width="148" height="30" rx="4" stroke="#cfcbdb" stroke-opacity=".45" fill="#ffffff" fill-opacity=".03"/>
+      <circle class="led" cx="40" cy="41" r="3" fill="#e9e6f2"/>
+      <circle class="led" cx="52" cy="41" r="3" fill="#b9b3cc" style="animation-delay:-1.3s"/>
+      <path d="M70 35h92M70 41h92M70 47h92" stroke="#cfcbdb" stroke-opacity=".16"/>
+    </g>
+    <g>
+      <rect x="26" y="66" width="148" height="30" rx="4" stroke="#cfcbdb" stroke-opacity=".45" fill="#ffffff" fill-opacity=".03"/>
+      <circle class="led" cx="40" cy="81" r="3" fill="#e9e6f2" style="animation-delay:-.7s"/>
+      <rect x="66" y="74" width="14" height="14" rx="2" stroke="#cfcbdb" stroke-opacity=".35"/>
+      <rect x="86" y="74" width="14" height="14" rx="2" stroke="#cfcbdb" stroke-opacity=".35"/>
+      <rect x="106" y="74" width="14" height="14" rx="2" stroke="#cfcbdb" stroke-opacity=".35"/>
+      <rect x="126" y="74" width="14" height="14" rx="2" stroke="#cfcbdb" stroke-opacity=".35"/>
+      <rect x="146" y="74" width="14" height="14" rx="2" stroke="#cfcbdb" stroke-opacity=".35"/>
+    </g>
+    <g>
+      <rect x="26" y="106" width="148" height="30" rx="4" stroke="#cfcbdb" stroke-opacity=".45" fill="#ffffff" fill-opacity=".03"/>
+      <circle class="led" cx="40" cy="121" r="3" fill="#e9e6f2" style="animation-delay:-2.1s"/>
+      <circle class="led" cx="52" cy="121" r="3" fill="#b9b3cc" style="animation-delay:-.4s"/>
+      <path d="M70 115h92M70 121h92M70 127h92" stroke="#cfcbdb" stroke-opacity=".16"/>
+    </g>
+    <g>
+      <rect x="26" y="146" width="148" height="30" rx="4" stroke="#cfcbdb" stroke-opacity=".45" fill="#ffffff" fill-opacity=".03"/>
+      <circle class="led" cx="40" cy="161" r="3" fill="#e9e6f2" style="animation-delay:-1.8s"/>
+      <path d="M70 155h92M70 161h92M70 167h92" stroke="#cfcbdb" stroke-opacity=".16"/>
+    </g>
+    <g>
+      <rect x="26" y="186" width="148" height="30" rx="4" stroke="#cfcbdb" stroke-opacity=".45" fill="#ffffff" fill-opacity=".03"/>
+      <circle class="led" cx="40" cy="201" r="3" fill="#e9e6f2" style="animation-delay:-.9s"/>
+      <circle class="led" cx="52" cy="201" r="3" fill="#b9b3cc" style="animation-delay:-2.4s"/>
+      <rect x="66" y="194" width="14" height="14" rx="2" stroke="#cfcbdb" stroke-opacity=".35"/>
+      <rect x="86" y="194" width="14" height="14" rx="2" stroke="#cfcbdb" stroke-opacity=".35"/>
+      <rect x="106" y="194" width="14" height="14" rx="2" stroke="#cfcbdb" stroke-opacity=".35"/>
+      <rect x="126" y="194" width="14" height="14" rx="2" stroke="#cfcbdb" stroke-opacity=".35"/>
+    </g>
+    <g>
+      <rect x="26" y="226" width="148" height="30" rx="4" stroke="#cfcbdb" stroke-opacity=".45" fill="#ffffff" fill-opacity=".03"/>
+      <circle class="led" cx="40" cy="241" r="3" fill="#e9e6f2" style="animation-delay:-1.5s"/>
+      <path d="M70 235h92M70 241h92M70 247h92" stroke="#cfcbdb" stroke-opacity=".16"/>
+    </g>
+  </svg>
+</div>
 
 <header class="nav" aria-label="Primary">
   <div class="nav-in">
@@ -24,19 +86,34 @@
       </ul>
     </nav>
     <a class="btn btn-violet nav-cta" href="#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="#about">About</a>
+        <a href="#portfolio">Portfolio</a>
+        <a href="#blog">Blog</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </details>
   </div>
 </header>
 
 <main id="main">
 <!-- ================= HERO ================= -->
 <section class="hero" id="top" aria-label="Introduction">
-  <div class="wrap hero-in">
-    <span class="chip rv on">Eric Li · Full-Stack &amp; Infrastructure</span>
-    <h1 class="rv on rv-d1">From web apps to firewalls, VLANs, and enterprise systems.</h1>
-    <p class="hero-sub rv on rv-d2">Full-stack development, network architecture, and infrastructure engineering.</p>
-    <div class="hero-cta rv on rv-d3">
-      <a class="btn btn-ghost" href="#portfolio">Projects <span class="arr" aria-hidden="true">↗</span></a>
-      <a class="btn btn-violet" href="#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+  <div class="stage" id="stage">
+    <canvas class="constellation" id="constellation" aria-hidden="true"></canvas>
+    <div class="hero-in">
+      <span class="chip rv on">Eric Li · Full-Stack &amp; Infrastructure</span>
+      <h1 class="rv on rv-d1">From web apps to firewalls, VLANs, and <span class="grad">enterprise systems.</span></h1>
+      <p class="hero-sub rv on rv-d2">Full-stack development, network architecture, and infrastructure engineering.</p>
+      <div class="hero-cta rv on rv-d3">
+        <a class="btn btn-ghost" href="#portfolio">Projects <span class="arr" aria-hidden="true">↗</span></a>
+        <a class="btn btn-violet" href="#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+      </div>
     </div>
   </div>
 
@@ -64,9 +141,9 @@
         <div class="mock-main">
           <div class="mock-stats">
             <div class="mtile" data-stat="stacks"><b>6</b><span>Stacks</span></div>
-            <div class="mtile" data-stat="containers"><b>26</b><span>Containers</span></div>
-            <div class="mtile" data-stat="images"><b>30</b><span>Images</span></div>
-            <div class="mtile" data-stat="volumes"><b>9</b><span>Volumes</span></div>
+            <div class="mtile" data-stat="containers"><b>27</b><span>Containers</span></div>
+            <div class="mtile" data-stat="images"><b>40</b><span>Images</span></div>
+            <div class="mtile" data-stat="volumes"><b>11</b><span>Volumes</span></div>
             <div class="mtile" data-stat="networks"><b>12</b><span>Networks</span></div>
           </div>
           <div class="mock-chart">
@@ -94,7 +171,7 @@
 <!-- ================= LIGHT INTERLUDE: statement + stack marquee ================= -->
 <section class="band-lite" aria-label="Technology stack">
   <div class="wrap">
-    <p class="statement rv">From web applications to network infrastructure — networks deployed across homes and small businesses up to <span class="vio">1,000㎡</span>.</p>
+    <p class="statement rv">From web applications to network infrastructure — networks deployed across homes and small businesses up to <span class="vio">1,000&nbsp;m²</span>.</p>
   </div>
   <div class="marq rv" aria-hidden="true">
     <div class="marq-track">
@@ -106,7 +183,6 @@
 
 <!-- ================= ABOUT / TRUSTED ================= -->
 <section class="band about" id="about" aria-labelledby="about-t">
-  <span class="wm" aria-hidden="true">N5HQ</span>
   <div class="wrap">
     <div class="sec-head rv">
       <span class="chip">About Me</span>
@@ -205,7 +281,7 @@
       <a class="ptab ptab-violet" href="/portfolio/upcoming/" style="text-decoration:none">Upcoming</a>
       <p>Projects that are scoped, planned, and queued up — real work coming down the line.</p>
     </div>
-    <div class="cards cards-2">
+    <div class="cards cards-2 alt">
       <article class="pcard rv">
         <span class="num">04</span>
         <h3>Hotel IPTV System — 100+ Rooms</h3>
@@ -247,7 +323,7 @@
   <div class="wrap">
     <div class="sec-head rv">
       <span class="chip">Blog</span>
-      <h2 id="blog-t">Notes from <span class="vio">the transition.</span></h2>
+      <h2 id="blog-t">Notes from <span class="vio">the journey.</span></h2>
       <p class="sub">Infrastructure, learning, and building in public.</p>
     </div>
     <ul class="posts">
@@ -329,28 +405,34 @@
 <!-- ================= FOOTER ================= -->
 <footer class="footer">
   <div class="wrap">
-    <div class="foot-grid">
-      <div class="foot-brand">
-        <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
-        <p>Full-Stack &amp; Infrastructure — web apps, firewalls, VLANs, and enterprise systems.</p>
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+          <p>Full-Stack &amp; Infrastructure — web apps, firewalls, VLANs, and enterprise systems.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="/lab/">Lab dashboard →</a>
+        </div>
       </div>
-      <nav class="fcol" aria-label="Footer sections">
-        <h4>Sections</h4>
-        <ul>
-          <li><a href="#about">About</a></li>
-          <li><a href="#portfolio">Portfolio</a></li>
-          <li><a href="#blog">Blog</a></li>
-          <li><a href="/lab/">Lab</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav>
-      <div class="foot-note">
-        <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
-        <a class="foot-lab" href="/lab/">Lab dashboard →</a>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="#about">About</a>
+          <a href="#portfolio">Portfolio</a>
+          <a href="#blog">Blog</a>
+          <a href="#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
       </div>
-    </div>
-    <div class="legal">
-      <p>© 2026 N5HQ. All rights reserved.</p>
     </div>
   </div>
 </footer>
@@ -369,6 +451,132 @@
     });
   }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
   els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const links = [...document.querySelectorAll('.nav-links a[href^="#"]')];
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  const map = new Map();
+  links.forEach(a => {
+    const sec = document.querySelector(a.hash);
+    if (sec) map.set(sec, a);
+  });
+  const spy = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(a => a.removeAttribute('aria-current'));
+      map.get(e.target)?.setAttribute('aria-current', 'true');
+    });
+  }, { rootMargin: '-35% 0px -55% 0px' });
+  map.forEach((a, sec) => spy.observe(sec));
+})();
+
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cv = document.getElementById('constellation');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  // real services as constellation nodes — center is the lab itself
+  const NODES = [
+    {x:.50,y:.50,r:5,label:'N5HQ',hub:true},
+    {x:.16,y:.30,r:3,label:'UniFi'},   {x:.30,y:.16,r:3,label:'Docker'},
+    {x:.52,y:.12,r:3,label:'Grafana'}, {x:.72,y:.18,r:3,label:'Immich'},
+    {x:.86,y:.34,r:3,label:'Home Assistant'},
+    {x:.88,y:.62,r:3,label:'Prometheus'}, {x:.74,y:.82,r:3,label:'Loki'},
+    {x:.50,y:.88,r:3,label:'Uptime Kuma'}, {x:.26,y:.82,r:3,label:'Tailscale'},
+    {x:.12,y:.62,r:3,label:'Nginx'}
+  ];
+  const EDGES = NODES.slice(1).map((_,i)=>[0,i+1]).concat([[1,2],[3,4],[5,6],[7,8],[9,10]]);
+  let W,H,DPR,t0=performance.now();
+  const fit = () => {
+    DPR = Math.min(devicePixelRatio||1,2);
+    W = cv.clientWidth; H = cv.clientHeight;
+    cv.width = W*DPR; cv.height = H*DPR;
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  };
+  fit(); addEventListener('resize', fit);
+  const P = n => ({x:n.x*W, y:n.y*H});
+  const draw = now => {
+    const t = (now-t0)/1000;
+    ctx.clearRect(0,0,W,H);
+    ctx.font = '10px ui-monospace,Menlo,monospace';
+    EDGES.forEach(([a,b],i) => {
+      const A=P(NODES[a]), B=P(NODES[b]);
+      ctx.strokeStyle='rgba(255,255,255,.06)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y); ctx.stroke();
+      const ph=(t*.14+i*.19)%1;                       // pulse traveling the edge
+      const px=A.x+(B.x-A.x)*ph, py=A.y+(B.y-A.y)*ph;
+      ctx.fillStyle='rgba(154,120,255,.7)';
+      ctx.beginPath(); ctx.arc(px,py,1.4,0,7); ctx.fill();
+    });
+    NODES.forEach((n,i) => {
+      const p=P(n), bob=reduce?0:Math.sin(t*.7+i*1.7)*2;
+      const g=ctx.createRadialGradient(p.x,p.y+bob,0,p.x,p.y+bob,n.r*4.5);
+      g.addColorStop(0,n.hub?'rgba(154,120,255,.85)':'rgba(120,220,160,.55)');
+      g.addColorStop(1,'transparent');
+      ctx.fillStyle=g;
+      ctx.beginPath(); ctx.arc(p.x,p.y+bob,n.r*4.5,0,7); ctx.fill();
+      ctx.fillStyle=n.hub?'#cbbdf2':'#9fe8bc';
+      ctx.beginPath(); ctx.arc(p.x,p.y+bob,n.r,0,7); ctx.fill();
+      ctx.fillStyle='rgba(139,137,150,.75)';
+      ctx.textAlign = p.x>W*.66?'right':(p.x<W*.33?'left':'center');
+      ctx.fillText(n.label, p.x, p.y+bob-n.r-7);
+    });
+    if (!reduce && !document.hidden) requestAnimationFrame(draw);
+  };
+  requestAnimationFrame(draw);
+  document.addEventListener('visibilitychange', () => { if(!document.hidden && !reduce){ t0=performance.now()-2000; requestAnimationFrame(draw);} });
+})();
+
+(() => {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const stage = document.getElementById('stage');
+  if (stage && matchMedia('(pointer:fine)').matches) {
+    let raf=0;
+    addEventListener('pointermove', e => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        stage.style.setProperty('--drift-x',(e.clientX/innerWidth).toFixed(3));
+        stage.style.setProperty('--drift-y',(e.clientY/innerHeight).toFixed(3));
+        raf=0;
+      });
+    }, {passive:true});
+  }
+  if (matchMedia('(pointer:fine)').matches) {
+    document.querySelectorAll('.pcard,.postcard,.comp,.svc').forEach(card => {
+      card.addEventListener('pointermove', e => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', ((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+        card.style.setProperty('--my', ((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+      }, {passive:true});
+    });
+  }
+})();
+
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const nums = document.querySelectorAll('.astat b');
+  if (!nums.length || reduce || !('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    io.unobserve(e.target);
+    const end = parseInt(e.target.textContent,10); if (isNaN(end)) return;
+    const t0 = performance.now();
+    const tick = now => {
+      const k = Math.min((now-t0)/1200,1), v = Math.round(end*(1-Math.pow(2,-10*k)));
+      e.target.textContent = k<1 ? v : end;
+      if (k<1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }), {threshold:.6});
+  nums.forEach(n => io.observe(n));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
 })();
 
 (() => {
@@ -402,6 +610,155 @@
       btn.firstChild.textContent = 'Send Message ';
     }
   });
+})();
+</script>
+
+<script>
+(() => {
+  const bg = document.getElementById('scene-bg');
+  const about = document.getElementById('about');
+  if (!bg || !about) return;
+  const rack = bg.querySelector('.about-rack');
+  const orb = bg.querySelector('.about-orb');
+  const globe = bg.querySelector('.orb-globe');
+  const mapEl = bg.querySelector('.orb-map');
+  const net = document.getElementById('orb-net');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+  let p = 0, angle = -7, lockY = null, raf = 0;
+
+  const update = () => {
+    raf = 0;
+    const r = about.getBoundingClientRect();
+    const vh = innerHeight;
+    const start = vh;                        /* about top touches viewport bottom */
+    const end = (vh - r.height) / 2;         /* about vertically centred */
+    p = clamp((start - r.top) / Math.max(1, start - end), 0, 1);
+    bg.style.opacity = p.toFixed(3);
+    if (reduce) {
+      rack.style.transform = 'translateY(-58%) rotate(-7deg)';
+      orb.style.transform = 'translateY(-50%)';
+      return;
+    }
+    if (p >= 1) { if (lockY === null) lockY = scrollY; } else { lockY = null; }
+    const spin = lockY === null ? 0 : (scrollY - lockY) * 0.05;
+    angle = -720 * (1 - p) + spin - 7;
+    rack.style.transform =
+      'translateY(-58%) translateX(' + (-92 * (1 - p)).toFixed(2) + 'vw) ' +
+      'rotate(' + angle.toFixed(2) + 'deg)';
+    orb.style.transform = 'translateY(-50%) scale(' + (0.05 + 0.95 * p).toFixed(3) + ')';
+  };
+  const kick = () => { if (!raf) raf = requestAnimationFrame(update); };
+  addEventListener('scroll', kick, { passive: true });
+  addEventListener('resize', kick, { passive: true });
+  update();
+
+  /* ---- capital-city lights + rack patch cables ---- */
+  if (reduce || !net) return;
+  const CITIES = [
+    ['Washington', 38.9, -77.0], ['Ottawa', 45.4, -75.7], ['Mexico City', 19.4, -99.1],
+    ['Brasilia', -15.8, -47.9], ['Buenos Aires', -34.6, -58.4], ['London', 51.5, -0.1],
+    ['Paris', 48.9, 2.4], ['Madrid', 40.4, -3.7], ['Berlin', 52.5, 13.4], ['Rome', 41.9, 12.5],
+    ['Cairo', 30.0, 31.2], ['Moscow', 55.8, 37.6], ['Riyadh', 24.7, 46.7], ['New Delhi', 28.6, 77.2],
+    ['Beijing', 39.9, 116.4], ['Seoul', 37.6, 127.0], ['Tokyo', 35.7, 139.7], ['Bangkok', 13.8, 100.5],
+    ['Jakarta', -6.2, 106.8], ['Canberra', -35.3, 149.1], ['Pretoria', -25.7, 28.2], ['Abuja', 9.1, 7.5]
+  ].map(([name, lat, lon], i) => ({ name, lat, lon, ph: i * 1.37 }));
+  /* the 9 port squares in the rack's 200x280 viewBox (5 on unit 2, 4 on unit 5) */
+  const PORTS = [[73,81],[93,81],[113,81],[133,81],[153,81],[73,201],[93,201],[113,201],[133,201]];
+  const ports = new Array(9).fill(null);
+  const ctx = net.getContext('2d');
+  let dpr = 1;
+  const size = () => {
+    dpr = Math.min(2, devicePixelRatio || 1);
+    net.width = Math.round(innerWidth * dpr); net.height = Math.round(innerHeight * dpr);
+    net.style.width = innerWidth + 'px'; net.style.height = innerHeight + 'px';
+  };
+  addEventListener('resize', size, { passive: true });
+  size();
+  const qp = (A, C, B, t) => {
+    const u = 1 - t;
+    return [u*u*A[0] + 2*u*t*C[0] + t*t*B[0], u*u*A[1] + 2*u*t*C[1] + t*t*B[1]];
+  };
+  let last = performance.now();
+  const frame = (now) => {
+    requestAnimationFrame(frame);
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    if (p < 0.4) return;
+    const g = globe.getBoundingClientRect();
+    if (g.width < 40) return;
+    const gw = g.width, gh = g.height, gcx = g.left + gw/2, gcy = g.top + gh/2, R = gw/2;
+    const tileW = gw * 2;
+    const scale = globe.offsetWidth ? gw / globe.offsetWidth : 1;
+    const tx = new DOMMatrixReadOnly(getComputedStyle(mapEl).transform).m41 * scale;
+    const pos = CITIES.map(c => {
+      let x = ((c.lon + 180) / 360 * tileW + tx) % tileW;
+      if (x < 0) x += tileW;
+      const sx = g.left + x, sy = g.top + (90 - c.lat) / 180 * gh;
+      const inside = x < gw && Math.hypot(sx - gcx, sy - gcy) < R * 0.965;
+      return { c, sx, sy, x, inside };
+    });
+    /* sparkle: city lights switching on */
+    for (const pt of pos) {
+      if (!pt.inside) continue;
+      const tw = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(now / 540 + pt.c.ph * 2.1));
+      const r = 1.1 + 1.1 * tw;
+      const grad = ctx.createRadialGradient(pt.sx, pt.sy, 0, pt.sx, pt.sy, r * 4);
+      grad.addColorStop(0, 'rgba(238,232,252,' + (0.85 * tw).toFixed(3) + ')');
+      grad.addColorStop(0.35, 'rgba(203,184,240,' + (0.4 * tw).toFixed(3) + ')');
+      grad.addColorStop(1, 'rgba(203,184,240,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(pt.sx, pt.sy, r * 4, 0, 7); ctx.fill();
+    }
+    if (p < 0.999 || innerWidth < 900) return; /* cables only once locked & rack visible */
+    /* rack port positions under current rotation */
+    const rb = rack.getBoundingClientRect();
+    const rcx = rb.left + rb.width/2, rcy = rb.top + rb.height/2;
+    const s = (parseFloat(getComputedStyle(rack).width) || 0) / 200;
+    const a = angle * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a);
+    const portXY = PORTS.map(([px, py]) => {
+      const lx = (px - 100) * s, ly = (py - 140) * s;
+      return [rcx + lx*ca - ly*sa, rcy + lx*sa + ly*ca];
+    });
+    const byCity = new Set(ports.filter(Boolean).map(o => o.city));
+    for (let i = 0; i < 9; i++) {
+      const o = ports[i];
+      if (!o) continue;
+      const pt = pos.find(q => q.c === o.city);
+      const gone = !pt || !pt.inside || pt.x < gw * 0.18; /* nearing the left limb */
+      if (o.state !== 'ret' && gone) o.state = 'ret';
+      if (o.state === 'ext') { o.t = Math.min(1, o.t + dt / 0.9); if (o.t >= 1) o.state = 'hold'; }
+      else if (o.state === 'ret') { o.t -= dt / 0.7; if (o.t <= 0) { ports[i] = null; byCity.delete(o.city); continue; } }
+      if (pt && pt.inside) o.lastQ = [pt.sx, pt.sy];
+      const P = portXY[i], Q = o.lastQ;
+      const dx = Q[0]-P[0], dy = Q[1]-P[1], len = Math.hypot(dx, dy) || 1;
+      const C = [(P[0]+Q[0])/2 - dy/len * len*0.10, (P[1]+Q[1])/2 + dx/len * len*0.10 + len*0.05];
+      ctx.strokeStyle = 'rgba(203,184,240,0.5)';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(P[0], P[1]);
+      const STEPS = 24;
+      for (let k = 1; k <= STEPS; k++) {
+        const [qx, qy] = qp(P, C, Q, (k / STEPS) * o.t);
+        ctx.lineTo(qx, qy);
+      }
+      ctx.stroke();
+      const [ex, ey] = qp(P, C, Q, o.t);
+      ctx.fillStyle = 'rgba(238,232,252,0.9)';
+      ctx.beginPath(); ctx.arc(ex, ey, 1.6, 0, 7); ctx.fill();
+    }
+    /* patch newly-risen cities into free ports (rightmost = newest first) */
+    const cand = pos.filter(q => q.inside && !byCity.has(q.c) && q.x > gw*0.3 && q.x < gw*0.97)
+                    .sort((a, b) => b.x - a.x);
+    for (let i = 0; i < 9; i++) {
+      if (ports[i]) continue;
+      const q = cand.shift();
+      if (!q) break;
+      ports[i] = { city: q.c, state: 'ext', t: 0, lastQ: [q.sx, q.sy] };
+      byCity.add(q.c);
+    }
+  };
+  requestAnimationFrame(frame);
 })();
 </script>
 </body>

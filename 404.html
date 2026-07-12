@@ -3,22 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>In Progress — N5HQ</title>
-<meta name="description" content="Projects currently being designed, built, and deployed — each one solving a real problem in the real world.">
-<link rel="canonical" href="https://www.n5hq.me/portfolio/in-progress/">
+<title>N5HQ — Page not found</title>
+<meta name="description" content="This page doesn't exist. Head back to the N5HQ homepage.">
+<meta name="robots" content="noindex">
 <meta name="theme-color" content="#060507">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="N5HQ">
-<meta property="og:title" content="In Progress — N5HQ">
-<meta property="og:description" content="Projects currently being designed, built, and deployed — each one solving a real problem in the real world.">
-<meta property="og:url" content="https://www.n5hq.me/portfolio/in-progress/">
-<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css?v=d14">
-<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -52,49 +45,15 @@
 <main id="main">
 <section class="hero hero-sm" aria-label="Page header">
   <div class="wrap hero-in">
-    <a class="crumb rv on" href="/#portfolio">← Portfolio Showcase</a>
-    <span class="chip rv on">Active Projects</span>
-    <h1 class="rv on rv-d1">In Progress</h1>
-    <p class="hero-sub rv on rv-d2">Projects currently being designed, built, and deployed — each one solving a real problem in the real world.</p>
+    <span class="chip">404</span>
+    <h1>Page not found.</h1>
+    <p class="hero-sub">The address doesn't match anything on this site — it may have moved or never existed.</p>
+    <div class="hero-cta">
+      <a class="btn btn-violet" href="/">Back to home <span class="arr" aria-hidden="true">↗</span></a>
+      <a class="btn btn-ghost" href="/blog/">Read the blog <span class="arr" aria-hidden="true">↗</span></a>
+    </div>
   </div>
 </section>
-<section class="band band-tight"><div class="wrap">
-<h2 class="sr-only">Projects</h2>
-<div class="cards cards-2">
-      <article class="pcard rv">
-        <span class="num">02</span>
-        <h3>Family Home Dashboard</h3>
-        <p class="desc">A wall-mounted touchscreen that keeps the household in sync — shared calendar, live weather, and event countdowns at a glance.</p>
-        <details class="more" open>
-          <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
-          <div class="tags">
-            <span class="tag">Raspberry Pi 5</span><span class="tag">Docker</span><span class="tag">Home Assistant</span><span class="tag">Touchscreen</span><span class="tag">Calendar Sync</span><span class="tag">Weather API</span>
-          </div>
-          <dl class="facts">
-            <div class="frow"><dt>Hardware</dt><dd>Raspberry Pi 5 running the dashboard as a containerised service, with a touchscreen display for interaction</dd></div>
-            <div class="frow"><dt>Architecture</dt><dd>Containerised deployment allows Home Assistant to run alongside the dashboard on the same device — enabling smart device control directly from the screen</dd></div>
-            <div class="frow"><dt>Integrations</dt><dd>Custom calendar sync keeping shared family events up to date; weather API for live local forecast data</dd></div>
-          </dl>
-        </details>
-      </article>
-      <article class="pcard rv rv-d1">
-        <span class="num">03</span>
-        <h3>Caddy Rating App</h3>
-        <p class="desc">A mobile app for submitting and tracking caddy ratings, with 5-star submissions syncing live to a provider dashboard.</p>
-        <details class="more" open>
-          <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
-          <div class="tags">
-            <span class="tag">React Native</span><span class="tag">Expo</span><span class="tag">TypeScript</span><span class="tag">Firebase</span><span class="tag">Firestore</span><span class="tag">Cloud Functions</span><span class="tag">Mobile</span>
-          </div>
-          <dl class="facts">
-            <div class="frow"><dt>Frontend</dt><dd>React Native with Expo SDK 51, TypeScript, and Expo Router — tab-based navigation between a Rating screen and a Provider Dashboard</dd></div>
-            <div class="frow"><dt>Backend</dt><dd>Firebase Firestore for real-time data storage, Cloud Functions v2 for server-side logic, and EAS Build for deployment</dd></div>
-            <div class="frow"><dt>Real-Time Sync</dt><dd>Ratings submitted by clients appear instantly on the provider dashboard — no refresh required, synchronised live across all connected devices</dd></div>
-          </dl>
-        </details>
-      </article>
-    </div>
-</div></section>
 </main>
 
 <footer class="footer">
@@ -132,16 +91,6 @@
 </footer>
 
 <script>
-(() => {
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const els = document.querySelectorAll('.rv:not(.on)');
-  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
-  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
-  els.forEach(el => io.observe(el));
-})();
-
 (() => {
   const m = document.querySelector('.mnav');
   if (!m) return;

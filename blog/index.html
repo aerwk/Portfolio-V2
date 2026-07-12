@@ -4,11 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Journey — N5HQ</title>
-<meta name="description" content="Notes from the transition — infrastructure, learning, and building in public.">
+<meta name="description" content="Notes from the journey — infrastructure, learning, and building in public.">
+<link rel="canonical" href="https://www.n5hq.me/blog/">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="The Journey — N5HQ">
+<meta property="og:description" content="Notes from the journey — infrastructure, learning, and building in public.">
+<meta property="og:url" content="https://www.n5hq.me/blog/">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="/assets/style.css?v=d14">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -24,6 +34,18 @@
       </ul>
     </nav>
     <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
   </div>
 </header>
 
@@ -32,10 +54,10 @@
   <div class="wrap hero-in">
     <span class="chip rv on">Latest Adventures</span>
     <h1 class="rv on rv-d1">The Journey</h1>
-    <p class="hero-sub rv on rv-d2">Notes from the transition — infrastructure, learning, and building in public.</p>
+    <p class="hero-sub rv on rv-d2">Notes from the journey — infrastructure, learning, and building in public.</p>
   </div>
 </section>
-<section class="band" style="padding-top:0" aria-label="All posts">
+<section class="band band-tight" aria-label="All posts">
   <div class="wrap">
     <div class="tagstate" id="tagstate" hidden>Showing posts tagged <span class="tagchip is-active" id="tagstate-name"></span><a class="tagclear" href="/blog/">× clear</a></div>
     <ul class="posts">
@@ -43,7 +65,7 @@
         <span class="postmeta"><span class="cat">Homelab</span><span>2026-06-28 · 10:15 PM</span></span>
         <h3><a class="stretch" href="/blog/posts/2026-06-28.html">Moving Immich to the NAS — and the Drive That Tried to Take My Photos With It</a></h3>
         <p>A simple storage migration turned into a genuine scare when the external SSD holding my entire photo library dropped offline mid-copy and the filesystem went into emergency shutdown. SMART was clean though — it was the USB connection all along. One cable swap later: a clean 107 MB/s copy, verified file-for-file, and Immich now living on the NAS.</p>
-        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="immich" href="/blog/?tag=immich">Immich</a><a class="tagchip" data-tag="storage" href="/blog/?tag=storage">Storage</a><a class="tagchip" data-tag="nas" href="/blog/?tag=nas">Nas</a><a class="tagchip" data-tag="ssd" href="/blog/?tag=ssd">Ssd</a><a class="tagchip" data-tag="recovery" href="/blog/?tag=recovery">Recovery</a><a class="tagchip" data-tag="usb" href="/blog/?tag=usb">Usb</a></div>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="immich" href="/blog/?tag=immich">Immich</a><a class="tagchip" data-tag="storage" href="/blog/?tag=storage">Storage</a><a class="tagchip" data-tag="nas" href="/blog/?tag=nas">NAS</a><a class="tagchip" data-tag="ssd" href="/blog/?tag=ssd">SSD</a><a class="tagchip" data-tag="recovery" href="/blog/?tag=recovery">Recovery</a><a class="tagchip" data-tag="usb" href="/blog/?tag=usb">USB</a></div>
       </li>
       <li class="postcard rv-d1" data-tags="website portfolio security blog design">
         <span class="postmeta"><span class="cat">Projects</span><span>2026-06-21 · 4:47 PM</span></span>
@@ -106,27 +128,35 @@
 
 <footer class="footer">
   <div class="wrap">
-    <div class="foot-grid">
-      <div class="foot-brand">
-        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
-        <p>Full-Stack &amp; Infrastructure — web apps, firewalls, VLANs, and enterprise systems.</p>
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+          <p>Full-Stack &amp; Infrastructure — web apps, firewalls, VLANs, and enterprise systems.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="/lab/">Lab dashboard →</a>
+        </div>
       </div>
-      <nav class="fcol" aria-label="Footer sections">
-        <h4>Sections</h4>
-        <ul>
-          <li><a href="/#about">About</a></li>
-          <li><a href="/#portfolio">Portfolio</a></li>
-          <li><a href="/blog/">Blog</a></li>
-          <li><a href="/lab/">Lab</a></li>
-          <li><a href="/#contact">Contact</a></li>
-        </ul>
-      </nav>
-      <div class="foot-note">
-        <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
-        <a class="foot-lab" href="/lab/">Lab dashboard →</a>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
       </div>
     </div>
-    <div class="legal"><p>© 2026 N5HQ. All rights reserved.</p></div>
   </div>
 </footer>
 
@@ -178,6 +208,13 @@
     apply(slug);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
 })();
 </script>
 </body>
