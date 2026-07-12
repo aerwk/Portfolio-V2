@@ -224,7 +224,7 @@ POST_TEMPLATE = """<!doctype html>
 
 <header class="nav" aria-label="Primary">
   <div class="nav-in">
-    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>N5HQ</a>
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
     <nav aria-label="Sections" style="display:contents">
       <ul class="nav-links">
         <li><a href="/#about">About</a></li>
