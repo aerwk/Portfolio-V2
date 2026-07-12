@@ -216,7 +216,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
   font-weight:700!important;letter-spacing:-.045em!important;word-spacing:-.18em;line-height:1.06!important;
   max-width:none!important;white-space:nowrap;
 }
-@media (max-width:520px){.hero-display{font-size:clamp(1.6rem,9vw,2rem)!important}}
+@media (max-width:520px){.hero-display{font-size:clamp(2rem,10.5vw,2.6rem)!important}}
 .hero-display .line{
   color:transparent;
   -webkit-text-stroke:clamp(1.2px,.14vw,2px) var(--white);
