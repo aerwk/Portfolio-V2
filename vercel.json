@@ -9,6 +9,8 @@
     { "source": "/portfolio/:path(.*)", "has": [{ "type": "host", "value": "www.n5hq.me" }], "destination": "https://ericli.n5hq.me/portfolio/:path", "permanent": true },
     { "source": "/lab", "has": [{ "type": "host", "value": "ericli.n5hq.me" }], "destination": "https://www.n5hq.me/", "permanent": true },
     { "source": "/lab/:path(.*)", "has": [{ "type": "host", "value": "ericli.n5hq.me" }], "destination": "https://www.n5hq.me/", "permanent": true },
+    { "source": "/portal", "has": [{ "type": "host", "value": "ericli.n5hq.me" }], "destination": "https://www.n5hq.me/portal", "permanent": true },
+    { "source": "/portal/:path(.*)", "has": [{ "type": "host", "value": "ericli.n5hq.me" }], "destination": "https://www.n5hq.me/portal", "permanent": true },
     { "source": "/index.html", "destination": "/", "permanent": true },
     { "source": "/home", "destination": "/", "permanent": true },
     { "source": "/home/:path(.*)", "destination": "/", "permanent": true }
@@ -22,6 +24,7 @@
     { "source": "/robots.txt", "has": [{ "type": "host", "value": "ericli.n5hq.me" }], "destination": "/robots-ericli.txt" },
     { "source": "/blog", "destination": "/blog/index.html" },
     { "source": "/lab", "destination": "/lab/index.html" },
+    { "source": "/portal", "destination": "/portal/index.html" },
     { "source": "/portfolio/in-progress", "destination": "/portfolio/in-progress/index.html" },
     { "source": "/portfolio/upcoming", "destination": "/portfolio/upcoming/index.html" },
     { "source": "/portfolio/completed", "destination": "/portfolio/completed/index.html" },
