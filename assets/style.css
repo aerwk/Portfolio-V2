@@ -213,9 +213,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 /* display hero: bold solid segment jammed against outlined segment */
 .hero-display{
   font-size:clamp(2.8rem,1.4rem + 6vw,5.8rem)!important;
-  font-weight:700!important;letter-spacing:-.045em!important;word-spacing:-.18em;line-height:1.04!important;
-  max-width:15ch!important;
+  font-weight:700!important;letter-spacing:-.045em!important;word-spacing:-.18em;line-height:1.06!important;
+  max-width:none!important;white-space:nowrap;
 }
+@media (max-width:520px){.hero-display{font-size:clamp(1.6rem,9vw,2rem)!important}}
 .hero-display .line{
   color:transparent;
   -webkit-text-stroke:clamp(1.2px,.14vw,2px) var(--white);
