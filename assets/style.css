@@ -132,7 +132,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 @media (max-width:62.5rem){.nav-in{margin-inline:clamp(.75rem,3vw,2rem)}}
 .brand{font-weight:700;font-size:1.06rem;letter-spacing:.01em;color:var(--white);text-decoration:none;display:flex;align-items:center;gap:.55rem}
-.brand .be{color:var(--violet-txt)}
+.brand .be{color:#6d28ff}
 .brand-mark{width:1.35rem;height:1.35rem;border-radius:.4rem;background:url("/assets/logo-n5.svg") center/contain no-repeat;box-shadow:0 0 12px var(--violet-glo)}
 .nav-links{display:flex;gap:clamp(.7rem,1.8vw,1.5rem);list-style:none;margin-left:auto}
 .nav-links a{position:relative;font-size:.88rem;font-weight:400;color:var(--grey);text-decoration:none;padding:.35rem .2rem;transition:color .25s var(--ease)}
