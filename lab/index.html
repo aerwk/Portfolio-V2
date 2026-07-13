@@ -36,11 +36,12 @@
     <nav aria-label="Sections" style="display:contents">
       <ul class="nav-links">
         <li><a href="https://portal.n5hq.me">Portal</a></li>
+        <li><a href="https://uptime.n5hq.me" target="_blank" rel="noopener">Uptime</a></li>
         <li><a href="https://unifi.ui.com/" target="_blank" rel="noopener">UI</a></li>
         <li><a href="https://nas.n5hq.me" target="_blank" rel="noopener">NAS</a></li>
       </ul>
     </nav>
-    <a class="btn btn-violet nav-cta" href="https://uptime.n5hq.me" target="_blank" rel="noopener">Status <span class="arr" aria-hidden="true">↗</span></a>
+    <a class="btn btn-violet nav-cta" href="https://ericli.n5hq.me" target="_blank" rel="noopener">Portfolio <span class="arr" aria-hidden="true">↗</span></a>
     <details class="mnav">
       <summary aria-label="Menu">
         <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
@@ -48,24 +49,24 @@
       </summary>
       <nav class="mnav-panel" aria-label="Menu">
         <a href="https://portal.n5hq.me">Portal</a>
+        <a href="https://uptime.n5hq.me" target="_blank" rel="noopener">Uptime</a>
         <a href="https://unifi.ui.com/" target="_blank" rel="noopener">UI</a>
         <a href="https://nas.n5hq.me" target="_blank" rel="noopener">NAS</a>
-        <a href="https://uptime.n5hq.me" target="_blank" rel="noopener">Status</a>
+        <a href="https://ericli.n5hq.me" target="_blank" rel="noopener">Portfolio</a>
       </nav>
     </details>
   </div>
 </header>
 
 <main id="main">
-<section class="hero hero-sm" aria-label="Page header">
-  <div class="wrap hero-in">
-    <span class="chip rv on">Personal Homelab</span>
-    <h1 class="rv on rv-d1">Self-hosted, <span class="vio">always on.</span></h1>
-    <p class="hero-sub rv on rv-d2">Self-hosted infrastructure &amp; services running on the personal network, with live counts straight from the Docker host.</p>
+<section class="hero hero-sm" aria-label="Page header" style="padding-bottom:0">
+  <div class="wrap hero-in" style="padding-bottom:1.5rem">
+    <span class="chip rv on">HomeLab</span>
+    <h1 class="rv on rv-d1">This is <span class="vio">the rabbit hole.</span></h1>
+    <p class="hero-sub rv on rv-d2">Road to removing subscriptions from my monthly bills, taking ownership of my data once again. Self-hosted infrastructure and services running on personal network.</p>
   </div>
 </section>
 <section class="band band-tight"><div class="wrap">
-    <div class="sec-head rv"><span class="chip">Homelab Environment</span><h2>Running <span class="vio">24/7.</span></h2></div>
     <div class="mock" style="margin-top:0">
       <div class="mock-frame" style="border-radius:var(--r-lg);border-bottom:1px solid var(--line-2)">
         <div class="mock-bar"><span class="mock-dots"><i></i><i></i><i></i></span><span class="mock-url">n5ubuntu · docker</span><span style="width:2.6rem"></span></div>
@@ -77,19 +78,43 @@
             <div class="mtile" data-stat="volumes"><b>11</b><span>Volumes</span></div>
             <div class="mtile" data-stat="networks"><b>13</b><span>Networks</span></div>
           </div>
-          <div class="spec-stats">
-            <div class="mtile"><b>i5-9500T</b><span>CPU</span></div>
-            <div class="mtile"><b>6</b><span>Cores</span></div>
-            <div class="mtile"><b>32 GB</b><span>Memory</span></div>
-            <div class="mtile"><b>Ubuntu</b><span>OS</span></div>
-          </div>
-          <div class="spec-stats">
-            <div class="mtile"><b>DH4300 Plus</b><span>UGREEN NAS</span></div>
-            <div class="mtile"><b>16 TB</b><span>HDD Volume</span></div>
-            <div class="mtile"><b>3 TB</b><span>SSD Volume</span></div>
-          </div>
         </div>
       </div>
+    </div>
+    <div class="sec-head rv mt-sp4"><span class="chip">Network Infrastructure</span><h2>Ubiquiti, <span class="vio">end to end.</span></h2></div>
+    <div class="spec-stats rv">
+      <div class="mtile"><b>UCG-Fiber</b><span>Cloud Gateway</span></div>
+      <div class="mtile"><b>USW Flex 2.5G</b><span>Rack · 8× 2.5GbE</span></div>
+      <div class="mtile"><b>USW Ultra 60W</b><span>Rack · 8-port PoE</span></div>
+      <div class="mtile"><b>USW Flex Mini ×3</b><span>Rack · Office · Theatre</span></div>
+    </div>
+    <div class="spec-stats rv" style="margin-top:.55rem">
+      <div class="mtile"><b>U7 Pro Max</b><span>WiFi 7 AP · Lounge</span></div>
+      <div class="mtile"><b>U7 In-Wall ×2</b><span>WiFi 7 AP · Office · Theatre</span></div>
+      <div class="mtile"><b>U7 Lite</b><span>WiFi 7 AP · Garage</span></div>
+    </div>
+    <div class="spec-stats rv" style="margin-top:.55rem">
+      <div class="mtile"><b>G6 Turret</b><span>Protect Camera</span></div>
+      <div class="mtile"><b>G5 Turret Ultra ×3</b><span>Protect Cameras</span></div>
+      <div class="mtile"><b>G5 Dome Ultra</b><span>Protect Camera</span></div>
+    </div>
+    <div class="sec-head rv mt-sp4"><span class="chip">Compute</span><h2>Dell OptiPlex <span class="vio">7070.</span></h2></div>
+    <div class="spec-stats rv">
+      <div class="mtile"><b>Ubuntu 26.04</b><span>OS</span></div>
+      <div class="mtile"><b>i5-9500T</b><span>Intel CPU</span></div>
+      <div class="mtile"><b>6</b><span>Cores</span></div>
+      <div class="mtile"><b>32 GB</b><span>Memory</span></div>
+      <div class="mtile"><b>512 GB</b><span>NVMe SSD</span></div>
+      <div class="mtile"><b>2.5 GbE</b><span>USB Network Adapter</span></div>
+    </div>
+    <div class="sec-head rv mt-sp4"><span class="chip">Storage</span><h2>UGREEN DH4300 <span class="vio">Plus.</span></h2></div>
+    <div class="spec-stats rv">
+      <div class="mtile"><b>UGOS Pro</b><span>OS</span></div>
+      <div class="mtile"><b>RK3588C</b><span>8-core ARM CPU</span></div>
+      <div class="mtile"><b>8 GB</b><span>LPDDR4X Memory</span></div>
+      <div class="mtile"><b>2.5 GbE</b><span>LAN</span></div>
+      <div class="mtile"><b>16 TB</b><span>Volume 1 · 2× IronWolf HDD</span></div>
+      <div class="mtile"><b>3 TB</b><span>Volume 2 · Crucial SSDs</span></div>
     </div>
     <div class="sec-head rv mt-sp4"><span class="chip">Key Components</span><h2>Production-grade, <span class="vio">self-hosted.</span></h2></div>
 <div class="comps">
@@ -111,7 +136,7 @@
     <div class="foot-card">
       <div class="foot-top">
         <div class="foot-brand">
-          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span>HQ</span></a>
           <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
         <div class="foot-socials" aria-label="Social links">
           <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
@@ -123,16 +148,16 @@
         </div>
         </div>
         <div class="foot-note">
-          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
-          <a class="foot-lab" href="/">Lab dashboard →</a>
+          <p>Road to tech wiz.</p>
+          <a class="foot-lab" href="https://ericli.n5hq.me/">Personal portfolio →</a>
         </div>
       </div>
       <div class="foot-bottom">
         <nav class="foot-links" aria-label="Footer">
-          <a href="https://ericli.n5hq.me/#about">About</a>
-          <a href="https://ericli.n5hq.me/#portfolio">Portfolio</a>
-          <a href="https://ericli.n5hq.me/blog/">Blog</a>
-          <a href="https://ericli.n5hq.me/#contact">Contact</a>
+          <a href="https://portal.n5hq.me">Portal</a>
+          <a href="https://uptime.n5hq.me" target="_blank" rel="noopener">Uptime</a>
+          <a href="https://unifi.ui.com/" target="_blank" rel="noopener">UI</a>
+          <a href="https://nas.n5hq.me" target="_blank" rel="noopener">NAS</a>
         </nav>
         <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
       </div>
