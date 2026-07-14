@@ -407,6 +407,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
   transition:gap .25s var(--ease),color .25s var(--ease);
 }
 .feature-link:hover,.feature-link:focus-visible{gap:.85rem;color:#fff}
+.feature-link+.feature-link{margin-left:1.8rem}
 .pilltabs a.ptab{text-decoration:none;cursor:pointer;transition:transform .25s var(--ease),border-color .25s var(--ease-s),background-color .25s var(--ease-s)}
 .pilltabs a.ptab:hover,.pilltabs a.ptab:focus-visible{transform:translateY(-2px);border-color:currentColor;background:var(--glass-2)}
 
@@ -437,6 +438,28 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 .more .facts{margin-top:1.2rem}
 .more .fgrid{margin-top:1.3rem}
 .more .feature-link{margin-top:1.3rem}
+
+/* superscript status tag on card titles — shipped but still evolving */
+.suptag{
+  display:inline-flex;align-items:center;gap:.4em;vertical-align:.45em;
+  font-family:var(--mono);font-size:.52em;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--green);border:1px solid oklch(72% 0.15 155 / .35);border-radius:var(--r-pill);
+  padding:.18em .75em;background:oklch(72% 0.15 155 / .08);
+  margin-left:.5rem;white-space:nowrap;
+}
+.suptag::before{content:"";width:.5em;height:.5em;border-radius:50%;background:currentColor}
+
+/* small external-link chip beside the Details toggle */
+.btnrow{display:flex;align-items:center;gap:.5rem}
+.ghchip{
+  display:inline-flex;align-items:center;gap:.35rem;
+  font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.03em;color:var(--grey);
+  border:1px solid var(--line);border-radius:var(--r-pill);
+  padding:.38rem 1rem;background:var(--glass);text-decoration:none;
+  box-shadow:inset 0 1px #ffffff0f;
+  transition:background-color .25s var(--ease-s),border-color .25s var(--ease-s),color .25s var(--ease-s),transform .25s var(--ease);
+}
+.ghchip:hover,.ghchip:focus-visible{color:#fff;border-color:var(--grey);transform:translateY(-1px)}
 
 /* ---------- scene backdrop — fixed starfield + orb, scroll-driven (index only) ----------
    Entrance is driven by JS scroll progress toward #about: rack flies in from the left
@@ -669,7 +692,7 @@ main{position:relative;z-index:1}
 .prose em{color:var(--white)}
 .prose a{color:var(--violet-txt);text-decoration:underline;text-underline-offset:3px;text-decoration-color:oklch(60% 0.19 288 / .4);transition:text-decoration-color .25s var(--ease)}
 .prose a:hover{text-decoration-color:var(--violet-txt)}
-.prose code{font-family:var(--mono);font-size:.84em;color:var(--violet-txt);background:var(--bg-2);border:1px solid var(--line);border-radius:.4rem;padding:.08em .4em}
+.prose code,.pcard code,.comp code{font-family:var(--mono);font-size:.84em;color:var(--violet-txt);background:var(--bg-2);border:1px solid var(--line);border-radius:.4rem;padding:.08em .4em}
 .prose ul{list-style:none;margin:0 0 1.15rem;display:flex;flex-direction:column;gap:.5rem}
 .prose ul li{position:relative;padding-left:1.4rem;color:var(--grey);font-weight:300;line-height:1.6}
 .prose ul li::before{content:"";position:absolute;left:.1rem;top:.62em;width:.45rem;height:.45rem;border-radius:.14rem;rotate:45deg;background:linear-gradient(135deg,var(--violet),var(--violet-2))}

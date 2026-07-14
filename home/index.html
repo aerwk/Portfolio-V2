@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css?v=d26">
+<link rel="stylesheet" href="/assets/style.css?v=d27">
 <noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
 </head>
 <body>
@@ -222,42 +222,44 @@
       <a class="ptab ptab-green" href="/portfolio/completed/" style="text-decoration:none">Completed</a>
       <p>Shipped projects that are live and running — battle-tested in the real world.</p>
     </div>
-    <article class="pcard feature rv">
-      <span class="num">01</span>
-      <h3>HomeLab</h3>
-      <p class="desc">Production-grade self-hosted infrastructure running 24/7 — networking, compute, storage, monitoring, smart home, and a full Linux ISO stack, all built from scratch.</p>
-      <details class="more">
-        <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
-        <div class="tags">
-          <span class="tag">UniFi</span><span class="tag">Docker</span><span class="tag">Linux</span><span class="tag">Grafana</span><span class="tag">Home Assistant</span><span class="tag">VLANs</span><span class="tag">Pi-hole</span>
-        </div>
-        <div class="fgrid">
-          <div class="fcell"><h4>Networking</h4><p>UniFi Cloud Gateway Fiber with five isolated VLANs, inter-VLAN firewall policies, Pi-hole DNS filtering, DDNS, and 40+ connected clients</p></div>
-          <div class="fcell"><h4>Containers &amp; Services</h4><p>20+ containerised services on a Dell OptiPlex — Immich, Grafana, Prometheus, Loki, Home Assistant, and more, managed via Portainer</p></div>
-          <div class="fcell"><h4>Observability</h4><p>Prometheus metrics, Grafana dashboards, and Loki log aggregation — custom overview dashboard built via the Grafana API</p></div>
-          <div class="fcell"><h4>Smart Home</h4><p>Matter and Thread over Matter for local device control, HomeKit, Philips Hue, and Meross unified through Home Assistant</p></div>
-        </div>
-        <a class="feature-link" href="/portfolio/homelab/">View full details →</a>
-      </details>
-    </article>
-    <article class="pcard rv">
-      <span class="num">02</span>
-      <h3>disclaude-sesh</h3>
-      <p class="desc">An open-source Discord bridge for running Claude Code on a headless server — start, drive, and supervise AI sessions from a phone, published with full docs and versioned releases.</p>
-      <details class="more">
-        <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
-        <div class="tags">
-          <span class="tag">Open Source</span><span class="tag">Discord</span><span class="tag">TypeScript</span><span class="tag">Bun</span><span class="tag">systemd</span><span class="tag">Claude Code</span>
-        </div>
-        <dl class="facts">
-          <div class="frow"><dt>The gap</dt><dd>Claude Code's remote interfaces can only attach to a session that's already running — on a headless server there's no native way to start one remotely. This closes that gap from Discord</dd></div>
-          <div class="frow"><dt>Architecture</dt><dd>Two bots with deliberately split jobs: the official channel plugin carries conversation and tool-approval buttons; a minimal supervisor maps four commands to systemd — no shell passthrough, zero inbound ports</dd></div>
-          <div class="frow"><dt>Resilience</dt><dd>systemd user units and linger survive reboots, tmux survives dropped connections, a restart loop survives crashes — proven with an unattended reboot test before release</dd></div>
-          <div class="frow"><dt>Shipped</dt><dd>MIT-licensed with semver releases, a full manual install tutorial plus an AI-assisted install path, and an auto-repatcher that keeps an optional plugin patch alive across updates</dd></div>
-        </dl>
-        <a class="feature-link" href="https://github.com/aerwk/disclaude-sesh" target="_blank" rel="noopener noreferrer">View on GitHub →</a>
-      </details>
-    </article>
+    <div class="cards cards-2">
+      <article class="pcard rv">
+        <span class="num">01</span>
+        <h3>HomeLab <span class="suptag">Maintained</span></h3>
+        <p class="desc">Production-grade self-hosted infrastructure running 24/7 — networking, compute, storage, monitoring, smart home, and a full Linux ISO stack, all built from scratch.</p>
+        <details class="more">
+          <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
+          <div class="tags">
+            <span class="tag">UniFi</span><span class="tag">Docker</span><span class="tag">Linux</span><span class="tag">Grafana</span><span class="tag">Home Assistant</span><span class="tag">VLANs</span><span class="tag">Pi-hole</span>
+          </div>
+          <dl class="facts">
+            <div class="frow"><dt>Networking</dt><dd>UniFi Cloud Gateway Fiber with five isolated VLANs, inter-VLAN firewall policies, Pi-hole DNS filtering, DDNS, and 40+ connected clients</dd></div>
+            <div class="frow"><dt>Containers &amp; Services</dt><dd>20+ containerised services on a Dell OptiPlex — Immich, Grafana, Prometheus, Loki, Home Assistant, and more, managed via Portainer</dd></div>
+            <div class="frow"><dt>Observability</dt><dd>Prometheus metrics, Grafana dashboards, and Loki log aggregation — custom overview dashboard built via the Grafana API</dd></div>
+            <div class="frow"><dt>Smart Home</dt><dd>Matter and Thread over Matter for local device control, HomeKit, Philips Hue, and Meross unified through Home Assistant</dd></div>
+          </dl>
+          <a class="feature-link" href="/portfolio/homelab/">View full details →</a>
+        </details>
+      </article>
+      <article class="pcard rv rv-d1">
+        <span class="num">02</span>
+        <h3>Disclaude Sesh <span class="suptag">Maintained</span></h3>
+        <p class="desc">An open-source Discord bridge for running Claude Code on a headless server — start, drive, and supervise AI sessions from a phone, published with full docs and versioned releases.</p>
+        <details class="more">
+          <summary><span class="btnrow"><span class="more-btn">Details</span><a class="ghchip" href="https://github.com/aerwk/disclaude-sesh" target="_blank" rel="noopener noreferrer">GitHub <span class="arr" aria-hidden="true">↗</span></a></span><span class="chev" aria-hidden="true">▾</span></summary>
+          <div class="tags">
+            <span class="tag">GitHub</span><span class="tag">Open Source</span><span class="tag">Discord</span><span class="tag">TypeScript</span><span class="tag">Bun</span><span class="tag">systemd</span><span class="tag">Claude Code</span>
+          </div>
+          <dl class="facts">
+            <div class="frow"><dt>The gap</dt><dd>Claude Code's remote interfaces can only attach to a session that's already running — on a headless server there's no native way to start one remotely. This closes that gap from Discord</dd></div>
+            <div class="frow"><dt>Architecture</dt><dd>Two bots with deliberately split jobs: the official channel plugin carries conversation and tool-approval buttons; a minimal supervisor maps four commands to systemd — no shell passthrough, zero inbound ports</dd></div>
+            <div class="frow"><dt>Resilience</dt><dd>systemd user units and linger survive reboots, tmux survives dropped connections, a restart loop survives crashes — proven with an unattended reboot test before release</dd></div>
+            <div class="frow"><dt>Shipped</dt><dd>MIT-licensed with semver releases, a full manual install tutorial plus an AI-assisted install path, and an auto-repatcher that keeps an optional plugin patch alive across updates</dd></div>
+          </dl>
+          <a class="feature-link" href="/portfolio/disclaude-sesh/">View full details →</a>
+        </details>
+      </article>
+    </div>
 
     <!-- in progress -->
     <div class="grouplbl rv" id="grp-in-progress">
@@ -600,6 +602,11 @@
   if (!m) return;
   m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
   document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+
+(() => { // external chip inside a <summary>: follow the link without toggling the card
+  document.querySelectorAll('summary .ghchip').forEach(a =>
+    a.addEventListener('click', e => e.stopPropagation()));
 })();
 
 (() => {

@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HomeLab — N5HQ</title>
-<meta name="description" content="Self-hosted infrastructure powering all my personal computing needs. A production-grade homelab running 24/7.">
-<link rel="canonical" href="https://ericli.n5hq.me/portfolio/homelab/">
+<title>Disclaude Sesh — N5HQ</title>
+<meta name="description" content="An open-source Discord bridge for running Claude Code on a headless server — start, drive, and supervise AI sessions from a phone.">
+<link rel="canonical" href="https://ericli.n5hq.me/portfolio/disclaude-sesh/">
 <meta name="theme-color" content="#060507">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="N5HQ">
-<meta property="og:title" content="HomeLab — N5HQ">
-<meta property="og:description" content="Self-hosted infrastructure powering all my personal computing needs. A production-grade homelab running 24/7.">
-<meta property="og:url" content="https://ericli.n5hq.me/portfolio/homelab/">
+<meta property="og:title" content="Disclaude Sesh — N5HQ">
+<meta property="og:description" content="An open-source Discord bridge for running Claude Code on a headless server — start, drive, and supervise AI sessions from a phone.">
+<meta property="og:url" content="https://ericli.n5hq.me/portfolio/disclaude-sesh/">
 <meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -60,69 +60,53 @@
 <section class="hero hero-sm" aria-label="Page header">
   <div class="wrap hero-in">
     <a class="crumb rv on" href="/#portfolio">← Portfolio Showcase</a>
-    <span class="chip rv on">Shipped</span>
-    <h1 class="rv on rv-d1">HomeLab</h1>
-    <p class="hero-sub rv on rv-d2">Self-hosted infrastructure powering all my personal computing needs. A production-grade homelab with networking, compute, storage, surveillance, and smart home automation running 24/7.</p>
+    <span class="chip rv on">Open Source — Maintained</span>
+    <h1 class="rv on rv-d1">Disclaude Sesh</h1>
+    <p class="hero-sub rv on rv-d2">A two-bot Discord bridge for running Claude Code on a headless server — start, drive, and supervise AI sessions from a phone, from anywhere. MIT-licensed and published with full documentation and versioned releases.</p>
   </div>
 </section>
-<section class="band band-tight" aria-label="The lab at a glance"><div class="wrap">
-  <div class="sec-head rv"><span class="chip">At a Glance</span><h2>The rack, <span class="vio">by the numbers.</span></h2></div>
-  <div class="hl-bento">
-    <figure class="photo-fig rv">
-      <img src="/assets/homelab-rack.webp" width="1080" height="1440" alt="The N5HQ homelab rack — UniFi Cloud Gateway Fibre, patch panel and Flex switch cabled above a Dell OptiPlex 7070 node, with the UGREEN DH4300 Plus NAS alongside.">
-      <figcaption>The actual rack — gateway · patch panel · switch · compute, NAS alongside</figcaption>
-    </figure>
-    <div class="hl-col">
-      <div class="mock rv rv-d1" style="margin-top:0">
-        <div class="mock-frame" style="border-radius:var(--r-lg);border-bottom:1px solid var(--line-2)">
-          <div class="mock-bar"><span class="mock-dots"><i></i><i></i><i></i></span><span class="mock-url">n5ubuntu · docker</span><span style="width:2.6rem"></span></div>
-          <div class="mock-main" style="padding:1.1rem">
-            <div class="mock-stats">
-              <div class="mtile" data-stat="stacks"><b>8</b><span>Stacks</span></div>
-              <div class="mtile" data-stat="containers"><b>28</b><span>Containers</span></div>
-              <div class="mtile" data-stat="images"><b>43</b><span>Images</span></div>
-              <div class="mtile" data-stat="volumes"><b>11</b><span>Volumes</span></div>
-              <div class="mtile" data-stat="networks"><b>13</b><span>Networks</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="hl-duo">
-        <div class="comp hl-card rv rv-d1">
-          <h3>Compute</h3>
-          <div class="spec-stats">
-            <div class="mtile"><b>i5-9500T</b><span>CPU</span></div>
-            <div class="mtile"><b>6</b><span>Cores</span></div>
-            <div class="mtile"><b>32 GB</b><span>Memory</span></div>
-            <div class="mtile"><b>Ubuntu</b><span>OS</span></div>
-          </div>
-        </div>
-        <div class="comp hl-card rv rv-d2">
-          <h3>Storage — UGREEN NAS</h3>
-          <div class="spec-stats">
-            <div class="mtile"><b>DH4300 Plus</b><span>Model</span></div>
-            <div class="mtile"><b>16 TB</b><span>HDD Volume</span></div>
-            <div class="mtile"><b>3 TB</b><span>SSD Volume</span></div>
-            <div class="mtile"><b>4</b><span>Bays</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
+
+<section class="band band-tight" aria-label="The problem it solves"><div class="wrap">
+  <div class="sec-head rv"><span class="chip">The Gap</span><h2>The missing <span class="vio">start button.</span></h2></div>
+  <div class="cards cards-2">
+    <article class="pcard rv">
+      <h3>The problem</h3>
+      <p class="desc">Claude Code's remote interfaces — Remote Control, the mobile app, channel plugins — can only attach to a session that is already running. That's fine on a laptop. On an always-on server, where the CLI and the workspace live and every other machine is just a window into them, it becomes the lockout: forget to start a session before leaving, let one crash or time out, or reboot the box, and the AI is unreachable until you can SSH back in. There is no native way to start a session remotely on a headless server.</p>
+    </article>
+    <article class="pcard rv rv-d1">
+      <h3>The answer</h3>
+      <p class="desc">A supervisor bot that is deliberately dumb: four fixed commands mapped straight to systemd, a single-user allowlist, and no shell passthrough by design. Send <code>!start</code> from a phone and the session comes up on the server; the official channel plugin then carries the whole conversation — including tool-approval buttons — inside Discord. Everything conversational goes to one bot, everything operational to the other.</p>
+    </article>
   </div>
 </div></section>
-<section class="band band-tight"><div class="wrap">
-    <div class="sec-head rv"><span class="chip">Key Components</span><h2>Always learning, <span class="vio">always building.</span></h2></div>
-<div class="comps">
-      <div class="comp rv"><span class="ico" aria-hidden="true"><i></i></span><h3>Networking</h3><p>UniFi Cloud Gateway Fiber, managed switches, WiFi 7 APs, and fiber connectivity — supporting 40+ connected clients across all networks</p></div>
-      <div class="comp rv rv-d1"><span class="ico" aria-hidden="true"><i></i></span><h3>VLANs &amp; Firewall</h3><p>Five isolated networks — Management, Home, Guest, IoT, and Cameras — with inter-VLAN firewall policies enforcing least-privilege traffic rules</p></div>
-      <div class="comp rv rv-d2"><span class="ico" aria-hidden="true"><i></i></span><h3>DNS Routing &amp; DDNS</h3><p>Pi-hole for network-wide DNS filtering and local split-horizon routing; DDNS for dynamic public IP tracking across Cloudflare</p></div>
-      <div class="comp rv"><span class="ico" aria-hidden="true"><i></i></span><h3>Compute &amp; Storage</h3><p>Dell OptiPlex with Intel i5-9500T, 32GB RAM, running Ubuntu and Docker; UGREEN DH4300 Plus NAS alongside — 16TB HDD volume + 3TB SSD volume for Linux ISOs, backups, and photos</p></div>
-      <div class="comp rv rv-d1"><span class="ico" aria-hidden="true"><i></i></span><h3>Observability</h3><p>Full monitoring stack with Prometheus metrics, Grafana dashboards, and Loki log aggregation — custom homelab overview dashboard built via the Grafana API</p></div>
-      <div class="comp rv rv-d2"><span class="ico" aria-hidden="true"><i></i></span><h3>*arr ISO Automation</h3><p>Radarr, Sonarr, and Prowlarr automating acquisition and organisation of Linux ISOs; Discord webhooks push real-time notifications on downloads and status changes</p></div>
-      <div class="comp rv"><span class="ico" aria-hidden="true"><i></i></span><h3>Surveillance</h3><p>UniFi Protect cameras + Aqara smart cameras with 24/7 recording</p></div>
-      <div class="comp rv rv-d1"><span class="ico" aria-hidden="true"><i></i></span><h3>Smart Home — Matter &amp; Thread</h3><p>HomeKit, Philips Hue, and Meross devices unified via Home Assistant; Matter and Thread over Matter for local, cloud-independent device control</p></div>
-      <div class="comp rv rv-d2"><span class="ico" aria-hidden="true"><i></i></span><h3>API Integrations</h3><p>Custom automations via Home Assistant REST API, UniFi Network API, Grafana API, Cloudflare API, and Discord webhooks — services talk to each other without manual intervention</p></div>
+
+<section class="band band-tight" aria-label="How it works"><div class="wrap">
+  <div class="sec-head rv"><span class="chip">How It Works</span><h2>Two bots, <span class="vio">split on purpose.</span></h2></div>
+  <div class="comps">
+    <div class="comp rv"><span class="ico" aria-hidden="true"><i></i></span><h3>Supervisor Bot</h3><p>Bun + discord.js, roughly a hundred lines — <code>!start</code> <code>!stop</code> <code>!restart</code> <code>!status</code> drive a systemd user unit; strangers are silently dropped by a user-ID allowlist</p></div>
+    <div class="comp rv rv-d1"><span class="ico" aria-hidden="true"><i></i></span><h3>Channel Plugin</h3><p>The official Claude Code Discord plugin carries messages into the live session and replies back out — DM or channel, no @-mention needed once paired</p></div>
+    <div class="comp rv rv-d2"><span class="ico" aria-hidden="true"><i></i></span><h3>Approvals on the Phone</h3><p>Tool permission prompts arrive as Allow/Deny buttons in Discord; an optional patch moves them from DMs into the ops channel without granting anyone else approval power</p></div>
+    <div class="comp rv"><span class="ico" aria-hidden="true"><i></i></span><h3>Unattended Resilience</h3><p>systemd user units with linger survive reboots, tmux survives dropped connections, a restart loop survives crashes — proven with an unattended reboot test before release</p></div>
+    <div class="comp rv rv-d1"><span class="ico" aria-hidden="true"><i></i></span><h3>Security Model</h3><p>Zero inbound ports — both bots are outbound gateway clients. Tokens live in one chmod-600 config file; sender allowlists gate both bots; permission prompts stay on by default</p></div>
+    <div class="comp rv rv-d2"><span class="ico" aria-hidden="true"><i></i></span><h3>Auto-Repatcher</h3><p>Plugin updates silently revert local patches — a pre-launch check re-applies the channel-buttons patch, verifies it still compiles, and posts a Discord notice either way</p></div>
+  </div>
+</div></section>
+
+<section class="band band-tight" aria-label="On GitHub"><div class="wrap">
+  <div class="sec-head rv"><span class="chip">On GitHub</span><h2>Built to be <span class="vio">installed by strangers.</span></h2></div>
+  <article class="pcard feature rv">
+    <h3>aerwk/disclaude-sesh</h3>
+    <p class="desc">Published under the MIT licence with semver releases. The README documents two installation paths: a full manual tutorial for humans who want to understand every step, and a single copy-paste prompt that hands the entire server-side setup to Claude Code — the human only does the two things it can't: click through the Discord Developer Portal and send a pairing DM.</p>
+    <div class="tags">
+      <span class="tag">MIT</span><span class="tag">Discord</span><span class="tag">TypeScript</span><span class="tag">Bun</span><span class="tag">systemd</span><span class="tag">tmux</span><span class="tag">Claude Code</span>
     </div>
+    <div class="fgrid">
+      <div class="fcell"><h4>Docs</h4><p>Installation (manual and AI-assisted), usage and commands, security notes, troubleshooting, uninstall — plus a full write-up of the optional channel-buttons patch and its safety model</p></div>
+      <div class="fcell"><h4>Defaults</h4><p>The risky conveniences are opt-in flags, not out-of-the-box behaviour: permission prompts stay on, the plugin patch stays off, and every identifier in the repo is a placeholder</p></div>
+    </div>
+    <a class="feature-link" href="https://github.com/aerwk/disclaude-sesh" target="_blank" rel="noopener noreferrer">View the repository →</a>
+    <a class="feature-link" href="/blog/posts/2026-07-14.html">Read the build story →</a>
+  </article>
 </div></section>
 </main>
 
