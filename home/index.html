@@ -146,7 +146,7 @@
         <div class="mock-main">
           <div class="mock-stats">
             <div class="mtile" data-stat="stacks"><b>8</b><span>Stacks</span></div>
-            <div class="mtile" data-stat="containers"><b>27</b><span>Containers</span></div>
+            <div class="mtile" data-stat="containers"><b>28</b><span>Containers</span></div>
             <div class="mtile" data-stat="images"><b>43</b><span>Images</span></div>
             <div class="mtile" data-stat="volumes"><b>11</b><span>Volumes</span></div>
             <div class="mtile" data-stat="networks"><b>13</b><span>Networks</span></div>
@@ -225,7 +225,7 @@
     <article class="pcard feature rv">
       <span class="num">01</span>
       <h3>HomeLab</h3>
-      <p class="desc">Production-grade self-hosted infrastructure running 24/7 — networking, compute, storage, monitoring, smart home, and a full media stack, all built from scratch.</p>
+      <p class="desc">Production-grade self-hosted infrastructure running 24/7 — networking, compute, storage, monitoring, smart home, and a full Linux ISO stack, all built from scratch.</p>
       <details class="more">
         <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
         <div class="tags">
@@ -332,7 +332,12 @@
       <p class="sub">Infrastructure, learning, and building in public.</p>
     </div>
     <ul class="posts">
-      <li><a class="postcard rv" href="/blog/posts/2026-07-13.html">
+      <li><a class="postcard rv" href="/blog/posts/2026-07-14.html">
+        <span class="postmeta"><span class="cat">Projects</span><span>2026-07-14</span></span>
+        <h3>Discord In, Linux ISOs Out</h3>
+        <p>The home server archives Linux ISOs: some ship once like an LTS release, others push a new point release every week for years. Requesting one was already a Discord message, but the last metre was still me, dragging finished downloads into the folders the library software actually watches. This week the pipeline closed: a small sorter container now shelves every ISO by genre and language, season-sized release archives stopped failing once we found the dead mirror behind the timeouts, and the request app got a cleaner name.</p>
+      </a></li>
+      <li><a class="postcard rv-d1" href="/blog/posts/2026-07-13.html">
         <span class="postmeta"><span class="cat">Projects</span><span>2026-07-13</span></span>
         <h3>I Gave the AI a Browser, and We Shipped the Redesign</h3>
         <p>The redesign had been sitting on a preview port waiting for my eyes, because I was the only one in the loop who could see pixels. That changed today: headless Chromium went onto the server, and suddenly every change came back with screenshots attached. What followed was the most productive day this site has ever had — a rebuilt footer, a scroll-driven purple Earth with ethernet cables patching into world capitals, my actual rack photo on the homelab page, live Docker stats on three pages, and the whole thing pushed to production before bed.</p>
@@ -342,20 +347,15 @@
         <h3>I Sat Down to Add One Button and Rebuilt Half My Smart Home</h3>
         <p>The plan was small: wire a few Home Assistant controls onto my Stream Deck. Opening Home Assistant to do it exposed the real state of things — five broken integrations, and a chunk of the house that lived in Apple Home but had never made it into HA at all. So the button waited. What followed was a day of standing up a Matter server, untangling why my devices were spread across three VLANs that Matter can&#x27;t see across, migrating the whole Meross fleet to local control, and clearing every broken integration off the board. Classic me: I went in for a light switch and came out having rebuilt the foundation.</p>
       </a></li>
-      <li><a class="postcard rv-d1" href="/blog/posts/2026-07-01.html">
+      <li><a class="postcard rv-d2" href="/blog/posts/2026-07-01.html">
         <span class="postmeta"><span class="cat">Homelab</span><span>2026-07-01</span></span>
         <h3>I Built a Status Page, and It Caught My NAS Crashing Before I Finished Setting It Up</h3>
         <p>The plan was a quiet evening standing up Uptime Kuma to watch the homelab. On its very first round of checks it flagged Immich as down — a real outage, not a config mistake. That kicked off a four-hour hunt that ran through stale CIFS mounts and a misbehaving Samba service before SSH into the NAS finally gave a straight answer: the disks were perfect, and smbd was segfaulting on a corrupted database held in RAM. The monitoring&#x27;s first job turned out to be catching its own storage backend falling over.</p>
       </a></li>
-      <li><a class="postcard rv-d2" href="/blog/posts/2026-06-28.html">
+      <li><a class="postcard rv" href="/blog/posts/2026-06-28.html">
         <span class="postmeta"><span class="cat">Homelab</span><span>2026-06-28</span></span>
         <h3>Moving Immich to the NAS — and the Drive That Tried to Take My Photos With It</h3>
         <p>A simple storage migration turned into a genuine scare when the external SSD holding my entire photo library dropped offline mid-copy and the filesystem went into emergency shutdown. SMART was clean though — it was the USB connection all along. One cable swap later: a clean 107 MB/s copy, verified file-for-file, and Immich now living on the NAS.</p>
-      </a></li>
-      <li><a class="postcard rv" href="/blog/posts/2026-06-21.html">
-        <span class="postmeta"><span class="cat">Projects</span><span>2026-06-21</span></span>
-        <h3>Taking the Email Off the Page, and Knowing When to Undo a Logo</h3>
-        <p>Pulled my real email out of the contact form and routed it through a masked endpoint, added tag filtering to the blog so posts can be browsed by topic, then spent the evening building a custom logo to replace the placeholder diamond — tried it in the nav and footer, decided it wasn&#x27;t right, and reverted it. Finished by pushing the day&#x27;s work live.</p>
       </a></li>
       <li class="rv rv-d2"><span class="postcard postcard-cta">
         <h3>Blog</h3>

@@ -74,7 +74,7 @@
 <p>Energy: 7/10. Mood: 7/10. A full day — server work through most of it, vault documentation in the afternoon. Ended up dealing with an unexpected Immich outage too, which turned into one of the more satisfying debug sessions in a while.</p>
 <h2>Storage Rename and Samba</h2>
 <p>The 2TB external drive had been mounted at <code>/mnt/photos</code> since Immich was first set up — a name that made sense at the time but was misleading given the drive was always meant to act as a local NAS placeholder until a proper NAS gets built. Renamed it to <code>/mnt/tmpnas</code>: created the new mount point, unmounted the drive, updated <code>/etc/fstab</code>, remounted, and updated Immich's <code>.env</code> to point <code>UPLOAD_LOCATION</code> to <code>/mnt/tmpnas/immich</code>. Restarted the Immich stack to confirm photos still loaded. They did.</p>
-<p>With the drive properly named, set up two Samba shares on top of it. <code>homeshare</code> is guest-accessible, read/write, available to anything on the network — a general-purpose drop point. <code>eykli</code> is private, requires a Samba password, for personal files. Both share blocks added to <code>/etc/samba/smb.conf</code>, Samba restarted. The shares are reachable locally and through Tailscale using <code>smb://100.78.149.70/homeshare</code> (or <code>/eykli</code>).</p>
+<p>With the drive properly named, set up two Samba shares on top of it. <code>homeshare</code> is guest-accessible, read/write, available to anything on the network — a general-purpose drop point. The second share is private, password-protected, for personal files. Both share blocks added to <code>/etc/samba/smb.conf</code>, Samba restarted. The shares are reachable locally and through Tailscale at <code>smb://x.x.149.70</code>.</p>
 <p>One gotcha worth noting: <code>lsblk</code> briefly showed the drive as unmounted during the remount process — not an actual problem, just a timing thing between commands. The Immich photo loading issue after the restart was caused by the container having started before the drive was properly mounted; restarting the stack after confirming the mount resolved it.</p>
 <h2>T7 Shield UAS Fix</h2>
 <p>Later in the day, opened Immich and photos weren't loading. Checked <code>docker stats</code> and saw <code>immich_server</code> sitting at 147% disk utilisation with a 25-second flush wait and 4.9 second write latency. That's not a software problem.</p>
@@ -96,7 +96,7 @@
 <h2>What's Next</h2>
 <ul>
 <li class="task-open">Re-establish HomeKit pairing for Aqara doorbell</li>
-<li class="task-open">Install Canon G4600 Series driver, update printer port to <code>10.1.1.5</code></li>
+<li class="task-open">Install Canon G4600 Series driver, update printer port to <code>x.x.1.5</code></li>
 <li class="task-open">Fix Claudian session ID error on MacBook</li>
 <li class="task-open">Fix WAN uptime Grafana panel</li>
 <li class="task-open">Cloudflare Access in front of Immich</li>
@@ -111,7 +111,7 @@
     <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="samba" href="/blog/?tag=samba">Samba</a><a class="tagchip" data-tag="storage" href="/blog/?tag=storage">Storage</a><a class="tagchip" data-tag="immich" href="/blog/?tag=immich">Immich</a><a class="tagchip" data-tag="kernel" href="/blog/?tag=kernel">Kernel</a><a class="tagchip" data-tag="vault" href="/blog/?tag=vault">Vault</a><a class="tagchip" data-tag="home-assistant" href="/blog/?tag=home-assistant">Home Assistant</a><a class="tagchip" data-tag="recovery" href="/blog/?tag=recovery">Recovery</a></div>
     <nav class="postfoot rv on" aria-label="Post navigation">
       <a class="btn btn-ghost" href="/blog/posts/2026-06-10.html">← Network Fixes, Tailscale, and a NIC Upgrade</a>
-      <a class="btn btn-ghost" href="/blog/posts/2026-06-12.html">Three Designs, a Domain Cutover, and the Media Stack Comes Home →</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-12.html">Three Designs, a Domain Cutover, and the Linux ISO Stack Comes Home →</a>
     </nav>
   </div>
 </article>

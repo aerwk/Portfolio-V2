@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Discord In, Linux ISOs Out — N5HQ</title>
+<meta name="description" content="The home server archives Linux ISOs: some ship once like an LTS release, others push a new point release every week for years. Requesting one was already a Discord message, but the last metre was still me, dragging finished downloads into the folders the library software actually watches. This week the pipeline closed: a small sorter container now shelves every ISO by genre and language, season-sized release archives stopped failing once we found the dead mirror behind the timeouts, and the request app got a cleaner name.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-07-14.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Discord In, Linux ISOs Out — N5HQ">
+<meta property="og:description" content="The home server archives Linux ISOs: some ship once like an LTS release, others push a new point release every week for years. Requesting one was already a Discord message, but the last metre was still me, dragging finished downloads into the folders the library software actually watches. This week the pipeline closed: a small sorter container now shelves every ISO by genre and language, season-sized release archives stopped failing once we found the dead mirror behind the timeouts, and the request app got a cleaner name.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-07-14.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d26">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Discord In, Linux ISOs Out</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Projects</span>
+      <span class="chip">2026-07-14 · Tuesday · 8:55 AM</span>
+      <span class="chip">4 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>My home server archives Linux ISOs. Some of them are feature-length images that ship once and never change, like an LTS release. Others are rolling-release distros: a new point release every week, sometimes for fifteen years straight, and completists want the full back-catalogue. The household requests these ISOs by typing a name at a Discord bot, and a chain of services does the rest: the bot hands the request to Seerr, Seerr hands it to the fetchers, the fetchers find a source and download it. All very hands-off, except for the last metre, which was me.</p>
+<h2>The last metre</h2>
+<p>The library software organises the collection into eight shelves: feature ISOs and rolling-release ISOs, each split by origin — anime, Asian, English, foreign — plus one hand-curated kids shelf that nobody but me touches. Each shelf watches its own folder. The fetchers, though, drop everything into two landing folders that no shelf watches at all. So every requested ISO downloaded perfectly, then sat invisible until I noticed the household asking where it was, shelled in, and dragged it to the right folder by hand. An automated pipeline with a human as the final conveyor belt.</p>
+<p>The obvious fix was the request app's built-in routing rules, and it turned out to be a trap. Route by genre and by language sounds fine until an animated ISO from Japan matches both the Animation rule and the Asian-language rule, and the app's documentation doesn't say which one wins. The only way to find out was to fire real requests and watch where they landed. I'd be debugging a black box with live ammunition.</p>
+<h2>A small librarian</h2>
+<p>Instead the server got one more container: forty lines of compose and a Python script that wakes every fifteen minutes, looks at whatever landed in the transit folders, and asks the metadata service what each ISO actually is. The rules are mine, written down where I can read them: anything tagged Animation goes to the anime shelf no matter what language it speaks, live-action in an Asian language goes to the Asian shelf, English goes to English, and the kids shelf is never, ever, touched by a machine. Moves are renames on the same filesystem, so a fifty-gigabyte archive shelves itself instantly instead of copying, and the fetcher's bookkeeping gets updated so it doesn't go looking for files in the old spot.</p>
+<p>First live sweep, it found two rolling-release distros stranded in transit, read their metadata, and filed one under English and one under anime. Both appeared on their shelves before I'd finished reading the log line.</p>
+<h2>The release archives that wouldn't fetch</h2>
+<p>While I was in there, a longer-standing annoyance: requesting a full season-sized release archive of a rolling distro almost never worked, and single point releases only sometimes. The causes were stacked three deep, which is why it always looked random.</p>
+<p>First, a global size cap of five gigabytes, sensible for one point release, meant every full archive was rejected on sight — those run twenty to forty gigabytes. Raised to fifty: big enough for any real archive, still small enough to reject the fake two-hundred-gigabyte "releases" that are never what they claim. Second, quality floors. I set them to ten megabytes a minute deliberately, because I still want the content to be quality; bottom-shelf re-encodes can stay where they are. Third, the actual killer: the busiest indexer was handing out download files through a mirror site that had quietly died. Every grab hung for a hundred and twelve seconds, failed, and each failure put the indexer in a penalty timeout, which made everything downstream look broken in new and confusing ways. The fix was one setting: prefer magnet links, skip the corpse of the mirror entirely. Grabs went from a two-minute timeout to four seconds.</p>
+<p>Proof run: asked for a missing point release from a distro nine major versions deep. Found, fetched, and on the shelf inside a minute. There's a back-catalogue of about a thousand missing point releases across the collection that's suddenly within reach.</p>
+<h2>Housekeeping</h2>
+<p>The request app also got a rename. It runs Seerr now, the successor to Overseerr, but its public address still said otherwise. The tricky part of renaming a gated service is the gap where the new name exists but the login gate doesn't, so the gate was armed for both names before the new one existed, then the old name was dropped once the switch was verified. Portal tile, uptime monitors, done.</p>
+<p>So the pipeline is closed. Type a name into Discord, and a few minutes later the ISO is on the correct shelf, sorted by what it is and where it's from, with nobody dragging files anywhere. The server hands out Linux ISOs like a package manager now. As it always should have.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="docker" href="/blog/?tag=docker">Docker</a><a class="tagchip" data-tag="plex" href="/blog/?tag=plex">Plex</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="python" href="/blog/?tag=python">Python</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-13.html">← I Gave the AI a Browser, and We Shipped the Redesign</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>
