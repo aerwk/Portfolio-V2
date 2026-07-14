@@ -196,7 +196,7 @@
     <div class="about-in">
       <p class="about-copy rv">I design, deploy, and maintain real infrastructure. My homelab runs five isolated VLANs, 20+ containerised services, and a full monitoring stack 24/7 — every piece built and documented from scratch. I'm moving into tech full-time by <span class="vio">2027</span>, focused on <span class="vio">networking and data science</span>, and I'd rather prove it with systems that run than a job title I don't hold yet.</p>
       <div class="about-side">
-        <div class="astat rv"><b>5</b><span><span class="t">Projects Built</span><p>Across web, mobile, and network infrastructure</p></span></div>
+        <div class="astat rv"><b id="stat-projects">10</b><span><span class="t">Projects</span><p>Portfolio builds plus four production networks deployed</p></span></div>
         <div class="astat rv rv-d1"><b>4</b><span><span class="t">Certifications</span><p>Industry credentials, in progress</p></span></div>
         <div class="astat rv rv-d2"><b>3</b><span><span class="t">Years Hands-On</span><p>Self-directed, building and breaking real systems</p></span></div>
       </div>
@@ -576,6 +576,13 @@
       }, {passive:true});
     });
   }
+})();
+
+(() => { // live Projects stat: portfolio cards on this page + networks deployed
+  const NETWORKS_DEPLOYED = 4;
+  const b = document.getElementById('stat-projects');
+  const cards = document.querySelectorAll('#portfolio article.pcard').length;
+  if (b && cards) b.textContent = cards + NETWORKS_DEPLOYED;
 })();
 
 (() => {
