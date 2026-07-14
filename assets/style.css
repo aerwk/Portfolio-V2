@@ -441,13 +441,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 
 /* superscript status tag on card titles — shipped but still evolving */
 .suptag{
-  display:inline-flex;align-items:center;gap:.4em;vertical-align:.45em;
-  font-family:var(--mono);font-size:.52em;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
-  color:var(--green);border:1px solid oklch(72% 0.15 155 / .35);border-radius:var(--r-pill);
-  padding:.18em .75em;background:oklch(72% 0.15 155 / .08);
-  margin-left:.5rem;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:.35em;vertical-align:.55em;
+  font-family:var(--mono);font-size:.58rem;font-weight:500;letter-spacing:.03em;
+  color:var(--green);border:1px solid oklch(72% 0.15 155 / .3);border-radius:var(--r-pill);
+  padding:.12rem .5rem;background:oklch(72% 0.15 155 / .07);
+  margin-left:.45rem;white-space:nowrap;
 }
-.suptag::before{content:"";width:.5em;height:.5em;border-radius:50%;background:currentColor}
+.suptag::before{content:"";width:.3rem;height:.3rem;border-radius:50%;background:currentColor}
 
 /* small external-link chip beside the Details toggle */
 .btnrow{display:flex;align-items:center;gap:.5rem}
