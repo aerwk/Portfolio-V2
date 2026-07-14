@@ -83,6 +83,24 @@
         <a class="feature-link" href="/portfolio/homelab/">View full details →</a>
       </details>
     </article>
+<article class="pcard rv">
+      <span class="num">02</span>
+      <h3>disclaude-sesh</h3>
+      <p class="desc">An open-source Discord bridge for running Claude Code on a headless server — start, drive, and supervise AI sessions from a phone, published with full docs and versioned releases.</p>
+      <details class="more" open>
+        <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
+        <div class="tags">
+          <span class="tag">Open Source</span><span class="tag">Discord</span><span class="tag">TypeScript</span><span class="tag">Bun</span><span class="tag">systemd</span><span class="tag">Claude Code</span>
+        </div>
+        <dl class="facts">
+          <div class="frow"><dt>The gap</dt><dd>Claude Code's remote interfaces can only attach to a session that's already running — on a headless server there's no native way to start one remotely. This closes that gap from Discord</dd></div>
+          <div class="frow"><dt>Architecture</dt><dd>Two bots with deliberately split jobs: the official channel plugin carries conversation and tool-approval buttons; a minimal supervisor maps four commands to systemd — no shell passthrough, zero inbound ports</dd></div>
+          <div class="frow"><dt>Resilience</dt><dd>systemd user units and linger survive reboots, tmux survives dropped connections, a restart loop survives crashes — proven with an unattended reboot test before release</dd></div>
+          <div class="frow"><dt>Shipped</dt><dd>MIT-licensed with semver releases, a full manual install tutorial plus an AI-assisted install path, and an auto-repatcher that keeps an optional plugin patch alive across updates</dd></div>
+        </dl>
+        <a class="feature-link" href="https://github.com/aerwk/disclaude-sesh" target="_blank" rel="noopener noreferrer">View on GitHub →</a>
+      </details>
+    </article>
 </div></section>
 </main>
 
