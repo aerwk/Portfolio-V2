@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Discord In, Linux ISOs Out — N5HQ</title>
-<meta name="description" content="The home server archives Linux ISOs: some ship once like an LTS release, others push a new point release every week for years. Requesting one was already a Discord message, but the last metre was still me, dragging finished downloads into the folders the library software actually watches. This week the pipeline closed: a small sorter container now shelves every ISO by genre and language, season-sized release archives stopped failing once we found the dead mirror behind the timeouts, and the request app got a cleaner name.">
+<meta name="description" content="The home server archives Linux ISOs: some ship once like an LTS release, others push a new point release every week for years. Requesting one was already a Discord message, but the last metre was still me, dragging finished downloads into the folders the library software actually watches. This week the pipeline closed: a small sorter container now shelves every ISO by genre and language, season-sized release archives stopped failing once we found the dead mirror behind the timeouts, and the request app got a cleaner name. Then, in the evening: the server proved it could reboot with nobody home, and the Discord ops bridge became a public repo anyone can install.">
 <link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-07-14.html">
 <meta name="theme-color" content="#060507">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="N5HQ">
 <meta property="og:title" content="Discord In, Linux ISOs Out — N5HQ">
-<meta property="og:description" content="The home server archives Linux ISOs: some ship once like an LTS release, others push a new point release every week for years. Requesting one was already a Discord message, but the last metre was still me, dragging finished downloads into the folders the library software actually watches. This week the pipeline closed: a small sorter container now shelves every ISO by genre and language, season-sized release archives stopped failing once we found the dead mirror behind the timeouts, and the request app got a cleaner name.">
+<meta property="og:description" content="The home server archives Linux ISOs: some ship once like an LTS release, others push a new point release every week for years. Requesting one was already a Discord message, but the last metre was still me, dragging finished downloads into the folders the library software actually watches. This week the pipeline closed: a small sorter container now shelves every ISO by genre and language, season-sized release archives stopped failing once we found the dead mirror behind the timeouts, and the request app got a cleaner name. Then, in the evening: the server proved it could reboot with nobody home, and the Discord ops bridge became a public repo anyone can install.">
 <meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-07-14.html">
 <meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
 <meta property="og:image:width" content="1200">
@@ -62,7 +62,7 @@
     <div class="meta rv on rv-d2">
       <span class="chip">Projects</span>
       <span class="chip">2026-07-14 · Tuesday · 8:55 AM</span>
-      <span class="chip">4 min read</span>
+      <span class="chip">7 min read</span>
       <span class="chip badge-ai">90% AI</span>
       <span class="chip chip-author">Eric Li</span>
     </div>
@@ -85,8 +85,18 @@
 <h2>Housekeeping</h2>
 <p>The request app also got a rename. It runs Seerr now, the successor to Overseerr, but its public address still said otherwise. The tricky part of renaming a gated service is the gap where the new name exists but the login gate doesn't, so the gate was armed for both names before the new one existed, then the old name was dropped once the switch was verified. Portal tile, uptime monitors, done.</p>
 <p>So the pipeline is closed. Type a name into Discord, and a few minutes later the ISO is on the correct shelf, sorted by what it is and where it's from, with nobody dragging files anywhere. The server hands out Linux ISOs like a package manager now. As it always should have.</p>
+<h2>The reboot nobody watched</h2>
+<p>The morning's work ended with a deliberate act of violence: reboot the whole server and see what comes back on its own. Everything on this box is supposed to survive that — the containers, the network mounts, the tunnel, and the two Discord bots that let me drive the server from my phone. Supposed to. The only way to know is to pull the trigger with a baseline captured and a verification script waiting.</p>
+<p>Verdict: sixteen out of sixteen service probes up, all three network mounts back, and the photo library visible the moment its container started — that last one matters because it used to lose a race against the NAS mount at boot and wake up staring at an empty directory. One systemd drop-in (make Docker wait for remote filesystems) killed that race permanently. The verification script did report one failure, which turned out to be the best kind: a service that looked dead was just socket-activated, dozing until something first knocks. The box now provably returns from a power cut with nobody logged in, and the bots answer from the couch before I've noticed the lights blinked.</p>
+<h2>Going public</h2>
+<p>The Discord bridge itself — two small bots, one that carries the conversation into a live Claude Code session and one that only knows four words (<code>!start</code> <code>!stop</code> <code>!restart</code> <code>!status</code>) — had been asked about enough that it deserved to stop being a private pile of scripts. So the evening went to open-sourcing it: <a href="https://github.com/aerwk/disclaude-sesh">disclaude-sesh</a>.</p>
+<p>Publishing homelab plumbing is mostly a privacy exercise. The private version had my paths, my Discord IDs, my quirks baked in everywhere. The public one got a single config file, placeholder IDs, and — importantly — different defaults than I run: the risky conveniences (skipping permission prompts, patching the plugin to move approval buttons into a channel) are opt-in flags with their trade-offs documented, not the out-of-the-box behavior. Then an automated sanitizer pass grepped the whole tree for everything from tokens to interface names before the first commit ever existed. Nothing personal survived into history.</p>
+<p>The README got two installation paths, because the project is itself about AI-assisted ops: a full manual tutorial for humans who want to understand every step, and a single copy-paste prompt that hands the entire server-side setup to Claude Code while the human only does the two things it can't — click around the Discord Developer Portal and send a pairing DM.</p>
+<h2>Release buttons</h2>
+<p>First release means version one point oh, live badges on the README — star count, latest release, how many people are online in the Discord — and a lesson at the very end: one commit message credited another project as the style reference for the page layout. Harmless? On a public repo the commit log <em>is</em> published content, and it should describe the change, not the mood board. Scrubbing two words from an already-pushed message costs a history rewrite, a moved tag, and re-pointed release notes. Cheap on a repo that's three hours old; a good habit to have learned before it wasn't.</p>
+<p>One day, one arc: the request pipeline stopped needing me in the morning, the server proved it doesn't need me at boot, and by midnight the whole remote-control rig became something a stranger can install without ever seeing my setup. The couch is now a fully supported deployment target.</p>
     </div>
-    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="docker" href="/blog/?tag=docker">Docker</a><a class="tagchip" data-tag="plex" href="/blog/?tag=plex">Plex</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="python" href="/blog/?tag=python">Python</a></div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="docker" href="/blog/?tag=docker">Docker</a><a class="tagchip" data-tag="plex" href="/blog/?tag=plex">Plex</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="python" href="/blog/?tag=python">Python</a><a class="tagchip" data-tag="open-source" href="/blog/?tag=open-source">Open Source</a></div>
     <nav class="postfoot rv on" aria-label="Post navigation">
       <a class="btn btn-ghost" href="/blog/posts/2026-07-13.html">← I Gave the AI a Browser, and We Shipped the Redesign</a>
       <span></span>
