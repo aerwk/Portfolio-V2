@@ -125,12 +125,34 @@ def meta_html(fm, readtime):
     return '<div class="meta rv on rv-d2">\n      ' + "\n      ".join(parts) + "\n    </div>"
 
 
+# Only these schemes may appear in a generated href. Anything else — javascript:,
+# data:, vbscript: — is rendered as inert text rather than a link.
+SAFE_URL = re.compile(r"^(?:https?://|mailto:|/|\#|\./)", re.I)
+
+
+def _link_sub(m):
+    """Render [text](url) with the URL escaped for attribute context.
+
+    The body is html.escape()d with quote=False before inline() runs, so a bare
+    double quote survives into here. Splicing it straight into href= lets a URL
+    close the attribute and inject its own (stored XSS). Escape quotes, and drop
+    any scheme that is not on the allowlist.
+    """
+    label, url = m.group(1), m.group(2).strip()
+    if not SAFE_URL.match(url):
+        return label
+    # & < > are already escaped upstream by html.escape(..., quote=False);
+    # the double quote is the one it leaves behind, and the one that matters here.
+    safe = url.replace('"', "&quot;")
+    return f'<a href="{safe}">{label}</a>'
+
+
 def inline(text):
     """Inline markdown -> HTML on already &<>-escaped text."""
     text = re.sub(r"`([^`]+)`", r"<code>\1</code>", text)
     text = re.sub(r"\[\[([^\]|]+)\|([^\]]+)\]\]", r"\2", text)  # [[a|b]] -> b
     text = re.sub(r"\[\[([^\]]+)\]\]", r"\1", text)              # [[a]]   -> a
-    text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2">\1</a>', text)
+    text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", _link_sub, text)
     text = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", text)
     text = re.sub(r"\*([^*]+)\*", r"<em>\1</em>", text)
     text = re.sub(r"(?<!\w)_([^_]+)_(?!\w)", r"<em>\1</em>", text)

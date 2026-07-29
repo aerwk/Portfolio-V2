@@ -8,3 +8,7 @@ CLAUDE.md
 .trash/
 .vercel/
 .vercel
+
+# python bytecode from scripts/test_build_blog.py
+__pycache__/
+*.pyc
