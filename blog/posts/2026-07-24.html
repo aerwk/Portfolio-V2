@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I Asked If My Containers Were Up to Date, and Ended the Day Running My Own Git Forge — N5HQ</title>
+<meta name="description" content="The day started with a reboot and six words: are all my docker containers updated? Nine hours later the server answers that question by itself every night, and asks me on Discord when an update looks risky. It also, unplanned, ended up hosting my own git forge. The best part was a one-character bug that quietly turned every yes into a no.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-07-24.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="I Asked If My Containers Were Up to Date, and Ended the Day Running My Own Git Forge — N5HQ">
+<meta property="og:description" content="The day started with a reboot and six words: are all my docker containers updated? Nine hours later the server answers that question by itself every night, and asks me on Discord when an update looks risky. It also, unplanned, ended up hosting my own git forge. The best part was a one-character bug that quietly turned every yes into a no.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-07-24.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">I Asked If My Containers Were Up to Date, and Ended the Day Running My Own Git Forge</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-07-24 · Friday · 9:45 PM</span>
+      <span class="chip">9 min read</span>
+      <span class="chip badge-ai">93% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>The day began with maintenance too ordinary to deserve a paragraph. Seventeen containers pulled and recreated, ten and a half gigabytes of dead images pruned, then a full upgrade and a reboot. The box was down for twenty-six seconds, its first reboot since the fourteenth, and thirty containers came back with nothing restart-looping.</p>
+<p>Four minutes later I opened a fresh session and typed six words: are all my docker containers updated? The answer was yes — twenty-seven of twenty-nine images current, the two flagged stale being digest pins the photo stack deliberately holds. Except I'd just spent half a Friday finding that out, and I'd have to spend it again next month. Thirty-six minutes later I was asking for a machine that would do the asking for me.</p>
+<h2>Teaching the server to ask on its own</h2>
+<p>The shape I wanted: something wakes before dawn, checks host packages and container images, and sorts each one into apply, skip, or come ask me — with a model reading the actual changelogs and a Discord message when the call is above its pay grade.</p>
+<p>n8n went on port 5678 as the scheduler. The design decision I'd defend to anyone is that the workflows are dumb: they're thin SSH wrappers, and every scrap of logic lives in shell scripts in <code>~/bin</code>, so I can run any stage by hand instead of poking at boxes on a canvas. The judge is a headless Claude call with web search, about twenty cents a run, working from plain-English criteria — including one that says if you're uncertain about a major bump, say skip and explain why, and a human can apply it manually. Giving a scheduler root deserved care, so the sudoers rule is exact-match with no wildcards anywhere: a wildcard there is an invitation to inject options as root.</p>
+<p>The approval loop took longest to get honest. Every conditional placed after a Discord call saw nothing at all, because a Discord webhook responds with an empty body, which had quietly created a latent bug where the reboot-required branch could never have fired. It would have looked fine forever.</p>
+<h2>The verdict that never arrived</h2>
+<p>Here is the one I'll be telling people about.</p>
+<p>Twice, at 16:25 and again a minute later, the judge ran against a real batch of eleven pending host packages. Both times it came back clean: update, risk low, with reasoning that all eleven were routine patch and point-release bumps, no removals and no major version jumps. Both times, the pipeline reported skip.</p>
+<p>The verdicts were never wrong. The parsing was. Somewhere in the orchestrator I'd written a bash default-value expression of the form <code>${JUDGE:-{}}</code>, meaning "the judge output, or an empty JSON object if it's missing". Bash doesn't read it that way. It takes the default as <code>{</code> and treats the second brace as a literal character to append. So a valid JSON verdict came out of the substitution with a stray closing brace stapled to the end, failed to parse, and fell through to the safe branch. The safe branch is skip.</p>
+<p>That is the failure mode worth being frightened of. Nothing errored, nothing alerted, the workflow succeeded, Discord stayed quiet, and the automation did absolutely nothing in a way that looked exactly like a well-behaved system with no work to do. An automation that fails safe is still an automation that silently does nothing. And the reason I built it was that I couldn't tell by looking whether my containers were current — so a pipeline that lies by omission is worse than no pipeline, because now I trust it.</p>
+<p>The fix was small: default to a null literal instead of a brace, then check the parsed result is the type you expected before acting on it. The lesson is bigger. Anything that can decide "do nothing" has to prove it decided that, rather than merely arriving there.</p>
+<h2>A README nobody had to write twice</h2>
+<p>Mid-afternoon I asked for a README covering the whole homelab, and for as many agents as it took to find out what the homelab actually contains. Ten went out in parallel and all ten came back, and the surprise was two live problems nobody had gone looking for: a stale boot cron still starting a deprecated site and crash-looping against a port another service now owns, and a reverse proxy squatting on ports 80 and 443 while fronting nothing. Sending ten readers through your own house is an audit whether you meant it to be or not.</p>
+<p>The follow-on was to stop writing docs by hand. A watcher listens for Docker container-create events, waits sixty seconds so a burst of containers counts as one change, and fires a webhook. On the other end a script redacts anything resembling a token out of the compose file and has a model write the page. The insight that made one watcher cover both paths: a terminal <code>docker compose up</code> and a Portainer stack deploy both recreate containers with compose labels, so a create event is the universal trigger. Nine pages bootstrapped in about six minutes.</p>
+<h2>The Claw that wouldn't link</h2>
+<p>Then a detour with a real wrong answer in it. My handheld PC had a USB-C 2.5-gigabit adapter plugged into the office access point's spare ethernet port, and was getting nothing.</p>
+<p>My first diagnosis was confident and wrong. I said it was the admin gate: a firewall policy that only lets whitelisted machines onto the management network, which neatly explains a device with a cable and no service. On any other day that's the answer. Not this one. Address sweeps of the subnet found no trace of the machine at all, so it never got as far as asking for an address and the firewall never had the chance to refuse it. The port was down at zero link speed, and stayed down through autonegotiation, forced 2.5 gigabit and forced 1. When a link won't come up at any speed the fault is on the far side of the cable — most likely no driver for that Realtek chipset on the Windows install, so the adapter never initialises.</p>
+<p>There was also a self-inflicted casualty. Twenty minutes earlier, without noticing, I had unplugged a small five-port switch to free up that port, and it was sitting there dark. Since it only does one gigabit it will never link on a port I've now forced to 2.5, so the override has to come off before it goes back. I went looking for one dead link and made a second one.</p>
+<h2>Built at six, shelved at nine</h2>
+<p>In between, I built a thing and then decided not to run it, which I want to record as a decision rather than a failure. The idea: drop a phone photo of a work-order sheet in a folder, get the handwritten numbers read out, validated against a field schema with types, ranges and a confidence floor, and written into its own styled tab in an Excel workbook. It worked. Three photo-realistic test sheets in three formats each extracted sixteen out of sixteen fields with zero errors, a pure-noise image was rejected with every field null at zero confidence, and re-dropping a processed sheet produced no duplicate tab and no duplicate index row.</p>
+<p>Three hours after asking for an always-on service, I asked for it to be taken offline and filed as a project I could come back to. Not deleted — stopped and disabled, unit file kept, one command brings it back. The honest reason is that it reads a form layout invented for the demo. My actual work-order sheet has never been configured, and running a live service against a form that doesn't exist is theatre.</p>
+<h2>Thirty-three minutes to a git forge</h2>
+<p>At 21:07 I asked for agents to research Forgejo and come back only with something viable. I sent the prompt twice inside twenty-five seconds, which tells you how much patience I had left.</p>
+<p>Three research agents reported within five minutes. Forgejo is a hard fork of Gitea since early 2024, run by a German non-profit; version 16 is out but non-LTS with an end of life this October, so the LTS release it was. The inventory was the useful part: only four repositories on the box are mine, and there was exactly one hard coupling worth protecting — Vercel auto-deploys from GitHub, and Vercel cannot talk to a self-hosted forge. That constraint decided the architecture. Forgejo becomes primary, GitHub becomes a push-mirror target, and every push still lands on GitHub, so nothing had to move. Six repositories migrated, one with all four of its releases.</p>
+<p>Two mirror syncs returned HTTP 500 and the cause was mundane: the new git-SSH host on port 2222 wasn't in <code>known_hosts</code>, so host-key verification failed behind an unhelpful status code. A branch pushed to Forgejo then appeared on GitHub in under thirty seconds, and deleting it propagated too. Backups went on a nightly timer to the NAS, proven with a 433 MB dump landing and its monitor going green.</p>
+<p>Prompt at 21:07, "Forgejo is live" at 21:40. Thirty-three minutes for research, decision, deployment, six migrations, mirrors, backups and monitoring. Fast enough that I checked the timestamps twice.</p>
+<p>Except one of those things I didn't do. At 21:21, two minutes after the container came up, a documentation page for the new stack appeared on disk, with the live container line in it showing an uptime of fifty-nine seconds. The watcher I'd built three and a half hours earlier had seen a container it didn't recognise, waited its sixty seconds, and written the page. Nobody asked. I found out by looking at a file modification time.</p>
+<p>The day started because I couldn't tell whether my containers were current without going and looking. It ended with the server updating itself on a schedule, asking permission when it isn't sure, and documenting things I install before I've finished installing them. I'm no longer the one who checks. I'm the one who gets asked.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="docker" href="/blog/?tag=docker">Docker</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a><a class="tagchip" data-tag="backup" href="/blog/?tag=backup">Backup</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="tooling" href="/blog/?tag=tooling">Tooling</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-16.html">← I Certified the Network at 2.5 Gigabit, Then Spent Three Hours Losing to a USB Dongle</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-25.html">Twenty-Three Cents to Read a Photo, and Almost None of It Was the Photo →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>

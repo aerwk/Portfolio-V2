@@ -145,11 +145,11 @@
         </div>
         <div class="mock-main">
           <div class="mock-stats">
-            <div class="mtile" data-stat="stacks"><b>8</b><span>Stacks</span></div>
-            <div class="mtile" data-stat="containers"><b>28</b><span>Containers</span></div>
-            <div class="mtile" data-stat="images"><b>43</b><span>Images</span></div>
-            <div class="mtile" data-stat="volumes"><b>11</b><span>Volumes</span></div>
-            <div class="mtile" data-stat="networks"><b>13</b><span>Networks</span></div>
+            <div class="mtile" data-stat="stacks"><b>12</b><span>Stacks</span></div>
+            <div class="mtile" data-stat="containers"><b>32</b><span>Containers</span></div>
+            <div class="mtile" data-stat="images"><b>50</b><span>Images</span></div>
+            <div class="mtile" data-stat="volumes"><b>15</b><span>Volumes</span></div>
+            <div class="mtile" data-stat="networks"><b>16</b><span>Networks</span></div>
           </div>
           <div class="mock-chart">
             <div class="c-head"><span>System health &amp; uptime</span><span class="c-live">Live</span></div>
@@ -352,30 +352,30 @@
       <p class="sub">Infrastructure, learning, and building in public.</p>
     </div>
     <ul class="posts">
-      <li><a class="postcard rv" href="/blog/posts/2026-07-14.html">
-        <span class="postmeta"><span class="cat">Projects</span><span>2026-07-14</span></span>
-        <h3>Discord In, Linux ISOs Out</h3>
-        <p>The home server archives Linux ISOs: some ship once like an LTS release, others push a new point release every week for years. Requesting one was already a Discord message, but the last metre was still me, dragging finished downloads into the folders the library software actually watches. This week the pipeline closed: a small sorter container now shelves every ISO by genre and language, season-sized release archives stopped failing once we found the dead mirror behind the timeouts, and the request app got a cleaner name. Then, in the evening: the server proved it could reboot with nobody home, and the Discord ops bridge became a public repo anyone can install.</p>
+      <li><a class="postcard rv" href="/blog/posts/2026-07-29.html">
+        <span class="postmeta"><span class="cat">Projects</span><span>2026-07-29</span></span>
+        <h3>I Built a Downloads Sorter in Six Hours, and Every Bug in It Looked Like Working Code</h3>
+        <p>The first backup this server has ever had reported success and contained 1.3 GB of live database files. That set the tone for the day. The rest of it went into a Windows Downloads sorter that produced a run of bugs which all executed cleanly and did the wrong thing, an 18-check test suite that failed once for exactly the reason it existed, and a repository that had to be deleted and recreated rather than force-pushed.</p>
       </a></li>
-      <li><a class="postcard rv-d1" href="/blog/posts/2026-07-13.html">
-        <span class="postmeta"><span class="cat">Projects</span><span>2026-07-13</span></span>
-        <h3>I Gave the AI a Browser, and We Shipped the Redesign</h3>
-        <p>The redesign had been sitting on a preview port waiting for my eyes, because I was the only one in the loop who could see pixels. That changed today: headless Chromium went onto the server, and suddenly every change came back with screenshots attached. What followed was the most productive day this site has ever had — a rebuilt footer, a scroll-driven purple Earth with ethernet cables patching into world capitals, my actual rack photo on the homelab page, live Docker stats on three pages, and the whole thing pushed to production before bed.</p>
+      <li><a class="postcard rv-d1" href="/blog/posts/2026-07-28.html">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-07-28</span></span>
+        <h3>A Second Server in the Morning, an Open Front Door by Midnight</h3>
+        <p>The plan was to stop keeping everything on one machine. A small OptiPlex became a second Proxmox node, Home Assistant moved into a real VM, and along the way I took my own network down by plugging in a cable. Then in the evening I turned eight agents loose on the whole lab to criticise it, and they found an approval button reachable from the internet whose only lock was a number you could guess.</p>
       </a></li>
-      <li><a class="postcard rv-d1" href="/blog/posts/2026-07-02.html">
-        <span class="postmeta"><span class="cat">Homelab</span><span>2026-07-02</span></span>
-        <h3>I Sat Down to Add One Button and Rebuilt Half My Smart Home</h3>
-        <p>The plan was small: wire a few Home Assistant controls onto my Stream Deck. Opening Home Assistant to do it exposed the real state of things — five broken integrations, and a chunk of the house that lived in Apple Home but had never made it into HA at all. So the button waited. What followed was a day of standing up a Matter server, untangling why my devices were spread across three VLANs that Matter can&#x27;t see across, migrating the whole Meross fleet to local control, and clearing every broken integration off the board. Classic me: I went in for a light switch and came out having rebuilt the foundation.</p>
+      <li><a class="postcard rv-d1" href="/blog/posts/2026-07-27.html">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-07-27</span></span>
+        <h3>The Wi-Fi Was Pinned to One Channel by a Network That Was Switched Off</h3>
+        <p>Four access points, all sitting on 2.4 GHz channel 6, and every attempt to change that failed with &#x27;This action could not be completed&#x27;. The cause turned out to be a disabled SSID still enforcing a channel lock across the whole site. Fixing it led to a second find: the same power setting produced 17 dBm on one 5 GHz channel and 29 dBm on another. That evening, planning a second Proxmox node turned up one IP address doing two different jobs across eight firewall rules.</p>
       </a></li>
-      <li><a class="postcard rv-d2" href="/blog/posts/2026-07-01.html">
-        <span class="postmeta"><span class="cat">Homelab</span><span>2026-07-01</span></span>
-        <h3>I Built a Status Page, and It Caught My NAS Crashing Before I Finished Setting It Up</h3>
-        <p>The plan was a quiet evening standing up Uptime Kuma to watch the homelab. On its very first round of checks it flagged Immich as down — a real outage, not a config mistake. That kicked off a four-hour hunt that ran through stale CIFS mounts and a misbehaving Samba service before SSH into the NAS finally gave a straight answer: the disks were perfect, and smbd was segfaulting on a corrupted database held in RAM. The monitoring&#x27;s first job turned out to be catching its own storage backend falling over.</p>
+      <li><a class="postcard rv-d2" href="/blog/posts/2026-07-26.html">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-07-26</span></span>
+        <h3>I Diagnosed the Same Outage Twice and Got Two Different Answers</h3>
+        <p>A 3:35am PDF-tool deployment turned up two silent failures: an OCR mount pointing at a directory the image doesn&#x27;t contain, and a login seeder that only works against an empty database. Then two separate sessions, three hours apart, looked at the same camera dropout and reached different conclusions, neither aware the other had happened. Three of the day&#x27;s confident findings were later revised, and the corrections are at the bottom.</p>
       </a></li>
-      <li><a class="postcard rv" href="/blog/posts/2026-06-28.html">
-        <span class="postmeta"><span class="cat">Homelab</span><span>2026-06-28</span></span>
-        <h3>Moving Immich to the NAS — and the Drive That Tried to Take My Photos With It</h3>
-        <p>A simple storage migration turned into a genuine scare when the external SSD holding my entire photo library dropped offline mid-copy and the filesystem went into emergency shutdown. SMART was clean though — it was the USB connection all along. One cable swap later: a clean 107 MB/s copy, verified file-for-file, and Immich now living on the NAS.</p>
+      <li><a class="postcard rv" href="/blog/posts/2026-07-25.html">
+        <span class="postmeta"><span class="cat">Projects</span><span>2026-07-25</span></span>
+        <h3>Twenty-Three Cents to Read a Photo, and Almost None of It Was the Photo</h3>
+        <p>I asked a simple question about a side project: what does it actually cost to have Claude read one photo of a handwritten work order? Three real measurements said about 23 cents each. The autopsy was worse than the number: roughly 117,000 input tokens billed for about 3,200 tokens of actual work, because every call was re-sending the entire agent harness. The rewrite took ten minutes. Whether it saves what I think it saves, I still can&#x27;t prove.</p>
       </a></li>
       <li class="rv rv-d2"><span class="postcard postcard-cta">
         <h3>Blog</h3>

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I Built a Downloads Sorter in Six Hours, and Every Bug in It Looked Like Working Code — N5HQ</title>
+<meta name="description" content="The first backup this server has ever had reported success and contained 1.3 GB of live database files. That set the tone for the day. The rest of it went into a Windows Downloads sorter that produced a run of bugs which all executed cleanly and did the wrong thing, an 18-check test suite that failed once for exactly the reason it existed, and a repository that had to be deleted and recreated rather than force-pushed.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-07-29.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="I Built a Downloads Sorter in Six Hours, and Every Bug in It Looked Like Working Code — N5HQ">
+<meta property="og:description" content="The first backup this server has ever had reported success and contained 1.3 GB of live database files. That set the tone for the day. The rest of it went into a Windows Downloads sorter that produced a run of bugs which all executed cleanly and did the wrong thing, an 18-check test suite that failed once for exactly the reason it existed, and a repository that had to be deleted and recreated rather than force-pushed.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-07-29.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">I Built a Downloads Sorter in Six Hours, and Every Bug in It Looked Like Working Code</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Projects</span>
+      <span class="chip">2026-07-29 · Wednesday · 10:40 PM</span>
+      <span class="chip">9 min read</span>
+      <span class="chip badge-ai">95% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>I didn't set out with a theme. But somewhere around nine at night, after the fourth bug of the day that had run cleanly, printed a success message and done entirely the wrong thing, it got hard to miss: today was about code that looks like it works. It opened at half past one in the morning with a backup that reported "complete" while containing nothing you could restore from, and closed near eleven with a public repository that had to be rebuilt from an empty history.</p>
+<h2>The backup that had never existed</h2>
+<p>My main server runs 31 containers. The named volumes underneath them hold the entire update pipeline, every uptime monitor and all the Grafana dashboards, and until this morning none of it was backed up by anything. The script took twenty minutes. Getting it to be true took the rest.</p>
+<p>The first run reported success and produced a 1.3 GB archive. GNU <code>tar</code> treats <code>--exclude</code> as positional: an exclusion placed after the file operand is silently ignored. So every exclusion I had written did nothing, the archive was stuffed with live, actively-written database files, and it exited zero. Moving the flags ahead of the operand dropped it to 230 MB.</p>
+<p>Then the SQLite snapshots, which I was taking through a read-only mount because read-only felt like the safe choice. It isn't. A write-ahead-log database has to <em>create</em> a <code>-shm</code> sidecar file just to open, and whether one is already resident varies run to run. One database snapshotted fine and failed on the very next run with <code>SQLITE_CANTOPEN</code>. A read-only mount there doesn't fail the backup, it drops a random database out of it and carries on.</p>
+<p>So it got proved by restore rather than by exit code. All eight snapshots pass <code>integrity_check</code> with real content in them: 45 monitors, four workflows, the ISO catalogues with 719 and 369 entries. Both failure paths exit 1 and push a DOWN to the status page, including a mountpoint guard so it can't write a convincing-looking backup into an empty local directory if the network mount drops. The first unattended run fired at 03:01:30 — 230 MB, 2004 entries, zero warnings, nobody awake. That was this machine's first real backup.</p>
+<h2>Three screenshots and a hostile test set</h2>
+<p>At half four in the afternoon I sent three screenshots of my Downloads folder and asked for something to sort it out. Windows 11, a handful of categories, and one requirement that shaped the whole design: nothing moves until it's been sitting still for an hour, so a download in flight never gets filed mid-write.</p>
+<p>The screenshots became the test corpus. Every filename visible in them got transcribed — 118 of them, with 31 distinct extensions, 27 names containing spaces, two with no extension at all, an uppercase <code>.PDF</code>, 4 GB ISOs, a folder mixed in among the files, and names carrying <code>&amp;</code>, <code>+</code>, <code>(1)</code>, commas and square brackets. A genuinely hostile test set, which is exactly what you want.</p>
+<p>The "wait an hour" part became a rule rather than a timer. A scheduled task runs every 15 minutes and the engine skips anything written to in the last 60, so a reboot or a missed run costs nothing. A file watcher holding a countdown would have looked more elegant and died silently with its process.</p>
+<h2>Four bugs that read as working code</h2>
+<p><code>Move-Item</code>'s <code>-Destination</code> is itself a wildcard-expanding parameter, and unlike the source side there is no literal variant of it — <code>-LiteralPath</code> only protects where the file is coming <em>from</em>. Hand it a destination with square brackets in the name and the file goes somewhere you did not ask for. Replaced with a direct .NET file move.</p>
+<p><code>catch [System.IO.IOException]</code> never fired at all, because PowerShell wraps .NET exceptions inside its own <code>MethodInvocationException</code>. The typed catch matched nothing, so all three collision test files fell into <code>failed</code> instead of being renamed with a suffix. It now unwraps the inner exception and asks the filesystem what happened rather than trusting the exception type. Microsoft's own docs say the typed catch <em>does</em> match on Windows PowerShell 5.1, so it's unreliable in both directions.</p>
+<p>The same-volume safety check was a no-op. Moves are only instant within one volume, so the code compared path roots first — using <code>GetPathRoot</code>, which is pure string manipulation and never touches the disk. Point a category folder at a junction leading to another drive and the check passes cheerfully while the move quietly crosses volumes. Junctions get rejected outright now, confirmed against a real one rather than reasoned about.</p>
+<p>My favourite: on the installer's completion screen, <code>foreach ($l in ...)</code> overwrote <code>$L</code>, the hashtable holding every colour and dimension in the interface, because PowerShell variable names are case-insensitive. The result was <code>Cannot convert null to type System.Drawing.Color</code>, and it only triggered when the "Run Now" box was ticked, which is precisely what I did. The language was being helpful. Fixed by renaming, then by an audit comparing every loop variable in the project against every script-level one, because once is a typo and twice is a pattern.</p>
+<p>Two more in the same family: an empty array is falsy in PowerShell, so a guard skipped the exact case it had been written to catch; and the category list, passed comma-joined the way a config file inevitably passes things, got read as one literal folder name, so every file landed in <code>Misc</code> with no error anywhere.</p>
+<h2>Windows Sandbox, and a test defeated by the thing it was testing</h2>
+<p>The bug that changed how I was working arrived at 18:14, live on my own PC: <code>Join-Path : Cannot bind argument to parameter 'Path' because it is an empty string.</code> <code>$PSScriptRoot</code> is empty inside a param-block default on Windows PowerShell 5.1 and works fine on PowerShell 7 — and everything up to then had been tested on Linux under 7, which structurally could not produce that failure. So I went looking for a way to stop using my own PC as the test dummy. The answer was an 18-check suite plus a one-command runner that builds a Windows Sandbox, maps the folder read-only and runs everything on a throwaway Windows that evaporates when you close it.</p>
+<p>The suite got mutation-tested before I trusted it: three deliberate bugs introduced one at a time — collision suffix removed, age gate removed, ignore list emptied — and each one failed exactly one test, and the correct one. Green ticks are easy; a suite with teeth is not. Scale held too, at 2000 files sorted in 2.4 seconds with 60 sequential collisions numbering themselves cleanly and nothing overwritten.</p>
+<p>First Sandbox run came back 17 out of 18, and the failure was in the harness rather than the sorter. Test 15 checks long-path handling with a hard-coded 230-character filename, but the Sandbox's temp directory path is already 72 characters, so the full path came to 306 and Windows refused to create the file. The test died during setup and never reached the code it was testing — defeated by a long path, which is the entire thing it exists to catch. Rewritten to size the name from the actual path at runtime, it passed 18 out of 18 on real Windows PowerShell 5.1.26100.8875.</p>
+<p>A real sort in there left exactly five things in the root, all correct: a PDF written a minute before the run, a <code>.part</code>, a <code>.crdownload</code>, <code>Thumbs.db</code> and the log file. The partials had been back-dated on purpose, so watching them get held while newer files moved proved the age gate was making a decision rather than waving everything through.</p>
+<p>The honest part: I still don't know it works on my actual Downloads folder. I installed it at quarter to seven, was told the first run would move essentially everything at once, and never went back to look. Every clean result I have is from the Sandbox.</p>
+<h2>The one-line request that took forty minutes</h2>
+<p>"Unprivate the repo." That was the whole ask. Before flipping the switch I looked at what would become visible, and the test fixture was the problem — it was real filenames from my own Downloads folder, including documents that belonged to other people and records that should never have left my machine. Not something to publish under my real name.</p>
+<p>It got replaced with 118 invented names of the same shape: same spread of extensions, same awkward characters, same edge cases. The tests assert on counts and behaviour and never on specific names, so the swap is behaviour-neutral. Three extra names shifted two counts, the assertions moved with them, and the suite stayed at 18 out of 18.</p>
+<p>Cleaning the working tree wasn't enough, because the data was in the history across four of the five commits. Rather than a surgical rewrite I reset to a single clean root commit — one missed blob is worse than lost history on a repo five hours old. Then the local reflog and the remote-tracking refs turned out to still be pinning the old objects, so those had to be expired and pruned too. And a force-push would not have finished the job either, because the old objects stay retrievable by hash on the server until it decides to garbage-collect. So the remote got deleted through the API and recreated from nothing. Verified from an anonymous clone rather than my own: one commit, 22 files, old hashes return 404.</p>
+<p>The same lesson had already turned up at one in the morning, in documentation rather than code. Wrapping up a UniFi investigation, I went through my own context file and found it naming a vault path that does not exist and never has. Every instruction I had written about keeping secrets out of the synced folder was aimed at an imaginary line, while the folder that actually syncs had never been treated as the published surface it is. A rule that reads as correct and enforces nothing.</p>
+<h2>The folder that looked broken and wasn't</h2>
+<p>The morning also produced a drop folder for screenshots, which sorts by file content rather than by extension. That distinction earned itself immediately: a file named <code>.png</code> that actually contained HTML got detected as text and sent to the failures pile instead of being quietly shelved with the images, where I'd never have found it again.</p>
+<p>I did spend a few minutes convinced it was broken, because its root sits empty. It sits empty because the sorter had already filed everything. That was the one thing all day that looked wrong and wasn't.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="backup" href="/blog/?tag=backup">Backup</a><a class="tagchip" data-tag="tooling" href="/blog/?tag=tooling">Tooling</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="powershell" href="/blog/?tag=powershell">Powershell</a><a class="tagchip" data-tag="testing" href="/blog/?tag=testing">Testing</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-28.html">← A Second Server in the Morning, an Open Front Door by Midnight</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>

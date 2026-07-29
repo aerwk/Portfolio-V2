@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Outage Was Already Over, and the Fake Flash Drive Wasn&#x27;t Fake — N5HQ</title>
+<meta name="description" content="I moved the WAN uplink on my gateway to a different port and every tunnelled hostname started returning Cloudflare error 1033. It took five minutes to close, and it had already fixed itself for four of them. What I was actually looking at was my own browser cache. Later the same morning a 256 GB flash drive that refused to format looked briefly like a counterfeit, then wedged Windows&#x27; disk service, and I still don&#x27;t know how that one ended.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-06-30.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="The Outage Was Already Over, and the Fake Flash Drive Wasn&#x27;t Fake — N5HQ">
+<meta property="og:description" content="I moved the WAN uplink on my gateway to a different port and every tunnelled hostname started returning Cloudflare error 1033. It took five minutes to close, and it had already fixed itself for four of them. What I was actually looking at was my own browser cache. Later the same morning a 256 GB flash drive that refused to format looked briefly like a counterfeit, then wedged Windows&#x27; disk service, and I still don&#x27;t know how that one ended.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-06-30.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">The Outage Was Already Over, and the Fake Flash Drive Wasn&#x27;t Fake</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-06-30 · Tuesday · 10:05 AM</span>
+      <span class="chip">5 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>At 4:41 in the morning I moved the WAN uplink on my gateway off a 10-gigabit port and down to port 1, purely so I could have the fast ports back for something else. The public address didn't change. Within seconds every tunnelled hostname I own — sonarr, radarr, nas, photo — was serving Cloudflare error 1033, which is the edge telling you it can't reach your tunnel. I typed "solve this" and went looking. Five minutes later it was closed, and it had already been fixed for four of those five minutes.</p>
+<h2>Three minutes of real outage</h2>
+<p>The <code>cloudflared</code> container had been up for seven hours and never restarted, and its logs told the whole story in four lines. All four edge connections dropped between 04:37:36 and 04:39:01 — the connector holds redundant sessions to more than one Cloudflare point of presence, in my case Perth and Melbourne — and at 04:40:13 it started dialling back out on its own. By the time I reported an outage it was showing four ready connections and 6,710 requests served.</p>
+<p>The very first probe of the investigation, at 04:42, came back healthy: photo returned 200, radarr 302, nas 307, straight through the tunnel. Real outage, from the link bouncing to the sessions re-registering, was about three minutes. What I was still staring at was my own browser, holding onto the failed lookups and the 1033 page long after the thing behind them had recovered. A hard refresh would have ended the incident before it started. I restarted the container anyway, belt and braces rather than a fix.</p>
+<h2>The screen of zeroes</h2>
+<p>Then the best wrong turn of the day. To verify all eight hostnames end to end, the check resolved each one at a Cloudflare edge address instead of trusting DNS, and it tried to be clever about finding that address by resolving the apex domain. My apex doesn't point at the tunnel. It points at the static-site host where the portfolio lives. So all eight subdomains got forced there, and every endpoint came back <code>HTTP 000</code>. Eight of them, in a column.</p>
+<p>For about a minute the fix looked like it had made everything worse. It hadn't. The test was pointing the entire lab at a web host that has never heard of any of it. Corrected to resolve each hostname at its own edge, all eight came back clean, zero 1033s.</p>
+<p>The part worth writing down is the bit I only half understood before this. These tunnels are outbound-only: the connector dials <em>out</em> to Cloudflare on 443 and holds the sessions open, and nothing on the internet ever connects inward to me. Moving the WAN port needed no port forwards and no firewall rules. There was no configuration to break. The swap just bounced the link, and the sessions came back stale. I was offered a healthcheck-based auto-restart so it self-heals faster next time, and I said no. Three minutes doesn't justify another moving part.</p>
+<h2>A Linux box coaching a Windows PC through a disk wipe</h2>
+<p>Later that morning, a different kind of stuck: a 256 GB flash drive with three partitions on it that refused to format as exFAT, reporting itself as protected.</p>
+<p>The first move was to identify the device rather than act on it, which is how we found out the drive wasn't there. <code>lsblk</code> on the server showed one NVMe system disk and nothing else, and the only USB device attached to the whole machine was a 2.5-gig LAN adapter. Then, from me: it's on my Windows PC. So the rest of this is a Linux server that physically cannot see the drive, coaching Windows' <code>diskpart</code> through a destructive operation by copy-paste relay.</p>
+<p>What came back looked bad. A Kingston DataTraveler, and two leftover volumes marked unusable that added up to about four gigabytes. Four gigabytes on a drive claiming 256 is the textbook signature of a counterfeit: a small chip with firmware that lies about its capacity, so a format "succeeds", reports the full size, and then silently eats everything written past the real limit. DataTraveler is one of the most faked models on the market. That was an unpleasant thirty seconds. <code>list disk</code> settled it — disk 2, 231 GB, genuine. The four gigabytes were just junk partitions, already wiped by then.</p>
+<p>Which is when the actual problem showed up, and it was much dumber. <code>clean</code> succeeded, <code>create partition primary</code> succeeded, and then <code>format fs=exfat</code> failed with "There is no volume selected." Wiping a disk drops diskpart's focus, so you have to select the partition you just made before you can format it. Fine. Except somewhere in there a format got going without the quick flag, which on 231 GB means watching a counter crawl, and cancelling it wedged Windows' Virtual Disk Service: "a concurrent second call is made on an object before the first is completed." The cancelled call was still sitting in there unfinished, refusing to let another one start. <code>net stop vds</code> answered with "the requested pause, continue, or stop is not valid for this service."</p>
+<p>The honest advice at that point was to stop fighting it: reboot the PC, then format from File Explorer, which doesn't go through the same path. The record ends one minute later with no follow-up anywhere, so I'm not going to claim it worked. The drive is genuine, unlocked, wiped and carrying one primary partition, and as far as this journal knows it is still sitting there unformatted.</p>
+<h2>The thing I didn't notice</h2>
+<p>Somewhere around 6:20 that morning, in between the two, every access point in the house and all three of the little wall switches rebooted together. The core switch and the gateway stayed up. I only worked that out the following night from uptimes that had clustered, so treat the timing as derived rather than logged. A synchronised failure that hits the devices sharing power and skips the ones that don't is the shape of a power event, not a fault.</p>
+<p>Two of the day's emergencies were over before I started solving them. The third was a flash drive I successfully identified, unlocked, wiped and partitioned, and then did not format.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="cloudflare" href="/blog/?tag=cloudflare">Cloudflare</a><a class="tagchip" data-tag="unifi" href="/blog/?tag=unifi">UniFi</a><a class="tagchip" data-tag="storage" href="/blog/?tag=storage">Storage</a><a class="tagchip" data-tag="recovery" href="/blog/?tag=recovery">Recovery</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-29.html">← Twenty-Five Containers Updated, and the Cleanup That Ate My Rollback</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-01.html">I Built a Status Page, and It Caught My NAS Crashing Before I Finished Setting It Up →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>

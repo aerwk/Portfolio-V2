@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twenty-Three Cents to Read a Photo, and Almost None of It Was the Photo — N5HQ</title>
+<meta name="description" content="I asked a simple question about a side project: what does it actually cost to have Claude read one photo of a handwritten work order? Three real measurements said about 23 cents each. The autopsy was worse than the number: roughly 117,000 input tokens billed for about 3,200 tokens of actual work, because every call was re-sending the entire agent harness. The rewrite took ten minutes. Whether it saves what I think it saves, I still can&#x27;t prove.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-07-25.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Twenty-Three Cents to Read a Photo, and Almost None of It Was the Photo — N5HQ">
+<meta property="og:description" content="I asked a simple question about a side project: what does it actually cost to have Claude read one photo of a handwritten work order? Three real measurements said about 23 cents each. The autopsy was worse than the number: roughly 117,000 input tokens billed for about 3,200 tokens of actual work, because every call was re-sending the entire agent harness. The rewrite took ten minutes. Whether it saves what I think it saves, I still can&#x27;t prove.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-07-25.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Twenty-Three Cents to Read a Photo, and Almost None of It Was the Photo</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Projects</span>
+      <span class="chip">2026-07-25 · Saturday · 7:55 PM</span>
+      <span class="chip">5 min read</span>
+      <span class="chip badge-ai">92% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>A short day, two bursts with a long gap in the middle. The first was tidying up after yesterday's git server build. The second was meant to be a quick question and turned into the most useful thing I've found in a while: one of my pipelines was charging me a quarter every time it looked at a photograph, and 97% of that was packaging.</p>
+<h2>What does one call actually cost?</h2>
+<p>I have a parked side project that watches a folder for photos of handwritten work orders, transcribes them into a CSV, and files the originals. It works, it's been disabled for a while, and before turning it back on I wanted to know what it costs to run. So I asked the plain version: how many tokens does one image cost?</p>
+<p>I couldn't answer it, which was the first finding. The extraction step shelled out to <code>claude -p</code>, the Claude Code CLI in one-shot mode, and read exactly one field out of the JSON that came back: the result. The CLI had been handing me <code>usage</code> and <code>total_cost_usd</code> on every call and I was throwing both in the bin, so the pipeline log had zero cost lines in it.</p>
+<p>So I measured instead of estimating. Three real runs against the same sample photo, a 1248×1760 shot of a work order, all three returning identical transcriptions at 0.85 to 1.0 confidence. The costs came back $0.2499, $0.2189 and $0.2277. Call it 23 cents a photo.</p>
+<h2>The bill was almost entirely envelope</h2>
+<p>The interesting part isn't the number, it's the breakdown. The actual payload per photo is small: a 1,196-character prompt is about 300 tokens, and the image itself is about 2,900. So roughly 3,200 tokens of real work.</p>
+<p>I was being billed for about 117,000 input tokens.</p>
+<p>The other 114,000 were the agent harness: system prompt, tool definitions, session scaffolding, shipped up the wire on every photo, and twice per photo at that, because one turn goes on deciding to read the file and a second on reading it and answering.</p>
+<p>Then the part that made me laugh. Nearly all of the cost was the prompt cache, specifically the cache <em>write</em>: 36,312 tokens at the 2× write multiplier, $0.218, which is 87% of the whole bill. Caching is meant to be the cheap path — it pays for itself the second time you send the same prefix, and reads come back at a tenth of the price. But every <code>claude -p</code> invocation is a fresh session with a different prefix, so the cache never warmed. Three back-to-back identical runs and the write count sat at 31–36k every time. I was paying a premium to build a cache and then throwing it away before anything could read it. Fresh input tokens on that bill: four.</p>
+<p>Second finding, less funny: a blurry photo that fails validation costs exactly the same as a good one. It burns the full call and then lands in the failed folder.</p>
+<h2>Ten minutes, seventeen tests</h2>
+<p>The go-ahead was nine words, so the rewrite started immediately. It's a small port: drop the subprocess, call the Messages API directly with the image as a base64 content block, and let structured outputs guarantee the JSON shape instead of asking for it politely in prose. That last change deleted a function whose whole job was stripping markdown code fences off the model's reply, and with it the "did not return valid JSON" failure mode. Ten minutes, and 17 of 17 tests stayed green, which is only true because past-me mocked the OCR call behind an injection point instead of letting it reach out from inside the test suite.</p>
+<p>Two reversible judgement calls came with it: thinking off, since straight transcription doesn't need it and it's pure cost, and images downscaled to 2000px on the long edge, since a 4032×3024 phone photo is around 16k tokens against 4k for the same shot at 2000px. The cost log line goes <em>before</em> validation, so failed photos still get counted. They still cost money.</p>
+<p>Here's the honest bit. The estimated cost on the new path is about 1.7 cents a photo, roughly 14× cheaper, which at fifty photos a week is $11.50 against $0.85. That number has never been measured. There's still no API key on the box, so not one real call has gone through the new code. I've verified the token counts, the four image formats, the tests. I have not verified a bill. And there's a decent chance the $0.23 wasn't metered money at all but plan usage, which would make the comparison shakier still. It's an estimate wearing a very convincing suit.</p>
+<h2>Deciding not to keep something</h2>
+<p>The earlier burst was Forgejo housekeeping, mostly carried over from yesterday: extending a fine-grained GitHub token so the push-mirrors can write, plus the useful detail that editing one doesn't change the token string, so nothing on the server needs touching afterwards.</p>
+<p>The one real decision took a sentence. The old test-website repo is obsolete, replaced by the current portfolio, and shouldn't be pushed anywhere at all. So it got archived read-only with a description saying why, and that one call quietly deleted a planned push-mirror, an origin flip, and a whole repo from the setup instructions. Four documents shrank. The pending work went from three repos to two. Deciding not to keep something is work, and it's the cheapest kind there is.</p>
+<h2>Meanwhile, at 4am</h2>
+<p>While none of that was happening, the nightly update pipeline did its rounds unattended. It found Home Assistant and n8n stale and asked rather than deciding, noting that both publish only digest hashes rather than version tags so it couldn't read release notes first. Approved, applied at 04:55:50. Two minutes later the stack documentation regenerated itself off the container-create events, catching both containers at "Up 50 seconds" on the way past.</p>
+<p>Two hours of actual work, and the cheapest thing I did all day was read the receipt.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="python" href="/blog/?tag=python">Python</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="tooling" href="/blog/?tag=tooling">Tooling</a><a class="tagchip" data-tag="forgejo" href="/blog/?tag=forgejo">Forgejo</a><a class="tagchip" data-tag="docker" href="/blog/?tag=docker">Docker</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-24.html">← I Asked If My Containers Were Up to Date, and Ended the Day Running My Own Git Forge</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-26.html">I Diagnosed the Same Outage Twice and Got Two Different Answers →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>

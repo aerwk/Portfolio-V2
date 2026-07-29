@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two Rooms That Turn Themselves Off, Once I Worked Out What They Were Called — N5HQ</title>
+<meta name="description" content="A Sunday that didn&#x27;t start until four in the afternoon and then ran three jobs with nothing in common. Two rooms in the house learned to turn their own lights off, with the delay picked out of the sensor&#x27;s own history instead of a forum post. A planning question about changing internet providers answered itself in two minutes, then turned up a piece of leftover configuration I had no memory of creating. And a late-night design pass on the portfolio got told it looked like AI slop.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-07-12.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Two Rooms That Turn Themselves Off, Once I Worked Out What They Were Called — N5HQ">
+<meta property="og:description" content="A Sunday that didn&#x27;t start until four in the afternoon and then ran three jobs with nothing in common. Two rooms in the house learned to turn their own lights off, with the delay picked out of the sensor&#x27;s own history instead of a forum post. A planning question about changing internet providers answered itself in two minutes, then turned up a piece of leftover configuration I had no memory of creating. And a late-night design pass on the portfolio got told it looked like AI slop.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-07-12.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Two Rooms That Turn Themselves Off, Once I Worked Out What They Were Called</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-07-12 · Sunday · 11:55 PM</span>
+      <span class="chip">7 min read</span>
+      <span class="chip badge-ai">92% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Sunday didn't start until quarter past four in the afternoon, and then it ran three jobs with nothing to do with each other. Two rooms learned to turn their own lights off. A question about changing internet providers turned into a security finding. And late at night I installed a design skill, pointed it at my portfolio, and was told the result looked like AI slop. Some days are just a list.</p>
+<h2>Five minutes, chosen out of my own logs</h2>
+<p>The first job was well-shaped. There's a presence sensor in the theatre, and I wanted it to kill both light strips and both downlights once the room had been empty a while. The trigger writes itself. The only real decision is the number: how long after presence clears do you switch off?</p>
+<p>The forum answer is five minutes, because the forum answer is always five minutes. Instead I pulled the sensor's own history out of the recorder database and read what it had done that afternoon: thirty-second dropouts, a genuine half-hour absence, a twenty-five minute one, and a two-minute gap while the room was definitely occupied. Longest false dropout, two minutes. Shortest real absence, about twenty-five. Anything between those works, and five sits clear of the noise without leaving the lights on for half an hour after I've gone. Small thing, but it's the difference between a setting and a decision. The sensor also has its own delay before it will report the room clear at all, so the lived wait is that plus my five minutes.</p>
+<h2>What the house calls its own devices</h2>
+<p>The office version was the same automation with a longer action list: two downlights, the desk lamp, and the air purifier. Working out what those things were called took longer than writing the automation.</p>
+<p>The purifiers were the good one. There are two, and each appears as two entities in two different domains, one treating it as a fan and one as a plain switch. Neither has a friendly name. What they have are registry IDs, and the registry IDs are <code>big_potato</code> and <code>small_potato</code> — nothing there tells you the room, the model, or which of the four is safe to call. The only discriminator was which room the system had them filed under: small one is the office, big one is the lounge, leave the lounge alone.</p>
+<p>The presence sensors were worse, in a quieter way. The device-tracker entry for the theatre sensor is labelled for a completely different room, so trusting the label means automating the wrong room and then wondering why nothing happens. The only reliable answer was joining the device registry against the area registry. Automating a house is mostly archaeology on your own naming decisions.</p>
+<p>The procedure held both times: back up the automations file, append the new block, run the config validator, restart the container, then query the recorder database to confirm the automation exists and is enabled. Not "the restart looked fine" — ask the database. Both came back clean.</p>
+<p>The honest limit is that they're proven loaded, not proven to fire. And the office one comes with a warning: while I sat at my desk that afternoon, its sensor dropped to "no presence" several times. These things do not consider a motionless man at a computer to be a person.</p>
+<h2>What actually breaks if I change ISP</h2>
+<p>Later I asked a planning question: given the tunnels and containers I run, what would I have to update if I changed providers and my public address changed? Answer, checked against live state rather than theory in about two minutes: almost nothing.</p>
+<p>I enumerated the running stack, then resolved every public hostname I own. Not one DNS record anywhere points at my house — the service hostnames land on Cloudflare's proxy addresses, the site lands on Vercel. Everything that looks like it reaches in from outside reaches out first: the tunnel connector dials Cloudflare and holds the connection open, Tailscale dials its coordination servers, the mount to the seedbox is an outbound SSH session. Change the address underneath all of that and they re-register without noticing.</p>
+<p>So the work is one screen on the gateway — new credentials if the provider wants PPPoE, maybe a VLAN tag on the WAN port — with VLANs, firewall rules and reservations untouched. The thing to check before signing is whether they put you behind carrier-grade NAT, which kills inbound connections but leaves tunnels fine.</p>
+<h2>The thing I wasn't looking for</h2>
+<p>While verifying all that, I went through the gateway's configuration expecting to find nothing, and instead found a piece of leftover setup I had no memory of creating — something from before the tunnels existed, doing nothing useful for anybody, and left behind when the thing it was built for went away. I'm deliberately not writing down what it was. It went onto the remediation list rather than into this post, which is the right order for that kind of find.</p>
+<p>The part that stuck with me is that an ISP change wouldn't have touched it either way. I went looking for what a change would break and found something unrelated that had quietly been wrong for weeks in a direction I wasn't even asking about.</p>
+<p>Config rot is silent. Nothing alerts on a rule working exactly as configured that shouldn't exist. The audit you run for one reason earns its keep by finding the thing you weren't auditing for.</p>
+<h2>A design pass that answered the wrong question</h2>
+<p>At twenty past eleven at night I installed a UI/UX skill into the vault — two megabytes of mostly CSV, eighty-odd interface styles and a hundred and sixty colour palettes — then pointed it at Portfolio V2, served locally on port 3003, because 3002 now belongs to Uptime Kuma and the project's own notes hadn't caught up.</p>
+<p>Fourteen minutes, one git worktree so nothing touched the live checkout, three agents — two auditing in parallel, one doing the edits. What came back was real. Contrast computed from the actual colour values instead of eyeballed, catching violet small text at 3.82:1 against a 4.5 requirement and lifting the site's worst pair to 4.77:1. No social or canonical tags on any of the seventeen pages. And the one I'm glad it found: every page had its reveal elements starting at zero opacity, made visible only by JavaScript, so with scripting off the whole site below the hero was permanently invisible. Four lines of <code>noscript</code> fixes that forever.</p>
+<p>Five minutes after I reported it done, the verdict came back: not enough, looks like AI slop, make it flashy.</p>
+<p>Fair. I'd framed it as a polish pass inside the locked existing direction, and that framing was the problem. I optimised for defensible and delivered a more accessible version of the same page. Nobody had asked for accessible.</p>
+<p>So the overhaul started instead, and the research corrected my draft immediately. My instinct had been saturated: glowing edges, coloured blooms in the brand violet, more of everything. The look that actually reads as expensive is desaturated, and lit from <em>inside</em> with inset highlights rather than wrapped in an outer halo. Light your elements like a scene, not a sign. The stylesheet got thrown out and rewritten from scratch just before midnight.</p>
+<h2>No eyes</h2>
+<p>The last thing I did before the date rolled over was check whether the server had a headless browser installed. It doesn't. No Chromium, no Playwright, nothing cached anywhere.</p>
+<p>Which means everything in that last section was done without looking at the page. Contrast computed from source colours, structure validated by parsing the HTML, every URL confirmed as returning a 200, and a grep across all seventeen files whose empty result was the proof. Rigorous, reproducible, completely blind.</p>
+<p>I had just rewritten an entire stylesheet in pursuit of the word "flashy", with no way to find out whether it was flashy or a car crash. Of the three jobs I did today, the only one that needed eyes was the one I'd taken on without any.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="home-assistant" href="/blog/?tag=home-assistant">Home Assistant</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="unifi" href="/blog/?tag=unifi">UniFi</a><a class="tagchip" data-tag="portfolio" href="/blog/?tag=portfolio">Portfolio</a><a class="tagchip" data-tag="design" href="/blog/?tag=design">Design</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-02.html">← I Sat Down to Add One Button and Rebuilt Half My Smart Home</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-13.html">I Gave the AI a Browser, and We Shipped the Redesign →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>

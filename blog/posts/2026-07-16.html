@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I Certified the Network at 2.5 Gigabit, Then Spent Three Hours Losing to a USB Dongle — N5HQ</title>
+<meta name="description" content="I wanted real numbers for my own network, not another internet speed test. The morning went well: the wired path certified at 2.38 gigabits, and both devices that looked slow turned out to be behaving exactly as physics says they should. Then a new handheld arrived with a 2.5G USB ethernet dongle that would transmit and never receive, and I produced four confident diagnoses in three hours. All four were wrong.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-07-16.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="I Certified the Network at 2.5 Gigabit, Then Spent Three Hours Losing to a USB Dongle — N5HQ">
+<meta property="og:description" content="I wanted real numbers for my own network, not another internet speed test. The morning went well: the wired path certified at 2.38 gigabits, and both devices that looked slow turned out to be behaving exactly as physics says they should. Then a new handheld arrived with a 2.5G USB ethernet dongle that would transmit and never receive, and I produced four confident diagnoses in three hours. All four were wrong.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-07-16.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">I Certified the Network at 2.5 Gigabit, Then Spent Three Hours Losing to a USB Dongle</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-07-16 · Thursday · 10:20 PM</span>
+      <span class="chip">9 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>I have spent a lot of this year moving data around my own house without ever knowing how fast the house actually is. Every speed test I'd run measured the internet, which is the one part of the path I can't change. What I wanted was the inside number: PC to server, phone to server, laptop to server, with no ISP anywhere in it. So today started as a measurement day. It ended as a day about the one device I couldn't measure at all.</p>
+<h2>A service with an eleven-minute lifespan</h2>
+<p>The first attempt was OpenSpeedTest, the browser-based version of the idea: a container on the server, a gauge in a tab, press start. One fact came off the box before I'd written a line of the plan, and it reset everything. The server's active NIC links at 2.5 GbE, not gigabit, so the ceiling for anything wired is around 2.35 Gbps rather than the 940 Mbit/s I'd been assuming.</p>
+<p>Then I asked whether the thing could be driven from a terminal, because a gauge in a browser is not a number I can log. It could: the container's nginx serves a 30 MiB blob at one path and takes uploads at another, both plain HTTP, so it got wrapped in a curl driver that pushed 22.6 Gbps over loopback. At which point I looked at what I'd built, realised I'd reinvented a worse iperf3, and said take it down. Container, image and directory all deleted. Eleven minutes of visible life, about an hour counting the research. I had built a browser front end for something that has had a perfectly good command-line front end for twenty years.</p>
+<p>iperf3 replaced it in minutes, on host networking rather than bridged, since Docker's NAT layer shaves throughput and accuracy was the entire point.</p>
+<h2>Two numbers that looked like faults and weren't</h2>
+<p>The wired test, eight parallel streams, PC to server: <code>2.38 Gbits/sec</code> sending and <code>2.37 Gbits/sec</code> receiving. Theoretical TCP maximum on 2.5GbE is about 2.4 Gbit/s, so that's within a couple of percent of physics, and there's no gigabit hop hiding anywhere between my desk and the server. Then the next two devices both came back slow, and both were fine.</p>
+<p>The iPhone first, where I confused myself thoroughly. The first run gave 1.05 Mbit/s, which is not a fault, it's iperf3's default UDP pacing of exactly 1 Mbit/s doing what it's told. The second gave 182 Mbit/s and I announced that one was on TCP. It wasn't; the app's own label still said UDP, and I'd read what I expected rather than what was written. The controller had the phone on 6 GHz to the lounge AP at −64 dBm, negotiating 1441 Mbit/s down and 817 up. Weak direction, single stream, pointed the wrong way through a wall.</p>
+<p>The MacBook was the better lesson. 844 Mbit/s felt like a gigabit wall and set off every alarm I have about a slow hop. But it was on the office in-wall AP at −38 dBm, about as good as a wireless signal gets, on 80 MHz WiFi 6 with a link rate of 1201 both ways, and 844 out of 1201 is 70% — roughly the textbook ceiling for real WiFi after overhead. It's also an M1 MacBook Pro, whose radio is hard-capped at 80 MHz and two spatial streams. About 900 Mbit/s isn't a fault on that machine, it's the permanent roof.</p>
+<p>Two numbers that looked like problems, two answers that were "this is correct behaviour". Worth naming, because the instinct both times was to go hunting for a fault that didn't exist.</p>
+<h2>The handheld that would only talk in one direction</h2>
+<p>Then the afternoon, and the part I still don't have an answer for.</p>
+<p>I'd bought an MSI Claw 8 AI+ and was mid-unboxing. On WiFi it worked perfectly, on the Home network. Plugged into a 2.5G USB ethernet dongle it picked up an address on the Management network, showed a link, and had no internet whatsoever. Three hours later I had four diagnoses, each consistent with the evidence available at the time, and each killed by a single line of reply.</p>
+<p><strong>One: it's my own firewall.</strong> The controller showed the Claw linked at 2.5G with a healthy lease, nothing blocked. But my Management network has an allow rule for whitelisted admin devices followed immediately by a block-everything-else rule, and the dongle's MAC wasn't on the whitelist. That would cut it off from the gateway, which is also its DHCP-assigned DNS server, which is exactly what Windows reports as "no internet". WiFi worked because the Home network has its own resolver. Clean, complete, satisfying. I added the MAC. Three minutes later: "Still nothing."</p>
+<p><strong>Two: stale mapping.</strong> Those rules resolve MAC to current IP when the gateway provisions them, and this dongle has history on the network going back to June. Force-provision, wait 30 seconds, retest. I couldn't paste the adapter config, because it's a handheld games console with no clipboard bridge to here, so I read four values off the screen: address, mask, gateway, DNS. All textbook correct. The retest returned <code>Destination host unreachable</code>, a different failure entirely, and one that lives below the firewall layer. Firewalls don't touch ARP.</p>
+<p><strong>Three: the ethernet has been working the whole time.</strong> I pulled traffic flows for the dongle's MAC over three hours and got 284 of them, HTTPS and HTTP with return traffic, starting well before I'd touched the firewall. So TCP is flowing and only UDP and ICMP to the gateway are dead, which fits, because Windows decides "no internet" from a DNS probe. That split is the signature of a Realtek USB NIC checksum-offload bug, where bad checksums get silently discarded. It even explains the working DHCP lease, since DHCP servers read raw sockets and famously ignore bad UDP checksums, and ARP has no checksum at all. The test was to load a bare IP address in the browser: pure TCP, no DNS. Reply: "just comes up with 'server not found'".</p>
+<p>Which killed it. Firefox never got a TCP connection at all, so those 284 flows the gateway logged were traffic it forwarded and counted and that never arrived: a real record of real packets that didn't land, and the most misleading evidence of the day.</p>
+<p><strong>Four: the return path is dying, and it's the cable.</strong> That port had only ever run at 1G before, feeding a Flex Mini, so this was the first time anything had asked it to sustain 2.5GBASE-T, and marginal cable can genuinely pass one direction and mangle the other. I pulled the port error counters and suggested forcing the dongle down to 1.0 Gbps full duplex as the equivalent of swapping the cable. Reply: "i dont know how, but it got through for a few seconds and has now been locked out again."</p>
+<p>A few seconds after a link event, then dead again, transmitting the whole time. That reads like the receive path dropping into low-power idle and never waking: Realtek dongle, Energy-Efficient Ethernet, a battery-optimised handheld with aggressive USB power management. So the day ended with a kill-list — disable EEE, Green Ethernet, Gigabit Lite, selective suspend, untick "allow the computer to turn off this device to save power" — and no confirmation any of it worked, because none of it was tried.</p>
+<p>The Claw is on WiFi. That is not a fix, it's a workaround, and I'm writing it down as one. Along the way I ruled out a duplicate IP claimant, ACLs, content filters and blocked flows in either direction, and I put a MAC on an admin whitelist for a problem that had nothing to do with the firewall. That entry is still there.</p>
+<h2>Housekeeping</h2>
+<p>By nine that evening I'd given up on the wire and set the Claw up over WiFi instead. SSH needed no firewall change, because the existing Home-to-server allow rule already sits above the Management block, though I did nearly destroy the wrong key by running <code>ssh-keygen</code> inside the SSH session, on the server, where it offered to overwrite the server's own identity. Then I said I thought it had worked and the log disagreed, because the three most recent lines still read <code>Accepted password</code> and the last of those was the key-copy itself. One more login and there it was, <code>Accepted publickey ... ED25519</code> at 21:26:13. Believing the log over the vibe is a habit worth keeping.</p>
+<p>The NAS needed an actual rule, since it sits behind that same block: one allow policy scoped to the Claw's WiFi MAC and the NAS address only. The controller filed it at index 10010, below the block at 10007, which looked wrong, and two attempts to move it failed. Then the ping went through anyway, 4 of 4 at 3 to 14 ms. So those index numbers don't reflect actual evaluation order between zones, and the right response to a misplaced rule that works is to leave it alone.</p>
+<p>The morning had also produced a whole plan for moving the sim rig off the Flex Mini and straight into the in-wall AP: nothing blocked it, the Flex Mini was serving exactly one device and became redundant, and the rig would have gone from about 940 Mbit/s to about 2.3 Gbit/s. I'd already signed the session off when the correction landed: that motherboard only has a gigabit port. The whole thing evaporated on one line of hardware trivia I should have checked first.</p>
+<p>And the last thing today, at 21:41 and again at 21:54, was the same mistake twice on two machines. I mapped a drive using the name I assumed the server's share had, which is the folder's name and not the share's name, and got <code>System error 67, the network name cannot be found</code>. Corrected it on the Claw, then five minutes later corrected it again on the PC, having learned nothing in between.</p>
+<p>I spent today building the ability to measure my network precisely, and proved the wired path runs within two percent of its physical limit. The device that beat me was the one that never produced a number at all.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="unifi" href="/blog/?tag=unifi">UniFi</a><a class="tagchip" data-tag="hardware" href="/blog/?tag=hardware">Hardware</a><a class="tagchip" data-tag="docker" href="/blog/?tag=docker">Docker</a><a class="tagchip" data-tag="tooling" href="/blog/?tag=tooling">Tooling</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-14.html">← Discord In, Linux ISOs Out</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-24.html">I Asked If My Containers Were Up to Date, and Ended the Day Running My Own Git Forge →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Wi-Fi Was Pinned to One Channel by a Network That Was Switched Off — N5HQ</title>
+<meta name="description" content="Four access points, all sitting on 2.4 GHz channel 6, and every attempt to change that failed with &#x27;This action could not be completed&#x27;. The cause turned out to be a disabled SSID still enforcing a channel lock across the whole site. Fixing it led to a second find: the same power setting produced 17 dBm on one 5 GHz channel and 29 dBm on another. That evening, planning a second Proxmox node turned up one IP address doing two different jobs across eight firewall rules.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-07-27.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="The Wi-Fi Was Pinned to One Channel by a Network That Was Switched Off — N5HQ">
+<meta property="og:description" content="Four access points, all sitting on 2.4 GHz channel 6, and every attempt to change that failed with &#x27;This action could not be completed&#x27;. The cause turned out to be a disabled SSID still enforcing a channel lock across the whole site. Fixing it led to a second find: the same power setting produced 17 dBm on one 5 GHz channel and 29 dBm on another. That evening, planning a second Proxmox node turned up one IP address doing two different jobs across eight firewall rules.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-07-27.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">The Wi-Fi Was Pinned to One Channel by a Network That Was Switched Off</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-07-27 · Monday · 10:40 PM</span>
+      <span class="chip">10 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>At three in the morning I asked what should have been a five-minute question: I have four access points in the house, what channel should each one be on? The controller said all four were on 2.4 GHz channel 6, with every 5 GHz radio at 160 MHz width. Seven hours later I had rebuilt the whole RF plan, and the two findings that carried the day had the same shape — the configuration screen was describing a network that did not exist.</p>
+<h2>The lock on a network that was switched off</h2>
+<p>I planned the new 2.4 GHz channels, went to apply them, and every change bounced. The UI said "This action could not be completed" and nothing else. No field flagged, no reason, no log entry. That sentence is the entire diagnostic surface the interface gives you.</p>
+<p>Pushing the same change through the API returned the real error in one line: <code>api.err.RadioChannelLockedByIot</code>. There is a feature for IoT-heavy sites that pins every access point to one shared 2.4 GHz channel so that dumb devices never have to re-scan. It was switched on, inside one of my IoT SSIDs that was <strong>disabled</strong> at the time — and the lock applies site-wide whether or not the network it belongs to is broadcasting. A network that wasn't on had been rejecting every manual 2.4 GHz edit in the house. Which answered the original question too: nothing had gone wrong with auto-optimisation, and all four APs sat on channel 6 because something had explicitly told them to.</p>
+<p>I fumbled the fix once — told the lock was the problem, I re-enabled the SSID and came back reporting the identical error, because enabling the network and clearing the channel lock are two different settings on the same page. There was a genuine scare in the middle of it too: for a few minutes nothing at all was broadcasting on 2.4 GHz, about 29 IoT devices with nowhere to associate, two bursts of roughly 25 disconnect events in four seconds each. That one was me, reshuffling SSIDs in the UI in parallel with the API work.</p>
+<h2>Same setting, twelve decibels apart</h2>
+<p>With the lock gone I dropped the 5 GHz radios from 160 MHz to 80 and split them across four channels, and then noticed something that had been true all along: the best AP in the house was carrying nothing. The Lounge unit is a 4x4 ceiling-mounted Pro Max with zero clients on 5 GHz, while two small in-wall units carried everything. All four radios were set to <code>high</code> transmit power, and yet the Lounge on channel 36 was radiating <strong>17 dBm</strong> against the Office on channel 149 at <strong>24</strong>.</p>
+<p>My theory was the Australian regulatory domain, which caps the lower 5 GHz block far harder than the upper one. That's a theory, not a measurement, so I wrote the prediction down before testing it: swap the two APs' channels, and if the Lounge still reports 17 dBm on 149 then I was wrong and both channels go back.</p>
+<p>After the swap, the Lounge read <strong>29 dBm</strong> and the Office read <strong>15</strong>. Same hardware, same <code>high</code> setting, everything identical except the channel number. Twelve decibels apart, about sixteen times the transmit power. It confirmed itself again when I moved the Office to channel 132 and it came up at 22 dBm instead of the 15 it managed on 36. The 36–48 block is now deliberately empty here.</p>
+<h2>I guessed the floor plan, and I guessed it wrong</h2>
+<p>Four APs across three non-overlapping 2.4 GHz channels means two of them have to share. I paired the Theatre and the Garage on channel 11, reasoning that they felt furthest apart. Felt. I had never seen the layout. Then I uploaded an actual floor plan with the AP positions marked: Theatre and Garage are on the <em>same</em> side of the building, about the third-worst pair available. The genuinely furthest-apart pair is Theatre and Office, diagonal corners of a single-storey house. Replanned in four minutes once I could see it.</p>
+<p>The evidence was there before the plan arrived, and I'd flagged it at the time — the Garage's 2.4 GHz utilisation jumped from 61% to 75% right after the reshuffle, with a note beside it saying this is the pairing I guessed at without knowing the layout and it may be the wrong pair. An hour later it settled at 28%, so the spike was transient. The guess underneath it was still bad. Redone properly, the plan also dodged the two loudest things on channel 6: my dashcam at −56 dBm as heard by the Garage AP, which makes sense given the car parks under it, and a <code>DIRECT-</code> network at −51 from the Office that turned out to be the printer's Wi-Fi Direct radio.</p>
+<h2>The write that returned success and changed nothing</h2>
+<p>Late morning I tried to raise the minimum data rate on both 2.4 GHz SSIDs from 1 Mbps to 6, the standard trick for stopping slow chatty devices eating airtime. The call returned <code>success: true</code> and listed the field as updated. I ran it again to be sure. Same response. The stored value was still 1000 both times.</p>
+<p>The blocker was a different field: the rate preference was set to <code>auto</code>, which makes the controller discard any manual rate handed to it. Trying to flip that in the same call failed too, because it sat outside the tool's field whitelist and got dropped without complaint. The only reason I caught it is that the response echoed the config back and I read it. This is the day that earned a standing rule in my notes — never trust a return code from this controller, re-read the stored value afterwards, every time. <code>ok</code> means the request parsed, not that anything happened.</p>
+<p>The real fix was clicking it in the UI, under a menu path that wasn't the one I'd guessed at. The IoT network took 5.5 Mbps, the main one took 6. That gap matters more than it looks: 5.5 is an 802.11b rate and 6 is the lowest 802.11g one, so a floor of 6 makes 802.11b impossible on that network and removes the protection overhead b-compatibility charges to every transmission on it. A step change, not a 9% gain. The IoT network is still at 5.5, because it carries 29 devices I don't want to argue with.</p>
+<h2>What an hour of doing nothing proved</h2>
+<p>The plan was to change the rate, sit on my hands for an hour, then count devices and decide whether to roll back. Baseline: 33 wireless clients, 29 of them on the IoT network. After the hour, <strong>29 of 29 still associated</strong>.</p>
+<p>The airtime numbers were the payoff. Cleanest comparison is the Office AP, which didn't change 2.4 GHz channel across the window: utilisation went <strong>40% to 17%</strong> while its client count went <em>up</em>, eight to nine. The Lounge halved, 20% to 10%, while doubling clients from six to thirteen. Office transmit retries went <strong>16.7% to 3.0%</strong> — it had been re-sending roughly one packet in six.</p>
+<p>Everything with a second radio moved itself, no band steering needed. The one I cared about was my phone, which had been clinging to a 6 GHz link from the far side of the house at <strong>−68 dBm</strong> and landed on the Office AP's new channel 132 at <strong>−38</strong>. That's the whole chain paying off at once: clear the hidden lock, find the power cap, move the Office somewhere it can actually radiate. The printer fixed itself too, bounced off the Garage AP it had been holding at −70 dBm from the far end of the building and back onto the Office at −53, in the room it had sat in the whole time. Not everything held — two Apple devices regressed when the SSIDs restarted, the phone among them, briefly preferring that 6 GHz link at −72 over the −38 a metre away.</p>
+<h2>The cameras, which I did not actually diagnose</h2>
+<p>Mid-morning my Protect cameras started dropping offline and reconnecting, and the obvious suspicion was that I'd caused it. I hadn't — all five are wired on the camera VLAN, and PoE was clean, the switch feeding them delivering 15.6 W of a 60 W budget with no alarms. What I landed on instead is a guess rather than a diagnosis: the gateway was reporting 88–90% memory and a one-minute load average of 3.90, and that single box routes, runs the network controller, and runs Protect for five cameras. Squeeze Protect and the cameras deregister while the network underneath stays perfectly healthy, which is what I was seeing. But my tooling reaches the network side only, so I couldn't read Protect's own logs, and a story that fits the evidence is not a root cause.</p>
+<p>The annoying part is that I already had the answer. The previous evening I'd chased the same symptom from my phone and found it in Home Assistant's logs: the camera service on the gateway throwing 502s at the exact minutes all five went unavailable, which is the console's proxy answering while the thing behind it restarts. That was a different session in a different folder with its own memory, so this one started from scratch and reasoned its way to something vaguer. Two sessions, one symptom, no shared notebook. The fix for that isn't a better diagnosis, it's writing findings down somewhere both of them read.</p>
+<p>The only firm thing I got out of the morning was unrelated: a firewall rule named <code>Allow Cameras to Gateway</code> that cannot fire, because it matches cameras by MAC with a source zone of Internal while every camera lives in Untrusted.</p>
+<h2>One address, eight rules, two meanings</h2>
+<p>That evening I bought a second-hand OptiPlex 3070 Micro to become a second Proxmox node, then measured the machine it is meant to help: 0.5 load average, 9.7 GB of 30 GB used. So it isn't more capacity, it's a second failure domain and a lab — a Home Assistant appliance VM, a second Uptime Kuma so an outage of the main server still alerts me, a second Cloudflare tunnel connector, and a staging container to rehearse updates on.</p>
+<p>The evening went into writing the build plan rather than building anything, and the plan is where the interesting part was. Surveying the firewall first, I found <code>x.x.0.5</code> sitting as a literal address in <strong>eight</strong> policies, meaning two different things depending on which rule you read. In five it means Home Assistant — how the IoT devices, cameras, Hue bridge and air conditioning all reach it. In others it means the server. Two are ambiguous. Nothing distinguishes them, because today Home Assistant <em>is</em> the server, so moving HA to its own address without first splitting those rules by intent breaks the Matter, Hue and air conditioning automations in a way that presents as an mDNS problem rather than a firewall one. A quieter one underneath: the rule letting the Home VLAN reach the server permits exactly two destinations, so the office PC on the management network reaches a new Proxmox UI fine while my phone, on Home, reaches neither that nor the new Home Assistant.</p>
+<p>So the plan pre-allocates. Every guest gets a MAC assigned by hand rather than randomised by Proxmox, so it can be whitelisted and firewalled <em>before it exists</em>: everything additive goes in before the box is plugged in, both Home Assistant instances are permitted at once during the cutover so there's no window where neither works, and the old address comes out only after the new one is verified.</p>
+<p>Nothing was executed. Every firewall call that night was a preview with confirmation deliberately withheld, and one got re-run twice — once for wrongly nested parameters, once because the proposed object omitted two fields that would have been silently re-defaulted on write. A no-op either way, but the object you send should be identical to the one already there apart from the additions.</p>
+<p>The plan is written, the firewall changes are staged, and the machine they're for is still sitting on the desk running Windows. That's the correct order.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="unifi" href="/blog/?tag=unifi">UniFi</a><a class="tagchip" data-tag="wifi" href="/blog/?tag=wifi">Wifi</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="firewall" href="/blog/?tag=firewall">Firewall</a><a class="tagchip" data-tag="hardware" href="/blog/?tag=hardware">Hardware</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-26.html">← I Diagnosed the Same Outage Twice and Got Two Different Answers</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-28.html">A Second Server in the Morning, an Open Front Door by Midnight →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>

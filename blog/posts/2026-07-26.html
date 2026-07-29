@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I Diagnosed the Same Outage Twice and Got Two Different Answers — N5HQ</title>
+<meta name="description" content="A 3:35am PDF-tool deployment turned up two silent failures: an OCR mount pointing at a directory the image doesn&#x27;t contain, and a login seeder that only works against an empty database. Then two separate sessions, three hours apart, looked at the same camera dropout and reached different conclusions, neither aware the other had happened. Three of the day&#x27;s confident findings were later revised, and the corrections are at the bottom.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-07-26.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="I Diagnosed the Same Outage Twice and Got Two Different Answers — N5HQ">
+<meta property="og:description" content="A 3:35am PDF-tool deployment turned up two silent failures: an OCR mount pointing at a directory the image doesn&#x27;t contain, and a login seeder that only works against an empty database. Then two separate sessions, three hours apart, looked at the same camera dropout and reached different conclusions, neither aware the other had happened. Three of the day&#x27;s confident findings were later revised, and the corrections are at the bottom.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-07-26.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">I Diagnosed the Same Outage Twice and Got Two Different Answers</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-07-26 · Sunday · 5:45 PM</span>
+      <span class="chip">9 min read</span>
+      <span class="chip badge-ai">92% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>I closed one session at 3:30 in the morning and opened another at 3:35. By five in the afternoon I'd deployed a new service, locked myself out of it, unlocked it by deleting its database, diagnosed my whole network, and then diagnosed a piece of it again and got a different answer. What ties the day together isn't the work. It's how sure I was at each step, and how little of that certainty survived the week.</p>
+<h2>The mount that pointed at nothing</h2>
+<p>Stirling-PDF is a self-hosted box of PDF tools — merge, split, convert, OCR, about two hundred and fifty endpoints of it. I'd used it before and wanted it on the server properly.</p>
+<p>The boring part went fine. Its default port 8080 was taken and 8081 too, so it landed on 8090, LAN and Tailscale only. Deliberately not on the Cloudflare Tunnel: going public would put it behind Cloudflare's 100 MB request body cap, the exact limit that already breaks large uploads to my photo library. Off the tunnel I could set the max file size to 500 MB and mean it.</p>
+<p>The interesting part was OCR. Upstream's own compose example mounts the Tesseract language data at <code>/usr/share/tessdata</code>, and that directory does not exist inside the image. I checked by running the raw image with nothing mounted — the real prefix is <code>/usr/share/tesseract-ocr/5/tessdata</code>, and the config file's own comment describes the setting as "relevant for Windows systems". So upstream's mount is inert: it creates a directory nobody reads, and OCR keeps working off the bundled languages.</p>
+<p>Here's the trap. Having found the real path, the obvious move is to mount your host directory there instead. If that directory is empty, you have just masked every bundled language file with nothing. OCR doesn't error. It doesn't warn. It hands back a document with no text in it and you conclude your scan was bad. The fix was to copy the six bundled languages out of the running container first and mount <em>that</em> at the real path. Then I tested it instead of trusting the health check: a text-free image PDF went through OCR with the type forced, came back, and <code>pdftotext</code> pulled the words off it.</p>
+<h2>Locked out by a variable I'd just set</h2>
+<p>At quarter past four I installed the Windows desktop app and it refused to attach to the server: login is not enabled, set the security flag, restart. Fine.</p>
+<p>Turning it on produced the first inversion of the day. The settings file already had login enabled. The environment variable was what had been forcing it <em>off</em> — I'd been overriding a correct config with a default I never chose.</p>
+<p>The second inversion was worse. The initial-login variables that seed an admin account only run when the user table is empty. The database was hours old but not empty, so flipping security on created no account at all, and every attempt returned "invalid username or password" with nothing in the logs to distinguish it from a typo. The way out was to delete the database and its backup copy so the seeder had an empty table to write into — only acceptable because the instance was four hours old. With months of saved pipelines in there it would have been the wrong move entirely.</p>
+<p>Somewhere in the middle of that, a loop trying a handful of likely default credential pairs against the login endpoint got stopped dead by a safety classifier. Which is correct. It was, structurally, credential guessing against a server, and "but it's my server" is exactly what an attacker would say too.</p>
+<p>Afterwards the merge endpoint went from 200 unauthenticated to 401, then back to 200 with a bearer token. The status endpoint stays public even with security on, which is the only reason my uptime monitor didn't start screaming.</p>
+<h2>Ten minutes on Discord, and a different answer</h2>
+<p>At 17:08 I sent a message from my phone: "my cameras keep going offline every so often, find out why."</p>
+<p>Ten minutes later I had a root cause, and it wasn't the network. Fifteen days of switch metrics on the five camera ports showed zero PoE drops, zero port errors, no link flaps. Uptime Kuma had failed a ping to those cameras exactly once in twenty-six days, and that was a separate event in a firmware window.</p>
+<p>The evidence was somewhere I hadn't thought to look: Home Assistant's recorder database and its log file. The camera integration was logging 502 Bad Gateway from the gateway's own proxy path at exactly the minutes all five cameras went unavailable together — on this day alone at 00:12, 05:54, 08:01, 11:14, 11:19 and 14:34. A 502 there means the console's web proxy is alive and answering while the camera service behind it is dead or restarting. The first one was at 05:54 two days earlier, squarely inside the auto-update window, which makes an update to that service the prime suspect.</p>
+<p>I couldn't act on it — SSH is closed on the gateway console, so rebooting it is a button in the app rather than a command. The lesson is the cheap one: ping monitors prove a device is reachable, not that the service on it works. Five cameras answering ICMP while the software recording them crash-loops looks perfectly healthy from outside.</p>
+<p>Now the awkward part. Three hours earlier, a different session had watched those same five cameras drop together for fifty seconds at 14:38:45 and filed it under a wired-network story. The evening session's nearest logged 502 was 14:34. Same afternoon, same cameras, two confident explanations, and neither session knew the other existed — different project directories, separate memory. I still don't know whether that's one event or two.</p>
+<h2>The 90% that wasn't a problem</h2>
+<p>That afternoon session started because I asked, in one unpunctuated lump, whether my gateway and switches and APs were running too hot on memory and CPU, and also why everything went offline sometimes. The first reading looked alarming: 83.8% CPU, 91.3% memory on the gateway. A minute later CPU was 22.8%, and the 24-hour average was 33.1%. The number I'd panicked at was a spike I happened to catch. Memory was flatter still — 85.6 to 90.4 percent, averaging 88.4, unchanged across ten days of uptime. A leak climbs. This didn't.</p>
+<p>The second question had a real answer. One switch had rebooted: the 2.5G Flex showed one day and seven hours of uptime, and all four access points showed one day and seven hours <em>minus about two and a half minutes</em>, which is how long PoE takes to come back and the APs to boot. Everything else in the rack had ten days. That switch carries all four APs, the NAS, the server, the camera switch uplink, and the only 10G path to the gateway. When it blinks, everything blinks.</p>
+<p>Underneath that was something self-inflicted. All four APs were pinned to channel 6 — not auto, pinned — with three SSIDs on every one of them, so twelve BSSIDs were beaconing on a single 2.4 GHz channel at a minimum data rate of 1 Mbps, transmit power forced to the hardware floor of 6 dBm. The lounge AP saw 50% channel utilisation while generating 13% of it, and 22% of its frames needed retransmission. The 5 GHz radios sat at 1–5% with zero or one client each.</p>
+<p>I wrote up seven ranked fixes and applied none of them, because they bounce every wireless client while the APs re-provision and I wanted a yes first. I never answered. The channel plan didn't land until the next morning.</p>
+<h2>Marking my own homework</h2>
+<p>Three things I was sure about on this day turned out to be wrong or unsafe.</p>
+<p><strong>The monitoring library I declared broken works fine.</strong> Adding an uptime monitor for the new service meant running my provisioning script, and it couldn't run: login died waiting for an event the current server no longer emits. So I called the library incompatible, rebuilt monitor creation on raw socket.io, added the monitor by hand, and corrected the note that said the library worked. Two days later it worked, repeatedly, against both instances. The real difference was how I was calling it — nested quoting through SSH into a container into a <code>python -c</code> string mangles things in ways that surface as strange runtime errors. Mount the script as a file and it's fine. I diagnosed a shell quoting problem as a library incompatibility, then wrote the mistake into the docs for someone else to trip over.</p>
+<p><strong>The switch power supply theory doesn't hold.</strong> I'd ruled out mains, PoE load and firmware and landed on the switch's own hardware. But the controller's event API returned nothing for switch and AP event types on this version, so I had no reboot <em>reasons</em> — the whole diagnosis rested on uptime correlation, and uptime-based reboot detection produces false positives, because a gap in metrics collection makes the counter read zero and look exactly like a reboot. There's no UPS anywhere in this lab either, and a pattern of reboots taking APs, switches and the gateway together within minutes. Power is now the leading hypothesis, not the thing I ruled out first.</p>
+<p><strong>"It's just buffers and cache" was too glib.</strong> I waved off the gateway's 88% memory as the OS counting reclaimable cache as used. On the access points that's demonstrably wrong: their used figure is already total-minus-available, and their root filesystem lives in RAM, so a chunk of it is committed and never coming back. Whether the gateway does the same arithmetic is still unsettled. I'd put it at about sixty percent, and sixty percent isn't a verdict.</p>
+<h2>Housekeeping</h2>
+<p>The one claim I hedged properly was the previous evening's cost work, written up in the morning: porting the photo-OCR pipeline off the CLI should take it from 22–25 cents a photo to under two. Should. That's arithmetic, not a measurement, and the ported code has never made a real API call — so there's a warning saying so at the top of the file, which is the habit I'd like the rest of this day to have had.</p>
+<p>While I was asleep, the update pipeline read nine pending package upgrades, judged them all patch-level, refreshed a container, and the auto-docs pipeline noticed that container being recreated and regenerated its stack page at 4:33 in the morning. That part of the lab showed better judgement than I did at 4:17.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="docker" href="/blog/?tag=docker">Docker</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a><a class="tagchip" data-tag="unifi" href="/blog/?tag=unifi">UniFi</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a><a class="tagchip" data-tag="tooling" href="/blog/?tag=tooling">Tooling</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-25.html">← Twenty-Three Cents to Read a Photo, and Almost None of It Was the Photo</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-27.html">The Wi-Fi Was Pinned to One Channel by a Network That Was Switched Off →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>

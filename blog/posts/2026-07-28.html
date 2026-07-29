@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Second Server in the Morning, an Open Front Door by Midnight — N5HQ</title>
+<meta name="description" content="The plan was to stop keeping everything on one machine. A small OptiPlex became a second Proxmox node, Home Assistant moved into a real VM, and along the way I took my own network down by plugging in a cable. Then in the evening I turned eight agents loose on the whole lab to criticise it, and they found an approval button reachable from the internet whose only lock was a number you could guess.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-07-28.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="A Second Server in the Morning, an Open Front Door by Midnight — N5HQ">
+<meta property="og:description" content="The plan was to stop keeping everything on one machine. A small OptiPlex became a second Proxmox node, Home Assistant moved into a real VM, and along the way I took my own network down by plugging in a cable. Then in the evening I turned eight agents loose on the whole lab to criticise it, and they found an approval button reachable from the internet whose only lock was a number you could guess.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-07-28.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">A Second Server in the Morning, an Open Front Door by Midnight</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-07-28 · Tuesday · 11:30 PM</span>
+      <span class="chip">15 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>This is two days stapled together, and I won't pretend otherwise. The first starts before dawn and builds something: a second server, a second failure domain, a home for the things that currently all live on one box. The second starts around half four in the afternoon, when I stopped building and asked eight agents to take the whole lab apart and tell me what was wrong with it. The seam is obvious enough that I'd rather show it than hide it.</p>
+<p>The through-line of the morning turned out to be this: every step that broke, broke quietly, and every one of them looked like something else first.</p>
+<h2>The second box</h2>
+<p>The problem is boring and I'd been ignoring it for months. My main server runs about thirty-two containers including the thing that controls my house. Capacity was never the issue; concentration was — if that one machine has a bad day, so does the lighting.</p>
+<p>So: a Dell OptiPlex 3070 Micro, i5-9500T, 16 GB, a 256 GB NVMe, running Proxmox VE 9.2.5 at <code>x.x.0.20</code>.</p>
+<p>Bringing up its network config threw <code>error: vmbr0: bridge port ... does not exist</code>, and my first diagnosis was a Proxmox 9 interface-renaming change. Wrong. The USB 2.5G adapter had physically fallen off the bus — a loose connector. Reseating it brought it back under the same name.</p>
+<p>That event is the whole argument for what came next: an active-backup bond, USB adapter as primary, onboard NIC as standby, so a connector working itself loose becomes something I read about rather than an outage I discover. Failover test, simulated by downing the primary: zero packet loss, and it moved back on its own when the link returned. Over the bond, <code>iperf3</code> gave 2.35 Gbit/s both directions, against 944 Mbit/s on the earlier gigabit run.</p>
+<h2>The cable that took my network down</h2>
+<p>Buoyed by that, I decided the main server should have the same bond, and ran a cable from its onboard NIC to a spare switch port so it'd be ready when I applied the config.</p>
+<p>The config was not applied yet, and that NIC still had DHCP enabled from the original install. The moment it got carrier it took its own lease — <code>x.x.0.201</code> — and installed a default route at metric 100, which outranks the USB adapter's 1024. Lower metric wins. Every packet now left through a door nobody had told the firewall about, wearing an address that appears in exactly zero of my ALLOW rules.</p>
+<p>Nothing crashed. Nothing logged an error. The server was up, SSH was fine, the web UIs answered. It just stopped reaching anything on another VLAN: 100% loss to Home, IoT and Camera. Home Assistant couldn't see the smart plugs, the Hue bridge at <code>x.x.1.182</code> or the cameras, and my uptime monitor started politely telling Discord about it.</p>
+<p>I can't give an honest duration for it. My runbook says about eight hours; my own transcripts only support the cable going in around 07:00 and the fix landing at 08:45. Either it went in earlier than I remember, or the runbook figure is loose. I haven't settled it, so I won't pick one.</p>
+<h2>Two tools that ate the fix without mentioning it</h2>
+<p>Fixing it should have been ten minutes. It was closer to two hours, because everything I reached for failed silently.</p>
+<p>The first one hurt. I use a safety wrapper for network changes on a machine I can't physically reach: it backgrounds a timer, and if I haven't touched a confirmation file within 120 seconds it restores the previous config, on the assumption I've locked myself out. Sound pattern, and it had worked on the new node an hour earlier. This time my confirmation landed after the timer had fired — timestamp 08:09, well past the deadline — so my bond config was quietly reverted. No message, no error, and my session was still open because a bond needs a reboot to take effect anyway. I rebooted at 08:14 into the same broken state, because there was no bond config left to apply. I only proved that afterwards, by reading the generated network units and finding no bond among them.</p>
+<p>Then the stupid one: I edited the file in <code>nano</code>. A diff showed a uniform indent shift, which YAML would probably have tolerated. But the file was 808 bytes where it should have been 551. The indent accounted for maybe fifty. The other two hundred were invisible trailing whitespace that autoindent had put on the end of every line — in a whitespace-sensitive config, on a host with no monitor, in a rack I don't visit. The rule out of it: stage the file somewhere harmless, check it, then put it in place with <code>install</code>. Never paste it into an editor.</p>
+<p>The reboot at 08:45 worked. Bond up, one default route, <code>x.x.0.5</code> back where it belongs, cross-VLAN restored. The line doing the most work is a MAC address pin, so the bond keeps presenting the USB adapter's identity and the reservation keeps yielding the same address. Without it the bond could have landed in the dynamic pool and taken the tunnel and every firewall rule with it.</p>
+<h2>The broken API that was an address collision</h2>
+<p>With the network sane again, Home Assistant moved into a proper HAOS VM on the new node, which buys me the supervisor, add-ons and USB passthrough for a radio stick later. I rehearsed it first, restoring that morning's backup while the VM was isolated on the guest VLAN, so a half-configured copy couldn't go talking to real devices. Then the cutover, 11:25:05 to 11:35:26 — ten minutes of downtime, old container stopped rather than deleted so I had a way back.</p>
+<p>The interesting failure was the addressing. Setting the VM's static address kept timing out, leaving the interface configured as static with no address at all — a dark VM. I reproduced it three times. My first diagnosis was a broken supervisor API, which is a comfortable conclusion to reach, because then it isn't your fault.</p>
+<p>It wasn't broken. The address was already in use, and NetworkManager's duplicate-address detection was refusing it. The only place that said so was a log inside the guest, naming the device that already owned it: one of my access points.</p>
+<p>I'd picked that block by checking what was in use, and what I'd checked was the client list. Network infrastructure never appears in a client list, so four addresses that looked completely free were sitting under four APs. The lesson got written down: ping-sweep before you allocate, because "nothing is using it" and "nothing is listed as using it" are different statements.</p>
+<p>Proof came from <code>curl</code> inside the VM rather than <code>ping</code>, which can't get a raw socket in there and reports failure for everything including the gateway. Cross-VLAN calls came back 200, and the first real backup this lab has ever taken ran: 2.25 GB in 49 seconds.</p>
+<h2>The power-off that became a free test</h2>
+<p>At about 15:37 I turned off the wrong machine. I was shutting the new node down to fit a drive, and the main server went with it.</p>
+<p>Everything built that day now had to come back without me: the bond, the network mounts that must be present before Docker starts or the photo library wakes up staring at an empty folder, and a static address I'd converted from a DHCP lease four hours earlier — before installing the failsafe meant to protect it.</p>
+<p>At 15:40:23, three minutes into boot, that failsafe fired for real and logged the same clean result it had given in testing: gateway reachable, no action taken. The static address held with no lease behind it. The bond came up with both legs live. The mounts were in place before Docker started. Thirty-one of thirty-two containers up, thirty-eight monitors with nothing down, every public hostname serving. An unplanned test of the entire morning, passed.</p>
+<h2>Eight agents, one instruction</h2>
+<p>That was the build. Here's where the day changes shape. Around half four I asked for something different: go through the entire homelab, criticise everything, argue among yourselves, and only come back when it's flawless. Eight domain critics — backup, network exposure, host and boot, containers, update automation, monitoring, virtualisation, secrets — then two adjudicators to settle the fights, every load-bearing claim re-checked against live systems. Read-only. The audit itself changed nothing.</p>
+<p>The headline finding was mine, and it was bad. My update automation asks for approval before it does anything disruptive, and the approval is a link I click. That link was reachable from the public internet with no authentication in front of it, and the only secret protecting it was a number you could guess. Clicking it could approve a package upgrade, a batch of container updates, or a reboot of either host. There's no deny link either, so a link scanner or a browser prefetch could have done it by accident.</p>
+<p>It went behind an identity gate the same afternoon, with a deliberately short session lifetime — a day, where my other gated apps get a month — because this surface can reboot both servers. Honest caveat recorded at the time: that closes the path from the internet, not the one from inside my network.</p>
+<p>The rest of the list was long and deserved: no backup of the main server at all, no alerting engine anywhere, and a backup monitor reading green off manual test pushes while the job it watches had never once run. It also corrected my own briefing — I'd called my LAN flat, and it's five VLANs with about twenty-one zone policies, which the agent said plainly and called good work.</p>
+<h2>The outage that got overturned three times</h2>
+<p>Forty-four minutes after being told my monitoring couldn't have warned me about anything, thirty-five clients dropped off the network in 2.123 seconds. First reconnect 16 seconds later, a very-high-severity unreachable event 89 seconds after that, and by the time I looked it had all recovered on its own.</p>
+<p>The first answer came from the metrics history and it was tidy. The gateway's one-minute load had gone 4.58, then 11.91, then 38.72, against an afternoon baseline under 7, while its memory had sat at 90–95% for seven straight days. A gateway with no headroom, control plane stalling. Not a switch and not an AP — zero such events in three hours. The recommendation was to trim the inspection features and free memory.</p>
+<p>Then it got overturned. My uptime monitors recorded 1,761 heartbeats through that window with zero downs and zero state changes, across thirty-plus checks and two independent instances on separate hosts. The main server, a wired client, logged nothing, and its network mounts — the kind that throw errors on any real interruption — stayed silent. Yet the controller had logged two <em>wired</em> disconnects inside the same burst. The likeliest reading is that the controller lost track of its own state rather than the network failing. Whether the thirty-three wireless drops were real was never settled, and I'd rather leave that honest than take the flattering answer.</p>
+<p>Then the memory premise collapsed underneath it. That 90-something percent figure comes from a kernel call where used memory includes page cache, so it counts reclaimable memory as used. Over seven days it swung 500 MB with no reboot, one drop going 91.4% to 78.4% while buffers rose. Leak test over six days: up 0.29 percentage points. Flat. And during the load spike, memory went <em>down</em>.</p>
+<p>Then the third overturn, my favourite. Mid-investigation a firmware upgrade started looking like the answer, because the newer release notes explicitly mention improved memory usage for the intrusion-detection engine where my version has no work in that area at all. Good mechanism, good evidence. The ops auditor killed it in one line: that build is a Release Candidate and the one I'm running is the current official release. Running candidate firmware on a gateway with no console access, where recovery means holding a reset button through a power cycle, isn't a trade I'll make to chase a metric that was misread anyway.</p>
+<h2>Thirty-seven claims and ten survivors</h2>
+<p>The last stretch of the night was a separate exercise: four independent auditors going through every UniFi setting I have, all reading one central snapshot rather than hammering a gateway with known stability problems. Having the audit cause the next outage would have been a poor result.</p>
+<p>Each auditor produced atomic, individually checkable claims: assertion, evidence quoted from the snapshot, impact, proposed change, risk, source, confidence. Thirty-seven of them. Then all four voted on every claim, including their own.</p>
+<p>Ten survived unanimously. Five plausible-sounding recommendations were killed outright, three of them by the auditor who raised them. One withdrew its own IGMP snooping recommendation after checking radio airtime and finding self-transmission at 3–6%, meaning multicast wasn't costing anything to begin with. Another withdrew a minimum-data-rate change because the vendor documentation it rested on returns a 403 to every request — it failed its own sourcing rule and said so.</p>
+<p>One of my own recorded beliefs went the same way. I'd written that my AP reboots split by model, implying a firmware bug. Wrong: six boots across four APs and a switch all land in a 07:10–07:25 window on two different dates, and no per-model theory explains a fifteen-minute band.</p>
+<p>The second correction it offered is the more interesting one, because the audit was wrong and I very nearly took its word for it. It flagged my note that an IoT channel-lock flag had been blocking every 2.4 GHz edit site-wide, on the grounds that the flag reads false on all three of my networks. It does read false. It reads false because I turned it off the previous morning, which is the only reason I was able to set a channel plan at all — the day before, the controller was refusing those edits with a named error about exactly that lock, and its sibling IoT flag on the same network is still switched on today, which is what being cleared looks like rather than never having been set. The auditors were reading a snapshot taken after the fix and concluding the disease had never existed. That's the failure mode of auditing by photograph: you get the state and never the history that produced it, so a problem somebody already solved looks identical to one that was never real.</p>
+<p>Ten out of thirty-seven, five of the deaths self-inflicted. I find that more reassuring than a clean sweep would have been. Confident output is cheap; output that survives four reviewers trying to knock it down is worth something.</p>
+<h2>Claude reporting itself as an intruder</h2>
+<p>The best beat of the day is the one where the AI escalated its own work as a possible break-in.</p>
+<p>Seven firewall policies had gained a new destination address, and neither I nor apparently Claude had applied them. It went into the handoff file as a red blocker suggesting an unauthorised admin session. What had actually happened: the same session made those updates at 10:19 that morning as part of the Home Assistant cutover, announced them at the time, and then, after its context got compacted, failed to recognise its own handwriting.</p>
+<p>What turned confusion into an escalation was a search that returned a confident false negative. Transcript directories are named after the working directory with slashes swapped for dashes, so they start with a dash. A bare glob expands to a leading-dash path, <code>grep</code> reads that as flags rather than a filename, and the search reported no mentions anywhere. There were 185. That's a permanent note to myself now: before reporting any infrastructure change as unexplained, check whether you were the one who made it, and make sure your check can actually see.</p>
+<h2>The controller that says yes and means no</h2>
+<p>One change from the unanimous list would not stick. I wanted a network removed from the mDNS reflector, and tried three ways: two different API endpoints, both returning ok, and the tooling with confirmation enabled, which reported success and named the field it had updated while the body it handed back still showed the old value. Independent re-read afterwards: unchanged. An earlier change looked like it succeeded, then silently reverted a minute later.</p>
+<p>I stopped after three attempts rather than keep hammering a controller with known stability problems, and did it in the web UI instead. The rule out of that one is now written down in capitals: never trust a return code from this thing, re-read the stored value, then re-read it again a minute later. What did apply, at about eleven at night, was site-to-site VPN magic off and four protocol helper modules disabled for protocols nothing here uses, with the gateway at zero percent loss afterwards.</p>
+<p>So that's the day. A second failure domain that now exists, proved by an accident I didn't plan, and an audit that found the front door open on the one endpoint able to reboot both machines. Nearly every failure in it announced itself as a success first — the rollback that helpfully restored my broken config, the editor that helpfully aligned my whitespace, the API that helpfully confirmed a write it never made. I've started reading the value instead of the return code.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="unifi" href="/blog/?tag=unifi">UniFi</a><a class="tagchip" data-tag="home-assistant" href="/blog/?tag=home-assistant">Home Assistant</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a><a class="tagchip" data-tag="recovery" href="/blog/?tag=recovery">Recovery</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-27.html">← The Wi-Fi Was Pinned to One Channel by a Network That Was Switched Off</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-29.html">I Built a Downloads Sorter in Six Hours, and Every Bug in It Looked Like Working Code →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>

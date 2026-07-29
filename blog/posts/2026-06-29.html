@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twenty-Five Containers Updated, and the Cleanup That Ate My Rollback — N5HQ</title>
+<meta name="description" content="I asked for one thing: update all my Docker containers. The tunnel came back refusing the only command it had ever been given, the request bot came back with a nine-byte program whose entire contents were the words Not Found, and the last known-good image I could have rolled back to had been deleted by my own cleanup eight minutes earlier. Every job that night turned up something the job itself had caused or had been hiding.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-06-29.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Twenty-Five Containers Updated, and the Cleanup That Ate My Rollback — N5HQ">
+<meta property="og:description" content="I asked for one thing: update all my Docker containers. The tunnel came back refusing the only command it had ever been given, the request bot came back with a nine-byte program whose entire contents were the words Not Found, and the last known-good image I could have rolled back to had been deleted by my own cleanup eight minutes earlier. Every job that night turned up something the job itself had caused or had been hiding.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-06-29.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Twenty-Five Containers Updated, and the Cleanup That Ate My Rollback</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-06-29 · Monday · 10:20 PM</span>
+      <span class="chip">8 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Monday was a maintenance day, which in my experience is another way of saying it was a day of finding out what maintenance breaks. I asked for one thing — update all my Docker containers — and finished the night having fixed a tunnel that stopped accepting the only command it had ever been given, replaced a request bot whose entire program was the text "Not Found", and worked out why requests I'd sent for weeks were being binned by a number I set once and forgot. Everything that broke was caused by the maintenance or exposed by it.</p>
+<h2>Twenty-five containers, six stacks, one word</h2>
+<p>The estate is six Compose projects plus a couple of loose containers: home automation, the photo library, the stack that fetches Linux ISOs, monitoring, the reverse proxy, and the strays. Pull every image, bring everything up, recreate only what changed. Twenty-five containers running at the end, zero restart loops, every healthcheck green.</p>
+<p>Except the tunnel connector, which crash-looped the instant it came back. That container publishes eight hostnames, so crash-looping meant the whole public side was dark. The log complained that no valid additional argument had been passed to the tunnel command. The compose file said <code>command: tunnel --no-autoupdate --protocol http2</code>, and the old image had been happy to infer what I meant by a bare <code>tunnel</code>. The new one wants the <code>run</code> sub-command spelled out. One word appended to line 19, four edge connections registered seconds later.</p>
+<p>The confirmation came from a corpse. A duplicate connector had been sitting in the estate exited and dead for two weeks, and I read its config before deleting it. Its command was <code>tunnel --no-autoupdate run</code>. The dead one had been doing it right the whole time.</p>
+<h2>4.156 GB, and why it wasn't 7.21</h2>
+<p>An update like that leaves orphaned layers behind, so next was a cleanup: fourteen dangling images, each cross-checked against every container before anything was removed. Docker's accounting said 7.21 GB was reclaimable. The actual reclaim was 4.156 GB, and the image count went from 41 to 28. The gap isn't an error, it's how layers work — much of what looks reclaimable is shared with images still in use. Disk-usage estimates tell you the size of the thing you're deleting, not the size of the hole it leaves.</p>
+<p>The other thing worth saying out loud before a prune: those dangling layers are your instant rollback. Once they're gone, going back to yesterday's image means re-pulling and hoping it's still there. I knew that. I said it. I ran the prune anyway, which was fine, right up until eight minutes later.</p>
+<h2>The nine-byte program</h2>
+<p>The surface-level check said everything was up. It was only when I asked for a proper audit that the Discord request bot turned out to be lying. The container was "running". Its log was one line repeated dozens of times: invalid or corrupt jarfile.</p>
+<p>The jar was nine bytes. Reading it printed the words <code>Not Found</code>.</p>
+<p>The published image had been built the day before, and during its own build it went to fetch the upstream release, got a 404, and baked the 404 response in as the application. The version label came out as <code>null</code>, which in hindsight was the tell. The startup script just runs <code>java -jar</code> on whatever's at that path, so the container starts, fails, restarts, and calls itself running throughout. A broken build that ships is worse than one that fails, because a failed build tells you.</p>
+<p>The obvious move was to roll back to the previous image, and the previous image was among the fourteen I'd pruned eight minutes earlier. That's the sequence I'm writing this section for: I deleted the escape route before I knew there was anything to escape from, and the prune output was still on screen while I went looking for what it had taken.</p>
+<p>Pinning to a known version instead of chasing <code>latest</code> was the better fix anyway. It pulled a 17 MB jar with the right magic bytes at the front, and the logs went from a corruption loop to configuration valid, Discord connection successful, connected to guild. <code>latest</code> is a promise that whatever built most recently is worth having, and that promise had just been broken very literally.</p>
+<h2>The requests that were working perfectly, and failing anyway</h2>
+<p>Three minutes after the bot came back I sent a test request, and asked a question I'd been sitting on for weeks: the bot takes the request and it reaches the fetcher, but is it actually searching?</p>
+<p>It was. The fetcher's history showed the search completing the same second the request landed and returning eight candidate releases. All eight were rejected, every one for the same reason in slightly different numbers: not enough seeders, 7 against a minimum of 20. Nothing cleared a floor of twenty, so the fetcher did exactly what it was told, found nothing acceptable, and went quiet. From the outside that is indistinguishable from not searching at all.</p>
+<p>Two details worth keeping. First, where the fix belongs. Those thresholds are visible and editable in the fetcher, which is where you'd naturally go, and editing them there would have worked for about a day — the indexer manager runs a full sync and overwrites the fetcher's copy on its next pass. So the change went into the manager instead, and propagated to the second fetcher on its own.</p>
+<p>Second, the number. The recommendation was to drop the floor to 1. I picked 5, because a seeder count is the only cheap signal you get that a source is alive and will finish, and a floor of 1 means queueing things that sit at 0.2% forever. Re-running the same query afterwards: 9 of 10 accepted, where it had been 0 of 8. Then the test request went end to end on its own — grabbed, imported, on disk at 5.94 GB inside two minutes, and only that far because the corrupt-jar fix had gone in three minutes earlier.</p>
+<h2>The NAS finally got its second drive</h2>
+<p>Earlier that evening, before any of the Docker work, the storage rebuild I'd been backing up towards for days happened. The second 8 TB IronWolf went in, and I rearranged all four bays: the two SSDs into bays 1 and 2 as a scratch pool of about 3 TB, the two IronWolfs into bays 3 and 4 as roughly 16 TB of bulk. Both pools are striped with no redundancy — my call, made with the trade-off in front of me and reaffirmed when it was argued against. The bay order is deliberate too, so the third IronWolf can drop into bay 2 later with all three adjacent.</p>
+<p>Then the slow part: recreate every share and push four-odd terabytes back in. Mid-reload the mount showed 15T with 659 GB used, a satisfying and slightly alarming number. The thing that could have gone wrong quietly was the photo library, whose upload target sits in a share that had just been recreated empty. I'd paused it from my phone first, so it never woke up staring at a half-full folder.</p>
+<h2>The upload error I got confidently wrong</h2>
+<p>My phone then threw an upload error on one asset: the network connection was lost. I diagnosed that immediately and with real conviction as the tunnel's 100 MB request-body cap. The reasoning was clean — the photo app uploads each asset as one un-chunked POST, so anything over the cap gets cut off mid-flight and surfaces as a lost connection, and one asset failing while everything else works is exactly that shape. I verified the direct endpoints on the LAN and over Tailscale, both answering in under a millisecond, and repointed the app past the cap.</p>
+<p>It didn't work. Same error.</p>
+<p>The real cause was that nothing had ever uploaded, because nothing had ever logged in. Zero successful logins and zero asset activity across the whole window, against fourteen failed attempts spread over three spellings of my own account: five on an address with a letter missing, five on an address that has never been the account, four on the correct one with the wrong password. All from my own devices — not an attack, just a typo repeated with conviction, which is the same thing I'd just done with the diagnosis. The one useful thing in the wreckage: five of those attempts arrived from a Tailscale source, proving the redirect had taken effect. The app was reaching the server perfectly. It just couldn't get in.</p>
+<h2>Housekeeping</h2>
+<p>Remapping the shares on Windows hit a wall I'd never met: the network folder is currently mapped using a different username and password. I was using the same credentials, which made the message look like nonsense. Windows allows one credential set per server, and a hidden background session — the administrative pipe share set up behind your back — can hold stale ones long after the drive that created it is gone. Deleting the visible mapping isn't enough; the invisible one has to go too, then everything gets remapped in one pass. Five drive letters back.</p>
+<p>The 2 TB external SSD also came out of the server for good. Its temporary shares are retired, the server now exports exactly one directory, and the storage role has moved onto the NAS. The drive that came out of the NAS went into a USB dock as a cold-backup target.</p>
+<p>One evening, and most of what I fixed had been broken or hidden by the fixing. The estate is more current than it's been in months, and slightly less trusting of the word <code>latest</code>.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="docker" href="/blog/?tag=docker">Docker</a><a class="tagchip" data-tag="cloudflare" href="/blog/?tag=cloudflare">Cloudflare</a><a class="tagchip" data-tag="storage" href="/blog/?tag=storage">Storage</a><a class="tagchip" data-tag="nas" href="/blog/?tag=nas">NAS</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="recovery" href="/blog/?tag=recovery">Recovery</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-28.html">← Moving Immich to the NAS — and the Drive That Tried to Take My Photos With It</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-30.html">The Outage Was Already Over, and the Fake Flash Drive Wasn&#x27;t Fake →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>
