@@ -72,12 +72,14 @@
       <details class="more" open>
         <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
         <div class="tags">
-          <span class="tag">UniFi</span><span class="tag">Docker</span><span class="tag">Linux</span><span class="tag">Grafana</span><span class="tag">Home Assistant</span><span class="tag">VLANs</span><span class="tag">Pi-hole</span>
+          <span class="tag">UniFi</span><span class="tag">Docker</span><span class="tag">Linux</span><span class="tag">Grafana</span><span class="tag">Home Assistant</span><span class="tag">VLANs</span><span class="tag">Proxmox</span>
         </div>
         <div class="fgrid">
-          <div class="fcell"><h4>Networking</h4><p>UniFi Cloud Gateway Fiber with five isolated VLANs, inter-VLAN firewall policies, Pi-hole DNS filtering, DDNS, and 40+ connected clients</p></div>
-          <div class="fcell"><h4>Containers &amp; Services</h4><p>20+ containerised services on a Dell OptiPlex — Immich, Grafana, Prometheus, Loki, Home Assistant, and more, managed via Portainer</p></div>
+          <div class="fcell"><h4>Networking</h4><p>UniFi Cloud Gateway Fiber with five isolated VLANs, inter-VLAN firewall policies, split-horizon DNS and DHCP from the gateway, and 50+ connected clients across bonded 2.5GbE links</p></div>
+          <div class="fcell"><h4>Containers &amp; Services</h4><p>30+ containerised services across two Dell OptiPlex Micro nodes — Immich, Grafana, Prometheus, Loki, Forgejo, n8n and more, managed via Portainer</p></div>
           <div class="fcell"><h4>Observability</h4><p>Prometheus metrics, Grafana dashboards, and Loki log aggregation — custom overview dashboard built via the Grafana API</p></div>
+          <div class="fcell"><h4>Virtualisation &amp; Redundancy</h4><p>A second node running Proxmox VE as an independent failure domain — a Home Assistant VM plus LXC guests for monitoring, ingress and a staging box, so an outage of the main server still alerts and still serves</p></div>
+          <div class="fcell"><h4>Automated Ops</h4><p>Nightly update pipeline that reads changelogs, judges risk, and requests approval over Discord; restore-verified backups; self-hosted Forgejo mirroring to GitHub</p></div>
           <div class="fcell"><h4>Smart Home</h4><p>Matter and Thread over Matter for local device control, HomeKit, Philips Hue, and Meross unified through Home Assistant</p></div>
         </div>
         <a class="feature-link" href="/portfolio/homelab/">View full details →</a>
