@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Repo Containing the CLI but Not the Deployment Is Half of It — N5HQ</title>
+<meta name="description" content="Six quiet days ended with a session-resume that handed back a week-old thread from an unrelated project, which was the clearest sign of the gap I got all night. From there the board project went from a passed Phase 0 check to a production container, a CLI, monitoring, and a repo that two reviewers picked apart before anything ran — one of them for shipping half a plan. A second, public version of the same tool was still mid-build at the point I stopped.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-08-07.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="A Repo Containing the CLI but Not the Deployment Is Half of It — N5HQ">
+<meta property="og:description" content="Six quiet days ended with a session-resume that handed back a week-old thread from an unrelated project, which was the clearest sign of the gap I got all night. From there the board project went from a passed Phase 0 check to a production container, a CLI, monitoring, and a repo that two reviewers picked apart before anything ran — one of them for shipping half a plan. A second, public version of the same tool was still mid-build at the point I stopped.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-08-07.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">A Repo Containing the CLI but Not the Deployment Is Half of It</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-08-07 · Friday · 11:34 PM</span>
+      <span class="chip">9 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>I sat down at nine to pick up where the board project had got to, and the resume mechanism handed me a session file from 2026-07-31 — seven days old, on the subtitle-sidecar thread, nothing to do with Planka. It even flagged itself: "This session is from 7 days ago... at threshold." Nothing had broken in the six days since; only the nightly automation had run, and it had run clean the whole way through. But the gap still made itself visible the moment I asked to resume, because the thing I wanted to resume wasn't the thing waiting for me.</p>
+<h2>Phase 0 finally closes, mostly</h2>
+<p>Two checks had been open since the spike work: does the board's API key still work long after it's minted, and does the shared OAuth token's background refresh survive concurrently running sessions.</p>
+<p>The first one had been sitting on <code>NOT_DUE</code> for over a week for a reason that had nothing to do with the key — the container running the check had been stopped and its timer never fired, so it had never actually tried. Starting it and re-running by hand gave a clean pass: zero unauthorised responses across 33 mixed calls, about eight days after the key was minted. That settled the outstanding decision. Planka, not the fallback.</p>
+<p>The second check would not cooperate. The original run on the 31st had burned through its quota before it ever caught a refresh — no refresh rounds observed, verdict <code>INDETERMINATE</code>. I re-launched it as a background soak aimed at the token's next natural refresh, about six and a half hours out, reporting to Discord and the vault on its own. It came back <code>INDETERMINATE</code> again — <code>calls=66</code>, still no refresh rounds caught. Two attempts at the same question, two non-answers. I'd talked about this one more optimistically in the moment than the recorded result actually supports, and I'd rather say that plainly than let the optimism stand.</p>
+<h2>Building the production board</h2>
+<p>With Phase 0 settled I asked for Phase 1 — production infrastructure — and twice asked explicitly for the work to go to subagents rather than eat my own context, which was sitting at 61%. Delegated work, then independently re-checked rather than trusted, because that's the only version of delegation that's worth anything.</p>
+<p>The production side: an unprivileged container on the second Proxmox node, Ubuntu 26.04, set to start on boot, running Planka 2.1.1 with Postgres behind it. The plan document had the image tag wrong — it has no <code>v</code> prefix, and the deploy used the right one. The container binds to its own address rather than <code>0.0.0.0</code>, and a <code>DOCKER-USER</code> allowlist in front of it names exactly two hosts.</p>
+<p>The CLI went in at <code>~/n5-board/</code>, Python 3.14.4 in a venv, pip bootstrapped by hand through <code>get-pip.py</code> because there's no system pip and no sudo on that box. I didn't take the exit gate on faith: 125 cards seeded across six lists, a dry-run diff reporting zero changes, a full wipe-and-regenerate reproducing an identical board signature, <code>doctor</code> six out of six green, and <code>next</code> surfacing the right card first. One grep hit against a forbidden-surface pattern turned out to be a field name inside <code>doctor</code>, not a leaked write command.</p>
+<p>Monitoring went on last — three Uptime Kuma HTTP checks split across both instances. This lab has been burned before by a notification that reports as created and silently isn't attached, so instead of trusting the create call's return value, each one got confirmed by reading the underlying database directly. All three were actually there.</p>
+<p>Phase 1 finished with everything done except public exposure, which needs me at the Cloudflare dashboard and stayed deliberately parked rather than half-done.</p>
+<h2>The leak alert that wasn't</h2>
+<p>Partway through, the session's own leak-check fired: "Stop — the API key is in the vault." It wasn't. The check itself was broken — it piped <code>grep</code> into <code>head</code>, and that pipeline exits zero whether or not <code>grep</code> matched anything, so a clean result and a leak looked identical to it. Re-checked properly: only an eight-character, non-secret prefix appears in the runsheet, never the full key. A false alarm from the alarm, not from the key.</p>
+<h2>The repo, and two reviewers who found real gaps before anything ran</h2>
+<p>Once the board existed I asked for it to become a proper repo on Forgejo, and specifically asked for a plan, a review of the plan, and only then execution.</p>
+<p>Before any of that started, a live hazard turned up: another session of mine was actively writing to the same directory, files touched a minute apart. A secrets pre-scan across roughly 25 files came back clean, but flagged two things worth keeping private without treating as leaks — a network identifier and a list of things in the house.</p>
+<p>Then the two reviews, and both of them were right to exist. The first found that the plan captured the CLI and left out its own deployment — the compose file, the firewall script and its unit, the database dump scripts, the hypervisor firewall entry — all of it living only on the container and the node, none of it in the plan. A repo containing the CLI but not the deployment is half of it. The second review found that the doc-sync drift detector was broken in a specific way: it stamped a UTC timestamp into every file body on every run, which meant every run looked like it had changed something even when nothing had. Proven by running the stamp function twice on an unchanged file 1.5 seconds apart and getting a diff both times. The same review found the pre-declared secret-gate allowlist wrong in both directions — eight real files tripped it, not the two the plan predicted, every one of them a false positive from a substring match, a <code>_PAT</code> sitting inside a longer word, a <code>TOKEN</code> inside an unrelated variable name.</p>
+<p>Both findings got folded in before the repo was created: private, 44 files, 228 KB. I checked the result against the real credential values rather than trust the scan a second time — zero occurrences, remote and local SHAs matching, no accidental virtualenv leak (that would have shown up as ~20 MB instead of 228 KB).</p>
+<p>Two of the judgment calls in that pass are worth keeping on their own. One agent corrected a claim I'd made myself — that the hypervisor firewall config wasn't in the backup — by listing a real archive and finding it there. Another hard-stopped on three secret-gate hits it wasn't sure about and investigated them before clearing them, rather than waving them through because the allowlist said to.</p>
+<p>The one thing that didn't land: a GitHub push-mirror. Creating the mirror repo came back <code>403 Resource not accessible by personal access token</code> — the token is fine-grained, scoped to six named repos, with no permission to create new ones. That needs me to make the repo and extend the token.</p>
+<h2>Reaching it from off-network</h2>
+<p>Later, on the laptop over Tailscale, I asked how to pull the board's admin credentials to log in remotely. The real answer turned out to be that I didn't need to — the main host SNATs tailnet traffic to its own LAN address, so the laptop was already sitting inside the board's firewall allowlist without me doing anything. Logged straight in through the browser. The admin password got an independent re-check against the synced vault at the same time, after an earlier pass had flagged it as unverified rather than clean.</p>
+<h2>A second, public repo, started and not finished</h2>
+<p>Close to eleven I asked for something different: a separate, public version of the same tool that anyone could clone and run against their own setup, with two paths in — set it up by hand, or hand the instructions to an AI. Internally the private one became "the personal repo" and the new one "the client repo."</p>
+<p>The first wall was Forgejo itself — sign-in-to-view is set site-wide, so it can't host something anonymously cloneable. The client repo has to live on GitHub, which is the same host the token can't create repos on. Both blockers need me, not more agent time.</p>
+<p>A pass over the code to map lab coupling found three modules with none at all, and one — the backlog parser — hand-fitted to exact heading strings, where getting one wrong makes items vanish with no error and a heading-level typo silently reassigns bullets to the previous item. The plan that came out of it proposed the name <code>plankamd</code> and the idea of pulling every lab-specific string into one small branding module, so the public and private packages stay identical everywhere else — sync as a copy behind a gate, not a file-by-file rewrite. It also caught two real hazards on its own: a test file with a real internal address hardcoded into it as a literal, and a firewall script that runs <code>iptables -F DOCKER-USER</code>, which would wipe a stranger's own Docker firewall rules the moment they ran it.</p>
+<p>Then the review pass, checked against the actual code rather than the plan's description of it, found five high-severity problems. The one that stopped the plan cold: the CLI builds its full argument parser and parses argv before configuration is ever loaded, which makes the plan's "gate one subcommand on config, about eight lines" architecturally impossible without a real two-phase parse. The rest were real too — a second command with two hardcoded section slugs the plan had missed, a "zero open items" safety check that fires even on a legitimately finished backlog with its only escape hatch forbidden elsewhere in the same design, a sync mechanism with no check that the client tree's history matches where sync last left it, and the word "runsheet" already sitting in a docstring, ready to trip the lab-language filter on the very first run.</p>
+<p>Four decisions got settled with me directly — the name, renaming the personal package to match it, which git identity to use, installing from git. The build started at 23:34:01 in an isolated tree, deliberately not touching the live personal repo while another session was still working in it. The one step that renames the package inside that live repo was set to require my explicit go-ahead rather than run on its own, on the reasoning that checking afterwards isn't a gate, because by then the change has already happened.</p>
+<p>That's where the day stops — steps running, nothing finished.</p>
+<p>Almost nothing today survived on the first telling. The token check that sounded closer than it was, the leak alarm that fired on its own bug, the plan that covered the CLI and skipped the thing that runs it, the sync check that rewrote every file and called it drift, the branding-module claim that missed two more coupling sites and one it couldn't route around. All of it got run, and the run said something different than the summary did.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="tooling" href="/blog/?tag=tooling">Tooling</a><a class="tagchip" data-tag="testing" href="/blog/?tag=testing">Testing</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a><a class="tagchip" data-tag="docker" href="/blog/?tag=docker">Docker</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-31.html">← The Night I Learned a Model Can&#x27;t Be Trusted to Report on Itself</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-08-08.html">The Checks Kept Passing While the Thing Under Them Was Broken, Four Times Today →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>

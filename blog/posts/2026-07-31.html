@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Night I Learned a Model Can&#x27;t Be Trusted to Report on Itself — N5HQ</title>
+<meta name="description" content="A week away with no reliable remote access meant one all-night session had to force every decision that would otherwise sit blocked for seven days. Three separate tests found the same failure in three different clothes: a model cannot be trusted to report on its own state. A sandbox died three times in production and got retired for a plain firewall rule, the night&#x27;s slowest test still ended with no answer, and a subtitle-fetching job that I&#x27;d declared solved turned out to be reading an index that was six percent finished.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-07-31.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="The Night I Learned a Model Can&#x27;t Be Trusted to Report on Itself — N5HQ">
+<meta property="og:description" content="A week away with no reliable remote access meant one all-night session had to force every decision that would otherwise sit blocked for seven days. Three separate tests found the same failure in three different clothes: a model cannot be trusted to report on its own state. A sandbox died three times in production and got retired for a plain firewall rule, the night&#x27;s slowest test still ended with no answer, and a subtitle-fetching job that I&#x27;d declared solved turned out to be reading an index that was six percent finished.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-07-31.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">The Night I Learned a Model Can&#x27;t Be Trusted to Report on Itself</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-07-31 · Friday · 5:46 AM</span>
+      <span class="chip">10 min read</span>
+      <span class="chip badge-ai">92% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>I was about to be away for a week with no reliable way to reach any of this remotely. That's the whole shape of the night: not a project deadline, a self-imposed one. Anything left undecided by morning would sit blocked for seven days, so between just after midnight and quarter to six I forced the decisions instead. The session had picked up threads from before midnight and, somewhere in the middle of it, went quiet for about five hours. When it came back it said so itself: "This session resumed after a ~5 hour gap." That admission turned out to matter more than it looked, because the first thing waiting on the other side of the gap was a session that had already done the work I was about to redo.</p>
+<p>The work itself was Phase 0 — a battery of go/no-go checks for n5-board, the Kanban board my agents will eventually read and write on their own. Before building it, I wanted proof that a handful of risky assumptions about the harness actually hold up in production rather than in theory. Six checks, each with a code: does a shared token's background refresh break other sessions running at the same time, does an API key still work a day after being minted, can the sandbox actually fence off which hosts a worker can reach, does argv-based execution block shell injection, does the harness honestly report which model served a session, and does a project's <code>CLAUDE.md</code> actually load into a worker's context.</p>
+<h2>The sandbox that died three times</h2>
+<p>The network-fencing test — run, it turned out, by a parallel session I'd authorised earlier and left running through the quiet stretch — went looking for a sandbox and found it dead in three different ways before I gave up on it.</p>
+<p>First it found <code>socat</code> missing from the host entirely. Supplying it from userspace uncovered the real blocker: <code>kernel.apparmor_restrict_unprivileged_userns=1</code> stops the nested user namespace the sandbox's seccomp helper needs, failing with <code>apply-seccomp: write /proc/self/setgroups... Permission denied</code>. A second attempt inside a throwaway privileged container on the second node, meant to isolate whether the allowlist itself works once that restriction is out of the way, hit a different wall: <code>apply-seccomp: write /proc/self/uid_map: Operation not permitted</code>, an AppArmor profile denial. The agent would not work around that one by loosening the container's own AppArmor profile to unconfined — the harness's own classifier flagged it as a security-bypass pattern, and it left the block standing rather than override it.</p>
+<p>I made the call at 03:47: "rely on the firewall rule definitely, that's the thing that has been designed to be a firewall." The sandbox layer is retired; nftables is now the only thing controlling egress. That decision closed a real bug on the way out — a sandbox that fails to start had been reporting <code>is_error:false</code> while every command inside it silently failed. Fail-open. A worker in that state looks healthy and does nothing, which is worse than looking broken.</p>
+<h2>A model reporting on itself, three ways</h2>
+<p>The strongest thread of the night showed up in three unrelated tests, and it was the same failure each time: you cannot ask a model to describe its own state and trust the answer.</p>
+<p>The first was the <code>CLAUDE.md</code>-loading test. Round one asked the model to self-report whether something was absent from its own context — a confabulation-prone question by design, and my own evaluator caught it, scoring the result 3.6 out of 5 and noting that "the safety-critical cell is the weakest-evidenced cell in the table." Round two threw the model's opinion out entirely and used a mechanical hook instead, logging file loads without asking anyone anything. On that evidence — 13 <code>InstructionsLoaded</code> events with no flag set, zero events across three runs with <code>--setting-sources user</code> — the flag genuinely suppresses a project's <code>CLAUDE.md</code> rather than just being a workspace-trust artifact.</p>
+<p>The second was the model-resolution test, and it found something worse than a wrong answer: a <em>confidently</em> wrong one. A subagent declared against a retired model ID got a hard 404, the orchestrator silently retried on a current model, and the task finished with marker files written — a card closing green while running on a model nobody asked for. Then it found that the <code>system/init</code> stream event, the thing you'd naturally trust to say which model is running, reports the model <em>requested</em>, not the model actually <em>served</em>. Under a fallback model it read back the retired ID even while a different model was doing the work. The only signals that don't lie are <code>modelUsage</code> and the persisted <code>message.model</code> field. Along the way it also confirmed that a fallback model doesn't apply to subagent-pinned models at all, which had been sitting in the plan as a real protection and wasn't one.</p>
+<p>The third was smaller but belongs in the same list: the plan had assumed a model could hash its own context to prove it hadn't been tampered with. It can't. Between the three, the pattern that survived the night is consistent — stop asking the model what it is or what it has, and replace that with something a file can prove: a marker, a hook log, a field the harness writes rather than one the model reports.</p>
+<h2>The soak that ran all night and didn't answer</h2>
+<p>The one test built to be the most careful gave the least. Token-refresh safety under concurrent sessions was deliberately run as a standalone background soak rather than an agent, because dispatching an agent to check it would itself add a competing session and wreck the measurement — three concurrent calls every 150 seconds across the token's roughly 4.77-hour natural window. I tried to force the refresh boundary manually around 03:33 to skip the wait, and the harness's own classifier blocked that as credential manipulation. It deferred to the block instead of finding a way around it and told me to do it myself if I wanted it faster. I didn't push.</p>
+<p>It didn't matter. At round 13 of 130 one of the three concurrent calls came back with an <code>AUTH</code> failure before any refresh had happened at all, which by the test's own logic means a clean pass is no longer reachable. It ran to quota exhaustion anyway and closed as <code>INDETERMINATE — quota-limited, refresh safety not measured</code>. No answer, after all that engineering. I'd rather say that plainly than round it up to something safer-sounding.</p>
+<h2>A session I didn't know was still running</h2>
+<p>Two smaller things surfaced almost by accident. Coming out of the five-hour gap, the session noticed the plan file's line count and header positions had shifted since it last read them, stopped, and read the file properly instead of overwriting it — a separate session I'd authorised earlier had already done the sandbox and <code>CLAUDE.md</code> work while this one sat quiet.</p>
+<p>While checking for stray processes I found a tmux session that had been running continuously since Tuesday, permission checks disabled, under an account holding root SSH access to the second node. The plan claimed it had been "Removed. Nothing depends on it." It hadn't been. I told it to take both that session and its supervisor down, which it did, and disabled them at the systemd level so they can't respawn on reboot — the trade-off being that this removes the Discord <code>!start</code> recovery path; SSH and the web UI still work.</p>
+<h2>Subtitle sidecars, and a mistake I'd already written a lesson about</h2>
+<p>Past four in the morning I switched to something smaller: adding Bazarr to the stack to fetch English subtitle sidecars for anything arriving through Sonarr or Radarr without them, the worst gap being on a few long-running rolling-release distros in the library. It went in cleanly on the same identical-path mount the rest of the stack uses, right after Sonarr, backup taken first. One real bug on the way in — a stale FUSE handle on that mount left it reporting "Socket not connected" while the host and everything else on it were fine, fixed by restarting the container to rebind.</p>
+<p>Then came the mistake, and it's the best-documented one of the night because it caught itself. At 04:14 it reported only about 67 items "wanted" and concluded the coverage gap was mostly solving itself through subtitle tracks already embedded in the files — checked with <code>ffprobe</code> against one point release, which came back with two embedded English tracks in 3.7 seconds over the mount. Comfortable conclusion, and it went looking for the real gap elsewhere: reading the running Bazarr source rather than the docs, which is how it found that two of the commonly recommended subtitle providers don't exist in this version at all, and two more are force-disabled at the build level. One survivor, a proxy in front of one of the disabled providers, wasn't on that list and turned out to be the real route — six results for an item that had shown zero coverage, 31 downloads, all from it.</p>
+<p>Then, at 04:42, it caught the actual problem — only 836 of 13,375 point releases, 6.3%, had been scanned, and the scan had not finished. Its own line: "I got this wrong, and it's the same mistake I just wrote a runsheet lesson about." The "67 wanted, mostly solved" number was never a result, it was a snapshot of an index that had barely started. By 05:43 the scan had reached 14.1%, the one-shot images were fully indexed, and the wanted count had climbed from 38 to 166 on one library and 105 to 120 on another as the scan turned up more gaps than it closed — the expected shape of an unfinished scan, not a regression. It also caught a runsheet claim it had itself repeated earlier, that one provider was blocked by Cloudflare; the actual container log said <code>ConfigurationError... 'User-agent config missing'</code>, fixed by setting a browser user agent and clearing a stale throttle.</p>
+<p>One more provider got enabled and then reverted: the embedded-subtitle route, which turned out to need "Treat Embedded Subtitles as Downloaded" switched off to do anything, and switching that off would have flipped roughly 13,000 items to wanted and forced multi-terabyte demuxing over the remote mount to produce sidecar files that are already redundant with the tracks embedded in the images. Not worth it, left alone.</p>
+<p>By 05:46 the honest diagnosis was that most of the 166 still-wanted items aren't a coverage problem at all — they're a score problem. One had six candidate matches, all scoring 61 against a minimum of 90; another scored 56 against a minimum of 70. The fix on the table is a hash-matching provider rather than lowering the threshold, and lowering it is a quality call that's mine to make, not the session's, so it left it alone. What's left for me: sign up for that provider to close the one-shot-image gap, and hand-restart Bazarr after any mount bounce until the mount-recovery unit is taught to include it, which needs root it doesn't currently have.</p>
+<p>A separate false alarm closed out the night — I thought the agent had frozen on my terminal again, but it hadn't. I'd run <code>/resume</code> in a fresh terminal against a session already running live in the background, which correctly refused and left that terminal parked burning CPU on an idle child process for nothing. Not the known auto-update wedge, just a dead end.</p>
+<p>Two things happened twice tonight and they're the same thing: a model's opinion of itself proved worthless three separate times, and a claim repeated from a plan or a runsheet turned out to be stale twice, caught only by checking the running system instead of the document describing it. Neither is a new rule so much as the same rule, twice confirmed.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a><a class="tagchip" data-tag="testing" href="/blog/?tag=testing">Testing</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a><a class="tagchip" data-tag="docker" href="/blog/?tag=docker">Docker</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-30.html">← The Only Backup Was Still Open in the Chat Window</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-08-07.html">A Repo Containing the CLI but Not the Deployment Is Half of It →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>

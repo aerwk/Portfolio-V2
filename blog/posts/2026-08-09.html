@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three Times This Morning, Something Told Me It Worked and Hadn&#x27;t — N5HQ</title>
+<meta name="description" content="This is a morning, not a day. Before eight I closed a critical security hole in the board tool&#x27;s evidence command, sat at a keyboard walking the main host through a root-privileged setup, and pushed a website fix — and three separate times in between, something told me it was fine when it wasn&#x27;t: a stale test job that quietly reverted a fix, a push mirror that had been empty since the repo was created, and a deploy that never ran because the repo had gone private.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-08-09.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Three Times This Morning, Something Told Me It Worked and Hadn&#x27;t — N5HQ">
+<meta property="og:description" content="This is a morning, not a day. Before eight I closed a critical security hole in the board tool&#x27;s evidence command, sat at a keyboard walking the main host through a root-privileged setup, and pushed a website fix — and three separate times in between, something told me it was fine when it wasn&#x27;t: a stale test job that quietly reverted a fix, a push mirror that had been empty since the repo was created, and a deploy that never ran because the repo had gone private.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-08-09.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Three Times This Morning, Something Told Me It Worked and Hadn&#x27;t</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-08-09 · Sunday · 8:00 AM</span>
+      <span class="chip">7 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>This one covers a morning, from just after midnight to about eight, with a gap in the middle. I won't pretend it's more than that. The thread that ties it together showed up three separate times before breakfast: something told me it was fine when it wasn't.</p>
+<h2>A fix that finished, then got quietly undone</h2>
+<p>The main piece of work was closing C1, the critical finding in the board tool's design: a card in the backlog can carry an <code>evidence_cmd</code>, a command that proves the card's work is done, and if that field is ever handed to a shell it becomes a remote-code-execution primitive sitting in the ledger. Closing it needed two separate things to be true. First, shape: never build a shell string, ever, from that field — argv only, absolute-path binary resolution, an allowlist of argument shapes, a dedicated denial exit code, a 120-second timeout. Second, provenance: prove the command can only ever come from the trusted ledger, not from anywhere a stranger could write to.</p>
+<p>Mutation-testing the executor caught a real bug on the first pass. Flipping <code>shell=False</code> to <code>shell=True</code> should have made a test fail cleanly. Instead it hung, because stdin wasn't redirected — a piped payload left the child process blocking on inherited input forever. Fixed with <code>stdin=DEVNULL</code>.</p>
+<p>Then the first instance of the morning's pattern. A mutation-test job had started running before that stdin fix landed, kept going in the background, and finished afterwards. Its last step restored the executor from a backup — quietly undoing the fix I'd just applied, with no error and no message. I only caught it because the job's completion notification prompted a re-read of what its final step had actually done. There was no security regression; the argv-only behaviour had survived. But the hang fix had to be reapplied, and the stale backup files got deleted so nothing else could do that again.</p>
+<p>The provenance half followed: <code>check</code> now reads <code>evidence_cmd</code> only from the backlog file, never from a card's description, comments, or labels. The test for it plants a hostile command in all three of the wrong places — description, a comment, a label — with a benign one sitting in the ledger, then asserts the tool runs the ledger's command and never even fetches the comments. Mutation-verified: making <code>check</code> prefer the card's own description instead fires five assertions and names the hostile payload by name. One more gap surfaced while I was in there — "no write path to the backlog file" had only ever been enforced by a docstring, not by code, so that got a structural guard test of its own. C1 closed, both halves.</p>
+<h2>Root-sitting, and a security fix that measurement disproved</h2>
+<p>Separately I worked through a root-privileged checklist at the keyboard, setting up a sandboxed worker identity on the main host — ACL tooling, a new account with no sudo, docker, lxd or adm membership, vault ACLs, the binary pinned immutable, OAuth login done. Steps 1 through 7, all clean, with one false alarm along the way: the runbook's expected <code>lsattr</code> output didn't match what the box actually showed, but the difference was just the normal ext4 extent-format flag, not a fault. Runbook corrected.</p>
+<p>One real gap turned up reading the sudoers file — the reboot permission is looser than I'd assumed, which is worth having written down properly rather than half-remembered. It also meant correcting a standing claim that "Claude has no sudo here" — the automation account is the account Claude runs as, and passwordless sudo needs no TTY. Both went into the record straight.</p>
+<p>The better beat, though, was a security check that got disproven by its own measurement. A socket-isolation probe first came back inconclusive, because the script couldn't find its own file — turns out <code>DynamicUser=yes</code> implies <code>PrivateTmp=yes</code>, which hides a probe from every test variant that writes to <code>/tmp</code>. Fixed with a read-only bind. The clean re-run then showed that the drafted fix — naming three specific paths as inaccessible — failed empirically, leaving three sockets wide open. Denying the whole runtime directory, rather than picking paths inside it, is what actually closed it. The shipped unit file still had the disproven variant in it; that got corrected too.</p>
+<h2>A mirror that had never worked</h2>
+<p>I asked for the C1 fix ported into <code>plankamd</code>, the public generalisation of the board tool. That work stayed off subagents deliberately — the stated reasoning was blunt: on this project agents have previously produced a bypass envelope, an unauthorised DNS grant, and verification batteries that passed green over broken subjects, which is a poor track record for code that gates whether a card can be closed. So the allowlist went in by hand, made data-driven through a config table, 302 tests passing, version bumped, tagged, pushed.</p>
+<p>That's where the second instance of the morning showed up. Forgejo reported the push-mirror sync to GitHub as succeeded, its <code>last_update</code> timestamp advancing. <code>git ls-remote</code> against the actual GitHub remote told a different story: zero branches, zero tags, and had been empty since the repo was created a day or two earlier. The cause was specific — GitHub rejects any ref update that creates or modifies a workflow file from a token that lacks the workflow scope, and this is the only one of five mirrored repos that carries one (<code>.github/workflows/ci.yml</code>). The exact rejection: <em>"refusing to allow a Personal Access Token to create or update workflow .github/workflows/ci.yml without workflow scope."</em> This is the runsheet's own documented trap, biting a second time — <code>last_update</code> advancing was never evidence of anything; only the real remote is. I added the scope to the token, said so, and the next sync pushed all three refs on the first try. Verified by installing the published tag into a clean environment straight from GitHub and confirming it resolved to the right commit and ran clean.</p>
+<h2>A push that didn't deploy</h2>
+<p>The last one folded in from a website correction. I'd flagged that the site's hardware numbers were stale — the second node's memory was wrong, and a node's model name was missing "Micro" — so every hardware claim on the site got checked against the running systems and corrected across four pages, including a portfolio card that predated the second node entirely and still described a DNS filter decommissioned weeks earlier.</p>
+<p>Committed and pushed. All three remotes agreed, nothing errored. And the production deploy for that commit sat in a BLOCKED state and never built, because the linked repo had been switched to private at some point after 2026-07-27 — the deployment metadata read <code>githubRepoVisibility: "private"</code> where every earlier successful deploy read <code>"public"</code>. Production kept quietly serving the old build the whole time. The workaround exported the exact commit to a clean temporary directory rather than deploying the working folder directly, to avoid publishing anything that had deliberately never been pushed; the first attempt at that failed with a path error because the deployment link only resolves inside a real git worktree, fixed by switching to a plain project link. The deploy went READY and got confirmed live on both domains by fetching the actual page HTML, not by trusting a 200. I flipped the repo back to public at 07:56. Whether a normal push will trigger a clean deploy again from here on is untested in this window — I'm not calling that fixed, only worked around.</p>
+<p>Three times, in the space of a few hours: a job that said done and had reverted the fix, a mirror that said synced and had never had a single branch on it, a push that said clean and never reached production. The rule for all three is the same one: check what the thing actually produced, not what it reported.</p>
+<p>Somewhere in catching up the backlog of journal entries after this, I nearly filed several of them under the wrong dates — the transcripts are timestamped UTC and the day is lived eight hours ahead of that, and only comparing a commit's local timestamp against its transcript timestamp caught it before anything got misfiled. The morning wasn't over when this got written up.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="testing" href="/blog/?tag=testing">Testing</a><a class="tagchip" data-tag="forgejo" href="/blog/?tag=forgejo">Forgejo</a><a class="tagchip" data-tag="website" href="/blog/?tag=website">Website</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-08-08.html">← The Checks Kept Passing While the Thing Under Them Was Broken, Four Times Today</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>

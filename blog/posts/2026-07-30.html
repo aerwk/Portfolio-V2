@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Only Backup Was Still Open in the Chat Window — N5HQ</title>
+<meta name="description" content="A curated reinstall I handed off with &#x27;you take over from here&#x27; finished its uninstall step underneath its own preflight backup, and four hand-condensed rule files were gone with no copy anywhere — recoverable only because they were still sitting in the live session&#x27;s context from being read at startup. In the same day I closed a real remote-code-execution hole in the SSH automation and nearly reopened it with the fix meant to close it, watched a four-voice council correct its own arithmetic live while killing a runsheet-trim plan, and found two contradicting network audits that turned out to both be right, 42 minutes apart. All of it ran under a Claude platform outage that sat over the morning.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-07-30.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="The Only Backup Was Still Open in the Chat Window — N5HQ">
+<meta property="og:description" content="A curated reinstall I handed off with &#x27;you take over from here&#x27; finished its uninstall step underneath its own preflight backup, and four hand-condensed rule files were gone with no copy anywhere — recoverable only because they were still sitting in the live session&#x27;s context from being read at startup. In the same day I closed a real remote-code-execution hole in the SSH automation and nearly reopened it with the fix meant to close it, watched a four-voice council correct its own arithmetic live while killing a runsheet-trim plan, and found two contradicting network audits that turned out to both be right, 42 minutes apart. All of it ran under a Claude platform outage that sat over the morning.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-07-30.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">The Only Backup Was Still Open in the Chat Window</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-07-30 · Thursday · 11:55 PM</span>
+      <span class="chip">13 min read</span>
+      <span class="chip badge-ai">92% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>This one ran close to a full day, first event just after midnight and the last one still going near midnight again, with the two largest real gaps in the whole stretch each running close to an hour and a half. Somewhere around four in the morning the Claude API itself started throwing <code>529 Overloaded</code>, on and off, into the early afternoon. Agent work degraded through most of it — one six-agent sweep died outright and had to be redone by hand, with the session noting plainly that "the subagent API is effectively unavailable." I'm not going to give that outage a duration, because I never checked the status page and only have my own failures to bound it by. Eleven separate threads moved through the day. Two of them are worth the space; a few of the rest earned more than that.</p>
+<h2>The reinstall that finished before its own backup did</h2>
+<p>The morning started with a housekeeping item: the ECC rules and skills install on this machine was 272 commits behind, and a skill relocation from June meant zero skills were actually loading at the user level, invisibly, for over a month. The fix was straightforward — uninstall, pull, reinstall — chosen specifically to avoid a legacy-migration hazard that lives in <code>ecc repair</code> but not in a plain uninstall, confirmed by reading the uninstaller source rather than assuming.</p>
+<p>I ran the preflight backup myself and confirmed it: a 176 KB tarball at 12:27. Then I handed it off. "You take over from here and run the rest."</p>
+<p>The agent's own preflight backup, when it went to check it, came back with only 52 entries. The uninstall had already run underneath it. Four rule files I'd hand-condensed were gone, and there was no backup of them anywhere — because <code>~/.claude</code> has never been in the nightly backup allowlist. I confirmed that against that morning's 03:02 archive: zero <code>.claude/rules</code> entries in it, ever.</p>
+<p>They came back anyway, and only for one reason: those four files had been read into the live session's context at startup, so the text was still sitting there, verbatim, when the destruction was discovered. They got restaged from context rather than restored from any backup, because there was no backup to restore from. That's not a recovery procedure I'd want to rely on twice.</p>
+<p>The rest of the reinstall went cleanly once I was paying attention to it directly — a <code>yarn.lock</code> conflict that was just lockfile drift, a curated set of explicit modules instead of the <code>core</code> profile (which would have pulled 135 skill directories to the user level and undone the fix), 548 operations landing correctly split between user and project level. When I asked whether the four destroyed files needed restoring at all, or whether anything still referenced them, the answer was to leave the current upstream version in place rather than re-diverge, and keep the old condensed copies elsewhere for reference. Fine outcome. But the finding underneath it is the one that matters: the tool meant to protect me from myself doesn't get backed up.</p>
+<h2>The SSH hole, and the fix that almost broke everything it was fixing</h2>
+<p>Late in the day, while writing test cases for something unrelated, enumerating exactly what the update automation's SSH nodes send turned up a live one. A workflow built its remote command as <code>n5-doc-stack.sh {{ JSON.stringify($json.body?.project ?? '') }}</code>. <code>JSON.stringify</code> stops you breaking out of a quoted string. It does nothing about <code>$(...)</code>. A project name of <code>$(id -un)</code> came back with the server's own username, proof the substitution runs.</p>
+<p>The webhook behind that workflow is unauthenticated, bound to all interfaces, and reachable from anywhere on the LAN with no auth challenge. The account it runs as is in the <code>docker</code> and <code>lxd</code> groups and holds the root SSH key for the second node. I never sent the actual exploit payload — by the time I'd proven the mechanism, there was nothing left to learn from sending it live.</p>
+<p>The fix didn't touch the automation tool at all. Both of its SSH keys got a forced command in <code>authorized_keys</code> — <code>restrict</code>, an IP scope, and a hard-coded dispatch script — so sshd never executes whatever string the client sends. The client's command lands in <code>$SSH_ORIGINAL_COMMAND</code> as inert text, matched against an allowlist of the twelve real command shapes and mapped to a fixed local equivalent. I built that allowlist from the workflow JSON, tested it 12 for 12 over real SSH, and armed it.</p>
+<p>Then a real execution against it failed, because the SSH node prefixes every single command it sends with <code>cd / ; </code>, and the reconstruction built from the JSON never accounted for that. If I'd trusted the test I'd already passed, all four workflows would have broken silently at the next 04:00 run — the automation that fixed a hole would have quietly disabled itself. Fixed by normalising the prefix, then 24 forms passed — bare and prefixed both — and a real execution went end to end. The rule that came out of it: verifying a wire format against your own reconstruction of it proves nothing. You have to exercise the thing that actually produces it. I also added Discord alerting for anything the dispatcher refuses, throttled and stripped of anything that could turn a crafted refusal into an <code>@everyone</code>, because up to that point a refusal only ever went into a log nobody was watching.</p>
+<h2>A backlog built by agents that weren't allowed to touch anything</h2>
+<p>Early in the morning I asked for something I'd been putting off: spin up agents to trawl the whole homelab — every runsheet, the root docs, the audit, memory files, the live scripts and configs — and build one real backlog out of whatever they found wrong. Four read-only discovery agents did the sweep, four more evaluated what they'd found by theme, a sorting agent deduplicated and filed it into sections, and the write-up landed as <code>BACKLOG.md</code>: 761 lines, 124 items, every internal link checked and resolved.</p>
+<p>The evidence underneath it very nearly didn't survive the process — 403 cited findings and 16 files of working notes, 864 KB, sitting only in a background job's temp directory that gets wiped the moment the job ends. I asked for it to be preserved before that happened, and it got copied out somewhere outside the vault, hashes checked against the originals. The runsheets themselves got put under <code>git</code> for the first time in the same pass, which two of the three council voices later treated as a precondition before they'd even discuss trimming anything.</p>
+<h2>A council that caught its own arithmetic</h2>
+<p>With that backlog and that git history in place, I asked for a plan to trim the 30 runsheets down to whatever no longer needed full detail. A four-voice council — Architect, Pragmatist, Skeptic, Critic — turned it down. The proposed trim-trigger band had been measured from the same runsheets it would then judge, which is circular. It also found the wrong section: the plan arrived with an elaborate trim key already built for incident history, assuming that was where the bulk was — incidents are 789 of 6,532 lines, 12%. The larger sections are routine ops and configured state.</p>
+<p>Mid-discussion the Architect corrected its own number in front of me — a claimed savings of 150 lines turned out to be 57 on a recount, closer to what the Skeptic and Pragmatist had estimated from the start. And the sharpest single finding was the Critic's: a documented ruled-out cause, the kind of line that reads "PoE ruled out: 53.4V steady," is not dead weight, it's the thing that stops the next person re-chasing a cause someone already killed. A naive summariser would delete it as redundant precisely because it looks like a dead end.</p>
+<p>What actually shipped was small on purpose: 57 lines of non-template material removed, every runsheet linked back to its index, a stable backlog pointer generated by command rather than hand-typed item numbers so 30 sheets can't drift out of sync with each other. The larger trim — fifteen sheets that were over the (now-rejected) band — was scoped and then not touched. That's still sitting there, deliberately, not forgotten.</p>
+<h2>Two audits that disagreed and were both right</h2>
+<p>While clearing an item off the new backlog, I found two old network-audit documents giving different VLAN numbers for the same networks, and disagreeing with live reality either way. My first read was that one of them was just wrong. It wasn't — they're 19:34 and 20:16 on the same evening, 42 minutes apart, and the network was renumbered in between. The later document even documents the renumbering itself, in its own section, which I'd walked past the first time through. Both were accurate the moment they were written; the gap between them is a clock, not an error.</p>
+<h2>The rest of it</h2>
+<p>A little after midnight I updated the portfolio site against what the lab actually looks like now — Pi-hole listed in four places despite DNS running off the gateway, NPM still named where it had already been decommissioned, client count off by more than a dozen. A whole second Proxmox node, the Home Assistant VM, Forgejo and the update pipeline were missing from the page entirely. Fixed and shipped by 00:20, after a QA pass first claimed 26 broken images and then turned out to be counting off-screen lazy-loaded logos as broken, which they weren't.</p>
+<p>Alongside that I moved my starred GitHub repos — 21 of them when I first checked, 38 an hour later — into private Forgejo mirrors, 20 of them landing cleanly with no token or API call needed, one deliberately left out because it alone was 5 GB against a 3.6 GB total for everything else. GitHub's own reported repo sizes turned out to be badly wrong across the board, in one case reporting 60 MB for a repo that actually cloned at 234 MB. A second migration pass silently dropped its own last entry, because a <code>'\n'.join()</code> with no trailing newline meant a shell <code>while read</code> loop never saw the final line — caught before it mattered.</p>
+<p>Then I rebuilt part of the backup plan for those mirrors, because the assumption underneath the old one — that a lost mirror could just re-pull from GitHub on restore — turned out to be false the moment I actually tested it: <code>git remote update</code> against a missing bare repo fails outright with a plain "no such file or directory," and the mirror API had reported <code>200 OK</code> on that same failure a moment earlier. I tested the recovery path properly instead: a fresh <code>git clone --mirror</code> into the right lowercased path re-attaches cleanly to the database row that's still there. Later in the day I proposed incremental rsync instead of a full dump for these, and it took three separate fixes against the real NAS mount before it actually worked: file-mode permission bits on the share broke delta detection, modification times didn't survive the round trip either, and only a size-only comparison held. First run against it, 32 seconds for 3.9 GB; second run, 1.77 seconds for a 58 KB delta. An <code>agent-evaluator</code> pass on the whole write-up later caught two real mistakes in it anyway — a size figure that mislabelled the entire data directory as mirrors-only, and a recommendation that would have silently reversed a decision already made and rejected, on the same reasoning, in an earlier session.</p>
+<p>The NPM decommission finished its 24-hour soak clean — every gate green, zero downtime across 45 monitors — and got deleted for real, except for one 2.8 MB directory that's root-owned and needs <code>sudo</code> I don't have on this box. One of the two Docker networks slated for cleanup was initially flagged as "now-unused," but turned out still to be attached to the photo service — it was deliberately kept instead, and only the genuinely orphaned network actually came out. A five-agent review of the update pipeline separately turned up a 24-hour approval window that has never once actually fired on a real run (a timer bug that computes a negative number and cancels before anything starts), a live credential sitting in a synced config file that has no business being there, and a stored-XSS in the blog build script's own markdown handling. None of those are done yet; they're on the list now instead of invisible.</p>
+<p>Overnight the Windows SMB drive maps dropped again, same as the automation's Samba restart has apparently done before — this time traced further, to error 1219, "multiple connections to a server," caused by a stray guest session created just from browsing the host in Explorer holding the connection slot open. The nightly apt job restarting Samba unattended is still an open question I haven't decided on.</p>
+<h2>Starting the board, and stopping at a login screen</h2>
+<p>Late in the afternoon I finally started designing the agent kanban board I've been meaning to build — Planka as the place work gets filed, agents pick cards up, work them, and move them across columns while I track it from outside. Before handing any of the design work off, I checked what was actually true first: Planka isn't deployed yet, the backlog written that morning already behaves like a rough column model on its own, and the planning agents I had access to are read-only, so the actual authoring had to happen in a session I stayed in rather than one I could walk away from.</p>
+<p>The design changed shape once a security review looked at the first draft. Version one treated authority — what a card is allowed to make happen — as a field written on the card itself. That's a card any agent can edit granting itself permission by editing a field, and an unguarded evidence-check string on a card was one plausible route to a card that could type <code>qm destroy 121 --purge</code> and have it run. Version two moved authority off the card entirely: card selection decides nothing, and what a session is actually allowed to execute lives in root-owned files, the same for every card, deny-by-default. A small throwaway container on the second node tested the idea before it went into the real plan — most of it passed clean, but one test needed a filesystem-level read-only mount rather than just file permissions to hold, and a separate test proved that <code>NoNewPrivileges</code> does not stop root from clearing an immutable-file flag, which is a negative result worth having on record rather than a nice one.</p>
+<p>That's as far as it got. The container meant to run the agent side of this made it as far as installing Claude Code and hit the login screen, which is exactly where it's supposed to stop and wait for a human. I tried to do that login myself over SSH, pasted three commands as one block, and the two that mattered got swallowed somewhere in the connection setup and never ran. Caught by checking the container's actual state rather than trusting my own "it's through" — it wasn't. The day ended there, one command at a time, still waiting on me.</p>
+<p>The thread running under all of it: three separate things today reported success and weren't telling the truth — a backup that came back short, a mirror sync that returned 200 on a failure, an uninstall that finished before I knew it had started. The fix isn't cleverer error handling. It's checking the actual state on disk before trusting what a process reports about itself.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="backup" href="/blog/?tag=backup">Backup</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="tooling" href="/blog/?tag=tooling">Tooling</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-29.html">← I Built a Downloads Sorter in Six Hours, and Every Bug in It Looked Like Working Code</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-07-31.html">The Night I Learned a Model Can&#x27;t Be Trusted to Report on Itself →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>

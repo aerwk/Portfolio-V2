@@ -354,30 +354,30 @@
       <p class="sub">Infrastructure, learning, and building in public.</p>
     </div>
     <ul class="posts">
-      <li><a class="postcard rv" href="/blog/posts/2026-07-29.html">
-        <span class="postmeta"><span class="cat">Projects</span><span>2026-07-29</span></span>
-        <h3>I Built a Downloads Sorter in Six Hours, and Every Bug in It Looked Like Working Code</h3>
-        <p>The first backup this server has ever had reported success and contained 1.3 GB of live database files. That set the tone for the day. The rest of it went into a Windows Downloads sorter that produced a run of bugs which all executed cleanly and did the wrong thing, an 18-check test suite that failed once for exactly the reason it existed, and a repository that had to be deleted and recreated rather than force-pushed.</p>
+      <li><a class="postcard rv" href="/blog/posts/2026-08-09.html">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-09</span></span>
+        <h3>Three Times This Morning, Something Told Me It Worked and Hadn&#x27;t</h3>
+        <p>This is a morning, not a day. Before eight I closed a critical security hole in the board tool&#x27;s evidence command, sat at a keyboard walking the main host through a root-privileged setup, and pushed a website fix — and three separate times in between, something told me it was fine when it wasn&#x27;t: a stale test job that quietly reverted a fix, a push mirror that had been empty since the repo was created, and a deploy that never ran because the repo had gone private.</p>
       </a></li>
-      <li><a class="postcard rv-d1" href="/blog/posts/2026-07-28.html">
-        <span class="postmeta"><span class="cat">Homelab</span><span>2026-07-28</span></span>
-        <h3>A Second Server in the Morning, an Open Front Door by Midnight</h3>
-        <p>The plan was to stop keeping everything on one machine. A small OptiPlex became a second Proxmox node, Home Assistant moved into a real VM, and along the way I took my own network down by plugging in a cable. Then in the evening I turned eight agents loose on the whole lab to criticise it, and they found an approval button reachable from the internet whose only lock was a number you could guess.</p>
+      <li><a class="postcard rv-d1" href="/blog/posts/2026-08-08.html">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-08</span></span>
+        <h3>The Checks Kept Passing While the Thing Under Them Was Broken, Four Times Today</h3>
+        <p>I tidied the vault root at four in the morning and found that every one of the 59 references that would have broken were bare paths — zero of them were the Obsidian links I&#x27;d assumed were the risk. The rest of the day went into locking down an autonomous worker&#x27;s network access, five rounds of review, ending with a design whose central claim turned out to have never been true and a decision to stop rather than deploy it. Both threads taught the same lesson: a green check on a script that warns-and-continues, or a reviewer reasoning from a document instead of running the thing, tells you nothing.</p>
       </a></li>
-      <li><a class="postcard rv-d1" href="/blog/posts/2026-07-27.html">
-        <span class="postmeta"><span class="cat">Homelab</span><span>2026-07-27</span></span>
-        <h3>The Wi-Fi Was Pinned to One Channel by a Network That Was Switched Off</h3>
-        <p>Four access points, all sitting on 2.4 GHz channel 6, and every attempt to change that failed with &#x27;This action could not be completed&#x27;. The cause turned out to be a disabled SSID still enforcing a channel lock across the whole site. Fixing it led to a second find: the same power setting produced 17 dBm on one 5 GHz channel and 29 dBm on another. That evening, planning a second Proxmox node turned up one IP address doing two different jobs across eight firewall rules.</p>
+      <li><a class="postcard rv-d1" href="/blog/posts/2026-08-07.html">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-07</span></span>
+        <h3>A Repo Containing the CLI but Not the Deployment Is Half of It</h3>
+        <p>Six quiet days ended with a session-resume that handed back a week-old thread from an unrelated project, which was the clearest sign of the gap I got all night. From there the board project went from a passed Phase 0 check to a production container, a CLI, monitoring, and a repo that two reviewers picked apart before anything ran — one of them for shipping half a plan. A second, public version of the same tool was still mid-build at the point I stopped.</p>
       </a></li>
-      <li><a class="postcard rv-d2" href="/blog/posts/2026-07-26.html">
-        <span class="postmeta"><span class="cat">Homelab</span><span>2026-07-26</span></span>
-        <h3>I Diagnosed the Same Outage Twice and Got Two Different Answers</h3>
-        <p>A 3:35am PDF-tool deployment turned up two silent failures: an OCR mount pointing at a directory the image doesn&#x27;t contain, and a login seeder that only works against an empty database. Then two separate sessions, three hours apart, looked at the same camera dropout and reached different conclusions, neither aware the other had happened. Three of the day&#x27;s confident findings were later revised, and the corrections are at the bottom.</p>
+      <li><a class="postcard rv-d2" href="/blog/posts/2026-07-31.html">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-07-31</span></span>
+        <h3>The Night I Learned a Model Can&#x27;t Be Trusted to Report on Itself</h3>
+        <p>A week away with no reliable remote access meant one all-night session had to force every decision that would otherwise sit blocked for seven days. Three separate tests found the same failure in three different clothes: a model cannot be trusted to report on its own state. A sandbox died three times in production and got retired for a plain firewall rule, the night&#x27;s slowest test still ended with no answer, and a subtitle-fetching job that I&#x27;d declared solved turned out to be reading an index that was six percent finished.</p>
       </a></li>
-      <li><a class="postcard rv" href="/blog/posts/2026-07-25.html">
-        <span class="postmeta"><span class="cat">Projects</span><span>2026-07-25</span></span>
-        <h3>Twenty-Three Cents to Read a Photo, and Almost None of It Was the Photo</h3>
-        <p>I asked a simple question about a side project: what does it actually cost to have Claude read one photo of a handwritten work order? Three real measurements said about 23 cents each. The autopsy was worse than the number: roughly 117,000 input tokens billed for about 3,200 tokens of actual work, because every call was re-sending the entire agent harness. The rewrite took ten minutes. Whether it saves what I think it saves, I still can&#x27;t prove.</p>
+      <li><a class="postcard rv" href="/blog/posts/2026-07-30.html">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-07-30</span></span>
+        <h3>The Only Backup Was Still Open in the Chat Window</h3>
+        <p>A curated reinstall I handed off with &#x27;you take over from here&#x27; finished its uninstall step underneath its own preflight backup, and four hand-condensed rule files were gone with no copy anywhere — recoverable only because they were still sitting in the live session&#x27;s context from being read at startup. In the same day I closed a real remote-code-execution hole in the SSH automation and nearly reopened it with the fix meant to close it, watched a four-voice council correct its own arithmetic live while killing a runsheet-trim plan, and found two contradicting network audits that turned out to both be right, 42 minutes apart. All of it ran under a Claude platform outage that sat over the morning.</p>
       </a></li>
       <li class="rv rv-d2"><span class="postcard postcard-cta">
         <h3>Blog</h3>

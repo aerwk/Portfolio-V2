@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Checks Kept Passing While the Thing Under Them Was Broken, Four Times Today — N5HQ</title>
+<meta name="description" content="I tidied the vault root at four in the morning and found that every one of the 59 references that would have broken were bare paths — zero of them were the Obsidian links I&#x27;d assumed were the risk. The rest of the day went into locking down an autonomous worker&#x27;s network access, five rounds of review, ending with a design whose central claim turned out to have never been true and a decision to stop rather than deploy it. Both threads taught the same lesson: a green check on a script that warns-and-continues, or a reviewer reasoning from a document instead of running the thing, tells you nothing.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-08-08.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="The Checks Kept Passing While the Thing Under Them Was Broken, Four Times Today — N5HQ">
+<meta property="og:description" content="I tidied the vault root at four in the morning and found that every one of the 59 references that would have broken were bare paths — zero of them were the Obsidian links I&#x27;d assumed were the risk. The rest of the day went into locking down an autonomous worker&#x27;s network access, five rounds of review, ending with a design whose central claim turned out to have never been true and a decision to stop rather than deploy it. Both threads taught the same lesson: a green check on a script that warns-and-continues, or a reviewer reasoning from a document instead of running the thing, tells you nothing.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-08-08.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">The Checks Kept Passing While the Thing Under Them Was Broken, Four Times Today</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-08-08 · Saturday · 11:30 PM</span>
+      <span class="chip">15 min read</span>
+      <span class="chip badge-ai">92% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Two things filled today and they turned out to be the same lesson twice. The first, before dawn, was tidying the vault root and discovering that the danger I'd been braced for — broken Obsidian links — didn't exist at all, while the danger I hadn't thought about — bare path strings that fail by doing nothing rather than by erroring — was real and would have gone unnoticed. The second, most of the day and into the night, was locking down an autonomous worker's network access through five rounds of review, ending with a security claim that survived four rounds of scrutiny and then turned out to have never been true. Say the shape once: a check passing green is not evidence the thing underneath it works. It came up four separate times today.</p>
+<h2>Fifty-nine paths and zero links</h2>
+<p>The instruction at 04:23 was specific about the one thing that mattered: "do not commit any file/folder movements until you have run tests and certain that relocating them will not break anything, including any git commits." Thirteen loose files sat at the vault root — board documents, a status file, a research folder, a node plan, an audit, a migration plan, two images, a briefing, a restaurant guide, an orphaned stylesheet, a superseded README — plus a mixed-case <code>projects/Network/</code> directory that should have been lowercase from the start.</p>
+<p>Before moving anything I went looking for what would break, and expected the answer to be Obsidian: wikilinks between notes, snapped by a move. Zero. Not a small number, zero — every single cross-reference in this vault is a prose mention or a bare path string, never a <code>link</code>. What I actually found was 59 explicit path strings that would break: 32 inside the vault itself, 15 auto-regenerated by the board repo's doc-sync script, 6 hand-maintained in that same repo's README, 4 in Python, 2 in the top-level README. Moving files broke nothing in the tool built for linking and would have broken everything in the tooling built around it. That's backwards from what I'd have guessed walking in.</p>
+<p>The sharper part is how it would have broken, because two of those consumers fail by doing nothing rather than by erroring. The sync script's stamp function warns and continues on a missing source instead of aborting — an unpatched move would have exited 0 while quietly emptying the docs mirror. Two Python scripts (duplicated across two locations each) append to a status file rather than overwrite it — a stale path there wouldn't throw, it would silently recreate that file at the abandoned root, forever, next to nothing. Neither actually fired, because both got patched in the same change before anything moved, and I checked they weren't scheduled or mid-run first — no race, but they still had to be patched together rather than one now and one later. Verified afterwards two ways: the sync script ran with zero <code>WARN: missing</code> lines, and a full tree sweep resolved every path string in the vault to a file that actually exists.</p>
+<p>Sixteen moves landed: the board documents and research folder into <code>projects/n5-board/</code>, the node plan into <code>projects/proxmox-pve01/</code>, the audit into <code>projects/homelab-audit/</code>, the migration plan into <code>projects/seedbox/</code>, both images into <code>projects/network/</code>, <code>projects/Network/</code> renamed to lowercase, the briefing and the restaurant guide into <code>research/</code>, the stylesheet and the old README into <code>archive/</code>. Root now holds <code>CLAUDE.md</code> and directories, nothing else. One pre-existing drift turned up while I was baselining — a mirrored plan file whose vault source had been edited the day before but whose mirror was never re-run — folded into the same fix and recorded as not caused by this change.</p>
+<p>The board repo got its own clean commit, fourteen files, pushed and SHA-verified. The runsheets commit didn't come out as clean: it had to bundle the reorg's twelve one-line path fixes together with roughly 400 lines of a previous session's work that had never been committed, because the instruction was to commit fully and that work was sitting in the same working tree. I flagged the entanglement rather than commit it quietly — it's not what I'd have chosen to ship as one commit, but hiding it would have been worse.</p>
+<h2>A rule for the root, and a project directory with memory</h2>
+<p>The instruction at 04:54 was: "keep a rule in claude.md regarding organisation and how it should be." Six clauses went in — the root holds <code>CLAUDE.md</code> and directories, nothing else, ever; a filing table for what goes where; update the project directory in the same session and record state, not just the name; grep the whole filesystem outside the vault before moving anything, with the grep command itself as the authority rather than a list I'd have to remember to update; a finishing sweep that asserts every path string resolves; and a note that Obsidian links were never the risk, paths were.</p>
+<p>Then a second instruction, "ALso include the projects within YKL AI Brain," added a table for the nine personal-project folders with explicit state markers — live, superseded, parked, abandoned. The reason that matters showed up in the same pass: three website folders sit under the same account with similar names, and a blog post has already gone to the wrong one once. State markers are the thing that stops that happening twice.</p>
+<p>Three stale things turned up while building the table and got recorded rather than fixed on the spot: a dead <code>@reboot</code> cron still pointed at a superseded website folder that nothing actually runs from any more, a README still advertising a version number a week after the next one shipped, and a project's own context file with a hardware inventory wrong in three separate details. No memory file went in for the reorg itself — CLAUDE.md already loads every session, so a memory entry would only be a second copy that drifts out of sync with the first.</p>
+<h2>A board tool built for other people, and a bug found in mine</h2>
+<p>Overnight a background build agent had been generalising the board tool for public release — <code>plankamd</code> — and came back with 60 files, about 2,950 lines, an editable install, 193 tests passing at 91% coverage, linter clean. Its own adversarial pass then found a live bug in my personal repo, not the new one: <code>generate.py</code> force-moves any card that isn't in the Backlog column back to Backlog on every run, which directly contradicts its own docstring about workflow state being the board's to own. It's dormant only because Phase 1 is read-only — the moment anything actually moves a card, that line would silently erase the move.</p>
+<p>A security review of the new tool found zero leaked lab identifiers across all 60 files, and two findings that blocked publication anyway. A ReDoS in the backlog parser's regex, confirmed quadratic and measured rather than asserted: 40,000 trailing spaces took 9.12 seconds. And <code>generate</code>, the most-used command, never calls the redaction filter at all — only two other commands do — so a credential pasted into a backlog bullet would post to the board exactly as typed, despite the README claiming redaction runs on everything. Three more fixes landed after: CommonMark's <code>*</code> and <code>+</code> list markers, previously silently dropped instead of parsed; a new diagnostic for unspaced markers; docs brought back in sync. 240 tests green.</p>
+<p>The push itself had its own small verification lesson. Forgejo took the commit clean, SHA-verified, but the GitHub mirror sync call came back with a 500. I checked it directly against GitHub anyway — the standing warning is that the status field can look current even on a failed mirror — and confirmed the mirror had genuinely failed: GitHub refused the token permission to touch <code>.github/workflows/ci.yml</code> without workflow scope. GitHub was left clean rather than half-written. The token fix is mine to make.</p>
+<h2>Locked out of my own board, twice</h2>
+<p>In between, from 01:42, I couldn't reach the board from my laptop. Planka and Postgres were both healthy and listening, which made the tempting diagnosis wrong before it got said out loud — the actual block was the container's <code>DOCKER-USER</code> allowlist, which named only three hosts, and the root cause behind that was a Tailscale subnet-route and local-LAN collision on my end.</p>
+<p>Then I couldn't log in even with credentials pulled from the deployment directory. Two directories share the same path: an unrelated June artifact on the main host with no environment file at all, and the real deployment inside the container. Credentials came back live — 200, token issued — once pulled from the right place, which ruled out a bad password rather than assumed it. A third lockout, from my desktop this time, wired, got fixed with a live firewall edit to both the in-container script and the hypervisor entry, verified by reading the actual iptables chain rather than trusting the restart: new ACCEPT above the DROP, the other address still blocked, so the rule hadn't quietly widened. I asked whether exposing the board as a hostname would open it to any device — yes, both tunnel connectors are already allowlisted, so a hostname would bypass the IP allowlist entirely without an access policy in front of it. I parked that: "let's not worry about this aspect of it for now and get back to the project itself."</p>
+<h2>Three errors that never made it into the runbook</h2>
+<p>Before writing a runbook for everything that needs root, three plan errors got caught first. A settings step still carried a sandbox strict-allowlist block that's stale against the decision to retire the sandbox in July — left in, it would have made the worker refuse to start every single cycle. Two steps were ordered wrong: an OAuth login as the worker account was listed before pinning the binary, but the worker has no interpreter until the pin completes, because its home directory sits at mode 0700 until then. And the pin step is time-sensitive in a way that won't announce itself — the pinned version still exists on disk today, but auto-update has already moved me onto a newer one, and once cleanup removes the old build the pin becomes unreachable. The runbook that came out of it splits into eight steps ready to run now, two that need an artifact first, and three blocked on the Phase 2 build.</p>
+<h2>Five rounds on one word: proxy</h2>
+<p>This is the thread that ate the day, and it ended without shipping anything.</p>
+<p>The goal was limiting the autonomous worker's network egress. Round one was an nftables uid-scoped allowlist, and both reviewers failed it — not on paper, but by actually running the ruleset in an isolated network namespace, which is where the real bugs were. Socketless kernel traffic, IPv6 neighbour discovery and invalid-state resets, bypasses the uid match entirely and hits the terminal drop, which on a console-less box is a host-wide collateral-drop risk. Separately, <code>nft add element</code> on an element that already exists returns success without extending its timeout, so the refresher silently stops refreshing. The security reviewer also found the ruleset wasn't idempotent at all — no flush-and-rebuild preamble, so a routine edit-and-reload could resurrect a stale loopback-accept rule and reopen the exact hole the work exists to close.</p>
+<p>In between, the instruction was to run it again and correct an over-claim: a related privilege-separation item had been marked Closed in the plan, and it needed to read narrowed, not closed instead — the hypervisor's API has no upgrade, install, or arbitrary-root endpoint, so that root SSH key genuinely can't be retired.</p>
+<p>Round four rebuilt on three structural fixes and still failed both lenses: a detectable DNS-refresh bug, a false-alert-silence bug that would page forever while the heartbeat it depends on stayed permanently dead on any host without an AAAA record, and a hardcoded port list missing a service.</p>
+<p>Then my entire instruction, at 13:31, was one word: "proxy." The design turned inside out — nftables would permit the worker exactly one loopback proxy plus static LAN destinations, and the proxy itself, not nftables, would hold the hostname allowlist, so the worker would have no DNS by construction. The first pass at that architecture came back FAIL/PARTIAL on both lenses anyway, roughly 145 KB of hand-written security-critical shell and nft rules by then, doubling in size every round. The verdict on it was blunt: not converging.</p>
+<p>Comparing two proxy candidates for the job, the technical reviewer found one fails open under three separate misconfigurations — leave out a filter directive, leave out deny-default, or leave a port setting unset, and traffic goes straight through. The other denied under every misconfiguration tried against it. Reviewers split two to one in favour of the one that fails open, and I overrode that majority on the evidence rather than deferring to the count, because the proposed mitigation — a hand-maintained pre-start grep guard — repeats a failure pattern already found once in this exact project, where a duplicate pre-start directive had shown up at two line numbers in a single unit. The tradeoff went into the record rather than getting buried: the safer option's unit needs two capabilities and starts as root before demoting, against the fail-open option's zero-capability user directive. A real regression, and I said so.</p>
+<p>At 16:26 the instruction was to spin up subagents, Sonnet only, and keep the synthesis in the main session — I'd be away from the PC, remote control on, auto mode on. Telemetry egress got unanimously blocked at high confidence and closed belt-and-braces: an environment variable verified to suppress the outbound connection on both the pinned and the live binaries, plus a proxy denial as backup. That round scored two pass, one fail, and the fail was a live hazard rather than a paper one — the incident-recovery runsheet pointed a console-less operator at a doctor script written entirely in the other proxy's vocabulary, naming a log path that doesn't exist. Fixed on the spot rather than filed for later.</p>
+<p>At 21:29 the instruction was to keep going: "continue the loop until we get progress." That authorised an escalating loop, Sonnet for the first two rounds and Opus at high effort from round three if it still hadn't converged. The final round is the one that mattered most, and it did what the whole thread had been circling toward without quite doing until then: instead of reasoning about the design, it ran a resolver query as an unprivileged user and found the resolver reachable through a channel the firewall design had never accounted for — wide open, and invisible to the tool that was supposed to be blocking it. The design's central claim, that the worker has no DNS and therefore no exfiltration channel, had never actually been true, at any point in five rounds. The same pass found a false-green alerting bug to go with it: systemd's <code>requisite=</code> failures don't enter the failed state, proven with a disposable transient unit built to check exactly that, so the on-failure page would never fire if the proxy died, and the heartbeat only ever checked the firewall chain, never the proxy itself.</p>
+<p>It ended at 23:26, stopped on purpose rather than looped again: "the remaining work can't be verified without root, and I have no sudo here." Nothing shipped. The accounts don't exist on the host, the proxy isn't installed, the resolver hole is still open. A phone push went out.</p>
+<h2>What else happened while that ran</h2>
+<p>A separate loop, running from around half two in the morning, built a Web3 briefing from five parallel research agents and one editorial pass that rejected the first draft for abandoning its own fact-tagging scheme partway through. The second draft, 8,625 words and fourteen tables, closed all nine blocking items and went into the vault.</p>
+<p>The nightly automation gates ran on their own and mostly asked rather than approved: a VPN client jumping four minor versions plus a security module moving beta to stable, checked against a rehearsal box that hadn't actually tested three of the packages it was meant to; a major photo-app release with breaking API changes and a new CPU baseline; an unpinned stateful service. Five other updates went through clean. Stack docs regenerated for five stacks, and one incidental thing came out of that pass worth a note and nothing more yet — a machine-learning container showing about a minute of uptime against seven days for the rest of its stack. Flagged, not diagnosed. I don't know why it restarted.</p>
+<p>So: a root that's tidy now for a reason I checked rather than assumed, and a firewall design that survived five rounds of review before someone finally ran the query that mattered. The rule that came out of both is the same rule — a green check on a script that warns instead of erroring, or a reviewer that reasons from the document instead of the running system, isn't verification. It's a guess wearing verification's clothes. The fix that actually worked, every time it worked today, was making someone go run the thing.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="tooling" href="/blog/?tag=tooling">Tooling</a><a class="tagchip" data-tag="documentation" href="/blog/?tag=documentation">Documentation</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-08-07.html">← A Repo Containing the CLI but Not the Deployment Is Half of It</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-08-09.html">Three Times This Morning, Something Told Me It Worked and Hadn&#x27;t →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>
