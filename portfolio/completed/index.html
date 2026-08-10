@@ -76,9 +76,9 @@
         </div>
         <div class="fgrid">
           <div class="fcell"><h4>Networking</h4><p>UniFi Cloud Gateway Fiber with five isolated VLANs, inter-VLAN firewall policies, split-horizon DNS and DHCP from the gateway, and 50+ connected clients across bonded 2.5GbE links</p></div>
-          <div class="fcell"><h4>Containers &amp; Services</h4><p>30+ containerised services across two Dell OptiPlex Micro nodes — Immich, Grafana, Prometheus, Loki, Forgejo, n8n and more, managed via Portainer</p></div>
+          <div class="fcell"><h4>Containers &amp; Services</h4><p>32 containerised services across a three-node Dell OptiPlex Proxmox VE cluster — Immich, Grafana, Prometheus, Loki, Forgejo, n8n and more, managed via Portainer</p></div>
           <div class="fcell"><h4>Observability</h4><p>Prometheus metrics, Grafana dashboards, and Loki log aggregation — custom overview dashboard built via the Grafana API</p></div>
-          <div class="fcell"><h4>Virtualisation &amp; Redundancy</h4><p>A second node running Proxmox VE as an independent failure domain — a Home Assistant VM plus LXC guests for monitoring, ingress and a staging box, so an outage of the main server still alerts and still serves</p></div>
+          <div class="fcell"><h4>Virtualisation &amp; Redundancy</h4><p>A three-node Proxmox VE cluster with 2-of-3 quorum — guests spread across all three nodes, including a Home Assistant VM and LXC guests carrying duplicate monitoring and a second tunnel connector, so one node failing is not an outage</p></div>
           <div class="fcell"><h4>Automated Ops</h4><p>Nightly update pipeline that reads changelogs, judges risk, and requests approval over Discord; restore-verified backups; self-hosted Forgejo mirroring to GitHub</p></div>
           <div class="fcell"><h4>Smart Home</h4><p>Matter and Thread over Matter for local device control, HomeKit, Philips Hue, and Meross unified through Home Assistant</p></div>
         </div>

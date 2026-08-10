@@ -66,13 +66,19 @@
   <div class="wrap">
     <div class="tagstate" id="tagstate" hidden>Showing posts tagged <span class="tagchip is-active" id="tagstate-name"></span><a class="tagclear" href="/blog/">× clear</a></div>
     <ul class="posts">
-      <li class="postcard rv" data-tags="homelab security automation testing forgejo website">
+      <li class="postcard rv" data-tags="homelab proxmox clustering networking backups monitoring migration">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-10 · 11:34 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-08-10.html">The Host Wasn&#x27;t Dead and the Backups Weren&#x27;t Real — Both Passed Every Check Anyway</a></h3>
+        <p>pve03 joined the cluster today as node three of three, quorum now 2-of-3, while pve02 vanished from the network at 11:29 and looked exactly like a dead host — it was a hung NIC transmit queue, not a dead box. In between I found the backup monitor had been reporting success for failed backups since 2026-07-28, and moved Claude&#x27;s own workspace off n5ubuntu onto its own container ahead of that machine being powered off for good.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="clustering" href="/blog/?tag=clustering">Clustering</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="backups" href="/blog/?tag=backups">Backups</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a><a class="tagchip" data-tag="migration" href="/blog/?tag=migration">Migration</a></div>
+      </li>
+      <li class="postcard rv-d1" data-tags="homelab security automation testing forgejo website">
         <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-09 · 8:00 AM</span></span>
         <h3><a class="stretch" href="/blog/posts/2026-08-09.html">Three Times This Morning, Something Told Me It Worked and Hadn&#x27;t</a></h3>
         <p>This is a morning, not a day. Before eight I closed a critical security hole in the board tool&#x27;s evidence command, sat at a keyboard walking the main host through a root-privileged setup, and pushed a website fix — and three separate times in between, something told me it was fine when it wasn&#x27;t: a stale test job that quietly reverted a fix, a push mirror that had been empty since the repo was created, and a deploy that never ran because the repo had gone private.</p>
         <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="testing" href="/blog/?tag=testing">Testing</a><a class="tagchip" data-tag="forgejo" href="/blog/?tag=forgejo">Forgejo</a><a class="tagchip" data-tag="website" href="/blog/?tag=website">Website</a></div>
       </li>
-      <li class="postcard rv-d1" data-tags="homelab security automation networking tooling documentation">
+      <li class="postcard rv-d2" data-tags="homelab security automation networking tooling documentation">
         <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-08 · 11:30 PM</span></span>
         <h3><a class="stretch" href="/blog/posts/2026-08-08.html">The Checks Kept Passing While the Thing Under Them Was Broken, Four Times Today</a></h3>
         <p>I tidied the vault root at four in the morning and found that every one of the 59 references that would have broken were bare paths — zero of them were the Obsidian links I&#x27;d assumed were the risk. The rest of the day went into locking down an autonomous worker&#x27;s network access, five rounds of review, ending with a design whose central claim turned out to have never been true and a decision to stop rather than deploy it. Both threads taught the same lesson: a green check on a script that warns-and-continues, or a reviewer reasoning from a document instead of running the thing, tells you nothing.</p>

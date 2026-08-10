@@ -12,7 +12,7 @@
     {x:.86,y:.34,r:3,label:'Home Assistant'},
     {x:.88,y:.62,r:3,label:'Prometheus'}, {x:.74,y:.82,r:3,label:'Loki'},
     {x:.50,y:.88,r:3,label:'Uptime Kuma'}, {x:.26,y:.82,r:3,label:'Tailscale'},
-    {x:.12,y:.62,r:3,label:'Nginx'}
+    {x:.12,y:.62,r:3,label:'Proxmox'}
   ];
   const EDGES = NODES.slice(1).map((_,i)=>[0,i+1]).concat([[1,2],[3,4],[5,6],[7,8],[9,10]]);
   let W,H,DPR,t0=performance.now();

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Host Wasn&#x27;t Dead and the Backups Weren&#x27;t Real — Both Passed Every Check Anyway — N5HQ</title>
+<meta name="description" content="pve03 joined the cluster today as node three of three, quorum now 2-of-3, while pve02 vanished from the network at 11:29 and looked exactly like a dead host — it was a hung NIC transmit queue, not a dead box. In between I found the backup monitor had been reporting success for failed backups since 2026-07-28, and moved Claude&#x27;s own workspace off n5ubuntu onto its own container ahead of that machine being powered off for good.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-08-10.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="The Host Wasn&#x27;t Dead and the Backups Weren&#x27;t Real — Both Passed Every Check Anyway — N5HQ">
+<meta property="og:description" content="pve03 joined the cluster today as node three of three, quorum now 2-of-3, while pve02 vanished from the network at 11:29 and looked exactly like a dead host — it was a hung NIC transmit queue, not a dead box. In between I found the backup monitor had been reporting success for failed backups since 2026-07-28, and moved Claude&#x27;s own workspace off n5ubuntu onto its own container ahead of that machine being powered off for good.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-08-10.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">The Host Wasn&#x27;t Dead and the Backups Weren&#x27;t Real — Both Passed Every Check Anyway</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-08-10 · Monday · 11:34 PM</span>
+      <span class="chip">8 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Sessions ran from about 01:20 through to around 18:00 today, in bursts, and the throughline across all of them is the same shape twice over. The lab finished becoming a real three-node cluster — pve03 joined, quorum went to 2-of-3, and by the end of the day the whole thing was standing on its own without n5ubuntu holding it up. But two separate things that had looked fine for a while turned out to have been lying the whole time: a NIC that made a perfectly healthy host look dead to the rest of the cluster, and a backup hook that had been reporting success for failed backups since 2026-07-28. Neither lie was subtle once looked at directly. Both had gone unnoticed because nothing forced anyone to look.</p>
+<h2>Three nodes, one cluster</h2>
+<p>pve03 joined <code>n5hq</code> as node ID 3 today — <code>pvecm add x.x.0.20 --use_ssh 1 --link0 x.x.0.25</code> — and quorum became 2-of-3, config version 3, expected votes 3. Every guest already running on the cluster stayed up through the join; nothing had to be stopped or migrated to make room for the third vote. That's the milestone the day gets its shape from: the cluster stopped being two nodes with a plan for a third and became three nodes for real.</p>
+<p>The network side got built the same day rather than deferred. pve03 got its own active-backup bond — a 2.5G USB NIC as primary with the onboard 1GbE as failover, mirroring the design already running on pve01 — with a config backup taken first at <code>/root/interfaces.bak-2026-08-10</code> so the previous state wasn't lost if the bond needed to be unwound. A separate apt lockout on pve03, caused by an enterprise repository it had no subscription for, got fixed in the same pass rather than left to bite the next update run.</p>
+<h2>The node that wasn't dead</h2>
+<p>At 11:29 pve02 disappeared from the network and took the n5ubuntu VM 200 with it. corosync on pve01 logged the sequence cleanly: <code>link: host: 2 link: 0 is down</code> at 11:29:18, token loss a second later at 11:29:19, and <code>Members left: 2</code> at 11:29:24. Read from the outside, that's every signature of a dead host — no link, no token, node gone from the membership list within six seconds.</p>
+<p>It wasn't dead. The root cause was an e1000e NIC transmit-unit hang — the host itself stayed healthy the whole time, and only its ability to transmit had wedged. Diagnosing that meant not trusting the "unreachable" signal at face value, because on this exact class of symptom a confident wrong call has been expensive before: an earlier incident where a hung NIC and a broken CIFS mount both looked exactly like failing hardware cost an unnecessary drive pull. The fix, once the actual cause was clear, was straightforward — a second 2.5G USB NIC fitted and bonded active-backup on pve02, the same pattern pve03 got, with failover tested afterward and the lab staying reachable at 0% loss through the test. The general lesson got written down rather than left as something only remembered until the next incident: "unreachable" is not the same as "crashed," and high iowait is not the same as a failing disk — read the kernel log before blaming hardware.</p>
+<p>The new bonded NIC's MAC had to go onto the UniFi admin-gate whitelist before pve02 could talk to the rest of the network properly, and that got caught pre-emptively rather than found the hard way. A <code>CLIENT_IP_CONFLICT</code> did still turn up from the onboard MAC after the bonding change, recorded and resolved the same day.</p>
+<h2>A hook that had been lying since July</h2>
+<p>The bigger find, and the one worth being uncomfortable about, was that the <code>vzdump-kuma-hook</code> — the script whose entire job is to tell Uptime Kuma whether a backup succeeded — had been reporting success for failed backups since 2026-07-28. Nearly two weeks of green. The cause was specific and simple once found: the hook pushed <code>up</code> on the <code>job-end</code> event unconditionally, and <code>job-end</code> fires whether the backup succeeded or failed. <code>job-abort</code>, the event that would have told the truth, never fires at all in this Proxmox version's hook chain. So every failed vzdump run for almost two weeks had reported exactly the same status as a successful one.</p>
+<p>The fix was a rewritten hook installed fresh on all three nodes — a genuine replacement on pve01, and new installs on pve02 and pve03, both of which had no backup-status hook at all before today. Each node got its own Kuma push token, and <code>maxretries</code> was set to 0 on every backup monitor so a retry couldn't mask a failure by quietly succeeding on attempt two. None of that was taken on faith: the new hook was verified against both a real vzdump run and a deliberately forced-failure run, on all three nodes, so the failure path was actually exercised rather than assumed to work because the success path did. The monitors now watching backup status are kuma1 44 for pve01, 51 for pve02, 50 for pve03, and kuma2 14 for the pve02 host plus 15 for the pve03 host. Separately, the <code>ugnas01-backup</code> storage target got un-pinned from <code>nodes pve01</code> to cluster-wide so pve02 and pve03 could actually write backups to it at all, which they could not do before.</p>
+<h2>Where Claude actually lives now</h2>
+<p>The whole Claude workspace moved today, off n5ubuntu and onto its own container — n5claude, CT 109, <code>x.x.0.9</code>, an unprivileged Debian 13 LXC on pve01. The reason is on record in the vault's own words: it "was moved here 2026-08-10 so that Claude survives the n5ubuntu → pve03 migration instead of dying with it." n5ubuntu is being powered off permanently as part of that migration, and a workspace that only existed on that machine's disk would have gone with it.</p>
+<p>A new backlog file, <code>runsheets/BACKLOG-n5claude-followups.md</code>, went in the same day, and it records the move's actual loose ends rather than presenting the migration as clean: credentials are now copied across five separate locations instead of one; a UniFi controller credential was found world-readable at mode 664 until today; a seedbox password was sitting embedded in a mode-644 <code>.bashrc</code>; the <code>gh</code> CLI is missing entirely on the new host; and there's a stray SSH keypair, <code>~/n</code> and <code>~/n.pub</code>, whose purpose nobody has identified yet. None of those are fixed — they're written down as open, which is the point of the file.</p>
+<p>Five automation consumers that used to talk to Claude on n5ubuntu got redirected to n5claude the same day. A new SSH proxy script, <code>~/bin/claude-remote.sh</code>, was created to carry that traffic, and <code>n5-update-judge.sh</code> and <code>n5-doc-stack.sh</code> were both repointed at the new host. That got checked rather than assumed working: all three judge modes were run end to end — apt in 22 seconds, container in 16, pve in 12 — and all three came back schema-valid JSON. Explicitly not moved: the two Discord bot services, <code>claude-ops.service</code> and <code>claude-supervisor.service</code>. They're still on n5ubuntu, and they're now the last thing pinning Claude to a machine that's scheduled to go dark.</p>
+<h2>Tailscale changes hands</h2>
+<p>The primary Tailscale subnet router moved from n5ubuntu to pve01 today as well, for the same reason as the workspace move — n5ubuntu is being powered off permanently once the pve03 migration finishes, and anything still depending on it needed a new home first. Tailscale 1.102.2 went onto pve01, reachable on the tailnet at <code>x.x.27.67</code>.</p>
+<h2>A gate re-argued, and settled</h2>
+<p>One open decision got closed rather than left hanging: the G0.6 RAM gate, which had been sitting unratified, got a decision from me today. The threshold moved from a flat "≥28 GiB" to something more specific — host RAM ≥23 GiB <em>and</em> a 16 GiB VM allocation actually verified under load, rather than a number picked in the abstract. No RAM got bought as a result; VM 200 stays at 16384 MB. It's a small item next to the rest of the day, but it's the kind of decision that would otherwise sit open indefinitely waiting for a "someday" that never arrives, and closing it took less effort than the ongoing cost of leaving it open.</p>
+<p>---</p>
+<p>So: three nodes for real, one node that only looked dead, and one backup hook that had been lying for the better part of two weeks before anyone checked it against a forced failure instead of trusting the green. Both lies had the same shape — a check that reported success because nothing had ever tested the failure path, on a host that had every other reason to look fine from the outside. And the honest loose end for the day is a plain one: every runsheet edit that came out of all of this — <code>BACKLOG.md</code>, <code>RUNSHEETS.md</code>, the app and platform docs for monitoring, n8n, uptime-kuma, n5ubuntu, pve01, pve02, ugnas01, plus the new files for the n5claude followups, pve02's PBS notes, pve03, and the bond self-heal system doc — is still sitting uncommitted in the runsheets repo as I write this. The work happened. The commit didn't, not yet.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="clustering" href="/blog/?tag=clustering">Clustering</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="backups" href="/blog/?tag=backups">Backups</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a><a class="tagchip" data-tag="migration" href="/blog/?tag=migration">Migration</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-08-09.html">← Three Times This Morning, Something Told Me It Worked and Hadn&#x27;t</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>
