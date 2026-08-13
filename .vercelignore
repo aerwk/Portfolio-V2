@@ -1,0 +1,5 @@
+# Source kept in-repo but never served by Vercel.
+# portal.n5hq.me is reached only through the Cloudflare Tunnel behind an
+# Access gate; anything Vercel serves is public and would bypass that gate.
+portal-src/
+archive/
