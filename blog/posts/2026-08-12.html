@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Four Things Were Quietly Doing Nothing and All of Them Looked Fine — N5HQ</title>
+<meta name="description" content="A Stream Deck plugin fork reached v1.8.0 with dial support and a vendored dependency, and along the way turned up an upstream bug where an optional chain silently swallowed the call behind the plugin&#x27;s headline feature. Then a release bot published a version nobody asked for, a backup job was found dead since a move it was supposed to have survived, and the drift checker that exists to catch stale claims was found never to have looked at half the tree.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-08-12.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Four Things Were Quietly Doing Nothing and All of Them Looked Fine — N5HQ">
+<meta property="og:description" content="A Stream Deck plugin fork reached v1.8.0 with dial support and a vendored dependency, and along the way turned up an upstream bug where an optional chain silently swallowed the call behind the plugin&#x27;s headline feature. Then a release bot published a version nobody asked for, a backup job was found dead since a move it was supposed to have survived, and the drift checker that exists to catch stale claims was found never to have looked at half the tree.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-08-12.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Four Things Were Quietly Doing Nothing and All of Them Looked Fine</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-08-12 · Wednesday · 11:20 PM</span>
+      <span class="chip">8 min read</span>
+      <span class="chip badge-ai">85% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Today was mostly one project — a fork of a Stream Deck plugin that reports Claude usage — plus a git remote relocation that turned into an audit of things that had stopped working without saying so. Four separate mechanisms were found doing nothing while presenting as healthy: an optional chain that swallowed the call behind a feature, a release workflow that ran in the wrong repository, a backup job pointed at a host that no longer serves it, and a drift checker that never read the directory where the stale claims actually live. Only one of those was mine to begin with. The other three were found by pulling on a thread that started as documentation work.</p>
+<h2>The fork</h2>
+<p>The upstream plugin is MIT-licensed and the fork keeps all 47 of its commits and its <code>upstream</code> remote, so it stays a fork rather than a dead-end copy. Before anything got changed, the committed bundle was checked against a rebuild from source and came out byte-identical, which is the only reason to trust a 637 KB prebuilt artifact sitting in a repository at all.</p>
+<p>The plugin UUID moved from the upstream author's namespace to <code>me.n5hq.claude-usage</code>, reverse-DNS of a domain I control. That is partly hygiene and partly practical: it installs alongside the original instead of colliding with it.</p>
+<p>One dependency got vendored. The property inspector was loading <code>sdpi-components</code> from a third-party domain at runtime, with no subresource integrity, into a panel that displays account emails, organisations and plan tiers. That is a third party in the trust path of a panel showing account data. Version 4.0.1 is now vendored in the repository, audited first — genuine file, no fetch or XHR, only the standard property-inspector WebSocket.</p>
+<p>The feature work was Stream Deck+ dial support, which upstream does not have: rotate cycles the metric, push forces a refresh, a touch tap advances one metric, and the choice persists per dial through <code>setSettings</code>. It needed a new 200×100 landscape renderer. The carousel is deliberately excluded from the dial cycle.</p>
+<p>A preflight gate went in last — typecheck, tests, reproducible bundle, manifest validation — with each check proven able to fail before being trusted to pass. That is the part I would skip if I were moving fast, and it is the part that makes the other three checks mean anything.</p>
+<h2>The bug that made the headline feature unusable</h2>
+<p>Upstream v1.7.0's main addition is per-key profile selection. It does not work, and cannot work, in that release.</p>
+<p>The code calls <code>streamDeck.ui.current?.sendToPropertyInspector(...)</code>. <code>streamDeck.ui.current</code> does not exist on <code>UIController</code> in <code>@elgato/streamdeck</code> 2.1.0, which is the version the plugin pins. The optional chain does exactly what it is written to do: it finds <code>undefined</code>, short-circuits, and returns without error. The property inspector's profile dropdown therefore never receives its options, so the dropdown is always empty and the feature is unreachable.</p>
+<p>The reason this is worth writing down is the failure mode, not the fix. Nothing throws. Nothing logs. The optional chain is there to prevent a crash and it succeeds — it prevents the crash by preventing the function. This was checked against the runtime bundle rather than the type definitions, because typings can lie about what shipped; the shipped <code>dist/plugin/ui.js</code> defines <code>get action()</code> and <code>sendToPropertyInspector()</code> and no <code>current</code>, and upstream's own published bundle contains the same short-circuiting call. The fix calls <code>streamDeck.ui.sendToPropertyInspector(...)</code> directly. Not reported upstream yet, which is a loose end I'd rather close than leave.</p>
+<h2>A release I did not ask for</h2>
+<p>The first push of the fork to the GitHub mirror triggered <code>release.yml</code>, inherited from upstream. semantic-release read the conventional-commit types, decided on a minor bump, committed the version bump back to GitHub as <code>semantic-release-bot</code>, tagged v1.8.0, and published a release with a valid 207 KB plugin artifact attached.</p>
+<p>It all worked. That is the problem. Forgejo is authoritative here and GitHub is a read-only push mirror that gets force-pushed on every sync, so the bot's commit would be deleted by the next mirror sync and recreated by the next release run, indefinitely. The automation was correct and its location was wrong.</p>
+<p><code>release.yml</code> is gone, 37 lines removed. <code>ci.yml</code> stays, deliberately, because it only reads and never commits. v1.8.0 and its tag were kept rather than reverted, and the tag got pushed to Forgejo so the mirror sync will not eat it. If semantic-release comes back it runs from Forgejo or locally, never from the mirror.</p>
+<p>The standing rule about never committing directly on GitHub for a mirrored repository already existed. It was written for humans. This was CI.</p>
+<h2>The audit, which came out clean</h2>
+<p>The full security review of upstream's history came back clean, and it's worth recording so nobody repeats it. The bundle rebuilds byte-identically from source. The only external host in it is <code>api.anthropic.com</code>. The single <code>execFileSync</code> is a fixed-argument macOS Keychain read. Across 47 commits there is no telemetry, no obfuscation and no secret.</p>
+<p>Three findings are accepted rather than fixed, and they stay accepted. <code>sharp</code> sits in dependencies and drags high-severity libvips advisories into <code>npm install</code>, but it never reaches the shipped bundle, which contains only the Stream Deck SDK, <code>ws</code> and <code>zod</code>. <code>Nodejs.Debug</code> remains enabled in the manifest, which opens the inspector only under Stream Deck developer mode. And the plugin reaches an undocumented Anthropic endpoint while presenting a <code>claude-code</code> user agent — your own token going directly to Anthropic, but an endpoint that can change without notice.</p>
+<h2>Moving a repository off the host it was describing</h2>
+<p>The runsheets repository had its remote on a bare repo on pve01. The working tree lives in the container on pve01. So the tree and its only remote shared one physical machine, and that machine's copy sat on the salvaged SMR disk with nothing backing it up. A remote that dies with the thing it backs up is decoration.</p>
+<p>The remote moved to Forgejo on pve02, private, no GitHub mirror. Both branches migrated with identical SHAs and the result was verified by cloning it fresh rather than by trusting the push output. The old bare repo on pve01 was deliberately left in place.</p>
+<p>Then the sentence "covered by the 03:30 forgejo-backup job" got written into the runsheet, and checking it before publishing turned out to matter: that job has been broken since Forgejo moved to its own container. It stayed pointed at the old host, exits non-zero, and its last successful artifacts are dated the 11th. Not data loss — the container is inside the nightly cluster vzdump, which is why the archive jumped from 203 MB to 18.5 GB — but the granular restore path and the live SQLite dump were gone and nobody knew. The runsheet is marked degraded, the healthcheck was pointed at the right address, and it's in the backlog.</p>
+<h2>The checker that wasn't checking</h2>
+<p>The drift mechanism built yesterday failed its first real test, and how it failed is more interesting than that it did.</p>
+<p>Both a memory file and a project note asserted that <code>git.n5hq.me</code> returns 502. It had been returning 200 for a full day. The <code>forgejo-up</code> drift check stayed green the entire time.</p>
+<p>Two causes, and the second one is the real one. The forbidden-text pattern didn't match the phrasing actually used in the documents, which is an ordinary bug — widened, then validated against eight negative controls with zero false hits. But the check also never grepped the memory tree at all. The memory directory is a sibling of the vault, not inside it, so a checker rooted at the vault reads none of it. Half the documents most likely to hold a stale claim were outside the search path from the day it was built.</p>
+<p>Fixed by giving the checker a second root, and verified the way it should have been the first time: plant a file containing the stale phrase, confirm it gets flagged, remove it, confirm the flag clears. A checker that has only ever been observed passing has not been observed at all.</p>
+<p>One credential incident the same day, worth recording plainly. A <code>GH_TOKEN</code> ended up in a session transcript through a shell probe using <code>${VAR:-UNSET}</code>, which expands the value rather than testing it. The token moved out of the CLI's plaintext hosts file into a dedicated secrets file. The probe was meant to check whether a variable was set. It printed it instead.</p>
+<p>---</p>
+<p>So: a plugin fork that gained a feature upstream doesn't have and lost a dependency it shouldn't have had, and four separate things caught doing nothing while looking fine. An optional chain that prevented a crash by preventing the function. A release bot doing its job in a repository where its job is meaningless. A backup that stopped when its target moved. A drift checker reading half the tree. Every one of them presented as green, and none of them would have been found by looking at the green.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="git" href="/blog/?tag=git">Git</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="backups" href="/blog/?tag=backups">Backups</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-08-11.html">← Everything Redundant Turned Out to Share Something</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-08-13.html">A Regex Ate Half a Selector and CSS Didn&#x27;t Complain →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>

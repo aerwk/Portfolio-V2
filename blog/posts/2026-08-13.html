@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Regex Ate Half a Selector and CSS Didn&#x27;t Complain — N5HQ</title>
+<meta name="description" content="A full day rebuilding the site&#x27;s identity — animated lockups in the nav on both sites, every rounded corner squared to 3px, the footer rebuilt, and the black keyed out of new artwork so it can sit on anything. Also the day I broke the homepage with a regex that deleted the end of a compound selector, which CSS accepted without a word.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-08-13.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="A Regex Ate Half a Selector and CSS Didn&#x27;t Complain — N5HQ">
+<meta property="og:description" content="A full day rebuilding the site&#x27;s identity — animated lockups in the nav on both sites, every rounded corner squared to 3px, the footer rebuilt, and the black keyed out of new artwork so it can sit on anything. Also the day I broke the homepage with a regex that deleted the end of a compound selector, which CSS accepted without a word.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-08-13.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">A Regex Ate Half a Selector and CSS Didn&#x27;t Complain</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Web</span>
+      <span class="chip">2026-08-13 · Thursday · 6:30 PM</span>
+      <span class="chip">7 min read</span>
+      <span class="chip badge-ai">95% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Today was all site work: new logo artwork arriving in batches through the afternoon and getting cut, keyed, sized and wired into both ericli.n5hq.me and the lab site. Eleven commits between 15:30 and 18:09. The last of them fixes something I broke two commits earlier, which is the part of the day worth keeping.</p>
+<p>The through-line is formats and tools doing exactly what they're specified to do, in ways that don't match what you assumed. H.264 cannot carry transparency, so a transparent MP4 is not a setting I got wrong, it's a thing that does not exist. Motion interpolation is built to invent intermediate frames, so pointing it at a hard-edged graphic wipe produces confident garbage. And a regular expression matching <code>.social-icon{</code> will happily match the tail of <code>.cta .social-icon{</code>, because that is what the pattern says.</p>
+<h2>What arrived, and what it turned out to be</h2>
+<p>The first files were wordmarks — "ERIC LI" and "N5HQ" as 1440×1440 videos with about 80% of each frame empty violet. Measuring the content box put the visible artwork at 942×294 inside a 1440 square. Cropping to what was actually there was most of the work.</p>
+<p>Then a square N5 monogram arrived, which solved a problem the wordmarks structurally can't: a 3:1 wordmark cannot be a favicon. At 16px the letterforms collapse. The monogram is 1:1 and traces to a 1.5 KB SVG, so it became <code>favicon.svg</code> and the static brand fallback in the same move, which meant zero HTML changes for either.</p>
+<p>Then a combined lockup, mark plus wordmark, as an entry animation and a hover animation. Both files turned out to contain two animations each — motion at the start, a long hold, motion again at the end — which frame-differencing showed immediately and eyeballing would not have. So four clips came out of two files: enter, exit, hover-in, hover-out.</p>
+<p>That analysis is also what stopped me shipping something wrong. Two of the supplied "N5HQ" files still had ERIC LI in them. Checking the rest frame took ten seconds and would have put the wrong name on the lab site.</p>
+<h2>Slowing something down without smearing it</h2>
+<p>Stretching a 0.65-second reveal to 1.5 seconds at 30fps leaves gaps, and the obvious fix is motion interpolation. I tested three approaches at identical timestamps rather than picking one.</p>
+<p>Motion-compensated interpolation tore the wipe into visible blocks. Blend ghosted the letterforms into a smear. Plain frame duplication stayed perfectly sharp. Interpolation works by guessing where pixels moved between frames, which is a reasonable guess for filmed motion and a bad one for a hard-edged graphic wipe, where nothing "moves" — regions switch state. The naive option was the correct one, and I'd have shipped the clever one if I hadn't rendered all three side by side.</p>
+<h2>Squaring everything</h2>
+<p>The nav went from a pill to a 3px rounded rectangle, and the request was that everything else match.</p>
+<p>Ten elements turned out to read from one token, so <code>--r-pill: 99rem</code> becoming <code>3px</code> squared the nav, every button, the chips, the eyebrow tags and the state badges together. Three more circular elements — the mobile menu button, the social buttons and the arrow disc inside every button — were hardcoded at 50% and needed their own lines.</p>
+<p>Fifteen other things also use 50%, and those stayed round: status LEDs between 0.28 and 0.6rem, the active-nav dot, task bullets, and the large background orbs. A 3px radius on a 5px dot doesn't read as squared, it reads as a rendering fault, and the orbs are part of the visual design rather than UI chrome. Squaring two elements and leaving nine would have been less consistent, not more; squaring all twenty-five would have looked broken.</p>
+<h2>The nav bar that empties itself</h2>
+<p>The first version played the exit clip on scroll, so the logo animated away while the bar stayed put — which reads as a loading failure, not an intention. Replaced with the bar condensing instead: past the first section it shrinks to hug its contents, and the gap between the lockup and the first link becomes the flex gap, 26px, identical on both sites.</p>
+<p><code>max-width</code> can't animate to <code>max-content</code>, so the condensed width is measured at runtime and written to a custom property, which gives something that can actually transition. 90px of hysteresis keeps it from flickering at the boundary.</p>
+<h2>Keying black out of artwork</h2>
+<p>The last batch was the same lockups on black, to be made transparent so they can go anywhere.</p>
+<p>Colour-keying leaves jagged edges. The artwork is foreground composited over black, so alpha comes out of solving <code>p = a·F</code> per pixel against the two known foreground colours and keeping whichever explains the pixel best. Recompositing the result back over black reproduces the source with a mean error of 0.04, and 0.03% of pixels off by more than 30 — those being the boundary between the violet and the white, where the two candidates are equally good explanations.</p>
+<p>Then the format wall. MP4 has no alpha channel, so transparency lives in a VP9 WebM. Chrome, Firefox and Edge honour it; Safari wants HEVC-with-alpha, which needs an Apple encoder, so Safari gets the opaque fallback. Verified by decoding the WebM back out, then again in a real browser over four different backgrounds.</p>
+<p>Which is where the artwork's own limit showed up. On white, "ERIC" disappears, because it is white. On the brand violet, "LI" disappears, because it is that violet. The transparency is correct and the logo still isn't universal — it's built for a dark ground, which is all the site uses, so it's fine where it's going and not fine as a drop-anywhere asset. A single-colour variant would fix that.</p>
+<h2>The thing I broke</h2>
+<p>Removing the contact section's social buttons left two CSS rules unused, so I deleted them with a pattern matching <code>.social-icon{</code>. One of the rules was <code>.cta .social-icon{color:var(--grey)}</code>. The pattern matched from <code>.social-icon{</code> onward and removed exactly that, leaving <code>.cta </code> alone on a line.</p>
+<p>CSS discards comments during parsing. So the orphan bound to the next thing it found, and <code>.mock{...}</code> became <code>.cta .mock{...}</code> — a descendant selector matching nothing on the page. The dashboard mockup lost its max-width, its negative top margin and its stacking context in one go, and went full-bleed across the hero.</p>
+<p>Nothing errored. The file is valid CSS. The push succeeded, the deploy succeeded, and the page served a broken layout to anyone who visited. I checked that the rules I meant to delete were gone. I did not check that the rules I meant to keep still parsed, and those are different questions.</p>
+<p>Fixed by removing the orphan, verified by reading the computed <code>max-width</code> back as 928px rather than by looking at a screenshot and deciding it seemed fine.</p>
+<h2>One thing that would have blocked all of it</h2>
+<p>The site's repository still pointed its remote at the old Forgejo host, which now refuses connections after that service moved to its own container. Every push today would have failed. Repointed before the first commit, and <code>git ls-remote</code> confirmed the destination had the expected HEAD before anything was pushed to it.</p>
+<p>---</p>
+<p>So: two sites carrying new animated lockups, every corner squared to the same 3px, a footer rebuilt to a supplied layout, and artwork that now sits on any dark background. Against that, a regex that removed a rule I wanted gone and half a rule I didn't, producing valid CSS that silently stopped styling the largest element on the homepage. The deploy pipeline reported success at every stage, because every stage did succeed. Checking that a deletion removed the right thing is not the same as checking that what's left still works, and only one of those was in my head at the time.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="web" href="/blog/?tag=web">Web</a><a class="tagchip" data-tag="design" href="/blog/?tag=design">Design</a><a class="tagchip" data-tag="css" href="/blog/?tag=css">Css</a><a class="tagchip" data-tag="video" href="/blog/?tag=video">Video</a><a class="tagchip" data-tag="branding" href="/blog/?tag=branding">Branding</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-08-12.html">← Four Things Were Quietly Doing Nothing and All of Them Looked Fine</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Everything Redundant Turned Out to Share Something — N5HQ</title>
+<meta name="description" content="VM 200 shrank in place and live-migrated to pve03 with zero downtime, PBS went live on its own VM, NFS shared storage got built and benchmarked, and restores finally got proven against real archives instead of assumed. Then a four-wave read-only analysis of the whole lab found the same flaw in three separate places: the second copy of a thing depends on the first.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-08-11.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Everything Redundant Turned Out to Share Something — N5HQ">
+<meta property="og:description" content="VM 200 shrank in place and live-migrated to pve03 with zero downtime, PBS went live on its own VM, NFS shared storage got built and benchmarked, and restores finally got proven against real archives instead of assumed. Then a four-wave read-only analysis of the whole lab found the same flaw in three separate places: the second copy of a thing depends on the first.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-08-11.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Everything Redundant Turned Out to Share Something</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-08-11 · Tuesday · 11:40 PM</span>
+      <span class="chip">9 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>The day started at 00:23 with a disk shrink and ended with a read-only audit of the entire lab that refuted part of its own first draft. In between, three pieces of infrastructure got built and benchmarked rather than planned: Proxmox Backup Server on its own VM, NFS shared storage on the NAS, and a drift-detection mechanism that regenerates the cluster's own state document on a timer. The audit is the part worth sitting with. It went looking for whether the lab could survive a failure and found that most of the redundancy is real in form and not in substance: the second Uptime Kuma instance sends alerts down the same webhook as the first, the fallback guests all live on the same node they're meant to be a fallback for, and the backup server's datastore sits on the NAS it exists to hedge against.</p>
+<h2>The migration finished at 01:05</h2>
+<p>VM 200 got shrunk in place first, 00:23 to 00:41, 18 minutes of downtime. <code>sda</code> came out at 150G with root at 136G, swap active, 30 containers back up, and <code>systemctl is-system-running</code> reporting running with no failed units. pve02's pool dropped from 38.41% to 26.57%.</p>
+<p>The shrink was the thing that made the migration cheap. <code>qm migrate 200 pve03 --online --with-local-disks</code> moved 150.0 GiB instead of 477 GiB, took 16 minutes 27 seconds, and cost zero downtime — uptime read 25 minutes afterward, so the machine never rebooted, and Immich answered HTTP 200 throughout the transfer. pve02 went from 38.41% to 1.98%, pve03 from nothing to 25.56%.</p>
+<p>One thing surfaced mid-transfer that would otherwise have gone unnoticed: pve03 was running on its 1 GbE standby, not its 2.5G primary. The <code>enx74****5c7c</code> leg was down with a link failure count of zero, which is the awkward part — it hadn't failed, it had simply never come up in the bond. The transfer held about 110 MB/s as a result, roughly 890 Mbps, which is exactly what a gigabit link gives you and is also close enough to plausible that nobody would question it without checking. Repaired the same day.</p>
+<h2>PBS is real now</h2>
+<p>Proxmox Backup Server went in as VM 144 on pve02, PBS 4.2.5-1 at <code>x.x.0.44</code>, registered cluster-wide as <code>pbs-n5hq</code>. The datastore is a 1 TiB thick iSCSI LUN from the NAS SSD pool, deliberately not the HDD pool — that pool suffered unrecoverable btrfs metadata corruption on 2026-08-09, a 154-generation gap caused by lost writes on an unclean shutdown.</p>
+<p>Metadata change detection does what it claims. The third backup of CT140 moved 32 bytes out of 647.413 MiB in 0.98 seconds. The nightly job first fires at 01:00 on the 12th.</p>
+<p>Nothing got retired to make room for it. <code>n5-backup.sh</code> and the 02:30 vzdump-to-CIFS job both stay exactly as they were, and the whole thing runs as a parallel trial rather than a cutover. Separately, that 02:30 run on the 11th was the first fully successful cluster-wide vzdump across all three nodes, which closes a gap nobody had named out loud: portal, stirling-pdf and forgejo on pve02, and VM 200 on pve03, had never once had a successful scheduled backup.</p>
+<h2>Restores, proven rather than assumed</h2>
+<p>The restore gate has been open in the backlog for a long time on the grounds that a backup you have never restored is a hypothesis. Three restores ran on the 11th. <code>pct restore</code> brought CT140 back as VMID 199. <code>qmrestore</code> brought VM 200 back as VMID 299 — 49 GB of archive expanding to 161 GB read at 44.3% sparse, about 13 minutes, and it booted. PBS restored CT140 in 4.8 seconds at 135 MiB/s.</p>
+<p>The honest footnote is that one of those checks got downgraded afterward. The CT140 restore was reported as matching on file count, 16,875 files, and a later review ruled the file-count comparison itself unverified. The restore succeeded. The specific evidence offered for it was weaker than it read.</p>
+<h2>NFS, and a trade taken on numbers</h2>
+<p>Shared storage went in as an NFS share on the NAS SSD pool, exported to all three nodes and added to Proxmox as <code>nas-vm</code> with <code>--content images</code> only. Containers are deliberately excluded.</p>
+<p>NFS won over iSCSI plus LVM for one reason: iSCSI with LVM has no snapshot support at all, and losing snapshots would kill <code>pct rollback 133 clean</code>, which the nightly update rehearsal depends on.</p>
+<p>The export runs <code>async</code>, which is a trade rather than a default. Sequential writes go 95.3 MB/s synchronous to 227 MB/s async. The number that decided it is 4k fsync: 849 kB/s to 14.4 MB/s, a 17× difference, with per-sync latency dropping from 4.8 ms to 0.28 ms. The cost is a volatile window of roughly 30 seconds, up to about 1.5 GB, if the NAS dies uncleanly. A node dying loses nothing. Verified across all three nodes afterward at 13.2, 14.0 and 13.0 MB/s, within 8% of each other.</p>
+<p>VM 200 stays on local NVMe and is not moving. Immich's Postgres, Prometheus and Loki are all fsync-heavy, and that workload is the one that would feel the network round trip.</p>
+<h2>Four waves, and the shape they all found</h2>
+<p>The whole-lab analysis ran as six retrieval agents, four adversarial critics, three target-state reviewers and two planners, all read-only against the running systems. Its own status line is unambiguous: analysis complete, nothing executed.</p>
+<p>The cluster reads healthy. Three nodes on pve-manager 9.2.10, quorate 3 of 3, quorum 2, and both NVMes checked report zero errors. HA is unconfigured — <code>/etc/pve/ha/</code> is empty on all three nodes.</p>
+<p>What the analysis actually found is one flaw wearing three costumes. kuma1 and kuma2 exist as independent watchdogs, and they push to a byte-identical Discord webhook, so the thing that makes them independent is the one thing they share. The guests meant to act as fallbacks all sit on pve01. The backup server's datastore lives on the NAS, which is one of the things a backup server exists to survive. And the PBS encryption key is Option B — no master key, no paperkey, both copies inside the lab. Every one of those is redundant in the diagram and single-pointed in practice.</p>
+<p>The critique wave then refuted the retrieval wave, which is the part that justifies running adversarial agents at all. Wave 1 concluded the migration was complete and clean with no split-brain. Wave 2 found a roughly four-and-a-half-hour dual-run: after the planned reboot at 00:24:59, all four retired origin containers came back up alongside their pve02 replacements and stayed up until they were stopped between 05:12 and 05:47. That is the root cause of a stirling-pdf H2 database divergence, 73728 bytes on one side against 106496 on the other.</p>
+<p>Two retrieval agents inside that same analysis also concluded n5ubuntu was still bare metal. It is VM 200 on pve03, and has been since 01:05 that morning.</p>
+<h2>Documents that disagreed with the machines</h2>
+<p>A pattern turned up often enough to be worth naming: the hand-written documents were wrong and the generated ones were right. The runsheets said pve02 carries VM 200; it's on pve03, which <code>cluster-state.md</code> had correct. A memory file and a project note both said <code>git.n5hq.me</code> returns 502; it returns 200. The PBS decision document said "nothing built" at the top while its own body described a built VM. kuma2's runsheet claimed its own webhook, "a copy, not a relay" — it is the same webhook.</p>
+<p>So the drift mechanism got built rather than proposed. <code>gen-cluster-state.sh</code> regenerates <code>~/docs/cluster-state.md</code> hourly, <code>docs-drift-check.sh</code> writes <code>~/docs/drift-report.md</code> daily at 06:30, and <code>drift-checks.sh</code> holds the fact registry, 14 facts at build time, each one a claim checked against the running lab plus a grep for documents still asserting the old version. This is the one piece of that project that exists rather than being written down for later.</p>
+<h2>The monitoring audit, which is a plan and only a plan</h2>
+<p>All 63 monitors got audited, 48 on kuma1 and 15 on kuma2. Nothing has been executed. The findings are bad enough that writing them down without acting on them deserves to be uncomfortable.</p>
+<p>A failed backup notifies nobody. The backup scripts do push a real down status; monitors 42 and 47 have <code>maxretries=1</code>, which sends the first failure to PENDING rather than important, so two consecutive nightly failures are needed before the first Discord message. A WAN outage produces 12 attempted alerts and zero delivered. A gateway outage produces 14 attempted and zero delivered — both instances POST to Discord over the dead link, catch the error, log it, and never retry or queue. Thirteen monitors treat 401 and 403 as up.</p>
+<p>The mechanism worth the red flag: <code>updateMonitorNotification()</code> runs an unconditional, untransacted <code>DELETE</code> before re-inserting, so a <em>failed</em> <code>editMonitor</code> call still wipes a monitor's notifications. That is how monitor 45 lost its notifications on 2026-07-28.</p>
+<p>The review of the plan caught two errors in the plan itself. A <code>resendInterval</code> of 60 on push monitors with a 25-hour interval would have meant about 62 days between resends, not hourly. And two exporter targets pointed at addresses bound to localhost that would never have connected.</p>
+<h2>One belief retired</h2>
+<p>The claim that pve01's NVMe has 130 unsafe shutdowns and therefore power is the leading hypothesis does not hold. SMART counters are lifetime-cumulative and all three boot drives are second-hand, so those numbers describe the previous owner. pve02's SSD logged 755 unexpected power losses across 5.06 years of power-on time before it ever arrived here. My own count since ownership is fewer than five per system, most of them deliberate auto-power-on testing.</p>
+<p>The lack of a UPS is still a real exposure — the btrfs corruption on the 9th came from exactly that. The drive counters were never evidence for it.</p>
+<p>---</p>
+<p>So: the migration finished, three things got built and measured, and restores stopped being a hypothesis. Against that, an audit that went looking for resilience found the same shape three times over — a second copy that depends on the first, a fallback that shares a host with the thing it backs up, an encryption key whose only two copies sit in the building they protect. None of that is fixed. It's written down with numbers attached, which is a start and not a fix, and the plan for the monitoring half is explicitly a plan with nothing executed behind it.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="backups" href="/blog/?tag=backups">Backups</a><a class="tagchip" data-tag="storage" href="/blog/?tag=storage">Storage</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a><a class="tagchip" data-tag="migration" href="/blog/?tag=migration">Migration</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-08-10.html">← The Host Wasn&#x27;t Dead and the Backups Weren&#x27;t Real — Both Passed Every Check Anyway</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-08-12.html">Four Things Were Quietly Doing Nothing and All of Them Looked Fine →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span><span class="be">ERIC</span>LI</span></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>Instagram</a>
+        </div>
+        </div>
+        <div class="foot-note">
+          <p>Self-hosted homelab running 24/7 — personal infrastructure.</p>
+          <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+</body>
+</html>

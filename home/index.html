@@ -353,30 +353,30 @@
       <p class="sub">Infrastructure, learning, and building in public.</p>
     </div>
     <ul class="posts">
-      <li><a class="postcard rv" href="/blog/posts/2026-08-10.html">
+      <li><a class="postcard rv" href="/blog/posts/2026-08-13.html">
+        <span class="postmeta"><span class="cat">Web</span><span>2026-08-13</span></span>
+        <h3>A Regex Ate Half a Selector and CSS Didn&#x27;t Complain</h3>
+        <p>A full day rebuilding the site&#x27;s identity — animated lockups in the nav on both sites, every rounded corner squared to 3px, the footer rebuilt, and the black keyed out of new artwork so it can sit on anything. Also the day I broke the homepage with a regex that deleted the end of a compound selector, which CSS accepted without a word.</p>
+      </a></li>
+      <li><a class="postcard rv-d1" href="/blog/posts/2026-08-12.html">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-12</span></span>
+        <h3>Four Things Were Quietly Doing Nothing and All of Them Looked Fine</h3>
+        <p>A Stream Deck plugin fork reached v1.8.0 with dial support and a vendored dependency, and along the way turned up an upstream bug where an optional chain silently swallowed the call behind the plugin&#x27;s headline feature. Then a release bot published a version nobody asked for, a backup job was found dead since a move it was supposed to have survived, and the drift checker that exists to catch stale claims was found never to have looked at half the tree.</p>
+      </a></li>
+      <li><a class="postcard rv-d1" href="/blog/posts/2026-08-11.html">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-11</span></span>
+        <h3>Everything Redundant Turned Out to Share Something</h3>
+        <p>VM 200 shrank in place and live-migrated to pve03 with zero downtime, PBS went live on its own VM, NFS shared storage got built and benchmarked, and restores finally got proven against real archives instead of assumed. Then a four-wave read-only analysis of the whole lab found the same flaw in three separate places: the second copy of a thing depends on the first.</p>
+      </a></li>
+      <li><a class="postcard rv-d2" href="/blog/posts/2026-08-10.html">
         <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-10</span></span>
         <h3>The Host Wasn&#x27;t Dead and the Backups Weren&#x27;t Real — Both Passed Every Check Anyway</h3>
         <p>pve03 joined the cluster today as node three of three, quorum now 2-of-3, while pve02 vanished from the network at 11:29 and looked exactly like a dead host — it was a hung NIC transmit queue, not a dead box. In between I found the backup monitor had been reporting success for failed backups since 2026-07-28, and moved Claude&#x27;s own workspace off n5ubuntu onto its own container ahead of that machine being powered off for good.</p>
       </a></li>
-      <li><a class="postcard rv-d1" href="/blog/posts/2026-08-09.html">
+      <li><a class="postcard rv" href="/blog/posts/2026-08-09.html">
         <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-09</span></span>
         <h3>Three Times This Morning, Something Told Me It Worked and Hadn&#x27;t</h3>
         <p>This is a morning, not a day. Before eight I closed a critical security hole in the board tool&#x27;s evidence command, sat at a keyboard walking the main host through a root-privileged setup, and pushed a website fix — and three separate times in between, something told me it was fine when it wasn&#x27;t: a stale test job that quietly reverted a fix, a push mirror that had been empty since the repo was created, and a deploy that never ran because the repo had gone private.</p>
-      </a></li>
-      <li><a class="postcard rv-d1" href="/blog/posts/2026-08-08.html">
-        <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-08</span></span>
-        <h3>The Checks Kept Passing While the Thing Under Them Was Broken, Four Times Today</h3>
-        <p>I tidied the vault root at four in the morning and found that every one of the 59 references that would have broken were bare paths — zero of them were the Obsidian links I&#x27;d assumed were the risk. The rest of the day went into locking down an autonomous worker&#x27;s network access, five rounds of review, ending with a design whose central claim turned out to have never been true and a decision to stop rather than deploy it. Both threads taught the same lesson: a green check on a script that warns-and-continues, or a reviewer reasoning from a document instead of running the thing, tells you nothing.</p>
-      </a></li>
-      <li><a class="postcard rv-d2" href="/blog/posts/2026-08-07.html">
-        <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-07</span></span>
-        <h3>A Repo Containing the CLI but Not the Deployment Is Half of It</h3>
-        <p>Six quiet days ended with a session-resume that handed back a week-old thread from an unrelated project, which was the clearest sign of the gap I got all night. From there the board project went from a passed Phase 0 check to a production container, a CLI, monitoring, and a repo that two reviewers picked apart before anything ran — one of them for shipping half a plan. A second, public version of the same tool was still mid-build at the point I stopped.</p>
-      </a></li>
-      <li><a class="postcard rv" href="/blog/posts/2026-07-31.html">
-        <span class="postmeta"><span class="cat">Homelab</span><span>2026-07-31</span></span>
-        <h3>The Night I Learned a Model Can&#x27;t Be Trusted to Report on Itself</h3>
-        <p>A week away with no reliable remote access meant one all-night session had to force every decision that would otherwise sit blocked for seven days. Three separate tests found the same failure in three different clothes: a model cannot be trusted to report on its own state. A sandbox died three times in production and got retired for a plain firewall rule, the night&#x27;s slowest test still ended with no answer, and a subtitle-fetching job that I&#x27;d declared solved turned out to be reading an index that was six percent finished.</p>
       </a></li>
       <li class="rv rv-d2"><span class="postcard postcard-cta">
         <h3>Blog</h3>
