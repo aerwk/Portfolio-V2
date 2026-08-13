@@ -135,28 +135,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
  border-radius:var(--r-pill);overflow:hidden;box-shadow:0 0 12px var(--violet-glo);
  transition:opacity .18s linear}
 .brand .lk-rest,.brand .lk-clip{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover}
-.brand .lk-clip{opacity:0}
+.brand-n5{width:126px;height:42px}
+.brand .lk-clip{opacity:0;transition:opacity .15s linear}
 .brand .lk-clip.on{opacity:1}
-/* lab site: CSS approximation of the same motion */
-.brand-css.anim-in .lk-rest{animation:lkIn .93s steps(1,end) both}
-.brand-css.anim-out .lk-rest{animation:lkOut 1s steps(1,end) both}
-.brand-css.anim-pop .lk-rest{animation:lkPop .57s cubic-bezier(.2,.9,.25,1) both}
-@keyframes lkIn{0%{opacity:0;clip-path:inset(0 100% 0 0);transform:translateX(-6px)}
- 18%{opacity:1;clip-path:inset(0 62% 0 0);transform:translateX(3px)}
- 30%{clip-path:inset(0 62% 0 0);transform:translateX(-2px)}
- 45%{clip-path:inset(0 28% 0 0);transform:translateX(2px)}
- 62%{clip-path:inset(0 12% 0 0);transform:translateX(-1px)}
- 78%{clip-path:inset(0 0 0 0);transform:translateX(1px)}
- 100%{opacity:1;clip-path:inset(0 0 0 0);transform:none}}
-@keyframes lkOut{0%{opacity:1;clip-path:inset(0 0 0 0);transform:none}
- 22%{clip-path:inset(0 0 0 10%);transform:translateX(2px)}
- 48%{clip-path:inset(0 0 0 34%);transform:translateX(-3px)}
- 72%{clip-path:inset(0 0 0 70%);transform:translateX(4px)}
- 100%{opacity:0;clip-path:inset(0 0 0 100%);transform:translateX(-6px)}}
-@keyframes lkPop{0%{opacity:0;transform:scale(1.18)}22%{opacity:1;transform:scale(1.09)}
  55%{transform:scale(.99)}100%{transform:scale(1)}}
-@media (prefers-reduced-motion:reduce){.brand .lk-clip{display:none}
- .brand-css .lk-rest{animation:none!important}}
+@media (prefers-reduced-motion:reduce){.brand .lk-clip{display:none}}
 .nav-links{display:flex;gap:clamp(.7rem,1.8vw,1.5rem);list-style:none;margin-left:auto}
 .nav-links a{position:relative;font-size:.88rem;font-weight:400;color:var(--grey);text-decoration:none;padding:.35rem .2rem;transition:color .25s var(--ease)}
 .nav-links a:hover,.nav-links a:focus-visible{color:var(--white)}

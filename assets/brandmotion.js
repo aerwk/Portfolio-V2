@@ -11,26 +11,13 @@
   var clips = {};
   brand.querySelectorAll('.lk-clip').forEach(function (v) { clips[v.dataset.role] = v; });
   var ENDS_BLANK = { enter: false, exit: true, hoverin: false };
-  var isCss = brand.classList.contains('brand-css');
+  var loopClip = clips.hoverloop || null;
 
   function hideAll() {
     for (var k in clips) clips[k].classList.remove('on');
   }
 
   function play(name) {
-    if (isCss) {
-      var cls = name === 'hoverin' ? 'anim-pop' : name === 'exit' ? 'anim-out' : 'anim-in';
-      busy = true;
-      brand.classList.remove('anim-in', 'anim-out', 'anim-pop');
-      void brand.offsetWidth;
-      brand.style.opacity = '1';
-      brand.classList.add(cls);
-      window.setTimeout(function () {
-        if (name === 'exit') { brand.style.opacity = '0'; visible = false; } else { visible = true; }
-        busy = false;
-      }, name === 'hoverin' ? 570 : name === 'exit' ? 1000 : 930);
-      return;
-    }
     var v = clips[name];
     if (!v) return;
     busy = true;
@@ -50,7 +37,22 @@
   }
 
   brand.addEventListener('mouseenter', function () {
-    if (!busy && visible) play('hoverin');
+    if (busy || !visible) return;
+    if (loopClip) {                       // lab: continuous wobble while hovered
+      hideAll();
+      loopClip.classList.add('on');
+      var p = loopClip.play();
+      if (p && p.catch) p.catch(function () {});
+    } else {
+      play('hoverin');                    // portfolio: one-shot pop
+    }
+  });
+  brand.addEventListener('mouseleave', function () {
+    if (!loopClip) return;
+    loopClip.classList.remove('on');      // crossfades back to the static frame
+    window.setTimeout(function () {
+      if (!loopClip.classList.contains('on')) { loopClip.pause(); try { loopClip.currentTime = 0; } catch (e) {} }
+    }, 160);
   });
 
   var ticking = false;
