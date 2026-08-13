@@ -1,0 +1,35 @@
+# Portal launcher (portal.n5hq.me) — served on BOTH 127.0.0.1:8080 and 10.0.0.5:8080.
+# Reached through the Cloudflare Tunnel, gated by the "Portal" CF Access app.
+#
+# 2026-07-28: ADDED a 10.0.0.5:8080 bind alongside the original loopback one.
+# The loopback bind was a hard gate (origin unreachable from LAN), but it also
+# made the origin unreachable from the SECOND tunnel connector, cfd2 (LXC 134 on
+# pve01, 10.0.0.34). With two connectors Cloudflare round-robins, so portal would
+# have failed ~50% of requests — and only AFTER CF Access auth, so an
+# unauthenticated curl still returned 302 and looked healthy.
+#
+# The loopback bind MUST stay: the tunnel ingress for portal.n5hq.me is
+# "http://localhost:8080", and n5ubuntu's cloudflared is host-network, so removing
+# it takes portal down immediately (this happened briefly during the change).
+# Residual exposure is the Management VLAN only, which is itself gated by the
+# UniFi "Block Non-admin to Management" policy, so reach is limited to
+# admin-whitelisted MACs. CF Access still gates all external access.
+#
+# ⚠️ This bind is now coupled to n5ubuntu holding 10.0.0.5 — that is a DHCP
+# reservation, not a static. If the lease ever changes, Docker cannot bind and
+# portal fails to start. Original file: compose.yaml.bak-2026-07-28
+# Source of truth for the page lives HERE now (removed from the Portfolio-V2 repo).
+
+name: portal-site
+
+services:
+  portal:
+    image: nginx:alpine
+    container_name: portal
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:80"
+      - "10.0.0.5:8080:80"
+    volumes:
+      - ./site:/usr/share/nginx/html:ro
+      - ./default.conf:/etc/nginx/conf.d/default.conf:ro
