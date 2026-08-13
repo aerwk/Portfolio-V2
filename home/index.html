@@ -260,6 +260,39 @@
           <a class="feature-link" href="/portfolio/disclaude-sesh/">View full details →</a>
         </details>
       </article>
+      <article class="pcard rv">
+        <span class="num">03</span>
+        <h3>Stream Deck Usage Meter <span class="suptag">Maintained</span></h3>
+        <p class="desc">A fork of an open-source Stream Deck plugin that reports live Claude usage limits and local token and cost totals — extended with dial support, a vendored dependency, and a release gate.</p>
+        <details class="more">
+          <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">&#9662;</span></summary>
+          <div class="tags">
+            <span class="tag">TypeScript</span><span class="tag">Node.js</span><span class="tag">Stream Deck SDK</span><span class="tag">CI</span>
+          </div>
+          <dl class="facts">
+            <div class="frow"><dt>Dial support</dt><dd>Stream Deck+ encoders, which the original does not handle — rotate cycles the metric, push forces a refresh, a touch tap advances one metric, and the choice persists per dial</dd></div>
+            <div class="frow"><dt>Supply chain</dt><dd>The settings panel loaded a component library from a third-party domain at runtime, with no integrity check, into a view showing account details. That library is now vendored and audited in-tree</dd></div>
+            <div class="frow"><dt>Upstream bug</dt><dd>The original's per-key profile feature could not work: an optional chain referenced a property that does not exist in the pinned SDK version, so it silently returned instead of sending, and the dropdown never received its options</dd></div>
+            <div class="frow"><dt>Release gate</dt><dd>Typecheck, tests, a reproducible-bundle check and manifest validation run before any push — each one proven able to fail before being trusted to pass</dd></div>
+          </dl>
+        </details>
+      </article>
+      <article class="pcard rv rv-d1">
+        <span class="num">04</span>
+        <h3>FileIt <span class="suptag">Maintained</span></h3>
+        <p class="desc">A Windows tool that keeps the Downloads folder sorted on its own — files land, get classified by type, and move to where they belong without being touched.</p>
+        <details class="more">
+          <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">&#9662;</span></summary>
+          <div class="tags">
+            <span class="tag">Python</span><span class="tag">Windows</span><span class="tag">Automation</span>
+          </div>
+          <dl class="facts">
+            <div class="frow"><dt>Shipped</dt><dd>v1.1.0 released and frozen, with the next revision in progress alongside it rather than on top of it</dd></div>
+            <div class="frow"><dt>Release scheme</dt><dd>One folder per version, released versions immutable — so a shipped build cannot be edited by accident while the next one is being worked on</dd></div>
+            <div class="frow"><dt>Install</dt><dd>A single generated installer script with everything embedded, rebuilt from source by a build step so the distributed file is never hand-edited</dd></div>
+          </dl>
+        </details>
+      </article>
     </div>
 
     <!-- in progress -->
@@ -269,7 +302,7 @@
     </div>
     <div class="cards cards-2">
       <article class="pcard rv">
-        <span class="num">03</span>
+        <span class="num">05</span>
         <h3>Family Home Dashboard</h3>
         <p class="desc">A wall-mounted touchscreen that keeps the household in sync — shared calendar, live weather, and event countdowns at a glance.</p>
         <details class="more">
@@ -285,7 +318,7 @@
         </details>
       </article>
       <article class="pcard rv rv-d1">
-        <span class="num">04</span>
+        <span class="num">06</span>
         <h3>Caddy Rating App</h3>
         <p class="desc">A mobile app for submitting and tracking caddy ratings, with 5-star submissions syncing live to a provider dashboard.</p>
         <details class="more">
@@ -309,7 +342,7 @@
     </div>
     <div class="cards cards-2 alt">
       <article class="pcard rv">
-        <span class="num">05</span>
+        <span class="num">07</span>
         <h3>Hotel IPTV System — 100+ Rooms</h3>
         <p class="desc">End-to-end overhaul of a hotel's network and TV across 100+ rooms — new topology, an IPTV headend, and automated recovery.</p>
         <details class="more">
@@ -325,7 +358,7 @@
         </details>
       </article>
       <article class="pcard rv rv-d1">
-        <span class="num">06</span>
+        <span class="num">08</span>
         <h3>Multi-Site Network Unification</h3>
         <p class="desc">Three separate sites joined into one network so remote devices feel local, with a unified camera network and consistent cross-site access.</p>
         <details class="more">
