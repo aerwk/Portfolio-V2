@@ -1,0 +1,234 @@
+<title>n5hq.me Web Topology</title>
+<style>
+:root{
+  --bg:#faf9f7; --panel:#ffffff; --line:#1a17220f; --line-2:#1a172222;
+  --ink:#17151c; --muted:#5d5866; --dim:#8b8694;
+  --accent:#5400e9; --accent-soft:#5400e914;
+  --ok:#0f7b4f; --warn:#9a6100; --risk:#b3261e;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b0a0d; --panel:#131118; --line:#ffffff14; --line-2:#ffffff26;
+    --ink:#f2f0f5; --muted:#a8a3b2; --dim:#7d7889;
+    --accent:#b79bff; --accent-soft:#b79bff1a;
+    --ok:#5fd39b; --warn:#e0a94a; --risk:#ff8a80;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b0a0d; --panel:#131118; --line:#ffffff14; --line-2:#ffffff26;
+  --ink:#f2f0f5; --muted:#a8a3b2; --dim:#7d7889;
+  --accent:#b79bff; --accent-soft:#b79bff1a;
+  --ok:#5fd39b; --warn:#e0a94a; --risk:#ff8a80;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;
+ -webkit-font-smoothing:antialiased}
+.wrap{max-width:62rem;margin-inline:auto;padding:clamp(2rem,5vw,3.5rem) clamp(1rem,4vw,2rem) 5rem}
+header.top{border-bottom:1px solid var(--line-2);padding-bottom:1.3rem;margin-bottom:2rem}
+.eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+h1{margin:.4rem 0 .5rem;font-size:clamp(1.8rem,4vw,2.4rem);letter-spacing:-.02em;line-height:1.15}
+.sub{margin:0;color:var(--muted);max-width:60ch}
+h2{margin:2.6rem 0 .4rem;font-size:1.15rem;letter-spacing:-.01em}
+h2+.lede{margin:0 0 1rem;color:var(--muted);max-width:64ch;font-size:.95rem}
+figure{margin:0 0 .6rem;background:var(--panel);border:1px solid var(--line-2);border-radius:3px;
+ padding:1.4rem 1.1rem 1rem;overflow-x:auto}
+figure svg{display:block;max-width:100%;height:auto;margin-inline:auto;color:var(--ink)}
+figcaption{margin-top:.9rem;padding-top:.8rem;border-top:1px solid var(--line);
+ color:var(--muted);font-size:.87rem}
+figcaption b{color:var(--ink);font-weight:600}
+.scroll{overflow-x:auto;border:1px solid var(--line-2);border-radius:3px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:.88rem;min-width:44rem}
+th,td{text-align:left;padding:.55rem .75rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;
+ color:var(--dim);font-weight:400;white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td code,code{font-family:var(--mono);font-size:.82em;color:var(--accent)}
+.pill{font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;padding:.1rem .4rem;
+ border-radius:2px;border:1px solid var(--line-2);white-space:nowrap}
+.pill.ours{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
+.pill.gate{color:var(--ok);border-color:currentColor}
+.pill.open{color:var(--warn);border-color:currentColor}
+.pill.risk{color:var(--risk);border-color:currentColor}
+.note{border-left:2px solid var(--accent);padding:.1rem 0 .1rem .9rem;color:var(--muted);
+ max-width:64ch;font-size:.93rem;margin:1rem 0}
+.note b{color:var(--ink);font-weight:600}
+.note.risk{border-left-color:var(--risk)}
+ul{color:var(--muted);max-width:64ch;padding-left:1.1rem}
+li{margin:.3rem 0}
+li b{color:var(--ink);font-weight:600}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <span class="eyebrow">n5hq.me &middot; verified 13 Aug 2026</span>
+  <h1>Web Topology</h1>
+  <p class="sub">Twelve hostnames on one Cloudflare zone, reaching origins by two different routes. Three of them are ours and share a stylesheet; the rest are third-party applications that must not.</p>
+</header>
+
+<h2>How a request reaches an origin</h2>
+<p class="lede">Every hostname resolves through the same Cloudflare zone and then splits. The split is what decides whether a page can be public, and therefore where it is allowed to be hosted.</p>
+
+<figure>
+<svg viewBox="0 0 860 400" role="img" aria-label="Requests enter through the Cloudflare zone and split into two routes: a public route to Vercel serving ericli and www, and a gated route through Cloudflare Access and two tunnel connectors to origins on the LAN, including the portal.">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+    <marker id="aA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/>
+    </marker>
+  </defs>
+
+  <rect x="16" y="168" width="104" height="46" rx="3" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="68" y="190" text-anchor="middle" font-size="12.5" fill="currentColor">Browser</text>
+  <text x="68" y="205" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".6">public internet</text>
+
+  <line x1="120" y1="191" x2="176" y2="191" stroke="currentColor" stroke-width="1.2" marker-end="url(#a)"/>
+
+  <rect x="178" y="150" width="120" height="82" rx="3" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="238" y="176" text-anchor="middle" font-size="12.5" fill="currentColor">Cloudflare</text>
+  <text x="238" y="192" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".6">zone n5hq.me</text>
+  <text x="238" y="210" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".6">DNS + proxy</text>
+
+  <line x1="298" y1="172" x2="372" y2="104" stroke="currentColor" stroke-width="1.2" marker-end="url(#a)"/>
+  <text x="332" y="128" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".75">no gate</text>
+
+  <line x1="298" y1="212" x2="372" y2="286" stroke="currentColor" stroke-width="1.2" marker-end="url(#a)"/>
+  <text x="330" y="266" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".75">gated</text>
+
+  <rect x="374" y="70" width="128" height="66" rx="3" fill="none" stroke="var(--accent)" stroke-width="1.4"/>
+  <text x="438" y="94" text-anchor="middle" font-size="12.5" fill="var(--accent)">Vercel</text>
+  <text x="438" y="110" text-anchor="middle" font-size="10.5" fill="var(--accent)" opacity=".85">portfolio-v2</text>
+  <text x="438" y="125" text-anchor="middle" font-size="10.5" fill="var(--accent)" opacity=".85">host-routed</text>
+
+  <line x1="502" y1="103" x2="566" y2="103" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#aA)"/>
+  <rect x="568" y="62" width="150" height="34" rx="3" fill="none" stroke="var(--accent)" stroke-width="1.4"/>
+  <text x="643" y="84" text-anchor="middle" font-size="12" fill="var(--accent)">ericli.n5hq.me</text>
+  <rect x="568" y="110" width="150" height="34" rx="3" fill="none" stroke="var(--accent)" stroke-width="1.4"/>
+  <text x="643" y="132" text-anchor="middle" font-size="12" fill="var(--accent)">www.n5hq.me</text>
+
+  <rect x="374" y="252" width="128" height="66" rx="3" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="438" y="276" text-anchor="middle" font-size="12.5" fill="currentColor">Access</text>
+  <text x="438" y="292" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".6">identity gate</text>
+  <text x="438" y="307" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".6">6 of 10 hosts</text>
+
+  <line x1="502" y1="285" x2="560" y2="285" stroke="currentColor" stroke-width="1.2" marker-end="url(#a)"/>
+
+  <rect x="562" y="248" width="132" height="74" rx="3" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="628" y="271" text-anchor="middle" font-size="12.5" fill="currentColor">Tunnel</text>
+  <text x="628" y="287" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".6">cloudflared</text>
+  <text x="628" y="302" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".6">+ cfd2, round-robin</text>
+
+  <line x1="694" y1="270" x2="748" y2="238" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#aA)"/>
+  <rect x="750" y="214" width="96" height="46" rx="3" fill="none" stroke="var(--accent)" stroke-width="1.4"/>
+  <text x="798" y="234" text-anchor="middle" font-size="11.5" fill="var(--accent)">nginx</text>
+  <text x="798" y="249" text-anchor="middle" font-size="10.5" fill="var(--accent)" opacity=".85">portal</text>
+
+  <line x1="694" y1="300" x2="748" y2="332" stroke="currentColor" stroke-width="1.2" marker-end="url(#a)"/>
+  <rect x="750" y="308" width="96" height="60" rx="3" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="798" y="330" text-anchor="middle" font-size="11.5" fill="currentColor">LAN apps</text>
+  <text x="798" y="345" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".6">Immich, Forgejo,</text>
+  <text x="798" y="359" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".6">Kuma, HA, NAS</text>
+
+  <text x="16" y="30" font-size="11" fill="var(--accent)">violet = ours, shares the stylesheet</text>
+  <text x="16" y="48" font-size="11" fill="currentColor" opacity=".6">grey = third-party, keeps its own</text>
+</svg>
+<figcaption><b>The two routes are not interchangeable.</b> Vercel serves whatever is in the repo, publicly, with no identity check — fine for a portfolio and a lab page. The portal lists internal services, so it takes the gated route instead, and that is why its source cannot simply be dropped into the repo and deployed.</figcaption>
+</figure>
+
+<h2>Where the stylesheet comes from</h2>
+<p class="lede">All three of our surfaces render from one <code>assets/style.css</code> in one repository. They reach the browser by two different mechanisms, which is the part that used to let them drift.</p>
+
+<figure>
+<svg viewBox="0 0 820 300" role="img" aria-label="One repository feeds both delivery paths: pushing to Forgejo mirrors to GitHub which deploys ericli and www on Vercel, while deploy.sh rsyncs the same assets directory to the nginx container serving portal.">
+  <defs>
+    <marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <rect x="14" y="112" width="132" height="72" rx="3" fill="none" stroke="var(--accent)" stroke-width="1.4"/>
+  <text x="80" y="138" text-anchor="middle" font-size="12.5" fill="var(--accent)">Portfolio-V2</text>
+  <text x="80" y="154" text-anchor="middle" font-size="10.5" fill="var(--accent)" opacity=".85">assets/style.css</text>
+  <text x="80" y="169" text-anchor="middle" font-size="10.5" fill="var(--accent)" opacity=".85">one source</text>
+
+  <line x1="146" y1="134" x2="212" y2="80" stroke="currentColor" stroke-width="1.2" marker-end="url(#b)"/>
+  <text x="176" y="98" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".75">git push</text>
+
+  <line x1="146" y1="162" x2="212" y2="222" stroke="currentColor" stroke-width="1.2" marker-end="url(#b)"/>
+  <text x="182" y="206" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".75">deploy.sh</text>
+
+  <rect x="214" y="48" width="118" height="46" rx="3" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="273" y="68" text-anchor="middle" font-size="12" fill="currentColor">Forgejo</text>
+  <text x="273" y="83" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".6">authoritative</text>
+
+  <line x1="332" y1="71" x2="386" y2="71" stroke="currentColor" stroke-width="1.2" marker-end="url(#b)"/>
+  <text x="359" y="62" text-anchor="middle" font-size="10" fill="currentColor" opacity=".7">mirror</text>
+
+  <rect x="388" y="48" width="112" height="46" rx="3" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="444" y="68" text-anchor="middle" font-size="12" fill="currentColor">GitHub</text>
+  <text x="444" y="83" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".6">read-only</text>
+
+  <line x1="500" y1="71" x2="554" y2="71" stroke="currentColor" stroke-width="1.2" marker-end="url(#b)"/>
+  <text x="527" y="62" text-anchor="middle" font-size="10" fill="currentColor" opacity=".7">build</text>
+
+  <rect x="556" y="48" width="104" height="46" rx="3" fill="none" stroke="var(--accent)" stroke-width="1.4"/>
+  <text x="608" y="76" text-anchor="middle" font-size="12" fill="var(--accent)">Vercel</text>
+
+  <line x1="660" y1="71" x2="712" y2="71" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#b)"/>
+  <text x="770" y="60" text-anchor="middle" font-size="11.5" fill="var(--accent)">ericli</text>
+  <text x="770" y="80" text-anchor="middle" font-size="11.5" fill="var(--accent)">www</text>
+
+  <rect x="214" y="200" width="140" height="60" rx="3" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <text x="284" y="224" text-anchor="middle" font-size="12" fill="currentColor">rsync assets/</text>
+  <text x="284" y="240" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".6">+ checksum check</text>
+
+  <line x1="354" y1="230" x2="410" y2="230" stroke="currentColor" stroke-width="1.2" marker-end="url(#b)"/>
+
+  <rect x="412" y="204" width="126" height="52" rx="3" fill="none" stroke="var(--accent)" stroke-width="1.4"/>
+  <text x="475" y="226" text-anchor="middle" font-size="12" fill="var(--accent)">nginx</text>
+  <text x="475" y="242" text-anchor="middle" font-size="10.5" fill="var(--accent)" opacity=".85">n5ubuntu :8080</text>
+
+  <line x1="538" y1="230" x2="712" y2="230" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#b)"/>
+  <text x="625" y="221" text-anchor="middle" font-size="10" fill="var(--accent)" opacity=".8">via tunnel + Access</text>
+  <text x="770" y="235" text-anchor="middle" font-size="11.5" fill="var(--accent)">portal</text>
+
+  <line x1="80" y1="184" x2="80" y2="272" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="90" y="276" font-size="10.5" fill="currentColor" opacity=".6">portal-src/ excluded from the Vercel deploy (.vercelignore)</text>
+</svg>
+<figcaption><b>Two delivery mechanisms, one source.</b> Before this, the portal held its own copies — the stylesheet was 1,258 bytes behind and both marks were the previous artwork. The rsync step now copies <code>assets/</code> verbatim and verifies four checksums, so a second copy no longer exists to drift.</figcaption>
+</figure>
+
+<h2>Every hostname</h2>
+<div class="scroll"><table>
+  <thead><tr><th>Hostname</th><th>Serves</th><th>Route</th><th>Gate (observed)</th><th>Ours</th></tr></thead>
+  <tbody>
+    <tr><td><code>ericli</code></td><td>Portfolio + blog</td><td>Vercel</td><td><span class="pill open">public</span></td><td><span class="pill ours">stylesheet</span></td></tr>
+    <tr><td><code>www</code></td><td>Lab dashboard</td><td>Vercel</td><td><span class="pill open">public</span></td><td><span class="pill ours">stylesheet</span></td></tr>
+    <tr><td><code>n5hq.me</code></td><td>apex</td><td>308 &rarr; www</td><td><span class="pill open">public</span></td><td>—</td></tr>
+    <tr><td><code>portal</code></td><td>Service launcher</td><td>Tunnel &rarr; nginx</td><td><span class="pill gate">Access</span></td><td><span class="pill ours">stylesheet</span></td></tr>
+    <tr><td><code>status</code></td><td>Uptime Kuma status page</td><td>Tunnel</td><td><span class="pill gate">Access</span></td><td>third-party</td></tr>
+    <tr><td><code>ha</code></td><td>Home Assistant</td><td>Tunnel</td><td><span class="pill gate">Access</span></td><td>third-party</td></tr>
+    <tr><td><code>nas</code></td><td>UGREEN NAS</td><td>Tunnel</td><td><span class="pill gate">Access</span></td><td>third-party</td></tr>
+    <tr><td><code>n8n</code></td><td>Automation</td><td>Tunnel</td><td><span class="pill gate">Access</span></td><td>third-party</td></tr>
+    <tr><td><code>seerr</code></td><td>Request manager</td><td>Tunnel</td><td><span class="pill gate">Access</span></td><td>third-party</td></tr>
+    <tr><td><code>git</code></td><td>Forgejo</td><td>Tunnel</td><td><span class="pill open">open</span> — CLI git breaks behind Access</td><td>third-party</td></tr>
+    <tr><td><code>photo</code></td><td>Immich</td><td>Tunnel</td><td><span class="pill open">open</span> — mobile cannot answer a challenge</td><td>third-party</td></tr>
+    <tr><td><code>uptime</code></td><td>Uptime Kuma</td><td>Tunnel</td><td><span class="pill open">open</span> — app redirect only</td><td>third-party</td></tr>
+    <tr><td><code>tautulli</code></td><td>Playback stats</td><td>Tunnel</td><td><span class="pill risk">open</span> — Access bypassed 11 Aug, app login only</td><td>third-party</td></tr>
+  </tbody>
+</table></div>
+
+<p class="note"><b>The rule this map exists to make obvious:</b> a surface gets our stylesheet only if we wrote the page. That is <code>ericli</code>, <code>www</code> and <code>portal</code> — three of thirteen entries. The rest render their own applications, and restyling them would mean forking software to change its CSS.</p>
+
+<h2>Things worth knowing before changing any of it</h2>
+<ul>
+  <li><b>The portal has no monitor.</b> Neither do <code>git</code>, <code>uptime</code>, <code>n8n</code> or <code>ha</code>, and neither tunnel connector is watched as a process. The portal container was found stopped for two days on 13 Aug and nothing had reported it.</li>
+  <li><b>Two tunnel connectors serve every gated host</b>, round-robin. An origin reachable from only one of them fails about half of all requests, and only after the Access check — so an unauthenticated probe still looks healthy.</li>
+  <li><b>The portal's loopback bind must stay.</b> Tunnel ingress resolves <code>localhost:8080</code>; removing that bind has taken the portal down before, instantly.</li>
+  <li><b>Vercel serves everything in the repo.</b> There is no build step to filter it, so exclusion is the only mechanism — proven with a canary that returned 404 on both public hosts while a control file still returned 200.</li>
+  <li><b>Keep the GitHub repo public.</b> While private, Vercel produced deployments in state <code>BLOCKED</code> that never built, and production quietly kept serving the previous version.</li>
+</ul>
+</div>
