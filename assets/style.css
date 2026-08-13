@@ -145,6 +145,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 .brand-n5{width:125px;height:36px}
 .brand-foot{width:74px;height:40px}
 .brand-foot-n5{width:84px;height:45px}
+/* footer marks are transparent PNGs, so the brand tile's violet glow and
+   rounded corners would show as a halo around nothing */
+.brand-foot{box-shadow:none;border-radius:0;overflow:visible}
 .brand .lk-clip{opacity:0;transition:opacity .15s linear}
 .brand .lk-clip.on{opacity:1}
  55%{transform:scale(.99)}100%{transform:scale(1)}}
