@@ -1,71 +1,96 @@
-/* Nav lockup motion: entry on load / scroll-to-top, exit on scroll-away, pop on hover.
-   ericli uses rendered clips; the lab site uses a CSS approximation of the same timing. */
+/* Nav lockup: entry animation on load, hover animation, and a nav bar that
+   condenses to hug its contents once you scroll past the first section
+   (#about on the homepage). The lockup itself never leaves. */
 (function () {
-  var brand = document.querySelector('.nav-in .brand');
-  if (!brand) return;
-  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var navIn = document.querySelector('.nav-in');
+  var brand = navIn && navIn.querySelector('.brand');
+  if (!navIn) return;
 
-  var TOP = 60, AWAY = 140;
-  var visible = true, busy = false;
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  var clips = {};
-  brand.querySelectorAll('.lk-clip').forEach(function (v) { clips[v.dataset.role] = v; });
-  var ENDS_BLANK = { enter: false, exit: true, hoverin: false };
-  var loopClip = clips.hoverloop || null;
+  /* ---------- brand motion ---------- */
+  if (brand && !reduced) {
+    var clips = {};
+    brand.querySelectorAll('.lk-clip').forEach(function (v) { clips[v.dataset.role] = v; });
+    var loopClip = clips.hoverloop || null;
+    var busy = false;
+    var hideAll = function () { for (var k in clips) clips[k].classList.remove('on'); };
 
-  function hideAll() {
-    for (var k in clips) clips[k].classList.remove('on');
-  }
-
-  function play(name) {
-    var v = clips[name];
-    if (!v) return;
-    busy = true;
-    brand.style.opacity = '1';
-    hideAll();
-    try { v.currentTime = 0; } catch (e) {}
-    v.classList.add('on');
-    var done = function () {
-      v.removeEventListener('ended', done);
-      if (ENDS_BLANK[name]) { brand.style.opacity = '0'; visible = false; } else { visible = true; }
+    var play = function (name) {
+      var v = clips[name];
+      if (!v) return;
+      busy = true;
       hideAll();
-      busy = false;
+      try { v.currentTime = 0; } catch (e) {}
+      v.classList.add('on');
+      var done = function () { v.removeEventListener('ended', done); hideAll(); busy = false; };
+      v.addEventListener('ended', done);
+      var p = v.play();
+      if (p && p.catch) p.catch(done);
     };
-    v.addEventListener('ended', done);
-    var p = v.play();
-    if (p && p.catch) p.catch(done);
+
+    brand.addEventListener('mouseenter', function () {
+      if (busy) return;
+      if (loopClip) {
+        hideAll();
+        loopClip.classList.add('on');
+        var p = loopClip.play();
+        if (p && p.catch) p.catch(function () {});
+      } else {
+        play('hoverin');
+      }
+    });
+    brand.addEventListener('mouseleave', function () {
+      if (!loopClip) return;
+      loopClip.classList.remove('on');
+      window.setTimeout(function () {
+        if (!loopClip.classList.contains('on')) {
+          loopClip.pause();
+          try { loopClip.currentTime = 0; } catch (e) {}
+        }
+      }, 160);
+    });
+
+    play('enter');
   }
 
-  brand.addEventListener('mouseenter', function () {
-    if (busy || !visible) return;
-    if (loopClip) {                       // lab: continuous wobble while hovered
-      hideAll();
-      loopClip.classList.add('on');
-      var p = loopClip.play();
-      if (p && p.catch) p.catch(function () {});
-    } else {
-      play('hoverin');                    // portfolio: one-shot pop
-    }
-  });
-  brand.addEventListener('mouseleave', function () {
-    if (!loopClip) return;
-    loopClip.classList.remove('on');      // crossfades back to the static frame
-    window.setTimeout(function () {
-      if (!loopClip.classList.contains('on')) { loopClip.pause(); try { loopClip.currentTime = 0; } catch (e) {} }
-    }, 160);
-  });
+  /* ---------- condense the bar past the first section ---------- */
+  var condensedWidth = 0;
+  function measure() {
+    var had = navIn.classList.contains('condensed');
+    navIn.classList.add('measuring', 'condensed');
+    condensedWidth = Math.ceil(navIn.getBoundingClientRect().width);
+    navIn.classList.remove('measuring');
+    if (!had) navIn.classList.remove('condensed');
+    navIn.style.setProperty('--nav-cond', condensedWidth + 'px');
+  }
 
-  var ticking = false;
-  window.addEventListener('scroll', function () {
+  var threshold = 0;
+  function computeThreshold() {
+    var el = document.querySelector('#about') || document.querySelector('main section');
+    if (el) {
+      var r = el.getBoundingClientRect();
+      threshold = r.bottom + (window.scrollY || window.pageYOffset);
+    } else {
+      threshold = window.innerHeight * 0.8;
+    }
+  }
+
+  var condensed = false, ticking = false;
+  function onScroll() {
     if (ticking) return;
     ticking = true;
     window.requestAnimationFrame(function () {
       ticking = false;
       var y = window.scrollY || window.pageYOffset;
-      if (y > AWAY && visible && !busy) play('exit');
-      else if (y <= TOP && !visible && !busy) play('enter');
+      if (!condensed && y > threshold) { condensed = true; navIn.classList.add('condensed'); }
+      else if (condensed && y < threshold - 90) { condensed = false; navIn.classList.remove('condensed'); }
     });
-  }, { passive: true });
+  }
 
-  play('enter');
+  function init() { measure(); computeThreshold(); onScroll(); }
+  init();
+  window.addEventListener('load', init);
+  window.addEventListener('resize', function () { measure(); computeThreshold(); onScroll(); }, { passive: true });
+  window.addEventListener('scroll', onScroll, { passive: true });
 })();

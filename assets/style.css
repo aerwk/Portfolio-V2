@@ -129,8 +129,15 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
   background:#121114b3;backdrop-filter:blur(18px) saturate(150%);
   border:1px solid var(--line);border-radius:var(--r-pill);
   box-shadow:inset 0 1px #ffffff0f,0 12px 28px -14px #000000a6;
+  transition:max-width .38s var(--ease),padding .38s var(--ease);
 }
 @media (max-width:62.5rem){.nav-in{margin-inline:clamp(.75rem,3vw,2rem)}}
+/* past the first section the bar hugs its contents, so the gap between the
+   lockup and the first link is just the flex gap */
+.nav-in.condensed{max-width:var(--nav-cond,42rem);padding-left:.65rem}
+.nav-in.condensed .nav-links{margin-left:0}
+.nav-in.measuring{transition:none!important;max-width:max-content!important}
+@media (prefers-reduced-motion:reduce){.nav-in{transition:none}}
 .brand{position:relative;display:block;width:129px;height:34px;flex:none;text-decoration:none;
  border-radius:var(--r-pill);overflow:hidden;box-shadow:0 0 12px var(--violet-glo);
  transition:opacity .18s linear}
