@@ -188,7 +188,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 @media (pointer:coarse){
   .tagchip{padding:.55rem 1rem}
   .ptab{padding:.65rem 1.25rem}
-    .nav-links a{padding:.6rem .35rem}
+  .nav-links a{padding:.6rem .35rem}
 }
 
 /* ---------- hero — framed cinematic stage ---------- */
@@ -239,7 +239,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 .hero-sub{max-width:46rem}
 .hero-sub{color:var(--grey);font-weight:300;max-width:38rem;font-size:clamp(1rem,.95rem + .3vw,1.2rem);line-height:1.62}
 .hero-cta{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:.6rem}
-.cta 
+
 /* ---------- browser-frame dashboard mockup — tilted product shot ---------- */
 .mock{
   position:relative;z-index:3;max-width:58rem;margin:calc(-1*clamp(4rem,9vh,7rem)) auto 0;
