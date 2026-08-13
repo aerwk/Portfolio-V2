@@ -663,13 +663,15 @@ main{position:relative;z-index:1}
 
 .foot-brand{display:flex;flex-direction:column;gap:1rem;align-items:center}
 .foot-brand p{font-size:.85rem;font-weight:300;color:var(--grey-dim);max-width:62ch;margin:0}
-.foot-socials{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.4rem 1.3rem;margin-top:.2rem}
+.foot-socials{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.35rem .5rem;margin-top:.2rem}
+/* icon-only: the anchor carries the hit area, since the label is gone */
 .foot-socials a{
-  display:inline-flex;align-items:center;gap:.45rem;
-  font-size:.82rem;font-weight:400;color:var(--grey);text-decoration:none;transition:color .25s var(--ease);
+  display:inline-grid;place-items:center;width:2.25rem;height:2.25rem;
+  color:var(--grey);text-decoration:none;border-radius:var(--r-pill);
+  transition:color .25s var(--ease),background-color .25s var(--ease);
 }
-.foot-socials a:hover,.foot-socials a:focus-visible{color:var(--white)}
-.foot-socials svg{width:15px;height:15px;flex:none}
+.foot-socials a:hover,.foot-socials a:focus-visible{color:var(--white);background:#ffffff0d}
+.foot-socials svg{width:18px;height:18px;flex:none}
 .foot-lab{font-size:.82rem;font-weight:400;color:var(--grey);text-decoration:none;transition:color .25s var(--ease)}
 .foot-lab:hover,.foot-lab:focus-visible{color:var(--white)}
 .foot-bottom{
