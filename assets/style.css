@@ -138,16 +138,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 .nav-in.condensed .nav-links{margin-left:0}
 .nav-in.measuring{transition:none!important;max-width:max-content!important}
 @media (prefers-reduced-motion:reduce){.nav-in{transition:none}}
-.brand{position:relative;display:block;width:129px;height:34px;flex:none;text-decoration:none;
- border-radius:var(--r-pill);overflow:hidden;box-shadow:0 0 12px var(--violet-glo);
+.brand{position:relative;display:block;width:125px;height:37px;flex:none;text-decoration:none;
  transition:opacity .18s linear}
-.brand .lk-rest,.brand .lk-clip{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover}
-.brand-n5{width:125px;height:36px}
+.brand .lk-rest,.brand .lk-clip{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain}
 .brand-foot{width:74px;height:40px}
 .brand-foot-n5{width:84px;height:45px}
-/* footer marks are transparent PNGs, so the brand tile's violet glow and
-   rounded corners would show as a halo around nothing */
-.brand-foot{box-shadow:none;border-radius:0;overflow:visible}
 .brand .lk-clip{opacity:0;transition:opacity .15s linear}
 .brand .lk-clip.on{opacity:1}
  55%{transform:scale(.99)}100%{transform:scale(1)}}
