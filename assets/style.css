@@ -142,7 +142,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
  border-radius:var(--r-pill);overflow:hidden;box-shadow:0 0 12px var(--violet-glo);
  transition:opacity .18s linear}
 .brand .lk-rest,.brand .lk-clip{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover}
-.brand-n5{width:126px;height:42px}
+.brand-n5{width:125px;height:36px}
 .brand .lk-clip{opacity:0;transition:opacity .15s linear}
 .brand .lk-clip.on{opacity:1}
  55%{transform:scale(.99)}100%{transform:scale(1)}}

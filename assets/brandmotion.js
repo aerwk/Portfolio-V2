@@ -12,7 +12,6 @@
   if (brand && !reduced) {
     var clips = {};
     brand.querySelectorAll('.lk-clip').forEach(function (v) { clips[v.dataset.role] = v; });
-    var loopClip = clips.hoverloop || null;
     var busy = false;
     var hideAll = function () { for (var k in clips) clips[k].classList.remove('on'); };
 
@@ -30,27 +29,8 @@
     };
 
     brand.addEventListener('mouseenter', function () {
-      if (busy) return;
-      if (loopClip) {
-        hideAll();
-        loopClip.classList.add('on');
-        var p = loopClip.play();
-        if (p && p.catch) p.catch(function () {});
-      } else {
-        play('hoverin');
-      }
+      if (!busy) play('hoverin');
     });
-    brand.addEventListener('mouseleave', function () {
-      if (!loopClip) return;
-      loopClip.classList.remove('on');
-      window.setTimeout(function () {
-        if (!loopClip.classList.contains('on')) {
-          loopClip.pause();
-          try { loopClip.currentTime = 0; } catch (e) {}
-        }
-      }, 160);
-    });
-
     play('enter');
   }
 
