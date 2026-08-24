@@ -1,0 +1,47 @@
+{
+  "buildCommand": "echo 'Static site - no build needed'",
+  "outputDirectory": ".",
+  "framework": "static",
+  "rewrites": [
+    {
+      "source": "/lab",
+      "destination": "/lab/index.html"
+    },
+    {
+      "source": "/lab/",
+      "destination": "/lab/index.html"
+    },
+    {
+      "source": "/portfolio/homelab",
+      "destination": "/portfolio/homelab/index.html"
+    },
+    {
+      "source": "/portfolio/homelab/",
+      "destination": "/portfolio/homelab/index.html"
+    },
+    {
+      "source": "/blog",
+      "destination": "/blog/index.html"
+    },
+    {
+      "source": "/blog/",
+      "destination": "/blog/index.html"
+    },
+    {
+      "source": "/blog/posts",
+      "destination": "/blog/posts/view.html"
+    },
+    {
+      "source": "/blog/posts/",
+      "destination": "/blog/posts/view.html"
+    },
+    {
+      "source": "/blog/reader",
+      "destination": "/blog/reader.html"
+    },
+    {
+      "source": "/blog/reader/",
+      "destination": "/blog/reader.html"
+    }
+  ]
+}

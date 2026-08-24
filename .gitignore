@@ -12,3 +12,11 @@ CLAUDE.md
 # python bytecode from scripts/test_build_blog.py
 __pycache__/
 *.pyc
+
+# Archived predecessor project (N5HQ Website Build, folded in 2026-08-24).
+# The SITE lives in v1/ and IS committed and served. This directory holds that
+# project's working material — research, design, iteration logs, skills. Kept
+# local for reference only, never committed and never published, matching the
+# "vault-side project files" rule above. Full git history with these files is
+# preserved in Forgejo: eykli/n5hq-test-website (10.0.0.43:2222).
+archive/n5hq-website-build/

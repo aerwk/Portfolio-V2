@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Completed — Eric Li</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-navy: #0f172a;
+            --color-navy-dark: #0a0e1a;
+            --color-teal: #0891b2;
+            --color-purple: #a855f7;
+            --color-cyan: #06b6d4;
+            --color-green: #22c55e;
+            --color-text-light: #f0f4f8;
+            --color-text-muted: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 25%, #1a2a3a 50%, #0f2a3a 75%, #0a1a2a 100%);
+            color: var(--color-text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header .logo {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            background: linear-gradient(135deg, var(--color-teal) 0%, var(--color-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .back-link {
+            color: var(--color-teal);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--color-cyan);
+        }
+
+        /* Main */
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 4rem 2rem 6rem;
+        }
+
+        /* Hero */
+        .page-hero {
+            margin-bottom: 4rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            border-radius: 20px;
+            padding: 0.35rem 0.9rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--color-green);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 1.25rem;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--color-green);
+        }
+
+        .page-hero h1 {
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        .page-hero p {
+            color: var(--color-text-muted);
+            font-size: 1rem;
+            max-width: 600px;
+            line-height: 1.8;
+        }
+
+        /* Project cards */
+        .projects-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .project-card:hover {
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .project-card-header {
+            padding: 2rem 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: flex-start;
+            gap: 1.25rem;
+        }
+
+        .project-number {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--color-green);
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            border-radius: 6px;
+            padding: 0.3rem 0.6rem;
+            letter-spacing: 0.08em;
+            white-space: nowrap;
+            margin-top: 0.2rem;
+        }
+
+        .project-card-title {
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            letter-spacing: -0.02em;
+            line-height: 1.25;
+            color: var(--color-text-light);
+        }
+
+        .project-card-body {
+            padding: 1.75rem 2rem;
+        }
+
+        .project-description {
+            color: var(--color-text-muted);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 1.75rem;
+        }
+
+        /* Detail rows */
+        .detail-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .detail-row {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .detail-row-icon {
+            font-size: 1rem;
+            min-width: 24px;
+            margin-top: 0.1rem;
+        }
+
+        .detail-row-content strong {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--color-text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-row-content p {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            line-height: 1.7;
+        }
+
+        /* Tags */
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .tag-list-left {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            font-size: 0.72rem;
+            font-weight: 600;
+            font-family: 'Roboto Mono', monospace;
+            padding: 0.3rem 0.7rem;
+            border-radius: 5px;
+            background: rgba(34, 197, 94, 0.08);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            color: var(--color-green);
+        }
+
+        .view-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--color-teal);
+            text-decoration: none;
+            white-space: nowrap;
+            transition: color 0.2s;
+        }
+
+        .view-link:hover {
+            color: var(--color-cyan);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.25);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 2rem;
+            text-align: center;
+            color: rgba(203, 213, 225, 0.5);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 640px) {
+            main { padding: 2.5rem 1.25rem 4rem; }
+            .project-card-header { flex-direction: column; gap: 0.75rem; }
+            .project-card-header, .project-card-body { padding: 1.5rem; }
+            .tag-list { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header>
+        <nav>
+            <a href="/" class="logo">N5HQ</a>
+            <a href="/" class="back-link">← Back to Home</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero -->
+        <div class="page-hero">
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                Shipped
+            </div>
+            <h1>Completed</h1>
+            <p>Projects that are live, running, and doing their job — shipped and battle-tested in the real world.</p>
+        </div>
+
+        <!-- Projects -->
+        <div class="projects-list">
+
+            <!-- HomeLab -->
+            <div class="project-card">
+                <div class="project-card-header">
+                    <span class="project-number">01</span>
+                    <h2 class="project-card-title">HomeLab</h2>
+                </div>
+                <div class="project-card-body">
+                    <p class="project-description">
+                        A production-grade self-hosted infrastructure running 24/7 — networking, compute, storage, smart home automation, surveillance, and a full media stack. Everything from the UniFi network to the monitoring dashboards is designed, deployed, and maintained from scratch.
+                    </p>
+                    <div class="detail-grid">
+                        <div class="detail-row">
+                            <span class="detail-row-icon">🌐</span>
+                            <div class="detail-row-content">
+                                <strong>Networking</strong>
+                                <p>UniFi Cloud Gateway Fiber with five isolated VLANs (Management, Home, Guest, IoT, Cameras), inter-VLAN firewall policies, Pi-hole DNS filtering, DDNS, and 40+ connected clients</p>
+                            </div>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-row-icon">🐳</span>
+                            <div class="detail-row-content">
+                                <strong>Containers & Services</strong>
+                                <p>20+ containerised services on a Dell OptiPlex — Immich, Grafana, Prometheus, Loki, Home Assistant, Radarr, Sonarr, Prowlarr, and more, managed via Portainer</p>
+                            </div>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-row-icon">📊</span>
+                            <div class="detail-row-content">
+                                <strong>Observability</strong>
+                                <p>Full monitoring stack with Prometheus metrics, Grafana dashboards, and Loki log aggregation — custom homelab overview dashboard built via the Grafana API</p>
+                            </div>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-row-icon">🏠</span>
+                            <div class="detail-row-content">
+                                <strong>Smart Home</strong>
+                                <p>Matter and Thread over Matter for local device control, HomeKit, Philips Hue, and Meross devices unified through Home Assistant with API-driven automations</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tag-list">
+                        <div class="tag-list-left">
+                            <span class="tag">UniFi</span>
+                            <span class="tag">Docker</span>
+                            <span class="tag">Linux</span>
+                            <span class="tag">Grafana</span>
+                            <span class="tag">Home Assistant</span>
+                            <span class="tag">VLANs</span>
+                            <span class="tag">Pi-hole</span>
+                        </div>
+                        <a href="/portfolio/homelab" class="view-link">View full details →</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 N5HQ. All rights reserved.</p>
+    </footer>
+</body>
+</html>

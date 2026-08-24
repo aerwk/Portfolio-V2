@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab — Eric Li</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-navy: #0f172a;
+            --color-navy-dark: #0a0e1a;
+            --color-teal: #0891b2;
+            --color-purple: #a855f7;
+            --color-cyan: #06b6d4;
+            --color-text-light: #f0f4f8;
+            --color-text-muted: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 25%, #1a2a3a 50%, #0f2a3a 75%, #0a1a2a 100%);
+            color: var(--color-text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            scrollbar-width: none;
+            font-weight: 400;
+        }
+
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 7xl;
+            margin: 0 auto;
+        }
+
+        header .logo {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            background: linear-gradient(135deg, var(--color-teal) 0%, var(--color-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        header nav a {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--color-text-muted);
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        header nav a:hover {
+            color: var(--color-teal);
+        }
+
+        /* Main content */
+        main {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+        }
+
+        .lab-container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .lab-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .lab-header h1 {
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .lab-header p {
+            font-size: 1rem;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .service-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--color-teal);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(8, 145, 178, 0.15);
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            line-height: 1;
+        }
+
+        .service-card h3 {
+            font-size: 1.2rem;
+            color: var(--color-text-light);
+        }
+
+        .service-card p {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            line-height: 1.5;
+        }
+
+        .service-link {
+            display: inline-block;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--color-teal);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .service-link:hover {
+            color: var(--color-cyan);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 2rem;
+            text-align: center;
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            color: var(--color-teal);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--color-cyan);
+        }
+
+        .stats-section {
+            margin-top: 4rem;
+            padding-top: 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stats-section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            color: var(--color-text-light);
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--color-teal);
+            transform: translateY(-3px);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-teal);
+            font-family: 'Roboto Mono', monospace;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+
+        @media (max-width: 768px) {
+            header nav {
+                padding: 1rem 1.5rem;
+            }
+
+            main {
+                padding: 2rem 1rem;
+            }
+
+            .lab-header {
+                margin-bottom: 3rem;
+            }
+
+            .lab-header h1 {
+                font-size: 2rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .service-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header>
+        <nav>
+            <a href="/" class="logo">N5HQ</a>
+            <a href="/">← Back to Home</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="lab-container">
+            <div class="lab-header">
+                <h1>Personal Homelab</h1>
+                <p>Self-hosted infrastructure & services running on the personal network. Always learning, always building.</p>
+            </div>
+
+            <div class="services-grid">
+                <a href="https://photo.n5hq.me" class="service-card" target="_blank" rel="noopener noreferrer">
+                    <div class="service-icon">🖼️</div>
+                    <h3>Photos</h3>
+                    <p>Photo management & library</p>
+                    <span class="service-link">photo.n5hq.me →</span>
+                </a>
+
+                <a href="https://status.n5hq.me" class="service-card" target="_blank" rel="noopener noreferrer">
+                    <div class="service-icon">📊</div>
+                    <h3>Status</h3>
+                    <p>System health & uptime</p>
+                    <span class="service-link">status.n5hq.me →</span>
+                </a>
+
+                <div class="service-card" style="opacity: 0.7; cursor: not-allowed;">
+                    <div class="service-icon">🐳</div>
+                    <h3>Containers</h3>
+                    <p>Docker stack overview</p>
+                    <span class="service-link">Coming soon</span>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <h2>Homelab Environment</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">Stacks</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">19</div>
+                        <div class="stat-label">Containers</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">Volumes</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">19</div>
+                        <div class="stat-label">Images</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 N5HQ. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Smooth navigation
+        document.querySelectorAll('a[href="/"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = '/';
+            });
+        });
+    </script>
+</body>
+</html>

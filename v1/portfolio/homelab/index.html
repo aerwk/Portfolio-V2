@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeLab — Eric Li</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-navy: #0f172a;
+            --color-navy-dark: #0a0e1a;
+            --color-teal: #0891b2;
+            --color-purple: #a855f7;
+            --color-cyan: #06b6d4;
+            --color-text-light: #f0f4f8;
+            --color-text-muted: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 25%, #1a2a3a 50%, #0f2a3a 75%, #0a1a2a 100%);
+            color: var(--color-text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 7xl;
+            margin: 0 auto;
+        }
+
+        header .logo {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            background: linear-gradient(135deg, var(--color-teal) 0%, var(--color-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        header nav a {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--color-text-muted);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        header nav a:hover {
+            color: var(--color-teal);
+        }
+
+        /* Main content */
+        main {
+            padding: 4rem 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            margin-bottom: 3rem;
+            text-align: center;
+            letter-spacing: -0.02em;
+        }
+
+        .homelab-image {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(8, 145, 178, 0.1);
+        }
+
+        .homelab-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .infrastructure-section {
+            margin-bottom: 3rem;
+        }
+
+        .infrastructure-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--color-text-light);
+            text-align: center;
+        }
+
+        .infrastructure-content {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .infrastructure-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .infrastructure-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .infrastructure-item strong {
+            color: var(--color-teal);
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .infrastructure-item p {
+            color: var(--color-text-muted);
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+        .containers-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .container-tag {
+            background: rgba(168, 85, 247, 0.2);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--color-teal);
+            font-weight: 600;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            color: var(--color-teal);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--color-cyan);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 2rem;
+            text-align: center;
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+            margin-top: 4rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.7rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.5);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 10px 30px rgba(8, 145, 178, 0.5);
+        }
+
+        @media (max-width: 968px) {
+            main {
+                display: block !important;
+            }
+
+            main > div:first-child {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+            }
+
+            .homelab-image {
+                margin-top: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 2rem 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .infrastructure-content {
+                padding: 1.5rem;
+            }
+
+            .containers-list {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header>
+        <nav>
+            <a href="/" class="logo">N5HQ</a>
+            <a href="/" class="back-link">← Back to Home</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;">
+            <!-- Left Column -->
+            <div>
+                <h1 style="text-align: left; margin-bottom: 1rem; font-size: 3rem;">HomeLab</h1>
+                <p style="color: var(--color-text-muted); margin-bottom: 2rem; line-height: 1.8;">Self-hosted infrastructure powering all my personal computing needs. A production-grade homelab with networking, compute, storage, surveillance, and smart home automation running 24/7.</p>
+
+                <!-- Technology Stack Title -->
+                <h3 style="color: var(--color-text-light); font-size: 1.5rem; margin-bottom: 1.5rem; margin-top: 2rem; font-weight: 700;">Technology Stack</h3>
+
+                <!-- Technology Stack Tiles -->
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                    <!-- Docker -->
+                    <div class="infrastructure-content" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🐳</div>
+                        <h3 style="color: var(--color-text-light); font-size: 0.9rem; margin-bottom: 0.2rem;">Docker</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.75rem;">Containers</p>
+                    </div>
+
+                    <!-- UniFi -->
+                    <div class="infrastructure-content" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌐</div>
+                        <h3 style="color: var(--color-text-light); font-size: 0.9rem; margin-bottom: 0.2rem;">UniFi</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.75rem;">Network</p>
+                    </div>
+
+                    <!-- Linux -->
+                    <div class="infrastructure-content" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🐧</div>
+                        <h3 style="color: var(--color-text-light); font-size: 0.9rem; margin-bottom: 0.2rem;">Linux</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.75rem;">OS</p>
+                    </div>
+
+                    <!-- Prometheus -->
+                    <div class="infrastructure-content" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📊</div>
+                        <h3 style="color: var(--color-text-light); font-size: 0.9rem; margin-bottom: 0.2rem;">Prometheus</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.75rem;">Metrics</p>
+                    </div>
+
+                    <!-- Grafana -->
+                    <div class="infrastructure-content" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📈</div>
+                        <h3 style="color: var(--color-text-light); font-size: 0.9rem; margin-bottom: 0.2rem;">Grafana</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.75rem;">Dashboards</p>
+                    </div>
+
+                    <!-- Portainer -->
+                    <div class="infrastructure-content" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚙️</div>
+                        <h3 style="color: var(--color-text-light); font-size: 0.9rem; margin-bottom: 0.2rem;">Portainer</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.75rem;">Management</p>
+                    </div>
+
+                    <!-- Immich -->
+                    <div class="infrastructure-content" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🖼️</div>
+                        <h3 style="color: var(--color-text-light); font-size: 0.9rem; margin-bottom: 0.2rem;">Immich</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.75rem;">Photos</p>
+                    </div>
+
+                    <!-- Home Assistant -->
+                    <div class="infrastructure-content" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏠</div>
+                        <h3 style="color: var(--color-text-light); font-size: 0.9rem; margin-bottom: 0.2rem;">Home Assistant</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.75rem;">Automation</p>
+                    </div>
+
+                    <!-- PostgreSQL -->
+                    <div class="infrastructure-content" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🗄️</div>
+                        <h3 style="color: var(--color-text-light); font-size: 0.9rem; margin-bottom: 0.2rem;">PostgreSQL</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.75rem;">Database</p>
+                    </div>
+
+                    <!-- Nginx -->
+                    <div class="infrastructure-content" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔧</div>
+                        <h3 style="color: var(--color-text-light); font-size: 0.9rem; margin-bottom: 0.2rem;">Nginx</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.75rem;">Proxy</p>
+                    </div>
+
+                    <!-- Loki -->
+                    <div class="infrastructure-content" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📝</div>
+                        <h3 style="color: var(--color-text-light); font-size: 0.9rem; margin-bottom: 0.2rem;">Loki</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.75rem;">Logs</p>
+                    </div>
+
+                    <!-- Tailscale -->
+                    <div class="infrastructure-content" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔐</div>
+                        <h3 style="color: var(--color-text-light); font-size: 0.9rem; margin-bottom: 0.2rem;">Tailscale</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.75rem;">VPN</p>
+                    </div>
+
+                    <!-- Radarr -->
+                    <div class="infrastructure-content" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎬</div>
+                        <h3 style="color: var(--color-text-light); font-size: 0.9rem; margin-bottom: 0.2rem;">Radarr</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.75rem;">Movies</p>
+                    </div>
+
+                    <!-- Sonarr -->
+                    <div class="infrastructure-content" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📺</div>
+                        <h3 style="color: var(--color-text-light); font-size: 0.9rem; margin-bottom: 0.2rem;">Sonarr</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.75rem;">TV Series</p>
+                    </div>
+
+                    <!-- Prowlarr -->
+                    <div class="infrastructure-content" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
+                        <h3 style="color: var(--color-text-light); font-size: 0.9rem; margin-bottom: 0.2rem;">Prowlarr</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.75rem;">Indexers</p>
+                    </div>
+
+                    <!-- Pi-hole -->
+                    <div class="infrastructure-content" style="padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🛡️</div>
+                        <h3 style="color: var(--color-text-light); font-size: 0.9rem; margin-bottom: 0.2rem;">Pi-hole</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.75rem;">DNS / Filtering</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div>
+                <!-- Image -->
+                <div class="homelab-image" style="margin-bottom: 3rem;">
+                    <img src="/IMG_3796_preview.jpeg" alt="Homelab Setup">
+                </div>
+
+                <!-- Key Features -->
+                <div>
+                    <h3 style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--color-text-light);">🔧 Key Components</h3>
+                    <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                        <div style="display: flex; gap: 1rem;">
+                            <span style="color: var(--color-teal); font-weight: 600; min-width: 20px;">✓</span>
+                            <div>
+                                <p style="color: var(--color-text-light); font-weight: 600; margin-bottom: 0.3rem;">Networking</p>
+                                <p style="color: var(--color-text-muted); font-size: 0.9rem;">UniFi Cloud Gateway Fiber, managed switches, WiFi 7 APs, and fiber connectivity — supporting 40+ connected clients across all networks</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <span style="color: var(--color-teal); font-weight: 600; min-width: 20px;">✓</span>
+                            <div>
+                                <p style="color: var(--color-text-light); font-weight: 600; margin-bottom: 0.3rem;">VLANs & Firewall</p>
+                                <p style="color: var(--color-text-muted); font-size: 0.9rem;">Five isolated networks — Management, Home, Guest, IoT, and Cameras — with inter-VLAN firewall policies enforcing least-privilege traffic rules</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <span style="color: var(--color-teal); font-weight: 600; min-width: 20px;">✓</span>
+                            <div>
+                                <p style="color: var(--color-text-light); font-weight: 600; margin-bottom: 0.3rem;">DNS Routing & DDNS</p>
+                                <p style="color: var(--color-text-muted); font-size: 0.9rem;">Pi-hole for network-wide DNS filtering and local split-horizon routing; DDNS for dynamic public IP tracking across Cloudflare</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <span style="color: var(--color-teal); font-weight: 600; min-width: 20px;">✓</span>
+                            <div>
+                                <p style="color: var(--color-text-light); font-weight: 600; margin-bottom: 0.3rem;">Compute</p>
+                                <p style="color: var(--color-text-muted); font-size: 0.9rem;">Dell OptiPlex with Intel 9500T, 32GB RAM, running Ubuntu and Docker</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <span style="color: var(--color-teal); font-weight: 600; min-width: 20px;">✓</span>
+                            <div>
+                                <p style="color: var(--color-text-light); font-weight: 600; margin-bottom: 0.3rem;">Storage</p>
+                                <p style="color: var(--color-text-muted); font-size: 0.9rem;">Remote slot storage + local NVMe, 22TB capacity for media and backups</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <span style="color: var(--color-teal); font-weight: 600; min-width: 20px;">✓</span>
+                            <div>
+                                <p style="color: var(--color-text-light); font-weight: 600; margin-bottom: 0.3rem;">*arr Media Automation</p>
+                                <p style="color: var(--color-text-muted); font-size: 0.9rem;">Radarr, Sonarr, and Prowlarr automating acquisition and organisation of movies and TV from a remote media server; Discord webhooks push real-time notifications on downloads and status changes</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <span style="color: var(--color-teal); font-weight: 600; min-width: 20px;">✓</span>
+                            <div>
+                                <p style="color: var(--color-text-light); font-weight: 600; margin-bottom: 0.3rem;">Surveillance</p>
+                                <p style="color: var(--color-text-muted); font-size: 0.9rem;">UniFi Protect cameras + Aqara smart cameras with 24/7 recording</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <span style="color: var(--color-teal); font-weight: 600; min-width: 20px;">✓</span>
+                            <div>
+                                <p style="color: var(--color-text-light); font-weight: 600; margin-bottom: 0.3rem;">Smart Home — Matter & Thread</p>
+                                <p style="color: var(--color-text-muted); font-size: 0.9rem;">HomeKit, Philips Hue, and Meross devices unified via Home Assistant; Matter and Thread over Matter for local, cloud-independent device control</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <span style="color: var(--color-teal); font-weight: 600; min-width: 20px;">✓</span>
+                            <div>
+                                <p style="color: var(--color-text-light); font-weight: 600; margin-bottom: 0.3rem;">API Integrations</p>
+                                <p style="color: var(--color-text-muted); font-size: 0.9rem;">Custom automations via Home Assistant REST API, UniFi Network API, Grafana API, Cloudflare API, and Discord webhooks — services talk to each other without manual intervention</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <span style="color: var(--color-teal); font-weight: 600; min-width: 20px;">✓</span>
+                            <div>
+                                <p style="color: var(--color-text-light); font-weight: 600; margin-bottom: 0.3rem;">Containers</p>
+                                <p style="color: var(--color-text-muted); font-size: 0.9rem;">20+ containerized services including Immich, Grafana, Prometheus, and the full *arr stack</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 N5HQ. All rights reserved.</p>
+    </footer>
+</body>
+</html>

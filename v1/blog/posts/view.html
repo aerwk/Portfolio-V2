@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Post — Eric Li</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-navy: #0f172a;
+            --color-teal: #0891b2;
+            --color-purple: #a855f7;
+            --color-cyan: #06b6d4;
+            --color-text-light: #f0f4f8;
+            --color-text-muted: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 25%, #1a2a3a 50%, #0f2a3a 75%, #0a1a2a 100%);
+            color: var(--color-text-light);
+            line-height: 1.8;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 7xl;
+            margin: 0 auto;
+        }
+
+        header .logo {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-teal) 0%, var(--color-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .back-link {
+            color: var(--color-teal);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            color: var(--color-cyan);
+        }
+
+        /* Article */
+        article {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            min-height: calc(100vh - 80px);
+        }
+
+        .article-meta {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .article-date {
+            color: var(--color-teal);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .article-title {
+            font-size: clamp(2rem, 8vw, 3rem);
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .article-excerpt {
+            font-size: 1.1rem;
+            color: var(--color-text-muted);
+            max-width: 600px;
+            margin: 1.5rem auto;
+            line-height: 1.7;
+        }
+
+        .article-tags {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .tag {
+            background: rgba(168, 85, 247, 0.2);
+            color: var(--color-purple);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .article-content {
+            margin-top: 3rem;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        .article-content h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            color: var(--color-text-light);
+        }
+
+        .article-content h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 0.8rem;
+            color: var(--color-text-light);
+        }
+
+        .article-content h4 {
+            font-size: 1.1rem;
+            margin: 1.2rem 0 0.6rem;
+            color: var(--color-text-light);
+        }
+
+        .article-content p {
+            margin-bottom: 1.5rem;
+            color: var(--color-text-muted);
+        }
+
+        .article-content ul,
+        .article-content ol {
+            margin: 1.5rem 0 1.5rem 2rem;
+            color: var(--color-text-muted);
+        }
+
+        .article-content li {
+            margin-bottom: 0.7rem;
+        }
+
+        .article-content code {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-family: 'Roboto Mono', monospace;
+            color: var(--color-cyan);
+            font-size: 0.9rem;
+        }
+
+        .article-content pre {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .article-content pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .article-content blockquote {
+            border-left: 4px solid var(--color-teal);
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            color: var(--color-text-muted);
+            font-style: italic;
+        }
+
+        .article-content a {
+            color: var(--color-teal);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .article-content a:hover {
+            color: var(--color-cyan);
+            text-decoration: underline;
+        }
+
+        .article-footer {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: var(--color-text-muted);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--color-text-muted);
+        }
+
+        .error {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #ef4444;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 2rem;
+            text-align: center;
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            article {
+                padding: 2rem 1rem;
+            }
+
+            .article-title {
+                font-size: 1.8rem;
+            }
+
+            .article-content {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header>
+        <nav>
+            <a href="/" class="logo">N5HQ</a>
+            <a href="/blog" class="back-link">← Back to Blog</a>
+        </nav>
+    </header>
+
+    <!-- Article -->
+    <article>
+        <div id="articleContainer" class="loading">
+            Loading post...
+        </div>
+    </article>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 N5HQ. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Get post ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('post');
+
+        // Parse frontmatter
+        function parseFrontmatter(content) {
+            const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
+            const match = content.match(frontmatterRegex);
+
+            if (!match) return { metadata: {}, content };
+
+            try {
+                const metadata = jsYaml.load(match[1]);
+                const markdownContent = content.replace(frontmatterRegex, '').trim();
+                return { metadata, content: markdownContent };
+            } catch (e) {
+                console.error('Error parsing frontmatter:', e);
+                return { metadata: {}, content };
+            }
+        }
+
+        // Calculate read time
+        function calculateReadTime(content) {
+            const wordCount = content.split(/\s+/).length;
+            const readTime = Math.ceil(wordCount / 200);
+            return readTime;
+        }
+
+        // Load and render the post
+        async function loadPost() {
+            const container = document.getElementById('articleContainer');
+
+            if (!postId) {
+                container.innerHTML = '<div class="error">Error: No post specified. <a href="/blog" style="color: var(--color-teal);">← Back to Blog</a></div>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/blog/posts/${postId}.md`);
+                if (!response.ok) throw new Error('Post not found');
+
+                const content = await response.text();
+                const { metadata, content: markdownContent } = parseFrontmatter(content);
+
+                if (!metadata.title) {
+                    throw new Error('Post missing title in frontmatter');
+                }
+
+                const readTime = calculateReadTime(markdownContent);
+                const htmlContent = marked.parse(markdownContent);
+
+                function formatDate(dateString) {
+                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                    return new Date(dateString).toLocaleDateString('en-US', options);
+                }
+
+                // Update page title
+                document.title = `${metadata.title} — Blog`;
+
+                // Render article
+                const tagsHtml = (metadata.tags || [])
+                    .map(tag => `<span class="tag">${tag}</span>`)
+                    .join('');
+
+                container.innerHTML = `
+                    <div class="article-meta">
+                        <div class="article-date">${formatDate(metadata.date || new Date())}</div>
+                        <h1 class="article-title">${metadata.title}</h1>
+                        ${metadata.excerpt ? `<p class="article-excerpt">${metadata.excerpt}</p>` : ''}
+                        ${tagsHtml ? `<div class="article-tags">${tagsHtml}</div>` : ''}
+                    </div>
+
+                    <div class="article-content">
+                        ${htmlContent}
+                    </div>
+
+                    <div class="article-footer">
+                        <p>Published on ${formatDate(metadata.date || new Date())} • ${readTime} minute read</p>
+                        <p style="margin-top: 1.5rem; font-size: 0.85rem;">
+                            Questions? Reach out via <a href="/#contact" style="color: var(--color-teal); text-decoration: none;">the contact form</a> or on <a href="https://linkedin.com/in/eric-li-90a0a3163/" style="color: var(--color-teal); text-decoration: none;" target="_blank">LinkedIn</a>.
+                        </p>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading post:', error);
+                container.innerHTML = `<div class="error">Error loading post: ${error.message} <br><a href="/blog" style="color: var(--color-teal); margin-top: 1rem; display: inline-block;">← Back to Blog</a></div>`;
+            }
+        }
+
+        loadPost();
+    </script>
+</body>
+</html>

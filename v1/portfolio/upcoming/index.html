@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upcoming — Eric Li</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-navy: #0f172a;
+            --color-navy-dark: #0a0e1a;
+            --color-teal: #0891b2;
+            --color-purple: #a855f7;
+            --color-cyan: #06b6d4;
+            --color-text-light: #f0f4f8;
+            --color-text-muted: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 25%, #1a2a3a 50%, #0f2a3a 75%, #0a1a2a 100%);
+            color: var(--color-text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header .logo {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            background: linear-gradient(135deg, var(--color-teal) 0%, var(--color-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .back-link {
+            color: var(--color-teal);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--color-cyan);
+        }
+
+        /* Main */
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 4rem 2rem 6rem;
+        }
+
+        /* Hero */
+        .page-hero {
+            margin-bottom: 4rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            border-radius: 20px;
+            padding: 0.35rem 0.9rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--color-purple);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 1.25rem;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--color-purple);
+            animation: pulse 2.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        .page-hero h1 {
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        .page-hero p {
+            color: var(--color-text-muted);
+            font-size: 1rem;
+            max-width: 600px;
+            line-height: 1.8;
+        }
+
+        /* Project cards */
+        .projects-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .project-card:hover {
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .project-card-header {
+            padding: 2rem 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: flex-start;
+            gap: 1.25rem;
+        }
+
+        .project-number {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--color-purple);
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            border-radius: 6px;
+            padding: 0.3rem 0.6rem;
+            letter-spacing: 0.08em;
+            white-space: nowrap;
+            margin-top: 0.2rem;
+        }
+
+        .project-card-title {
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            letter-spacing: -0.02em;
+            line-height: 1.25;
+            color: var(--color-text-light);
+        }
+
+        .project-card-body {
+            padding: 1.75rem 2rem;
+        }
+
+        .project-description {
+            color: var(--color-text-muted);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 1.75rem;
+        }
+
+        /* Detail rows */
+        .detail-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .detail-row {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .detail-row-icon {
+            font-size: 1rem;
+            min-width: 24px;
+            margin-top: 0.1rem;
+        }
+
+        .detail-row-content strong {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--color-text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-row-content p {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            line-height: 1.7;
+        }
+
+        /* Tags */
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .tag {
+            font-size: 0.72rem;
+            font-weight: 600;
+            font-family: 'Roboto Mono', monospace;
+            padding: 0.3rem 0.7rem;
+            border-radius: 5px;
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            color: var(--color-purple);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.25);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 2rem;
+            text-align: center;
+            color: rgba(203, 213, 225, 0.5);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 640px) {
+            main { padding: 2.5rem 1.25rem 4rem; }
+            .project-card-header { flex-direction: column; gap: 0.75rem; }
+            .project-card-header, .project-card-body { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header>
+        <nav>
+            <a href="/" class="logo">N5HQ</a>
+            <a href="/" class="back-link">← Back to Home</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero -->
+        <div class="page-hero">
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                Coming Soon
+            </div>
+            <h1>Upcoming</h1>
+            <p>Projects that are scoped, planned, and queued up — real work that's coming down the line.</p>
+        </div>
+
+        <!-- Projects -->
+        <div class="projects-list">
+
+            <!-- Project 1: Hotel IPTV -->
+            <div class="project-card">
+                <div class="project-card-header">
+                    <span class="project-number">01</span>
+                    <h2 class="project-card-title">Hotel IPTV System — 100+ Rooms</h2>
+                </div>
+                <div class="project-card-body">
+                    <p class="project-description">
+                        End-to-end overhaul of a hotel's network and TV infrastructure across 100+ rooms. Involves rebuilding the network topology from the ground up, deploying an IPTV headend with encoders, and automating network health and recovery workflows.
+                    </p>
+                    <div class="detail-grid">
+                        <div class="detail-row">
+                            <span class="detail-row-icon">🌐</span>
+                            <div class="detail-row-content">
+                                <strong>Network Redesign</strong>
+                                <p>Reconfiguring the existing network to a clean VLAN and firewall architecture, establishing a healthier and more maintainable topology across the property</p>
+                            </div>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-row-icon">📺</span>
+                            <div class="detail-row-content">
+                                <strong>IPTV Headend</strong>
+                                <p>Deploying a dedicated IPTV headend with encoders to distribute live TV to all 100+ rooms over the network — replacing legacy coax infrastructure</p>
+                            </div>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-row-icon">⚙️</span>
+                            <div class="detail-row-content">
+                                <strong>Automated Recovery</strong>
+                                <p>Locally hosted server running containerised services that continuously monitor network health, troubleshoot issues automatically, and request the correct permissions to restore connectivity without manual intervention</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tag-list">
+                        <span class="tag">IPTV</span>
+                        <span class="tag">VLANs</span>
+                        <span class="tag">Firewall</span>
+                        <span class="tag">Network Design</span>
+                        <span class="tag">Docker</span>
+                        <span class="tag">Automation</span>
+                        <span class="tag">100+ Rooms</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 2: Multi-Site Network -->
+            <div class="project-card">
+                <div class="project-card-header">
+                    <span class="project-number">02</span>
+                    <h2 class="project-card-title">Multi-Site Network Unification</h2>
+                </div>
+                <div class="project-card-body">
+                    <p class="project-description">
+                        Connecting three geographically separate sites into a single unified network — making remote devices feel local. Combined with a dedicated camera network across the sites and seamless cross-site access for all users.
+                    </p>
+                    <div class="detail-grid">
+                        <div class="detail-row">
+                            <span class="detail-row-icon">🔗</span>
+                            <div class="detail-row-content">
+                                <strong>Site Unification</strong>
+                                <p>Deploying a network across three separate physical locations that operates as a single logical network — giving users transparent "local" access to devices regardless of which site they're at</p>
+                            </div>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-row-icon">📷</span>
+                            <div class="detail-row-content">
+                                <strong>Camera Network</strong>
+                                <p>Deploying a unified surveillance camera network spanning all three sites, accessible and manageable from a single interface</p>
+                            </div>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-row-icon">🏢</span>
+                            <div class="detail-row-content">
+                                <strong>Cross-Site Access</strong>
+                                <p>Users on any site can reach printers, servers, and devices on any other site without VPN friction — same network, different locations</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tag-list">
+                        <span class="tag">Multi-Site</span>
+                        <span class="tag">Network Design</span>
+                        <span class="tag">Site-to-Site</span>
+                        <span class="tag">Surveillance</span>
+                        <span class="tag">VLANs</span>
+                        <span class="tag">Routing</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 N5HQ. All rights reserved.</p>
+    </footer>
+</body>
+</html>

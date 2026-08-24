@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building a Self-Hosted Homelab: From Zero to Hero — Blog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-navy: #0f172a;
+            --color-teal: #0891b2;
+            --color-purple: #a855f7;
+            --color-cyan: #06b6d4;
+            --color-text-light: #f0f4f8;
+            --color-text-muted: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 25%, #1a2a3a 50%, #0f2a3a 75%, #0a1a2a 100%);
+            color: var(--color-text-light);
+            line-height: 1.8;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 7xl;
+            margin: 0 auto;
+        }
+
+        header .logo {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-teal) 0%, var(--color-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .back-link {
+            color: var(--color-teal);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            color: var(--color-cyan);
+        }
+
+        /* Article */
+        article {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            min-height: calc(100vh - 80px);
+        }
+
+        .article-meta {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .article-date {
+            color: var(--color-teal);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .article-title {
+            font-size: clamp(2rem, 8vw, 3rem);
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .article-excerpt {
+            font-size: 1.1rem;
+            color: var(--color-text-muted);
+            max-width: 600px;
+            margin: 1.5rem auto;
+            line-height: 1.7;
+        }
+
+        .article-tags {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .tag {
+            background: rgba(168, 85, 247, 0.2);
+            color: var(--color-purple);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .article-content {
+            margin-top: 3rem;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        .article-content h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            color: var(--color-text-light);
+        }
+
+        .article-content h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 0.8rem;
+            color: var(--color-text-light);
+        }
+
+        .article-content p {
+            margin-bottom: 1.5rem;
+            color: var(--color-text-muted);
+        }
+
+        .article-content ul,
+        .article-content ol {
+            margin: 1.5rem 0 1.5rem 2rem;
+            color: var(--color-text-muted);
+        }
+
+        .article-content li {
+            margin-bottom: 0.7rem;
+        }
+
+        .article-content code {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-family: 'Roboto Mono', monospace;
+            color: var(--color-cyan);
+            font-size: 0.9rem;
+        }
+
+        .article-content blockquote {
+            border-left: 4px solid var(--color-teal);
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            color: var(--color-text-muted);
+            font-style: italic;
+        }
+
+        .article-footer {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: var(--color-text-muted);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 2rem;
+            text-align: center;
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            article {
+                padding: 2rem 1rem;
+            }
+
+            .article-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header>
+        <nav>
+            <a href="/" class="logo">N5HQ</a>
+            <a href="/blog" class="back-link">← Back to Blog</a>
+        </nav>
+    </header>
+
+    <!-- Article -->
+    <article>
+        <div class="article-meta">
+            <div class="article-date">June 9, 2026</div>
+            <h1 class="article-title">Building a Self-Hosted Homelab: From Zero to Hero</h1>
+            <p class="article-excerpt">A comprehensive guide to building your own homelab infrastructure, from networking to containerization.</p>
+            <div class="article-tags">
+                <span class="tag">Infrastructure</span>
+                <span class="tag">Docker</span>
+                <span class="tag">Networking</span>
+            </div>
+        </div>
+
+        <div class="article-content">
+            <h2>Introduction</h2>
+            <p>Building a homelab is one of the most practical ways to learn infrastructure, networking, and DevOps. This guide walks you through the entire process, from hardware selection to deploying containerized applications.</p>
+
+            <h2>Why Build a Homelab?</h2>
+            <p>A homelab provides hands-on experience with real infrastructure challenges:</p>
+            <ul>
+                <li>Learn networking fundamentals in a safe environment</li>
+                <li>Practice containerization and orchestration</li>
+                <li>Build automation skills with real systems</li>
+                <li>Develop troubleshooting abilities</li>
+                <li>Create a resume-worthy project</li>
+            </ul>
+
+            <h2>Hardware Setup</h2>
+            <p>Your hardware choice depends on your budget and goals. I built mine with:</p>
+            <ul>
+                <li><code>Dell OptiPlex 7070</code> — Main compute (i9-9500T, 32GB RAM)</li>
+                <li><code>UniFi Network</code> — Professional networking equipment</li>
+                <li><code>NAS Storage</code> — 22TB for media and backups</li>
+                <li><code>PoE Cameras</code> — UniFi Protect surveillance</li>
+            </ul>
+
+            <h2>Networking Layer</h2>
+            <p>Start with proper networking. A good network foundation makes everything else easier:</p>
+            <blockquote>
+                "Your network is the foundation for everything else in your homelab. Get this right, and everything else becomes possible."
+            </blockquote>
+
+            <h2>Containerization with Docker</h2>
+            <p>Docker simplifies application deployment. Instead of managing dependencies on the host system, containers are self-contained and portable.</p>
+
+            <h2>Going Further</h2>
+            <p>Once you have Docker running, the next step is container orchestration with Kubernetes. This enables auto-scaling, rolling updates, and sophisticated deployments.</p>
+
+            <h2>Conclusion</h2>
+            <p>Building a homelab is a journey, not a destination. Start simple, learn continuously, and expand gradually. The skills you develop will translate directly to professional infrastructure work.</p>
+        </div>
+
+        <div class="article-footer">
+            <p>Published on June 9, 2026 • 8 minute read</p>
+            <p style="margin-top: 1.5rem; font-size: 0.85rem;">
+                Questions? Reach out via <a href="/#contact" style="color: var(--color-teal); text-decoration: none;">the contact form</a> or on <a href="https://linkedin.com/in/eric-li-90a0a3163/" style="color: var(--color-teal); text-decoration: none;" target="_blank">LinkedIn</a>.
+            </p>
+        </div>
+    </article>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 N5HQ. All rights reserved.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog — N5HQ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-navy: #0f172a;
+            --color-navy-dark: #0a0e1a;
+            --color-teal: #0891b2;
+            --color-purple: #a855f7;
+            --color-cyan: #06b6d4;
+            --color-text-light: #f0f4f8;
+            --color-text-muted: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 25%, #1a2a3a 50%, #0f2a3a 75%, #0a1a2a 100%);
+            color: var(--color-text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header .logo {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            background: linear-gradient(135deg, var(--color-teal) 0%, var(--color-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        header nav .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        header nav a.nav-link {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--color-text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        header nav a.nav-link:hover {
+            color: var(--color-teal);
+        }
+
+        /* Hero */
+        .blog-hero {
+            padding: 5rem 2rem 3rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .blog-hero h1 {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--color-text-light) 0%, var(--color-text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .blog-hero p {
+            color: var(--color-text-muted);
+            font-size: 1.05rem;
+            max-width: 560px;
+            line-height: 1.75;
+        }
+
+        .hero-accent {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--color-teal), var(--color-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Stats bar */
+        .stats-bar {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .stat-value {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--color-teal);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        /* Main layout */
+        .blog-layout {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem 6rem;
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        /* Post list */
+        .posts-section h2 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--color-text-muted);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .blog-posts {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .blog-post-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1.75rem 2rem;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: border-color 0.25s, background 0.25s, transform 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blog-post-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--color-teal), var(--color-purple));
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+
+        .blog-post-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(8, 145, 178, 0.4);
+            transform: translateX(4px);
+        }
+
+        .blog-post-card:hover::before {
+            opacity: 1;
+        }
+
+        .post-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.65rem;
+        }
+
+        .post-date {
+            font-size: 0.8rem;
+            color: var(--color-teal);
+            font-weight: 600;
+            font-family: 'Roboto Mono', monospace;
+            letter-spacing: 0.04em;
+        }
+
+        .post-category {
+            font-size: 0.75rem;
+            color: var(--color-purple);
+            background: rgba(168, 85, 247, 0.12);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .post-read-time {
+            font-size: 0.78rem;
+            color: var(--color-text-muted);
+            margin-left: auto;
+        }
+
+        .post-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--color-text-light);
+            margin-bottom: 0.6rem;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+        }
+
+        .post-excerpt {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            line-height: 1.65;
+            margin-bottom: 1rem;
+        }
+
+        .post-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .post-tag {
+            font-size: 0.72rem;
+            color: var(--color-text-muted);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.2rem 0.55rem;
+            border-radius: 4px;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-section h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--color-teal);
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-link {
+            display: block;
+            color: var(--color-text-muted);
+            text-decoration: none;
+            font-size: 0.88rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            transition: color 0.2s;
+        }
+
+        .sidebar-link:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar-link:hover {
+            color: var(--color-teal);
+        }
+
+        .sidebar-link .link-date {
+            display: block;
+            font-size: 0.75rem;
+            color: rgba(203, 213, 225, 0.5);
+            font-family: 'Roboto Mono', monospace;
+            margin-top: 0.15rem;
+        }
+
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 0;
+            color: var(--color-text-muted);
+            font-size: 0.88rem;
+        }
+
+        .category-count {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--color-teal);
+        }
+
+        .reader-cta {
+            display: block;
+            text-align: center;
+            padding: 0.85rem;
+            background: linear-gradient(135deg, rgba(8,145,178,0.15), rgba(168,85,247,0.15));
+            border: 1px solid rgba(8, 145, 178, 0.3);
+            border-radius: 8px;
+            color: var(--color-teal);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .reader-cta:hover {
+            background: linear-gradient(135deg, rgba(8,145,178,0.25), rgba(168,85,247,0.25));
+            border-color: rgba(8, 145, 178, 0.5);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--color-text-muted);
+        }
+
+        .empty-state h3 {
+            font-size: 1.2rem;
+            color: var(--color-text-light);
+            margin-bottom: 0.75rem;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.25);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 2rem;
+            text-align: center;
+            color: rgba(203, 213, 225, 0.5);
+            font-size: 0.85rem;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--color-text-muted);
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 1em;
+            animation: ellipsis 1.2s infinite;
+        }
+
+        @keyframes ellipsis {
+            0%   { content: '.'; }
+            33%  { content: '..'; }
+            66%  { content: '...'; }
+            100% { content: ''; }
+        }
+
+        @media (max-width: 900px) {
+            .blog-layout {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+            .sidebar {
+                position: static;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .blog-hero {
+                padding: 3rem 1.25rem 2rem;
+            }
+            .blog-layout {
+                padding: 0 1.25rem 4rem;
+            }
+            .post-meta-row {
+                flex-wrap: wrap;
+            }
+            .post-read-time {
+                margin-left: 0;
+            }
+            .stats-bar {
+                gap: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header>
+        <nav>
+            <a href="/" class="logo">N5HQ</a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/#about" class="nav-link">About</a>
+                <a href="/#portfolio" class="nav-link">Portfolio</a>
+                <a href="/blog" class="nav-link" style="color: var(--color-text-light);">Blog</a>
+                <a href="/#contact" class="nav-link">Contact</a>
+                <a href="/lab" class="nav-link">Lab</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <div class="blog-hero">
+        <h1>The <span class="hero-accent">Journey</span></h1>
+        <p>Infrastructure notes, career reflections, and lessons from building in public. Written from the homelab up.</p>
+        <p style="margin-top: 0.6rem; font-size: 0.82rem; color: rgba(203,213,225,0.5); letter-spacing: 0.01em;">
+            Each post declares the percentage of content generated with
+            <span style="color: var(--color-purple); font-weight: 600;">Claude AI</span>.
+        </p>
+        <div class="stats-bar" id="statsBar" style="display:none;">
+            <div class="stat">
+                <span class="stat-value" id="statPosts">—</span>
+                <span class="stat-label">Posts</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="statCategories">—</span>
+                <span class="stat-label">Categories</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main layout -->
+    <div class="blog-layout">
+        <!-- Posts -->
+        <section class="posts-section">
+            <h2>All Posts</h2>
+            <div id="postsList" class="blog-posts">
+                <div class="loading">Loading posts</div>
+            </div>
+        </section>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>Reader View</h3>
+                <a href="/blog/reader.html" class="reader-cta">Open with Sidebar Navigation →</a>
+            </div>
+
+            <div class="sidebar-section" id="categoriesSection" style="display:none;">
+                <h3>Categories</h3>
+                <div id="categoriesList"></div>
+            </div>
+
+            <div class="sidebar-section" id="recentSection" style="display:none;">
+                <h3>Recent Posts</h3>
+                <div id="recentList"></div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 N5HQ. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function formatDate(dateString) {
+            const d = new Date(dateString);
+            return d.toLocaleDateString('en-AU', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function formatDateShort(dateString) {
+            const d = new Date(dateString);
+            return d.toLocaleDateString('en-AU', { month: 'short', day: 'numeric' });
+        }
+
+        async function loadBlog() {
+            const postsList = document.getElementById('postsList');
+
+            try {
+                const res = await fetch('/blog/posts/posts.json');
+                if (!res.ok) throw new Error('Could not load posts.json');
+                const data = await res.json();
+                const posts = data.posts || [];
+
+                // Sort newest first
+                posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                // Stats
+                const categories = [...new Set(posts.map(p => p.category || 'Journal'))];
+                document.getElementById('statPosts').textContent = posts.length;
+                document.getElementById('statCategories').textContent = categories.length;
+                document.getElementById('statsBar').style.display = 'flex';
+
+                // Render posts
+                if (posts.length === 0) {
+                    postsList.innerHTML = `
+                        <div class="empty-state">
+                            <h3>No posts yet</h3>
+                            <p>Add frontmatter to your journal entries and run <code>npm run blog:generate</code>.</p>
+                        </div>`;
+                    return;
+                }
+
+                postsList.innerHTML = posts.map(post => {
+                    const tagsHtml = (post.tags || []).slice(0, 4)
+                        .map(t => `<span class="post-tag">#${t}</span>`)
+                        .join('');
+
+                    return `
+                        <a href="/blog/reader.html?post=${post.id}" class="blog-post-card">
+                            <div class="post-meta-row">
+                                <span class="post-date">${formatDate(post.date)}</span>
+                                ${post.category ? `<span class="post-category">${post.category}</span>` : ''}
+                                <span class="post-read-time">${post.readTime || '?'} min read</span>
+                            </div>
+                            <div class="post-title">${post.title}</div>
+                            ${post.excerpt ? `<p class="post-excerpt">${post.excerpt}</p>` : ''}
+                            ${tagsHtml ? `<div class="post-tags">${tagsHtml}</div>` : ''}
+                        </a>`;
+                }).join('');
+
+                // Categories sidebar
+                const catCounts = {};
+                posts.forEach(p => {
+                    const cat = p.category || 'Journal';
+                    catCounts[cat] = (catCounts[cat] || 0) + 1;
+                });
+
+                document.getElementById('categoriesList').innerHTML = Object.entries(catCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([cat, count]) => `
+                        <div class="category-item">
+                            <span>${cat}</span>
+                            <span class="category-count">${count}</span>
+                        </div>`).join('');
+                document.getElementById('categoriesSection').style.display = 'block';
+
+                // Recent posts sidebar
+                document.getElementById('recentList').innerHTML = posts.slice(0, 5).map(p => `
+                    <a href="/blog/reader.html?post=${p.id}" class="sidebar-link">
+                        ${p.title}
+                        <span class="link-date">${formatDateShort(p.date)}</span>
+                    </a>`).join('');
+                document.getElementById('recentSection').style.display = 'block';
+
+            } catch (err) {
+                postsList.innerHTML = `
+                    <div class="empty-state">
+                        <h3>Could not load posts</h3>
+                        <p>${err.message}</p>
+                    </div>`;
+                console.error(err);
+            }
+        }
+
+        loadBlog();
+    </script>
+</body>
+</html>

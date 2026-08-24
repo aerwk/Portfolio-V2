@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog — Eric Li</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-navy: #0f172a;
+            --color-teal: #0891b2;
+            --color-purple: #a855f7;
+            --color-cyan: #06b6d4;
+            --color-text-light: #f0f4f8;
+            --color-text-muted: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 25%, #1a2a3a 50%, #0f2a3a 75%, #0a1a2a 100%);
+            color: var(--color-text-light);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 7xl;
+            margin: 0 auto;
+        }
+
+        header .logo {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-teal) 0%, var(--color-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .back-link {
+            color: var(--color-teal);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            color: var(--color-cyan);
+        }
+
+        /* Main Layout */
+        .blog-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 0;
+            min-height: calc(100vh - 80px);
+        }
+
+        /* Sidebar */
+        .blog-sidebar {
+            background: rgba(255, 255, 255, 0.02);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 1.5rem;
+            overflow-y: auto;
+            max-height: calc(100vh - 80px);
+        }
+
+        .sidebar-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-teal);
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .folder-group {
+            margin-bottom: 2rem;
+        }
+
+        .folder-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-text-light);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .folder-name:hover {
+            background: rgba(8, 145, 178, 0.1);
+            color: var(--color-teal);
+        }
+
+        .folder-icon {
+            font-size: 0.8rem;
+        }
+
+        .posts-list {
+            margin-left: 1rem;
+            border-left: 2px solid rgba(255, 255, 255, 0.08);
+            padding-left: 1rem;
+        }
+
+        .post-link {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            text-decoration: none;
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .post-link:hover {
+            color: var(--color-teal);
+            background: rgba(8, 145, 178, 0.1);
+            transform: translateX(4px);
+        }
+
+        .post-link.active {
+            color: var(--color-teal);
+            background: rgba(8, 145, 178, 0.2);
+            font-weight: 600;
+            border-left: 2px solid var(--color-teal);
+            padding-left: 0.75rem;
+        }
+
+        /* Main Content */
+        .blog-content {
+            padding: 3rem 2rem;
+            overflow-y: auto;
+            max-height: calc(100vh - 80px);
+        }
+
+        .article-inner {
+            max-width: 780px;
+        }
+
+        .article-meta {
+            margin-bottom: 2rem;
+        }
+
+        .article-date {
+            color: var(--color-teal);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .article-title {
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .article-excerpt {
+            font-size: 1rem;
+            color: var(--color-text-muted);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .article-tags {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: rgba(168, 85, 247, 0.2);
+            color: var(--color-purple);
+            padding: 0.4rem 0.8rem;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .claude-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 1.25rem;
+            padding: 0.4rem 0.9rem;
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--color-purple);
+            letter-spacing: 0.02em;
+        }
+
+        .claude-badge svg {
+            width: 13px;
+            height: 13px;
+            opacity: 0.8;
+        }
+
+        .article-body {
+            margin-top: 3rem;
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        .article-body h2 {
+            font-size: 1.6rem;
+            margin: 2rem 0 1rem;
+            color: var(--color-text-light);
+        }
+
+        .article-body h3 {
+            font-size: 1.3rem;
+            margin: 1.5rem 0 0.8rem;
+            color: var(--color-text-light);
+        }
+
+        .article-body p {
+            margin-bottom: 1.5rem;
+            color: var(--color-text-muted);
+        }
+
+        .article-body ul, .article-body ol {
+            margin: 1.5rem 0 1.5rem 2rem;
+            color: var(--color-text-muted);
+        }
+
+        .article-body li {
+            margin-bottom: 0.6rem;
+        }
+
+        .article-body code {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-family: 'Roboto Mono', monospace;
+            color: var(--color-cyan);
+            font-size: 0.9rem;
+        }
+
+        .article-body pre {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 1.2rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .article-body pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .article-body blockquote {
+            border-left: 4px solid var(--color-teal);
+            padding-left: 1.2rem;
+            margin: 1.5rem 0;
+            color: var(--color-text-muted);
+            font-style: italic;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--color-text-muted);
+        }
+
+        .empty-state h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--color-text-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .blog-container {
+                grid-template-columns: 1fr;
+            }
+
+            .blog-sidebar {
+                display: none;
+            }
+
+            .blog-content {
+                padding: 2rem 1rem;
+            }
+
+            .article-title {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header>
+        <nav>
+            <a href="/" class="logo">N5HQ</a>
+            <a href="/blog" class="back-link">← Back to Blog</a>
+        </nav>
+    </header>
+
+    <!-- Blog Container -->
+    <div class="blog-container">
+        <!-- Sidebar -->
+        <aside class="blog-sidebar">
+            <span class="sidebar-title">📚 Blog Posts</span>
+            <div id="sidebarContent"></div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="blog-content">
+            <div class="article-inner">
+                <div id="blogContent">
+                    <div class="empty-state">
+                        <h3>Welcome to the Blog</h3>
+                        <p>Select a post from the sidebar to get started.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <script>
+        let allPosts = [];
+        let currentPostId = null;
+
+        // Parse frontmatter
+        function parseFrontmatter(content) {
+            const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
+            const match = content.match(frontmatterRegex);
+
+            if (!match) return { metadata: {}, content };
+
+            try {
+                const metadata = jsYaml.load(match[1]);
+                const markdownContent = content.replace(frontmatterRegex, '').trim();
+                return { metadata, content: markdownContent };
+            } catch (e) {
+                console.error('Error parsing frontmatter:', e);
+                return { metadata: {}, content };
+            }
+        }
+
+        // Calculate read time
+        function calculateReadTime(content) {
+            const wordCount = content.split(/\s+/).length;
+            return Math.ceil(wordCount / 200);
+        }
+
+        // Load posts manifest
+        async function loadPostsManifest() {
+            try {
+                const response = await fetch('/blog/posts/posts.json');
+                const data = await response.json();
+                allPosts = data.posts;
+
+                // Build sidebar
+                buildSidebar();
+
+                // Load first post if exists
+                const urlParams = new URLSearchParams(window.location.search);
+                const postId = urlParams.get('post');
+                if (postId) {
+                    loadPost(postId);
+                }
+            } catch (error) {
+                console.error('Error loading posts manifest:', error);
+            }
+        }
+
+        // Build sidebar navigation — derive tree from post.path, not flat folders map
+        function buildSidebar() {
+            const container = document.getElementById('sidebarContent');
+            container.innerHTML = '';
+
+            // Build a nested tree: { name, children: {}, posts: [] }
+            const root = { children: {}, posts: [] };
+
+            // Sort oldest first for sidebar display
+            const sortedPosts = [...allPosts].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            sortedPosts.forEach(post => {
+                const parts = post.path.split('/');
+                // All but last segment are folder names; last segment is the file slug
+                const folders = parts.slice(0, -1);
+                let node = root;
+                folders.forEach(folderName => {
+                    if (!node.children[folderName]) {
+                        node.children[folderName] = { name: folderName, children: {}, posts: [] };
+                    }
+                    node = node.children[folderName];
+                });
+                node.posts.push(post);
+            });
+
+            function renderNode(node, depth) {
+                const fragment = document.createDocumentFragment();
+
+                // Render sub-folders first
+                for (const [, child] of Object.entries(node.children)) {
+                    const folderEl = document.createElement('div');
+                    folderEl.className = 'folder-group';
+                    if (depth > 0) folderEl.style.marginLeft = `${depth * 0.75}rem`;
+
+                    const folderNameEl = document.createElement('div');
+                    folderNameEl.className = 'folder-name';
+                    folderNameEl.innerHTML = `<span class="folder-icon">📁</span>${child.name}`;
+
+                    const postsList = document.createElement('div');
+                    postsList.className = 'posts-list';
+                    postsList.appendChild(renderNode(child, 0));
+
+                    folderEl.appendChild(folderNameEl);
+                    folderEl.appendChild(postsList);
+                    fragment.appendChild(folderEl);
+                }
+
+                // Render posts in this node
+                node.posts.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = `?post=${post.id}`;
+                    link.className = 'post-link';
+                    const d = new Date(post.date);
+                    link.textContent = d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
+                    link.title = post.title;
+                    link.dataset.postId = post.id;
+                    link.onclick = (e) => {
+                        e.preventDefault();
+                        loadPost(post.id);
+                        window.history.replaceState({}, '', `?post=${post.id}`);
+                    };
+                    fragment.appendChild(link);
+                });
+
+                return fragment;
+            }
+
+            container.appendChild(renderNode(root, 0));
+        }
+
+        // Load and render a specific post
+        async function loadPost(postId) {
+            const post = allPosts.find(p => p.id === postId);
+            if (!post) return;
+
+            currentPostId = postId;
+            const container = document.getElementById('blogContent');
+
+            // Update active link
+            document.querySelectorAll('.post-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            const activeLink = document.querySelector(`a[data-post-id="${postId}"]`);
+            if (activeLink) activeLink.classList.add('active');
+
+            try {
+                // post.path may contain spaces (e.g. "2026 Journals/06 June/slug")
+                const encodedPath = post.path.split('/').map(encodeURIComponent).join('/');
+                const response = await fetch(`/blog/posts/${encodedPath}.md`);
+                if (!response.ok) throw new Error('Post not found');
+
+                const content = await response.text();
+                const { metadata, content: rawMarkdown } = parseFrontmatter(content);
+
+                // Strip everything above the first ## heading (date heading, dividers, etc.)
+                const firstH2 = rawMarkdown.search(/^##\s/m);
+                const markdownContent = firstH2 !== -1 ? rawMarkdown.slice(firstH2) : rawMarkdown;
+
+                const readTime = calculateReadTime(markdownContent);
+                const htmlContent = marked.parse(markdownContent);
+
+                function formatDate(dateString) {
+                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                    return new Date(dateString).toLocaleDateString('en-US', options);
+                }
+
+                document.title = `${post.title} — Blog`;
+
+                const tagsHtml = (metadata.tags || [])
+                    .map(tag => `<span class="tag">${tag}</span>`)
+                    .join('');
+
+                const claudePct = metadata.claude_pct != null ? Number(metadata.claude_pct) : 0;
+                const claudeLabel = claudePct === 0
+                    ? 'Human-written'
+                    : `${claudePct}% generated with Claude`;
+                const claudeBadgeHtml = `
+                    <div class="claude-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+                        </svg>
+                        ${claudeLabel}
+                    </div>`;
+
+                container.innerHTML = `
+                    <div class="article-meta">
+                        <div class="article-date">${formatDate(post.date)}</div>
+                        <h1 class="article-title">${post.title}</h1>
+                        ${post.excerpt ? `<p class="article-excerpt">${post.excerpt}</p>` : ''}
+                        ${tagsHtml ? `<div class="article-tags">${tagsHtml}</div>` : ''}
+                        ${claudeBadgeHtml}
+                    </div>
+
+                    <div class="article-body">
+                        ${htmlContent}
+                    </div>
+
+                    <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.1); color: var(--color-text-muted); font-size: 0.9rem;">
+                        <p>${readTime} minute read • Published ${formatDate(post.date)}</p>
+                    </div>
+                `;
+
+                // Scroll to top
+                container.scrollTop = 0;
+            } catch (error) {
+                console.error('Error loading post:', error);
+                container.innerHTML = `<div class="empty-state" style="text-align:center"><h3>Error loading post</h3><p>${error.message}</p></div>`;
+            }
+        }
+
+        // Initialize
+        loadPostsManifest();
+    </script>
+</body>
+</html>
