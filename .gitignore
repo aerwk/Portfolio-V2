@@ -22,3 +22,11 @@ __pycache__/
 # "vault-side project files" rule above. Full git history with these files is
 # preserved in Forgejo: eykli/n5hq-test-website (10.0.0.43:2222).
 archive/n5hq-website-build/
+
+# Superseded logo artwork, archived on purpose (2026-06-21 explorations that the
+# 2026-08-13 lockups replaced). Kept on disk for reference, deliberately not
+# tracked and not pushed. Scoped to the image extensions rather than the whole
+# directory so archive/logo-preview.html stays tracked. archive/ is already in
+# .vercelignore, so nothing here is served either way.
+archive/*.svg
+archive/*.png
