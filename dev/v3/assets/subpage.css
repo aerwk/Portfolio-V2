@@ -179,7 +179,14 @@ body{ position:relative; min-height:100vh; }
    gap, same rule geometry, same socials margin) — top-right instead of bottom-right, so
    it grows downward from the top edge instead of upward from the bottom. Markup is now
    flat children of <nav> (no .n5i-pills wrapper), matching home exactly. */
-.tr nav{
+/* Eric, 2026-09-09: the nav links do not scale — they were the right size at the
+   1440 reference and grow out of proportion on a large screen. Resetting the scale
+   unit for the nav's subtree reverts every value inside it (pill padding and type,
+   the 23px icon discs, the divider, the gaps) to its reference size in one place,
+   while the corner's own inset still holds it 100px off the edge. Pills used
+   elsewhere — accordion triggers, the contact mailto, About's closing link — are
+   content rather than chrome and keep scaling. */
+.tr nav{ --n5i-u:1px;
   display:flex;
   flex-direction:column;
   align-items:flex-end;
