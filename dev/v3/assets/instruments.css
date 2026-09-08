@@ -307,8 +307,27 @@
    "About" label — Local time is the only label in this corner. */
 
 .n5i-clocksentence {
-  max-width: calc(376 * var(--n5i-u, 1px)); /* the cluster's measure, in the same scaled unit as everything else — ch was never the binding constraint here, the corner's content box was */
-  font: 400 calc(16 * var(--n5i-u, 1px))/1.25 var(--n5i-sans, 'Inter', system-ui, -apple-system, sans-serif);
+  /* the cluster's measure, in the same scaled unit as everything else — ch
+     was never the binding constraint here, the corner's content box was.
+     Basis raised 376->587.5 (2026-09-09): Eric first asked to match the
+     AM/PM font (30px) then "widen it, i dont want it to be tall" (705 =
+     376 * 30/16), then eased the size back down: "perhaps change it to
+     about 25px instead of 30px" — 587.5 = 376 * (25/16), the proportional
+     equivalent of the original 16px-text measure at THIS paragraph's own
+     25px size, keeping the ~130-char sentence close to its old 3-line
+     shape. Self-limiting, matching .bl's own max-width in p3/home.html
+     exactly minus 2*inset-x (this sits inside .bl's own padding) — see
+     design-system.md "Fluid scaling" for the 88.234375px measured
+     nav-column constant + 24px gap this reserves against .br. */
+  max-width: min(
+    calc(587.5 * var(--n5i-u, 1px)),
+    calc(100vw - 4 * var(--n5i-inset-x, 12px) - 112.234375px)
+  );
+  /* Deliberately its OWN literal size, not shared with .n5i-ap-stack span
+     (Eric, 2026-09-09): first matched to the AM/PM font at 30px, then eased
+     back down to 25px on Eric's call — do NOT re-couple this to the AM/PM
+     size again, he explicitly wants them different now. */
+  font: 400 calc(25 * var(--n5i-u, 1px))/1.25 var(--n5i-sans, 'Inter', system-ui, -apple-system, sans-serif);
   margin-top: calc(4 * var(--n5i-u, 1px));   /* + the cluster's scaled gap = 2x that from the label to the digit cap top */
 }
 

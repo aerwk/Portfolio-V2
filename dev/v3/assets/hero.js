@@ -1366,7 +1366,7 @@
       }
       var aspect = w / h;
       var frustumH = 9;
-      var isSmall = w <= 700;
+      var isSmall = w <= 767; // stays in lockstep with the CSS phone breakpoint (max-width:767px)
       var frustumW = frustumH * aspect;
       var worldToScreenScale = w / frustumW; // CSS px per world unit at scale 1
       var targetFrac = isSmall ? PORTRAIT_WIDTH_FRAC : 0.36;

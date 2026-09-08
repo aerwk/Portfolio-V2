@@ -18,18 +18,29 @@
   --n5i-sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
   --n5i-display:'Doto','Jersey 10',system-ui,monospace;
 
-  /* ---------- fluid edge-draft scaling (2026-09-08/09) ----------
-     Two anchors: 1440x900 (today, must stay byte-identical — the clamp's
-     ramp term is `100vw - 1440px`, exactly 0 at that width regardless of
-     slope rounding) and 2504px wide (Eric's spec: corners 100/60px in,
-     lockup ~300px, everything else 1.35x). Byte-identical copy of this
-     block lives in p3/home.html's inline :root — see design-system.md
-     "Fluid scaling" for the full derivation and the drift-risk note.
+  /* ---------- fluid edge-draft scaling (2026-09-08/09, insets re-anchored 2026-09-09) ----------
+     Byte-identical copy of this block lives in p3/home.html's inline :root
+     — see design-system.md "Fluid scaling" for the full derivation and the
+     drift-risk note.
+     --n5i-lockup-w / --n5i-u stay anchored at 1440x900 (today, must stay
+     byte-identical — the clamp's ramp term is `100vw - 1440px`, exactly 0
+     at that width regardless of slope rounding) up to 2504px wide (Eric's
+     spec: lockup ~300px, everything else 1.35x); below 1440 both floor at
+     their 1440 value (147px / 1px).
+     --n5i-inset-x / --n5i-inset-y are anchored differently (Eric,
+     2026-09-09: "keep the border parameters in place at all sizes, the
+     threshold for the no borders is when width < 768"): the ramp term is
+     `100vw - 768px`, floored at 768 (16px / 12px, matching the phone
+     breakpoint below) and still ceilinged at 2504 (100px / 60px) — so the
+     inset never collapses back to a flat 12px between 768 and 1440 the way
+     it used to. Slopes are rounded so the raw calc() value at 2504
+     slightly OVERSHOOTS 100/60, which is what makes clamp()'s upper bound
+     (not the arithmetic) land the value bit-exact at 2504.
      --n5i-u is a LENGTH (1px..1.35px) so `calc(N * var(--n5i-u))` type-
      checks as number*length=length; hairlines (1px borders/rules) are
      deliberately NOT multiplied by it. */
-  --n5i-inset-x: clamp(12px, calc(12px + (100vw - 1440px) * 0.082707), 100px);
-  --n5i-inset-y: clamp(12px, calc(12px + (100vw - 1440px) * 0.045113), 60px);
+  --n5i-inset-x: clamp(16px, calc(16px + (100vw - 768px) * 0.048388), 100px);
+  --n5i-inset-y: clamp(12px, calc(12px + (100vw - 768px) * 0.027650), 60px);
   --n5i-lockup-w: clamp(147px, calc(147px + (100vw - 1440px) * 0.143797), 300px);
   --n5i-u: clamp(1px, calc(1px + (100vw - 1440px) * 0.000329), 1.35px);
 }
@@ -385,8 +396,8 @@ main.page{
 
 :focus-visible{ outline:2px solid var(--bone); outline-offset:2px; }
 
-/* ---------- below 700px: corners back in flow ---------- */
-@media (max-width: 700px){
+/* ---------- below 768px: corners back in flow ---------- */
+@media (max-width: 767px){
   html,body{ overflow:auto; height:auto; }
   body{
     display:flex;
@@ -408,11 +419,11 @@ main.page{
     max-width:100%;
   }
 
-  /* Below 700px the vertical stack would waste height (five pills tall), so it
+  /* Below 768px the vertical stack would waste height (five pills tall), so it
      flattens exactly like home's own .br nav does at this width: all five pills
      (About/Projects/Blog/Contact/Login, direct children of nav, no wrapper) on one
      centred row, the divider dropped, the icon row centred on its own line beneath —
-     ported byte-for-byte from home's `@media (max-width:700px) .br nav` block. */
+     ported byte-for-byte from home's `@media (max-width:767px) .br nav` block. */
   .tr nav{
     flex-direction:row;
     flex-wrap:wrap;
@@ -463,7 +474,7 @@ main.page{
 .post-row:focus-visible .post-title{
   text-decoration-color:var(--bone);
 }
-@media (max-width:700px){
+@media (max-width:767px){
   .post-row{ grid-template-columns:1fr; gap:4px; }
 }
 
