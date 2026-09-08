@@ -307,7 +307,7 @@
    "About" label — Local time is the only label in this corner. */
 
 .n5i-clocksentence {
-  max-width: 44ch; /* ch is relative to this element's own (scaled) font-size, so it grows with --n5i-u automatically */
+  max-width: calc(376 * var(--n5i-u, 1px)); /* the cluster's measure, in the same scaled unit as everything else — ch was never the binding constraint here, the corner's content box was */
   font: 400 calc(16 * var(--n5i-u, 1px))/1.25 var(--n5i-sans, 'Inter', system-ui, -apple-system, sans-serif);
   margin-top: calc(4 * var(--n5i-u, 1px));   /* + the cluster's scaled gap = 2x that from the label to the digit cap top */
 }

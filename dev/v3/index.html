@@ -71,7 +71,13 @@
 
   .tl{ top:0; left:0; }
   .tr{ top:0; right:0; }
-  .bl{ bottom:0; left:0; max-width:40ch; }
+  /* max-width caps the BORDER box, and .corner's inset padding grew from 12px a
+     side at 1440 to 100px at 2504 — so a flat measure here would be eaten by the
+     padding and the cluster would get NARROWER as the page got wider (measured:
+     content 376px at 1440 vs 360px at 2504, wrapping the sentence from three
+     lines to five). Reserve the padding explicitly so the CONTENT measure is what
+     scales: 376px at 1440, exactly as before, and 1.35x that at 2504. */
+  .bl{ bottom:0; left:0; max-width:calc(376 * var(--n5i-u, 1px) + 2 * var(--n5i-inset-x, 12px)); }
   .br{ bottom:0; right:0; }
 
   .role{
