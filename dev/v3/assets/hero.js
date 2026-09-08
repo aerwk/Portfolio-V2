@@ -206,6 +206,26 @@
     // halo). Bottom: the near chassis underside + halo, measured 3.9–4.0.
     var HERO_TOP_UNITS = 5.9;
     var HERO_BOT_UNITS = 4.0;
+    // Desktop horizontal keep-out (Eric, 2026-09-09): the bottom-left clock +
+    // About cluster (.bl) and, on the same row, the bottom-right nav (.br)
+    // both sit BESIDE the object on desktop (isSmall false, w>=768) — unlike
+    // the phone layout above where they stack instead. Widening the clock
+    // sentence's measure (587.5px) grew .bl until its text ran onto the
+    // object's lit blades at 1440/2504, and at narrow desktop widths like
+    // 768 the object has almost no horizontal room between .bl and .br at
+    // all. resize() below shifts the frustum horizontally first (same
+    // shift-the-frustum-not-the-scene idiom the vertical liftWorld already
+    // uses) so the object clears both boxes' real, measured extents; only
+    // if that's not enough does it also raise bandBot to .bl's top, same
+    // shape as the phone band above, shrinking the object rather than
+    // letting it collide. The object's true worst-case half-width is the
+    // outer columns' centre-to-edge span PLUS half the chassis width (2.0
+    // world units — wider than a blade's 1.6, so the chassis, not the
+    // blade, is the binding edge) plus a small halo for the lavender
+    // bloom's bleed past the geometry (mirrors the vertical band's own
+    // "+0.1 for the bloom halo" margin on HERO_TOP_UNITS above).
+    var HERO_SIDE_HALO_UNITS = 0.15;
+    var CLUSTER_GAP_PX = 24; // matches this design's other .bl/.br breathing gap (design-system.md "Clock readout")
 
     var MIGRATE_DURATION = 700;
     var MIGRATE_STAGGER = 70;
@@ -1379,6 +1399,12 @@
       // state fits the band, and the world origin is placed so neither the
       // failover stacks nor the chassis cross the margins.
       var bandTop = 0, bandBot = h, margin = DESKTOP_MARGIN_PX, preferred = h / 2;
+      // Desktop keep-out boxes: .bl (bottom-left clock/About cluster) and
+      // .br (bottom-right nav) sit BESIDE the object here, unlike the phone
+      // layout below where they stack above/under it instead. offsetLeft/Top
+      // are body-relative, the same coordinate frame `container` (also
+      // body-inset:0) reports w/h in — see design-system.md "Fluid scaling".
+      var blRect = null, brRect = null;
       if (isSmall){
         var tlEl = document.querySelector('.tl');
         var blEl = document.querySelector('.bl');
@@ -1386,20 +1412,67 @@
         bandBot = blEl ? blEl.offsetTop : h * 0.63;
         margin = PORTRAIT_MARGIN_PX;
         preferred = (bandTop + bandBot) / 2 + PORTRAIT_DROP_PX; // Eric: lower than centred
+      } else {
+        var blDeskEl = document.querySelector('.bl');
+        var brDeskEl = document.querySelector('.br');
+        if (blDeskEl) blRect = { top: blDeskEl.offsetTop, right: blDeskEl.offsetLeft + blDeskEl.offsetWidth };
+        if (brDeskEl) brRect = { left: brDeskEl.offsetLeft };
       }
       var bandH = Math.max(1, bandBot - bandTop - 2 * margin);
       var maxScale = bandH / ((HERO_TOP_UNITS + HERO_BOT_UNITS) * worldToScreenScale);
       if (isFinite(maxScale) && maxScale > 0 && maxScale < scale) scale = maxScale;
+
+      // Desktop horizontal keep-out (Eric, 2026-09-09 — see HERO_SIDE_HALO_UNITS
+      // above): shift the object clear of .bl first, bounded on the right by
+      // .br, both measured live above. Only when shifting alone can't clear
+      // both at this scale — the expected case at narrow desktop widths like
+      // 768, where .bl and .br leave almost no gap between them — also raise
+      // bandBot to .bl's top (same shape as the phone band's own bandBot =
+      // .bl's offsetTop above), which shrinks the object via the maxScale
+      // clamp just above instead of letting it collide.
+      var shiftPx = 0, halfWidthPx = null;
+      if (!isSmall && (blRect || brRect)){
+        var halfWidthUnits = (COLS - 1) * (BLADE_W + COL_GAP) / 2 + CHASSIS_W / 2 + HERO_SIDE_HALO_UNITS;
+        halfWidthPx = halfWidthUnits * scale * worldToScreenScale;
+        var minCenterPx = blRect ? (blRect.right + CLUSTER_GAP_PX + halfWidthPx) : -Infinity;
+        var maxCenterPx = brRect ? (brRect.left - CLUSTER_GAP_PX - halfWidthPx) : Infinity;
+        if (minCenterPx > maxCenterPx && blRect){
+          bandBot = Math.min(bandBot, blRect.top);
+          bandH = Math.max(1, bandBot - bandTop - 2 * margin);
+          maxScale = bandH / ((HERO_TOP_UNITS + HERO_BOT_UNITS) * worldToScreenScale);
+          if (isFinite(maxScale) && maxScale > 0 && maxScale < scale) scale = maxScale;
+          halfWidthPx = halfWidthUnits * scale * worldToScreenScale;
+          minCenterPx = blRect ? (blRect.right + CLUSTER_GAP_PX + halfWidthPx) : -Infinity;
+          maxCenterPx = brRect ? (brRect.left - CLUSTER_GAP_PX - halfWidthPx) : Infinity;
+        }
+        var desiredCenterPx = w / 2;
+        if (minCenterPx <= maxCenterPx){
+          if (desiredCenterPx < minCenterPx) desiredCenterPx = minCenterPx;
+          if (desiredCenterPx > maxCenterPx) desiredCenterPx = maxCenterPx;
+        } else {
+          // last-resort safety net: even the shrunk object can't clear both
+          // boxes with room to spare — split the difference rather than pin
+          // to one side and guarantee the other overlaps.
+          desiredCenterPx = (minCenterPx + maxCenterPx) / 2;
+        }
+        shiftPx = desiredCenterPx - w / 2;
+      }
+
       var px = scale * worldToScreenScale; // screen px per world unit at this scale
       var originPx = preferred - (HERO_BOT_UNITS - HERO_TOP_UNITS) / 2 * px; // visual centre at `preferred`
       originPx = Math.min(originPx, bandBot - margin - HERO_BOT_UNITS * px);
       originPx = Math.max(originPx, bandTop + margin + HERO_TOP_UNITS * px);
       // shift the frustum, not the scene, so world-space logic (ceiling,
-      // lifts) is untouched; positive lift moves the image up
+      // lifts) is untouched; positive lift moves the image up, positive
+      // shiftPx moves the image right (both act on camera.left/right/top/
+      // bottom, i.e. view-space bounds — screen-aligned regardless of the
+      // camera's isometric yaw/elevation, so this needs no extra rotation
+      // correction; see the 2026-09-09 note in design-system.md).
       var liftWorld = (h / 2 - originPx) / worldToScreenScale;
-      lastFrame = { w: w, h: h, bandTop: bandTop, bandBot: bandBot, scale: scale, px: px, originPx: originPx, liftWorld: liftWorld, w2s: worldToScreenScale };
-      camera.left = -frustumW / 2;
-      camera.right = frustumW / 2;
+      var shiftWorld = -shiftPx / worldToScreenScale;
+      lastFrame = { w: w, h: h, bandTop: bandTop, bandBot: bandBot, scale: scale, px: px, originPx: originPx, liftWorld: liftWorld, w2s: worldToScreenScale, shiftPx: shiftPx, shiftWorld: shiftWorld, halfWidthPx: halfWidthPx, clusterRight: blRect ? blRect.right : null, navLeft: brRect ? brRect.left : null };
+      camera.left = -frustumW / 2 + shiftWorld;
+      camera.right = frustumW / 2 + shiftWorld;
       camera.top = frustumH / 2 - liftWorld;
       camera.bottom = -frustumH / 2 - liftWorld;
       camera.updateProjectionMatrix();
