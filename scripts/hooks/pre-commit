@@ -1,0 +1,123 @@
+#!/usr/bin/env bash
+# Auto-update the data-stat tiles (Stacks / Containers / Images / Volumes /
+# Networks) from the live Docker daemon on every commit, then stage the
+# touched files so the numbers ship with the push.
+#
+# 🔴 WHY THIS TALKS OVER SSH (rewritten 2026-08-11)
+# This hook used to read a LOCAL Docker socket. That silently stopped working
+# when the workspace moved to n5claude, an LXC with no Docker daemon: the old
+# hook was written to "fail safe", so it no-opped, the commit succeeded, and
+# STALE TILE NUMBERS SHIPPED TO PRODUCTION WITH NO WARNING. Docker lives on
+# n5ubuntu, so that is where the counts are read from now.
+#
+# 🔴 AND WHY IT FAILS LOUD
+# A stat hook that cannot reach the daemon has exactly one safe behaviour:
+# stop the commit and say so. Silence is indistinguishable from success, and
+# that is the failure mode this rewrite exists to kill. Deliberate override:
+#     SKIP_STAT_HOOK=1 git commit ...
+#
+# Override the host with N5_DOCKER_HOST if the Docker host ever moves again.
+
+set -uo pipefail
+
+cd "$(git rev-parse --show-toplevel)" 2>/dev/null || exit 0
+TARGETS="home/index.html lab/index.html portfolio/homelab/index.html"
+
+if [ "${SKIP_STAT_HOOK:-0}" = "1" ]; then
+  echo "pre-commit: SKIP_STAT_HOOK=1 — leaving data-stat tiles untouched." >&2
+  exit 0
+fi
+
+REMOTE="${N5_DOCKER_HOST:-n5ubuntu}"
+SSH="ssh -o BatchMode=yes -o ConnectTimeout=8 -o StrictHostKeyChecking=accept-new"
+
+die() {
+  echo "" >&2
+  echo "pre-commit FATAL: $1" >&2
+  echo "  The data-stat tiles could not be refreshed, so this commit would ship" >&2
+  echo "  whatever numbers are currently in the HTML — possibly stale." >&2
+  echo "" >&2
+  echo "  Fix the cause, or bypass deliberately with:  SKIP_STAT_HOOK=1 git commit ..." >&2
+  echo "" >&2
+  exit 1
+}
+
+$SSH "$REMOTE" true 2>/dev/null \
+  || die "cannot reach Docker host '$REMOTE' over ssh."
+
+# Portainer counts stacks from its own DB (including ones with no running
+# containers), so the tile is the union of Portainer stacks and compose
+# projects, deduped by name. The API key lives here; Portainer listens on
+# the remote host's loopback, so the curl has to run over there.
+PORTAINER_API_KEY=""
+PORTAINER_URL="https://localhost:9443"
+if [ -f "$HOME/.config/n5hq-portainer.env" ]; then
+  # shellcheck disable=SC1091
+  . "$HOME/.config/n5hq-portainer.env" 2>/dev/null || true
+fi
+
+counts=$($SSH "$REMOTE" \
+  "PORTAINER_API_KEY='${PORTAINER_API_KEY:-}' PORTAINER_URL='${PORTAINER_URL:-https://localhost:9443}' bash -s" <<'REMOTE_SCRIPT' 2>/dev/null
+set -uo pipefail
+command -v docker >/dev/null 2>&1 || { echo "ERR:no-docker"; exit 1; }
+docker info >/dev/null 2>&1 || { echo "ERR:daemon-unreachable"; exit 1; }
+
+api_names=""
+if [ -n "${PORTAINER_API_KEY:-}" ]; then
+  api_names=$(curl -sk -m 5 -H "X-API-Key: $PORTAINER_API_KEY" \
+    "${PORTAINER_URL}/api/stacks" 2>/dev/null \
+    | python3 -c 'import sys,json;print("\n".join(s["Name"] for s in json.load(sys.stdin)))' 2>/dev/null)
+fi
+compose_names=$(docker compose ls -qa 2>/dev/null)
+
+echo "stacks=$(printf '%s\n%s\n' "$compose_names" "$api_names" | sed '/^$/d' | sort -u | wc -l | tr -d ' ')"
+echo "containers=$(docker ps -aq 2>/dev/null | wc -l | tr -d ' ')"
+echo "images=$(docker images -q 2>/dev/null | wc -l | tr -d ' ')"
+echo "volumes=$(docker volume ls -q 2>/dev/null | wc -l | tr -d ' ')"
+echo "networks=$(docker network ls -q 2>/dev/null | wc -l | tr -d ' ')"
+REMOTE_SCRIPT
+) || die "the remote stat query failed on '$REMOTE' (${counts:-no output})."
+
+case "$counts" in
+  *ERR:no-docker*)          die "'$REMOTE' has no docker binary." ;;
+  *ERR:daemon-unreachable*) die "the Docker daemon on '$REMOTE' is not responding." ;;
+esac
+
+get() { printf '%s\n' "$counts" | sed -n "s/^$1=//p" | head -1; }
+stacks=$(get stacks); containers=$(get containers); images=$(get images)
+volumes=$(get volumes); networks=$(get networks)
+
+# Every value must be a positive integer. A zero is far more likely to mean
+# "the query broke" than "there are genuinely no containers", and publishing
+# a zeroed dashboard is worse than publishing nothing.
+for pair in "stacks:$stacks" "containers:$containers" "images:$images" \
+            "volumes:$volumes" "networks:$networks"; do
+  key=${pair%%:*}; val=${pair#*:}
+  case "$val" in
+    ''|*[!0-9]*) die "got a non-numeric value for '$key' ('$val')." ;;
+    0)           die "got 0 for '$key' — refusing to publish a zeroed stat tile." ;;
+  esac
+done
+
+set_stat() { # $1 = file, $2 = data-stat key, $3 = value
+  sed -i -E "s|(data-stat=\"$2\"><b>)[0-9]+(</b>)|\1$3\2|" "$1"
+}
+changed=0
+for f in $TARGETS; do
+  [ -f "$f" ] || continue
+  before=$(md5sum "$f" | cut -d' ' -f1)
+  set_stat "$f" stacks     "$stacks"
+  set_stat "$f" containers "$containers"
+  set_stat "$f" images     "$images"
+  set_stat "$f" volumes    "$volumes"
+  set_stat "$f" networks   "$networks"
+  [ "$(md5sum "$f" | cut -d' ' -f1)" != "$before" ] && changed=1
+  git add "$f" 2>/dev/null || true
+done
+
+if [ "$changed" = "1" ]; then
+  echo "pre-commit: tiles refreshed from $REMOTE — stacks=$stacks containers=$containers images=$images volumes=$volumes networks=$networks" >&2
+else
+  echo "pre-commit: tiles already current ($REMOTE: containers=$containers)." >&2
+fi
+exit 0
