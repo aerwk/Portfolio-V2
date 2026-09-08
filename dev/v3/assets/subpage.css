@@ -1,0 +1,644 @@
+/* N5HQ edge draft — piece 4 "Subpage chrome"
+   Self-contained: does NOT rely on instruments.css. Ports the exact corner
+   chrome (wordmark lockup, role label, link pills, social row) from
+   src/p3/home.html plus the atoms it borrowed from instruments.css
+   (.n5i-cluster/.n5i-label/.n5i-dim/.n5i-mark/.n5i-lockup family), then adds
+   the subpage content column per design-system.md "Layout (subpage)".
+   Tokens, faces, spacing: carbon / bone / vein / glow / violet. Weight 400
+   everywhere. No shadows, no cards, no gradients. */
+
+:root{
+  --carbon:#12130f;
+  --bone:#e4dfda;
+  --bone-55: rgba(228,223,218,.55);
+  --vein:#3c3c38;
+  --glow:#a493ff;
+  --violet:#5e18eb; /* brand violet, sampled from the logo; hover fill + rim only */
+  --n5i-mono:'JetBrains Mono','IBM Plex Mono',ui-monospace,Menlo,monospace;
+  --n5i-sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --n5i-display:'Doto','Jersey 10',system-ui,monospace;
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+
+html,body{
+  width:100%;
+  background:var(--carbon);
+  color:var(--bone);
+  font:400 16px/1.25 var(--n5i-sans);
+  -webkit-font-smoothing:antialiased;
+  overflow:auto;
+  height:auto;
+}
+body{ position:relative; min-height:100vh; }
+
+/* ---------- skip link ---------- */
+.skip-link{
+  position:absolute;
+  left:-9999px;
+  top:0;
+  z-index:10;
+  background:var(--carbon);
+  color:var(--bone);
+  padding:8px 16px;
+  font:400 14px/1.25 var(--n5i-sans);
+  text-decoration:underline;
+}
+.skip-link:focus{ left:12px; top:12px; }
+
+/* ---------- corners (ported from home.html, unchanged) ---------- */
+.corner{
+  position:fixed;
+  z-index:2;
+  padding:12px;
+  /* load choreography: readable at rest (opacity .15, not 0) as a static
+     fallback before JS runs; subpage.js settles this to full via WAAPI. */
+  opacity:.15;
+  transform:translateY(10px);
+}
+.tl{ top:0; left:0; }
+.tr{ top:0; right:0; }
+
+.role{
+  font:400 12px/1.25 var(--n5i-mono);
+  letter-spacing:-0.05em;
+  text-transform:uppercase;
+  color:var(--bone-55);
+  margin-top:4px;
+  white-space:nowrap;
+}
+
+/* ---------- instruments.css atoms the corner needs (ported, not linked) ---------- */
+.n5i-cluster{ display:flex; flex-direction:column; gap:4px; }
+.n5i-label{
+  font:400 12px/1.25 var(--n5i-mono);
+  letter-spacing:-0.05em;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.n5i-dim{ opacity:.55; }
+
+.n5i-mark{
+  font:400 40px/0.70 var(--n5i-display);
+  text-decoration:none;
+  color:inherit;
+  display:inline-block;
+  padding-top:6px;
+}
+/* Logo lockup: still image at rest; while a clip plays, a canvas replaces it
+   with the clip's frames keyed from black to alpha per frame. The <video>s
+   are never displayed, only decoded. Width follows the role label under it. */
+.n5i-lockup{ position:relative; display:block; width:100%; aspect-ratio:1698/804; height:auto; padding-top:0; line-height:0; }
+.n5i-lockup .lk-rest,.n5i-lockup .lk-hover,.n5i-lockup .lk-canvas,.n5i-lockup .lk-clip{position:absolute;inset:0;width:100%;height:100%;display:block}
+.n5i-lockup .lk-rest,.n5i-lockup .lk-hover{object-fit:contain}
+.n5i-lockup .lk-hover{opacity:0}
+.n5i-lockup .lk-canvas{opacity:0;pointer-events:none}
+.n5i-lockup .lk-clip{opacity:0;pointer-events:none}
+/* hover choreography (Eric, 2026-09-08): rest still -> entry clip -> hover still; hover still -> exit clip -> rest still.
+   While a clip is painting (.lk-play, set only after its first frame is on the canvas) BOTH stills are hidden, so a soft bottom row
+   of the keyed frame (chroma subsampling / fractional-DPR resampling) can only show Carbon, never the still being replaced
+   (Eric, 2026-09-08: "a few pixels at the bottom show the other colour"). The canvas fades out .3s over whichever still it settled on. */
+.n5i-lockup.lk-armed .lk-canvas{transition:opacity .3s linear}
+.n5i-lockup.lk-armed.lk-play .lk-canvas{opacity:1;transition:none}
+.n5i-lockup.lk-armed.lk-play .lk-rest,.n5i-lockup.lk-armed.lk-play .lk-hover{opacity:0}
+.n5i-lockup.lk-armed.lk-hov .lk-hover{opacity:1}
+.n5i-lockup.lk-armed.lk-hov .lk-rest{opacity:0}
+@media (prefers-reduced-motion:reduce){.n5i-lockup .lk-canvas,.n5i-lockup .lk-clip{display:none}.n5i-lockup .lk-rest{opacity:1!important}.n5i-lockup:hover .lk-hover,.n5i-lockup:focus-visible .lk-hover{opacity:1}.n5i-lockup:hover .lk-rest,.n5i-lockup:focus-visible .lk-rest{opacity:0!important}}
+
+/* ---------- pill (ported from home.html, unchanged mechanics) ---------- */
+.pill{
+  position:relative;
+  overflow:hidden;
+  display:inline-block;
+  padding:3px 11px;
+  border-radius:9999px;
+  font:400 12px/1.25 var(--n5i-mono);
+  letter-spacing:-0.05em;
+  text-transform:uppercase;
+  text-decoration:none;
+  color:var(--bone);
+  background:rgba(18,19,15,.4);
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+  border:1px solid transparent;
+  cursor:pointer;
+  transition:border-color 0s;
+}
+.pill-l{ position:relative; display:inline-block; }
+.pill-c{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--violet);
+  color:#fff;
+  border-radius:9999px;
+  transform:translateY(120%);
+  transition:transform .25s cubic-bezier(0,.55,.45,1);
+}
+.pill:focus-visible{ outline:2px solid var(--bone); outline-offset:2px; }
+.pill:focus-visible{ border-color:var(--violet); transition:border-color .5s cubic-bezier(.4,0,.2,1); }
+.pill:focus-visible .pill-c{ transform:none; }
+@media (hover:hover){
+  .pill:hover{ border-color:var(--violet); transition:border-color .5s cubic-bezier(.4,0,.2,1); }
+  .pill:hover .pill-c{ transform:none; }
+}
+@media (prefers-reduced-motion: reduce){
+  .pill, .pill-c{ transition:none; }
+}
+/* current-page pill: the hover state, permanently */
+.pill[aria-current="page"]{ border-color:var(--violet); }
+.pill[aria-current="page"] .pill-c{ transform:none; }
+
+/* Header nav (Eric, 2026-09-08, reverted to vertical the same day: "the nav bar being
+   flat was also a mistake, let's get the original vertical style layout like the one
+   on the homepage to the current top left region" — disambiguated to top-RIGHT, since
+   that's where the header nav already lives; only the internal arrangement changes).
+   Ported byte-for-byte from p3/home.html's .br nav (About/Projects/Blog/Contact pills,
+   then the social icon row, then the .n5i-nav-rule divider, then Login — same 4px nav
+   gap, same rule geometry, same socials margin) — top-right instead of bottom-right, so
+   it grows downward from the top edge instead of upward from the bottom. Markup is now
+   flat children of <nav> (no .n5i-pills wrapper), matching home exactly. */
+.tr nav{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:4px;
+}
+/* separates the four page pills from the Login pill below it — ported from home's
+   .n5i-nav-rule, same Vein divider token and geometry */
+.n5i-nav-rule{
+  width:28px;
+  height:1px;
+  background:var(--vein);
+  margin:12px 25px 12px 0;
+}
+.n5i-socials{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:4px;
+  margin:-2px 6px 0 0;
+}
+.pill.ico{
+  padding:0;
+  width:23px;
+  height:23px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+}
+.pill.ico .pill-l{ display:inline-flex; opacity:.7; }
+.pill.ico .pill-c{ border-radius:50%; }
+.pill.ico:hover .pill-l, .pill.ico:focus-visible .pill-l{ opacity:1; }
+
+/* pill-lg — the one text pill on /contact/: 16px Inter, not uppercase */
+.pill-lg{
+  font:400 16px/1.25 var(--n5i-sans);
+  letter-spacing:normal;
+  text-transform:none;
+  padding:8px 18px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .corner{ opacity:1; transform:none; transition:none; }
+}
+
+/* ---------- content column ---------- */
+main.page{
+  position:relative;
+  z-index:1;
+  margin-left:224px;
+  margin-right:200px;
+  padding:96px 0 128px;
+  opacity:.15;
+  transform:translateY(10px);
+}
+@media (prefers-reduced-motion: reduce){
+  main.page{ opacity:1; transform:none; }
+}
+
+.page .label{
+  font:400 12px/1.25 var(--n5i-mono);
+  letter-spacing:-0.05em;
+  text-transform:uppercase;
+  color:var(--bone-55);
+}
+/* .post-title-h carries the page-heading type at whatever level the
+   context needs: a post embedded under the blog landing's own h1 renders as
+   an h2, a post opened on its own stays an h1. Type follows the class, not
+   the tag, so the outline can be correct without the design changing. */
+.page h1, .page .post-title-h{
+  font:400 30px/1.1 var(--n5i-sans);
+  letter-spacing:-0.02em;
+  color:var(--bone);
+  margin-top:4px;
+}
+.page .lede{
+  margin-top:12px;
+  max-width:40ch;
+}
+.page p{ max-width:40ch; }
+
+.page section{ margin-top:64px; }
+.page section > .label{ display:block; }
+.page section > h2{
+  font:400 16px/1.25 var(--n5i-sans);
+  color:var(--bone);
+  margin-top:4px;
+}
+
+/* Blog landing (Eric, 2026-09-08): a 24px gap under the "Latest blog" section label,
+   matching the .post-list gap under "All posts" — scoped to this one section so the
+   breadcrumb's own spacing on a standalone/tree-selected post view (where it's the
+   first thing in main.page, flush with the page's own top padding) is untouched. */
+#blog-landing-view section{ margin-bottom:24px; }
+
+.page .list{
+  list-style:none;
+  max-width:72ch;
+  margin-top:24px;
+}
+.page .list li{
+  border-top:1px solid var(--vein);
+  padding:12px 0;
+}
+.page .list .row{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+}
+.page .list .row .title{
+  font:400 16px/1.25 var(--n5i-sans);
+  color:var(--bone);
+}
+.page .list .row .status{
+  font:400 12px/1.25 var(--n5i-mono);
+  letter-spacing:-0.05em;
+  text-transform:uppercase;
+  color:var(--bone-55);
+  white-space:nowrap;
+}
+.page .list .sentence{ margin-top:4px; max-width:72ch; }
+.page .list .tags{
+  display:block;
+  margin-top:4px;
+  font:400 12px/1.25 var(--n5i-mono);
+  letter-spacing:-0.05em;
+  color:var(--bone-55);
+}
+
+.page .social-row{
+  display:flex;
+  gap:8px;
+  margin-top:24px;
+  flex-wrap:wrap;
+}
+
+/* underlined links inside content — pills roll instead. .crumb-link (breadcrumb
+   segments — BLOG/year/month, Change 1, 2026-09-08) shares this treatment exactly:
+   the site's one in-content link style, underlined at rest, brightening on
+   hover/focus — so a breadcrumb segment reads as interactive the same way any other
+   in-content link does. It's a <button>, not an <a> (there is no real listing URL to
+   navigate to without JS), so the button-chrome reset lives alongside the shared rule. */
+.page a:not(.pill),
+.page .crumb-link{
+  color:var(--bone);
+  text-decoration:underline;
+  text-decoration-color:var(--bone-55);
+  transition:text-decoration-color .2s ease-out;
+}
+.page a:not(.pill):hover,
+.page a:not(.pill):focus-visible,
+.page .crumb-link:hover,
+.page .crumb-link:focus-visible{
+  text-decoration-color:var(--bone);
+}
+.page .crumb-link{
+  display:inline;
+  font:inherit;
+  letter-spacing:inherit;
+  text-transform:inherit;
+  vertical-align:baseline;
+  background:none;
+  border:none;
+  padding:0;
+  margin:0;
+  cursor:pointer;
+}
+/* the trailing crumb segment (day on a post, the viewed listing's own label) is
+   exactly where the page already is — deliberately NOT a link, no underline, no
+   pointer, so it reads as clearly non-interactive next to the linked segments
+   beside it. */
+.crumb-current{ cursor:default; }
+
+:focus-visible{ outline:2px solid var(--bone); outline-offset:2px; }
+
+/* ---------- below 700px: corners back in flow ---------- */
+@media (max-width: 700px){
+  html,body{ overflow:auto; height:auto; }
+  body{
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+    min-height:100dvh;
+  }
+  .corner{ position:relative; }
+  .tl{ order:1; align-self:flex-start; }
+  /* header nav relocates from footer to top, directly under the wordmark
+     (Eric, 2026-09-08: "the nav block sits directly under the wordmark at
+     the TOP of the page") — same phone treatment as before, just moved:
+     pills on one centred row, icons centred on the row beneath. */
+  .tr{ order:2; align-self:center; }
+  main.page{
+    order:3;
+    margin:0;
+    padding:24px 12px 32px;
+    max-width:100%;
+  }
+
+  /* Below 700px the vertical stack would waste height (five pills tall), so it
+     flattens exactly like home's own .br nav does at this width: all five pills
+     (About/Projects/Blog/Contact/Login, direct children of nav, no wrapper) on one
+     centred row, the divider dropped, the icon row centred on its own line beneath —
+     ported byte-for-byte from home's `@media (max-width:700px) .br nav` block. */
+  .tr nav{
+    flex-direction:row;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:center;
+    gap:2px;
+  }
+  .tr nav > .pill:not(.ico){ padding:3px 6px; flex:0 1 auto; min-width:0; }
+  .tr nav > .pill .pill-l{ white-space:nowrap; }
+  .n5i-nav-rule{ display:none; }
+  .n5i-socials{
+    order:10;
+    flex-basis:100%;
+    justify-content:center;
+    gap:4px;
+    margin:8px 0 0;
+  }
+}
+
+/* ---------- Post rows (/blog/) ---------- */
+.post-list{ max-width:72ch; margin-top:24px; }
+.post-row{
+  display:grid;
+  grid-template-columns:14ch 1fr;
+  gap:16px;
+  padding:12px 0;
+  border-top:1px solid var(--vein);
+  text-decoration:none;
+  color:var(--bone);
+  max-width:72ch;
+}
+.post-meta{
+  font:400 12px/1.25 var(--n5i-mono);
+  letter-spacing:-0.05em;
+  text-transform:uppercase;
+  color:var(--bone-55);
+  white-space:nowrap;
+}
+.post-title{
+  font:400 16px/1.25 var(--n5i-sans);
+  color:var(--bone);
+  text-decoration:underline;
+  text-decoration-color:var(--bone-55);
+  text-underline-offset:3px;
+  transition:text-decoration-color .15s ease-out;
+}
+.post-row:hover .post-title,
+.post-row:focus-visible .post-title{
+  text-decoration-color:var(--bone);
+}
+@media (max-width:700px){
+  .post-row{ grid-template-columns:1fr; gap:4px; }
+}
+
+/* ---------- Post prose (/blog/posts/*) ---------- */
+/* long-form measure is wider than the 40ch lede/paragraph default above */
+.page .post-chips{ margin-top:12px; }
+.prose{ max-width:60ch; margin-top:24px; }
+.prose h2, .prose h3{
+  font:400 20px/1.25 var(--n5i-sans);
+  color:var(--bone);
+  margin:40px 0 12px;
+}
+.prose p{
+  max-width:60ch;
+  margin:0 0 16px;
+  line-height:1.5;
+}
+.prose ul,
+.prose ol{
+  max-width:60ch;
+  padding-left:1.2em;
+  margin:0 0 16px;
+  line-height:1.5;
+}
+.prose code{
+  font:400 14px/1.25 var(--n5i-mono);
+}
+.prose pre{
+  font:400 13px/1.5 var(--n5i-mono);
+  overflow-x:auto;
+  border-top:1px solid var(--vein);
+  border-bottom:1px solid var(--vein);
+  padding:12px 0;
+  background:none;
+}
+.prose blockquote{
+  border-left:1px solid var(--vein);
+  padding-left:16px;
+  color:var(--bone-55);
+  max-width:60ch;
+  margin:0 0 16px;
+}
+
+/* ---------- accordion (projects page; reuses .pill mechanics) ---------- */
+.acc-trigger{
+  display:block;
+  width:100%;
+  max-width:72ch;
+  text-align:left;
+  padding:0;
+  margin-top:0;
+}
+.acc-trigger .pill-l,
+.acc-trigger .pill-c{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  width:100%;
+  padding:10px 16px;
+  box-sizing:border-box;
+}
+/* Disclosure indicator (Eric, 2026-09-08): collapsed points right, expanded points down —
+   one shared down-pointing chevron glyph, rotated in CSS only (no markup/JS change, so this
+   single rule covers every current and future .acc-trigger: the /projects/ accordion AND the
+   blog tree's root/year/month triggers, the latter generated at runtime by the tree builder
+   but carrying the same class). */
+.acc-chevron{
+  flex:none;
+  transform:rotate(-90deg); /* collapsed: '>' */
+  transition:transform .25s cubic-bezier(.4,0,.2,1);
+}
+.acc-trigger[aria-expanded="true"] .acc-chevron{ transform:none; } /* expanded: down arrow */
+/* open state: the same fill Eric's current-page pill parks on, keyed off aria-expanded */
+.acc-trigger[aria-expanded="true"]{ border-color:var(--violet); }
+.acc-trigger[aria-expanded="true"] .pill-c{ transform:none; }
+
+.acc-panel{
+  display:grid;
+  grid-template-rows:0fr;
+  transition:grid-template-rows .3s cubic-bezier(.4,0,.2,1);
+}
+.acc-panel.is-open{ grid-template-rows:1fr; }
+.acc-panel > div{
+  overflow:hidden;
+  min-height:0;
+}
+@media (prefers-reduced-motion: reduce){
+  .acc-panel, .acc-chevron{ transition:none; }
+}
+
+/* ---------- blog archive tree (/blog/ only; corner c-tl, flat/non-indented) ----------
+   Three acc-trigger levels (root "Blog" -> years -> months) reusing the accordion
+   mechanics above byte-for-byte, plus plain leaf links. Eric, 2026-09-08: "instead of
+   the indentation normally seen with topology systems, just have them all in line" —
+   every row (root, year, month, leaf) starts at the same left x; a mono tree-branch
+   glyph (├── / └──) is the only nod to hierarchy. Eric, 2026-09-08 (second pass): "Add
+   Blog as the root of the blog topology" — a single "BLOG" row wraps the whole tree, an
+   .acc-trigger like any other, alone in its own group (data-acc-group="tree-root") so it
+   always renders └── and the tree's rest state is exactly one visible pill.
+   🔴 The entire DOM below <nav data-blog-tree> (root/years/months/leaves) is BUILT AT
+   RUNTIME by subpage.js from the "All posts" list (#blog-list-view .post-row), not
+   hand-authored — see the JS section below for why. This stylesheet only needs to keep
+   describing the shape (classes/ids the builder emits), never the post content itself.
+   Width hazard (found by Playwright, not by inspection): .corner is position:fixed
+   with width:auto, so its actual width is a "shrink-to-fit" computed from the
+   MAX-CONTENT width of its children — the role label's nowrap text is what pins it
+   to ≈147.2px today (measured), same as the lockup's width:100%. A leaf's post
+   title is long, unbounded prose; text-overflow:ellipsis only clips at RENDER time
+   and does nothing to stop that title's full unwrapped width from being counted
+   during the shrink-to-fit pass, so without a hard cap here a long title silently
+   stretched the corner to 632px in testing and slid it under main.page (which
+   starts at x:224) — the exact failure mode the task called out. --tree-w gives
+   every row (trigger AND leaf) a fixed (non-percentage) max-width a hair under the
+   measured 147.2px, so the corner can never grow past what the wordmark already
+   pins it to, regardless of how long a future post title gets. */
+.blog-tree{
+  --tree-w:147px;
+  width:100%;
+  max-width:var(--tree-w);
+  margin-top:8px; /* + the 4px .n5i-cluster gap above = 12px cluster gap */
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.tree-root,
+.tree-year,
+.tree-month{ display:flex; flex-direction:column; gap:4px; }
+
+/* compact padding: the shared .acc-trigger padding (10px 16px) is sized for the 72ch
+   content-column buttons on /projects/; the corner is ≈147px wide, so this pair of
+   classes (specificity 0,0,3,0, beats the shared 0,0,2,0 rule by source order+count)
+   tightens it without touching the shared rule. */
+.acc-trigger.tree-trigger .pill-l,
+.acc-trigger.tree-trigger .pill-c{
+  padding:6px 10px;
+  gap:6px;
+}
+.tree-label{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  overflow:hidden;
+  white-space:nowrap;
+}
+.tree-glyph{
+  font:400 12px/1 var(--n5i-mono);
+  flex:none;
+  opacity:.55; /* opacity, not a bone-55 color, so it dims correctly on both the
+                  normal (bone-on-carbon) AND the open/violet-fill (white) pill states */
+}
+
+.tree-leaves{ list-style:none; }
+.tree-leaves li + li{ margin-top:2px; }
+.tree-leaf{
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+  padding:4px 10px;
+  text-decoration:none;
+  color:var(--bone-55);
+  font:400 12px/1.4 var(--n5i-mono);
+  letter-spacing:-0.05em;
+  min-width:0;
+}
+.tree-leaf .tree-glyph{ opacity:.4; }
+.tree-day{
+  flex:none;
+  font-variant-numeric:tabular-nums;
+  opacity:.7;
+}
+.tree-title{
+  flex:1 1 auto;
+  min-width:0; /* the flexbox default (auto) refuses to shrink below content size,
+                  which would defeat the ellipsis below and let a long title push
+                  the corner wider than its 147px content box */
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.tree-leaf:hover,
+.tree-leaf:focus-visible{ color:var(--bone); }
+.tree-leaf:hover .tree-title,
+.tree-leaf:focus-visible .tree-title{
+  text-decoration:underline;
+  text-decoration-color:var(--bone-55);
+}
+/* "current" leaf (Eric, 2026-09-08): not the pill/violet tile treatment
+   (that's reserved for the accordion triggers above) — just the day and
+   title recolored to the violet feature colour. The glyph is deliberately
+   excluded, only bumped slightly brighter so the row still reads as active. */
+.tree-leaf[aria-current="page"] .tree-glyph{ opacity:.55; }
+.tree-leaf[aria-current="page"] .tree-day,
+.tree-leaf[aria-current="page"] .tree-title{ color:var(--violet); }
+
+@media (prefers-reduced-motion: reduce){
+  .tree-leaf:hover .tree-title,
+  .tree-leaf:focus-visible .tree-title{ transition:none; }
+}
+
+/* ---------- Post prev/next (Eric, 2026-09-08: "< Previous and Next >... so it
+   can cycle between posts") ---------- */
+.post-prevnext{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  max-width:72ch;
+  margin-top:16px;
+}
+/* both slots always render (even empty) so the surviving control keeps its side
+   at either end of the archive — an empty slot has zero intrinsic width, so
+   justify-content:space-between still anchors the other one correctly. */
+.pn-prev, .pn-next{ display:block; }
+
+/* ---------- Breadcrumb-triggered listing (/blog/ root, year, month; Change 1,
+   2026-09-08 — reached from the breadcrumb now, not from a tree-node click; see
+   subpage.js) ---------- */
+#blog-listing-view [data-listing-count]{ margin-top:8px; }
+#blog-listing-view .post-list .label{ margin-top:20px; }
+#blog-listing-view .post-list .label:first-child{ margin-top:0; }
+
+/* ---------- /blog/ in-place list <-> post <-> listing swap ---------- */
+#blog-post-view[hidden],
+#blog-list-view[hidden],
+#blog-listing-view[hidden]{ display:none; }

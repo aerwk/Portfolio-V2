@@ -1,0 +1,475 @@
+<!doctype html>
+<!-- GENERATED FILE. Produced by scripts/build_dev_preview.py from the design
+     source in `01 Design/design-loop/src` (gitignored). Do not hand-edit this
+     file directly -- edit the source and re-run the generator instead. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>N5HQ — DevOps &amp; Infrastructure</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=JetBrains+Mono:wght@400&family=Doto:wght@400&family=Jersey+10&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/dev/v3/assets/instruments.css">
+<style>
+  :root{
+    --carbon:#12130f;
+    --bone:#e4dfda;
+    --bone-55: rgba(228,223,218,.55);
+    --vein:#3c3c38;
+    --glow:#a493ff;
+    --violet:#5e18eb; /* brand violet, sampled from the logo; hover fill + rim only */
+    --n5i-mono:'JetBrains Mono','IBM Plex Mono',ui-monospace,Menlo,monospace;
+    --n5i-sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --n5i-display:'Doto','Jersey 10',system-ui,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{
+    width:100%;height:100%;
+    background:var(--carbon);
+    color:var(--bone);
+    font:400 16px/1.25 var(--n5i-sans);
+    -webkit-font-smoothing:antialiased;
+    overflow:hidden;
+  }
+  body{ position:relative; min-height:100vh; }
+
+  .stage{
+    position:absolute; inset:0;
+    pointer-events:none;
+    z-index:1;
+  }
+
+  .corner{
+    position:absolute;
+    z-index:2;
+    padding:12px;
+    /* load choreography: readable at rest (opacity .15, not 0) as a static
+       fallback before JS runs; the actual settle to full is driven by the
+       Web Animations API below (transform+opacity only, 500ms ease-out,
+       staggered), which is deterministic and scrubbable for screenshot
+       tooling — a CSS transition can't be paused/seeked from outside. */
+    opacity:.15;
+    transform:translateY(10px);
+  }
+
+  .tl{ top:0; left:0; }
+  .tr{ top:0; right:0; }
+  .bl{ bottom:0; left:0; max-width:40ch; }
+  .br{ bottom:0; right:0; }
+
+  .role{
+    font:400 12px/1.25 var(--n5i-mono);
+    letter-spacing:-0.05em;
+    text-transform:uppercase;
+    color:var(--bone-55);
+    margin-top:4px;
+  }
+
+  /* Pill hover = the reference's (yinger.dev) shipped mechanics, read from
+     its CSS, minus the rest rim (dropped on Eric's instruction 2026-09-07):
+     at rest a 1px TRANSPARENT border on a 40% Carbon fill with
+     an 8px backdrop blur; on hover the border fades in to full
+     Bone over .5s, while a Bone-filled copy of the label (.pill-c) slides up
+     from below (translateY 120% -> 0, .25s quint-out) as a curtain carrying
+     the inverted label. Hover-out: curtain slides back down, border snaps
+     (0s) back to transparent. padding 3px 11px, not 4px 12px, so the 1px
+     border keeps the pill box the same size and the corner's 27px pitch. */
+  .pill{
+    position:relative;
+    overflow:hidden;
+    display:inline-block;
+    padding:3px 11px;
+    border-radius:9999px;
+    font:400 12px/1.25 var(--n5i-mono);
+    letter-spacing:-0.05em;
+    text-transform:uppercase;
+    text-decoration:none;
+    color:var(--bone);
+    background:rgba(18,19,15,.4);
+    -webkit-backdrop-filter:blur(8px);
+    backdrop-filter:blur(8px);
+    border:1px solid transparent;
+    cursor:pointer;
+    transition:border-color 0s;
+  }
+  .pill-l{ position:relative; display:inline-block; }
+  .pill-c{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--violet,#5e18eb);
+    color:#fff; /* white, like the logo's own lettering */
+    border-radius:9999px;
+    transform:translateY(120%);
+    transition:transform .25s cubic-bezier(0,.55,.45,1);
+  }
+  .pill:focus-visible{ outline:2px solid var(--bone); outline-offset:2px; }
+  .pill:focus-visible{ border-color:var(--violet,#5e18eb); transition:border-color .5s cubic-bezier(.4,0,.2,1); }
+  .pill:focus-visible .pill-c{ transform:none; }
+  @media (hover:hover){
+    .pill:hover{ border-color:var(--violet,#5e18eb); transition:border-color .5s cubic-bezier(.4,0,.2,1); }
+    .pill:hover .pill-c{ transform:none; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .pill, .pill-c{ transition:none; }
+  }
+
+  .br nav{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:4px;
+  }
+
+  /* separates the four page pills from the Login pill below it, matching
+     the same "Vein" divider token used for list-item dividers elsewhere */
+  .n5i-nav-rule{
+    width:28px;
+    height:1px;
+    background:var(--vein);
+    /* measured off Eric's reference: 21px under the icons, 23px above the
+       LOGIN cap line, right edge 14px in from the text edge (the pills'
+       12px padding puts their text 12px inside the box, so 25px here) */
+    margin:12px 25px 12px 0; /* 16px before the icons grew 4px downward into 23px discs */
+  }
+
+  .n5i-socials{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    /* each icon is a 23px disc pill (4px of disc around the 15px glyph);
+       gap/margins are the reference's 12px / 2px 10px minus that 4px, so
+       the glyphs sit exactly where alignment04.png put them and the rule +
+       Login below do not move */
+    gap:4px;
+    margin:-2px 6px 0 0;
+  }
+  .pill.ico{
+    padding:0;
+    width:23px;
+    height:23px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+  }
+  .pill.ico .pill-l{ display:inline-flex; opacity:.7; }
+  .pill.ico .pill-c{ border-radius:50%; }
+  .pill.ico:hover .pill-l, .pill.ico:focus-visible .pill-l{ opacity:1; }
+
+  @media (prefers-reduced-motion: reduce){
+    .corner{
+      opacity:1;
+      transform:none;
+      transition:none;
+    }
+  }
+
+  /* Below 700px (Eric, 2026-09-08): the hero stage stays the WHOLE viewport
+     behind transparent header and clock blocks — no in-flow stage box to
+     clip blades — and the clock + links are pushed to the bottom so the
+     page fits 390x844 without scrolling. Flow order: wordmark -> (hero
+     behind) -> clock/About -> links. hero.js lifts the object into the band
+     between the header and the clock block (PORTRAIT_LIFT_FRAC). */
+  @media (max-width: 700px){
+    html,body{ overflow:auto; height:auto; }
+    body{
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+      min-height:100dvh;
+    }
+    /* relative, not static, so the corners' z-index:2 still stacks them
+       above the absolute stage — text is never painted over by a blade */
+    .corner{ position:relative; }
+    .stage{
+      position:absolute;
+      inset:0;
+      overflow:visible;
+      pointer-events:none;
+    }
+    .tl{ order:1; }
+    .tr{ order:2; }
+    .bl{ order:4; margin-top:auto; }
+    .br{ order:5; }
+    /* Links: all five pills on ONE centred row (About Projects Blog Contact
+       Login — tighter 8px pill padding so they fit 366px), the divider rule
+       dropped, the icon row centred underneath. */
+    .br nav{
+      flex-direction:row;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:center;
+      gap:4px;
+    }
+    /* five pills must fit one 366px row even with a wider fallback font or
+       a large system font: tighter padding + gap, labels never wrap */
+    .br nav > .pill:not(.ico){ padding:3px 6px; flex:0 1 auto; min-width:0; }
+    .br nav > .pill .pill-l{ white-space:nowrap; }
+    .br nav{ gap:2px; }
+    .n5i-nav-rule{ display:none; }
+    .n5i-socials{
+      order:10;
+      flex-basis:100%;
+      justify-content:center;
+      gap:4px;
+      margin:8px 0 0;
+    }
+  }
+
+  .role{ white-space:nowrap; }
+  @media (max-width: 700px){ .tl{ align-self:flex-start; } }
+</style>
+</head>
+<body>
+
+  <div class="stage" id="hero-stage"></div>
+
+  <div class="corner tl n5i-cluster" id="c-tl">
+    <a class="n5i-mark n5i-lockup" href="/dev/v3/" aria-label="Eric Li"><img class="lk-rest" src="/dev/v3/assets/logo-rest.png" alt="Eric Li"><img class="lk-hover" src="/dev/v3/assets/logo-hover.png" alt="" aria-hidden="true"><canvas class="lk-canvas" aria-hidden="true"></canvas><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/dev/v3/assets/logo-entry.webm" type="video/webm"><source src="/dev/v3/assets/logo-entry.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverout" muted playsinline preload="auto"><source src="/dev/v3/assets/logo-exit.webm" type="video/webm"><source src="/dev/v3/assets/logo-exit.mp4" type="video/mp4"></video></a><script>(function(){var m=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;var a=document.currentScript.previousElementSibling;if(!m&&a&&a.classList.contains("n5i-lockup"))a.classList.add("lk-armed")})()</script>
+    <span class="role">DevOps &amp; Infrastructure</span>
+  </div>
+
+  <div class="corner bl n5i-cluster" id="c-bl">
+    <span class="n5i-label n5i-dim">Local time (GMT+8:00)</span>
+    <p class="n5i-clocksentence"><span class="n5i-clock-inline" data-n5i="clock">12:00 AM</span> DevOps &amp; Infrastructure enthusiast who designs, deploys, and maintains real infrastructure. <span class="n5i-dim">Open to roles and projects.</span></p>
+    <div class="n5i-readouts">
+      <span class="n5i-dim-readout" data-n5i="dim"></span>
+      <span class="n5i-dim-readout n5i-fps-readout" data-n5i="fps"></span>
+    </div>
+    <span class="n5i-label n5i-dim n5i-tz-label">Perth, WA → Australia</span>
+  </div>
+
+  <div class="corner br" id="c-br">
+    <nav aria-label="Links">
+      <a class="pill" href="/dev/v3/about/"><span class="pill-l">About ↗</span><span class="pill-c" aria-hidden="true">About ↗</span></a>
+      <a class="pill" href="/dev/v3/portfolio/"><span class="pill-l">Projects ↗</span><span class="pill-c" aria-hidden="true">Projects ↗</span></a>
+      <a class="pill" href="/dev/v3/blog/"><span class="pill-l">Blog ↗</span><span class="pill-c" aria-hidden="true">Blog ↗</span></a>
+      <a class="pill" href="mailto:helloworld@n5hq.me?subject=New%20message%20via%20ericli.n5hq.me"><span class="pill-l">Contact ↗</span><span class="pill-c" aria-hidden="true">Contact ↗</span></a>
+      <div class="n5i-socials" aria-label="Social links">
+        <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="GitHub"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span></a>
+        <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="LinkedIn"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span></a>
+        <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="Instagram"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span></a>
+      </div>
+      <span class="n5i-nav-rule" aria-hidden="true"></span>
+      <a class="pill" href="https://www.n5hq.me/"><span class="pill-l">Login →</span><span class="pill-c" aria-hidden="true">Login →</span></a>
+    </nav>
+  </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.158.0/three.min.js"></script>
+<script src="/dev/v3/assets/instruments.js"></script>
+<script src="/dev/v3/assets/hero.js"></script>
+<script>
+(function(){
+  'use strict';
+
+  var REDUCED = false;
+  try { REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+  catch (e) { REDUCED = false; }
+
+  /* the top-right telemetry corner is gone from ericli.n5hq.me (it's a
+     homelab-specific instrument reserved for a future n5hq.me page) — three
+     corners now, staggered evenly over the same 0-360ms span. */
+  var corners = [
+    { el: document.getElementById('c-tl'), delay: 0 },
+    { el: document.getElementById('c-bl'), delay: 180 },
+    { el: document.getElementById('c-br'), delay: 360 }
+  ].filter(function (c) { return !!c.el; });
+
+  /* One Web Animations API Animation per corner (transform+opacity only,
+     500ms ease-out, staggered per corner) rather than a CSS transition —
+     WAAPI gives shot tooling a deterministic, scrubbable timeline
+     (__n5RevealAt(ms) / __n5RevealPlay()), which a CSS transition can't
+     offer: a headless screenshot's own round-trip latency can land after
+     a transition has already finished, making it impossible to capture
+     mid-reveal. */
+  var revealAnims = [];
+
+  function revealCorners(){
+    if (REDUCED) {
+      var k;
+      for (k = 0; k < corners.length; k++) {
+        corners[k].el.style.opacity = '1';
+        corners[k].el.style.transform = 'none';
+      }
+      return;
+    }
+    var i;
+    for (i = 0; i < corners.length; i++) {
+      var c = corners[i];
+      var anim = c.el.animate(
+        [
+          { opacity: .15, transform: 'translateY(10px)' },
+          { opacity: 1, transform: 'none' }
+        ],
+        { duration: 500, delay: c.delay, easing: 'ease-out', fill: 'both' }
+      );
+      revealAnims.push(anim);
+    }
+  }
+
+  window.__n5RevealAt = function(ms){
+    var i;
+    for (i = 0; i < revealAnims.length; i++) {
+      revealAnims[i].pause();
+      revealAnims[i].currentTime = ms;
+    }
+  };
+  window.__n5RevealPlay = function(){
+    var i;
+    for (i = 0; i < revealAnims.length; i++) revealAnims[i].play();
+  };
+
+  /* Run the SAME fonts.ready + double-rAF barrier instruments.js uses
+     internally, then, inside that one callback: mount the hero (arming
+     its own internal fonts.ready + double-rAF gate for the assembly clock
+     — at most two more frames, which is fine), mount the instruments, and
+     fire the corner reveal — all three choreography tracks start from the
+     same tick instead of racing three independent fonts.ready listeners. */
+  function whenReady(cb){
+    function afterPaint(){
+      requestAnimationFrame(function(){ requestAnimationFrame(cb); });
+    }
+    if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
+      document.fonts.ready.then(afterPaint, afterPaint);
+    } else {
+      afterPaint();
+    }
+  }
+
+  var stage = document.getElementById('hero-stage');
+
+  whenReady(function(){
+    if (window.N5Hero) {
+      window.N5Hero.mount(stage);
+      window.N5Hero.onState(function(nodesUp){
+        if (window.N5Instruments) window.N5Instruments.setClusterState(nodesUp);
+      });
+    } else {
+      console.error('N5Hero failed to load');
+    }
+
+    revealCorners();
+
+    if (window.N5Instruments) {
+      window.N5Instruments.mount(document);
+      window.N5Instruments.setClusterState(3);
+    }
+
+    window.__n5ReadyAt = performance.now();
+    window.__n5PageReady = true;
+  });
+})();
+</script>
+</body>
+</html>
+
+<script>
+(function(){
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.n5i-lockup').forEach(function(brand){
+    var canvas = brand.querySelector('.lk-canvas');
+    var clips = {};
+    brand.querySelectorAll('.lk-clip').forEach(function(v){ clips[v.dataset.role] = v; });
+    var ctx = canvas && canvas.getContext && canvas.getContext('2d', { willReadFrequently: true });
+    /* reduced motion: CSS swaps the two stills on :hover, no video */
+    if (reduced || !ctx || !clips.hoverin || !clips.hoverout) { brand.classList.remove('lk-armed'); return; }
+    /* states: rest -> entering -> hover -> exiting -> rest. `wanted` is where the pointer
+       says we should be; whenever a clip settles somewhere else, the opposite clip runs. */
+    var state = 'rest', wanted = 'rest', current = null, loopId = 0, guard = 0, drawn = false;
+    var stopLoop = function(){
+      if (current && current.cancelVideoFrameCallback && loopId) current.cancelVideoFrameCallback(loopId);
+      else if (loopId) cancelAnimationFrame(loopId);
+      loopId = 0;
+    };
+    var fail = function(){
+      stopLoop(); clearTimeout(guard); current = null; state = 'rest';
+      brand.classList.remove('lk-armed'); brand.classList.remove('lk-play'); brand.classList.remove('lk-hov');
+    };
+    /* Frames are exported on black: key black to alpha by luminance, then retone so every
+       frame carries the site's own colours whatever the encoder or decoder did to the export
+       (Eric, 2026-09-08: the clip violet did not match the pill violet; ERIC must match the
+       role label, LI must match the mark). Regions are spatial, measured on the still:
+       mark x<.517; row 2 y>.49; the C ends at x=.764. Violet -> the brand token. Mark + LI ->
+       the mark grey. ERIC -> Bone at .55 while the letters are grey (rest), white when the
+       clip lights them; the C has no state of its own in the export, so it follows the E. */
+    var MARK_R = 0.517, ROW2_TOP = 0.49, C_R = 0.764;
+    var TOKEN = [94, 24, 235], BONE = [228, 223, 218], MARK = [184, 184, 184];
+    var key = function(v){
+      var W = canvas.width, H = canvas.height;
+      try { ctx.drawImage(v, 0, 0, W, H); } catch(e){ return false; }
+      var img = ctx.getImageData(0, 0, W, H), d = img.data;
+      var ei = (Math.round(0.2 * (H - 1)) * W + Math.round(0.585 * (W - 1))) * 4;
+      var em = Math.max(d[ei], d[ei+1], d[ei+2]) / 233;
+      var lit = (em - 0.56) / 0.44; if (lit < 0) lit = 0; if (lit > 1) lit = 1;
+      var xMark = MARK_R * W, yRow2 = ROW2_TOP * H, xC = C_R * W;
+      for (var y = 0, i = 0; y < H; y++) for (var x = 0; x < W; x++, i += 4) {
+        var r = d[i], g = d[i+1], b = d[i+2], m = r > g ? (r > b ? r : b) : (g > b ? g : b);
+        if (m <= 6) { d[i] = d[i+1] = d[i+2] = d[i+3] = 0; continue; }
+        var a = m / 233; if (a > 1) a = 1;
+        r /= a; g /= a; b /= a;
+        if (b > r + 40 && b > g + 60 && b > 120) {
+          /* the export's violet keys to ~.92, not 1 — treat it as opaque ink so the on-screen colour is the token itself */
+          var cv = a / 0.9; if (cv > 1) cv = 1;
+          d[i] = TOKEN[0]; d[i+1] = TOKEN[1]; d[i+2] = TOKEN[2]; d[i+3] = cv * 255; continue;
+        }
+        if (x < xMark || (y > yRow2 && x > xC)) {
+          var c = a / 0.75; if (c > 1) c = 1;
+          d[i] = MARK[0]; d[i+1] = MARK[1]; d[i+2] = MARK[2]; d[i+3] = c * 255; continue;
+        }
+        var cov = a / 0.56; if (cov > 1) cov = 1;
+        var w = (y > yRow2) ? lit : (a - 0.56) / 0.44; if (w < 0) w = 0; if (w > 1) w = 1;
+        d[i] = BONE[0] + (255 - BONE[0]) * w; d[i+1] = BONE[1] + (255 - BONE[1]) * w; d[i+2] = BONE[2] + (255 - BONE[2]) * w;
+        d[i+3] = cov * (0.55 + 0.45 * w) * 255;
+      }
+      ctx.putImageData(img, 0, 0);
+      return true;
+    };
+    var settle = function(v){
+      var to = (v === clips.hoverin) ? 'hover' : 'rest';
+      stopLoop(); clearTimeout(guard); key(v);
+      if (to === 'hover') brand.classList.add('lk-hov'); else brand.classList.remove('lk-hov');
+      brand.classList.remove('lk-play'); /* canvas fades out over the settled still (CSS .3s) */
+      state = to; current = null;
+      if (wanted !== state) run(wanted === 'hover' ? 'hoverin' : 'hoverout');
+    };
+    var loop = function(){
+      var v = current; if (!v) return;
+      var ok = v.readyState >= 2 && key(v);
+      if (ok && !drawn) {
+        /* only once a real frame is on the canvas: show it, and drop the hover still under
+           an exit clip (its first frame is the same violet, so nothing flashes) */
+        drawn = true; brand.classList.add('lk-play');
+        if (v === clips.hoverout) brand.classList.remove('lk-hov');
+      }
+      if (v.ended || v.paused) return;
+      loopId = v.requestVideoFrameCallback ? v.requestVideoFrameCallback(loop) : requestAnimationFrame(loop);
+    };
+    var run = function(name){
+      var v = clips[name]; if (!v) return;
+      state = (name === 'hoverin') ? 'entering' : 'exiting';
+      stopLoop(); clearTimeout(guard);
+      var r = brand.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(1, Math.round(r.width * dpr)); canvas.height = Math.max(1, Math.round(r.height * dpr));
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      current = v; drawn = false;
+      try { v.currentTime = 0; } catch(e){}
+      var done = function(){ v.removeEventListener('ended', done); v.removeEventListener('error', onErr); if (current === v) settle(v); };
+      var onErr = function(){ v.removeEventListener('ended', done); v.removeEventListener('error', onErr); fail(); };
+      v.addEventListener('ended', done); v.addEventListener('error', onErr);
+      guard = setTimeout(function(){ if (v.currentTime < 0.05) onErr(); }, 1500);
+      var p = v.play();
+      if (p && p.catch) p.catch(onErr);
+      loop();
+    };
+    var over = function(){ wanted = 'hover'; if (state === 'rest') run('hoverin'); };
+    var out = function(){ wanted = 'rest'; if (state === 'hover') run('hoverout'); };
+    brand.addEventListener('mouseenter', over); brand.addEventListener('mouseleave', out);
+    brand.addEventListener('focus', over); brand.addEventListener('blur', out);
+  });
+})();
+</script>

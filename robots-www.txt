@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /dev/
 
 Sitemap: https://www.n5hq.me/sitemap.xml

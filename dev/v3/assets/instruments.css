@@ -1,0 +1,303 @@
+/* N5HQ design loop — piece 2 "Instruments"
+   Tokens only: carbon / bone / vein / glow. Weight 400 everywhere.
+   Faces: Doto 400, fallback Jersey 10 (display/wordmark), Inter (body/heading),
+   JetBrains Mono (label).
+   Spacing: 4 / 12 / 64. No shadows, no borders except the 1px vein divider
+   the caller may add around this component (not added here). */
+
+.n5i-root,
+.n5i-root * { box-sizing: border-box; }
+
+.n5i-root {
+  color: var(--bone, #e4dfda);
+  font: 400 16px/1.25 var(--n5i-sans, 'Inter', system-ui, -apple-system, sans-serif);
+}
+
+/* ---------- shared atoms ---------- */
+
+.n5i-cluster {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.n5i-label {
+  font: 400 12px/1.25 var(--n5i-mono, 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, monospace);
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.n5i-dim { opacity: 0.55; }
+
+.n5i-mark {
+  font: 400 40px/0.70 var(--n5i-display, 'Doto', 'Jersey 10', system-ui, monospace);
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+  padding-top: 6px;
+}
+.n5i-logo-img{height:40px;width:auto;display:block}
+/* Logo lockup: still image at rest; while a clip plays, a canvas replaces it with the clip's
+   frames keyed from black to alpha per frame (the exports have a solid black background, and
+   the corner is its own stacking context so blend modes cannot reach the carbon ground). The
+   <video>s are never displayed, only decoded. Width follows the role label under it. */
+.n5i-lockup{position:relative;display:block;width:100%;aspect-ratio:1698/804;height:auto;padding-top:0;line-height:0}
+.n5i-lockup .lk-rest,.n5i-lockup .lk-hover,.n5i-lockup .lk-canvas,.n5i-lockup .lk-clip{position:absolute;inset:0;width:100%;height:100%;display:block}
+.n5i-lockup .lk-rest,.n5i-lockup .lk-hover{object-fit:contain}
+.n5i-lockup .lk-hover{opacity:0}
+.n5i-lockup .lk-canvas{opacity:0;pointer-events:none}
+.n5i-lockup .lk-clip{opacity:0;pointer-events:none}
+/* hover choreography (Eric, 2026-09-08): rest still -> entry clip -> hover still; hover still -> exit clip -> rest still.
+   While a clip is painting (.lk-play, set only after its first frame is on the canvas) BOTH stills are hidden, so a soft bottom row
+   of the keyed frame (chroma subsampling / fractional-DPR resampling) can only show Carbon, never the still being replaced
+   (Eric, 2026-09-08: "a few pixels at the bottom show the other colour"). The canvas fades out .3s over whichever still it settled on. */
+.n5i-lockup.lk-armed .lk-canvas{transition:opacity .3s linear}
+.n5i-lockup.lk-armed.lk-play .lk-canvas{opacity:1;transition:none}
+.n5i-lockup.lk-armed.lk-play .lk-rest,.n5i-lockup.lk-armed.lk-play .lk-hover{opacity:0}
+.n5i-lockup.lk-armed.lk-hov .lk-hover{opacity:1}
+.n5i-lockup.lk-armed.lk-hov .lk-rest{opacity:0}
+@media (prefers-reduced-motion:reduce){.n5i-lockup .lk-canvas,.n5i-lockup .lk-clip{display:none}.n5i-lockup .lk-rest{opacity:1!important}.n5i-lockup:hover .lk-hover,.n5i-lockup:focus-visible .lk-hover{opacity:1}.n5i-lockup:hover .lk-rest,.n5i-lockup:focus-visible .lk-rest{opacity:0!important}}
+
+
+/* ---------- odometer: the shared instrument primitive ---------- */
+/* Every rolling number is one or more of these columns. Motion is
+   transform-only (translateY via a custom property), duration is a
+   custom property so JS can set 900ms on first load and >=400ms
+   thereafter. Nothing here moves under reduced motion.
+
+   --n5i-row is a PIXEL length, not an em multiple: JS measures the real
+   rendered row height after fonts.ready and snaps it to an integer pixel
+   value, so every translateY lands on a whole device pixel. Without this,
+   the em-based fractional-pixel offsets subpixel-antialias the glyphs and
+   can fringe with colour at 1x DPR. Each column and its strip are also
+   promoted to their own composited layer (translateZ(0) + backface-
+   visibility:hidden) so that antialiasing stays greyscale, not subpixel. */
+
+.n5i-odo {
+  --n5i-row: 20px;     /* fallback row height; JS overwrites with the exact px */
+  --n5i-pos: 0;        /* current row index (0-9, or 10-19 mid-carry) */
+  --n5i-dur: 500ms;    /* per-tick transition duration, caller may override */
+  display: inline-block;
+  overflow: hidden;
+  height: var(--n5i-row);
+  vertical-align: top;
+  text-align: center;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.n5i-odo-strip {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+  transform: translateY(calc(var(--n5i-row) * -1 * var(--n5i-pos))) translateZ(0);
+  transition: transform var(--n5i-dur) cubic-bezier(0.16, 1, 0.3, 1);
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.n5i-odo-strip > span {
+  display: block;
+  height: var(--n5i-row);
+  /* --n5i-lh is set by JS on display (clock) columns only: the line-height
+     that puts the digit's ink flush with the row (see snapRow) */
+  line-height: var(--n5i-lh, var(--n5i-row));
+}
+
+.n5i-odo--display { --n5i-row: 56px; }
+.n5i-odo--label   { --n5i-row: 15px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .n5i-odo-strip { transition: none !important; }
+}
+
+/* ---------- A. clock ---------- */
+
+@font-face {
+  font-family: 'Bigger Display';
+  src: url(/dev/v3/assets/bigger-display.otf) format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+.n5i-clock-disp {
+  font: 400 80px/0.70 'Bigger Display', var(--n5i-display, 'Doto', 'Jersey 10', system-ui, monospace);
+  font-variant-numeric: tabular-nums;
+  /* Bigger Display ships one style (weight 900 in its OS/2 table) — a 1px
+     same-colour stroke is the only way to go heavier. Paint-only: layout
+     and the odometer's ink fitting are untouched (Eric, 2026-09-08). */
+  -webkit-text-stroke: 1px currentColor;
+  white-space: nowrap;
+  display: inline-flex;
+  /* stretch, not baseline — the AM/PM stack needs the full height of the
+     digit row (its own tallest sibling) to pin AM to the top and PM to
+     the bottom of it via justify-content:space-between */
+  align-items: stretch;
+}
+
+/* AM/PM shown together, always — never removed, never re-typeset. The
+   inactive one dims rather than disappearing so the stack never reflows
+   as the period changes. */
+.n5i-ap-stack {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-left: 4px;
+}
+
+.n5i-ap-stack span {
+  font: 400 30px/0.70 'Bigger Display', var(--n5i-display, 'Doto', 'Jersey 10', system-ui, monospace);
+  color: var(--bone);
+  /* AM/PM go the other way (Eric, 2026-09-08): the face has only its Black
+     cut, so a thin stroke in the ground colour erodes the glyph edges and
+     reads as a lighter weight. Paint-only. */
+  -webkit-text-stroke: 0.6px var(--carbon);
+}
+
+/* a 10% ghost of the inactive meridian (Eric, 2026-09-08: "lower the transparency
+   further, potentially to 10%") — a third, deliberate exception to "Bone at 100% or
+   55%, nothing else"; it is there for layout stability, not to be read */
+.n5i-ap-inactive {
+  opacity: .1;
+}
+
+.n5i-clock-colon { padding: 0 2px; animation: n5i-colon-blink 1s steps(1, end) infinite; }
+
+@keyframes n5i-colon-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* ---------- B. telemetry cluster ---------- */
+
+.n5i-tele {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.n5i-tele-line {
+  font: 400 12px/1.25 var(--n5i-mono, 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, monospace);
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.n5i-tele-line b { font-weight: 400; }
+
+/* the state line: one 4px dot in the violet glow, and nothing else on the page */
+
+.n5i-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.n5i-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--glow, #a493ff);
+  display: inline-block;
+  flex: 0 0 auto;
+  opacity: 1;
+}
+
+.n5i-dot--pulse {
+  animation: n5i-pulse 1s linear infinite;
+}
+
+@keyframes n5i-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.15; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .n5i-dot--pulse { animation: none; opacity: 0.7; }
+  .n5i-clock-colon { animation: none; opacity: 1; }
+}
+
+/* ---------- C. dimension readout ---------- */
+/* An inline footnote at the end of the dimmed "Open to roles..." sentence.
+   `position:relative; top:-.45em` is a paint-only offset — it never
+   participates in layout, so it can't collide with the line above; if it
+   wraps, it wraps as its own inline box with normal line flow underneath.
+   It carries no opacity of its own: it lives inside the sentence's own
+   .n5i-dim paragraph, so it inherits exactly that one 55% dim — never a
+   second, compounded opacity. */
+
+.n5i-dim-readout {
+  display: inline-block;
+  font: 400 12px/1.25 var(--n5i-mono, 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, monospace);
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  margin-left: 12px;
+  position: relative;
+  top: -.45em;
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+
+/* underneath the sentence now, not glued inline to its last word — each
+   readout on its own line, 4px apart (element-gap token), and RIGHT-aligned
+   to the sentence block's edge (Eric, 2026-09-08, resolution-fps-alignment.png)
+   so the two readouts read as a ledger column, not a left-flush footnote */
+.n5i-readouts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.n5i-readouts .n5i-dim-readout {
+  display: block;
+  margin-left: 0;
+  position: static;
+  top: auto;
+}
+
+/* the FPS line reads as a sub-item of the resolution line above it — the
+   ↳ glyph carries that now; with the column right-aligned an indent would
+   be invisible, so none. Selector kept at two classes to match
+   .n5i-readouts .n5i-dim-readout's specificity */
+.n5i-readouts .n5i-fps-readout {
+  margin-left: 0;
+}
+
+/* ---------- D. clock + About: one composed sentence ---------- */
+/* label -> ONE paragraph whose first word is the clock. The clock sits
+   inline (display:inline-block; vertical-align:baseline) so the sentence
+   wraps under and around it exactly like a sentence with a bolded first
+   word — not a separate line, not a separate cluster. There is no second
+   "About" label — Local time is the only label in this corner. */
+
+.n5i-clocksentence {
+  max-width: 44ch;
+  font: 400 16px/1.25 var(--n5i-sans, 'Inter', system-ui, -apple-system, sans-serif);
+  margin-top: 4px;   /* + the cluster's 4px gap = 8px from the label to the digit cap top */
+}
+
+/* the trailing timezone line reads as a separate footnote, not another
+   line of the cluster — cluster-gap (12px), not element-gap (4px) */
+.n5i-tz-label {
+  margin-top: 12px;
+}
+
+.n5i-clock-inline {
+  display: inline-block;
+  vertical-align: baseline;
+  /* overflow:hidden makes an inline-block's baseline its BOTTOM edge, and
+     line-height:0 removes the paragraph's strut inside it — so the prose
+     that follows sits exactly on the digits' baseline (the row bottom),
+     as in the reference, instead of on the font's internal baseline
+     ~13px above it. Nothing inside overflows: every digit is already
+     clipped by its own column. */
+  overflow: hidden;
+  line-height: 0;
+}

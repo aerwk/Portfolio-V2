@@ -15,7 +15,9 @@
     { "source": "/portal/:path(.*)", "has": [{ "type": "host", "value": "www.n5hq.me" }], "destination": "https://portal.n5hq.me/", "permanent": true },
     { "source": "/index.html", "destination": "/", "permanent": true },
     { "source": "/home", "destination": "/", "permanent": true },
-    { "source": "/home/:path(.*)", "destination": "/", "permanent": true }
+    { "source": "/home/:path(.*)", "destination": "/", "permanent": true },
+    { "source": "/dev", "has": [{ "type": "host", "value": "ericli.n5hq.me" }], "destination": "https://www.n5hq.me/dev", "permanent": true },
+    { "source": "/dev/:path(.*)", "has": [{ "type": "host", "value": "ericli.n5hq.me" }], "destination": "https://www.n5hq.me/dev/:path", "permanent": true }
   ],
   "rewrites": [
     { "source": "/", "has": [{ "type": "host", "value": "www.n5hq.me" }], "destination": "/lab/index.html" },
@@ -29,7 +31,12 @@
     { "source": "/portfolio/in-progress", "destination": "/portfolio/in-progress/index.html" },
     { "source": "/portfolio/upcoming", "destination": "/portfolio/upcoming/index.html" },
     { "source": "/portfolio/completed", "destination": "/portfolio/completed/index.html" },
-    { "source": "/portfolio/homelab", "destination": "/portfolio/homelab/index.html" }
+    { "source": "/portfolio/homelab", "destination": "/portfolio/homelab/index.html" },
+    { "source": "/dev/v3", "destination": "/dev/v3/index.html" },
+    { "source": "/dev/v3/about", "destination": "/dev/v3/about/index.html" },
+    { "source": "/dev/v3/portfolio", "destination": "/dev/v3/portfolio/index.html" },
+    { "source": "/dev/v3/blog", "destination": "/dev/v3/blog/index.html" },
+    { "source": "/dev/v3/contact", "destination": "/dev/v3/contact/index.html" }
   ],
   "headers": [
     {
