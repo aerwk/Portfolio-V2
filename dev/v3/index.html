@@ -87,14 +87,13 @@
      side at 1440 to 100px at 2504 — so a flat measure here would be eaten by the
      padding and the cluster would get NARROWER as the page got wider. Reserve
      the padding explicitly so the CONTENT measure is what scales.
-     Basis raised 376->587.5 (2026-09-09): Eric first asked to match the
-     AM/PM font (30px, giving 705 = 376*30/16), then "widen it, i dont want
-     it to be tall", then eased the sentence's own size back down: "perhaps
-     change it to about 25px instead of 30px" — 587.5 = 376 * (25/16), the
-     proportional equivalent of the original 16px-text measure at the
-     sentence's own (no longer AM/PM-matched) 25px size, so the ~130-char
-     sentence keeps roughly its old 3-line shape instead of wrapping much
-     further.
+     Basis 587.5->480 (2026-09-09, Eric: "'enthusiast' is sticking out too
+     much... keep everything at 3 lines, if not 4 is fine"). Must stay
+     byte-identical to .n5i-clocksentence's own basis in instruments.css —
+     see that rule for the full derivation (with real webfonts loaded,
+     587.5 let "enthusiast" end line 1 at every desktop width, visibly
+     longer than the two lines below it; 480 forces the wrap back to
+     "Infrastructure", costing a 4th line, which Eric explicitly allowed).
      A flat measure here is dangerous at narrow desktop widths, though: .bl
      is bottom-left and .br (the nav) is bottom-right, and near 768 the two
      would collide. So this is self-limiting — min() of the desired width
@@ -106,7 +105,7 @@
      scaling". 112.234375px below = that 88.234375px nav column + a flat
      24px breathing gap between the two corners. */
   .bl{ bottom:0; left:0; max-width:min(
-    calc(587.5 * var(--n5i-u, 1px) + 2 * var(--n5i-inset-x, 12px)),
+    calc(480 * var(--n5i-u, 1px) + 2 * var(--n5i-inset-x, 12px)),
     calc(100vw - 2 * var(--n5i-inset-x, 12px) - 112.234375px)
   ); }
   .br{ bottom:0; right:0; }
@@ -269,6 +268,34 @@
        measure existed. */
     .bl{ order:4; margin-top:auto; max-width:none; }
     .n5i-clocksentence{ max-width:none; } /* same reasoning as .bl above; this rule is same-specificity as instruments.css's but wins on cascade order (inline <style> loads after the linked stylesheet) */
+    /* instruments.css positions .n5i-readouts absolute, top:0, left:272u —
+       tuned to sit above "Infrastructure" on line 1 of the DESKTOP wrap.
+       Below 768px .n5i-clocksentence is uncapped (line above) so line 1 is
+       just "DevOps &" (see design-system.md / the 2026-09-09 measurements)
+       — "Infrastructure" wraps to its own line at the left margin, nowhere
+       near x=272u, so the desktop anchor points at empty space beside the
+       clock instead of at any word.
+       First attempt re-anchored to the PARAGRAPH's own bottom edge
+       (top:100%) — wrong: .n5i-clocksentence is still position:relative
+       here, so its own auto height (driven only by its in-flow text) is
+       what "100%" measures against, and an absolutely positioned child
+       never grows that height back to include itself. The result was 5px
+       of readouts hanging past .corner.bl's own (also auto-height) bottom
+       edge, into the gap above .br's nav — confirmed by measuring
+       blRect.bottom - readoutsRect.bottom = -5 at 390px. Anchoring to the
+       PARAGRAPH can't work at all on this breakpoint: whatever the
+       paragraph's real height turns out to be (it varies: 5 lines here,
+       could be more with a narrower phone), the readouts are outside it
+       by construction.
+       Fix: fall through to .corner.bl itself as the containing block
+       instead (position:static here undoes .n5i-clocksentence's own
+       position:relative; .corner already has position:relative one rule
+       up) and pin bottom/right to its PADDING edge — inset-y/inset-x get
+       us from that edge back to the same coordinate space every other
+       in-flow child (tz-label included) is drawn in, so this sits beside
+       tz-label, inside the box, however tall the paragraph ends up. */
+    .n5i-clocksentence{ position:static; }
+    .n5i-readouts{ top:auto; left:auto; right:var(--n5i-inset-x, 12px); bottom:var(--n5i-inset-y, 12px); }
     .br{ order:5; }
     /* Links: all five pills on ONE centred row (About Projects Blog Contact
        Login — tighter 8px pill padding so they fit 366px), the divider rule
@@ -310,11 +337,10 @@
 
   <div class="corner bl n5i-cluster" id="c-bl">
     <span class="n5i-label n5i-dim">Local time (GMT+8:00)</span>
-    <p class="n5i-clocksentence"><span class="n5i-clock-inline" data-n5i="clock">12:00 AM</span> DevOps &amp; Infrastructure enthusiast who designs, deploys, and maintains real infrastructure. <span class="n5i-dim">Open to roles and projects.</span></p>
-    <div class="n5i-readouts">
+    <p class="n5i-clocksentence"><span class="n5i-clock-inline" data-n5i="clock">12:00 AM</span><!-- n5i-readouts moved in-flow-adjacent here (2026-09-09) purely so it can use this <p> as its position:absolute containing block — see instruments.css .n5i-readouts/.n5i-clocksentence. A <span>, not a <div>: a <p> can only hold phrasing content, and a block child here would silently auto-close the paragraph mid-sentence, orphaning everything after it outside the styled <p>. aria-hidden because it now sits mid-sentence in DOM order, same reasoning as .n5i-ap-stack above. --><span class="n5i-readouts" aria-hidden="true">
       <span class="n5i-dim-readout" data-n5i="dim"></span>
       <span class="n5i-dim-readout n5i-fps-readout" data-n5i="fps"></span>
-    </div>
+    </span> DevOps &amp; Infrastructure enthusiast who designs, deploys, and maintains real infrastructure. <span class="n5i-dim">Open to roles and projects.</span></p>
     <span class="n5i-label n5i-dim n5i-tz-label">Perth, WA → Australia</span>
   </div>
 

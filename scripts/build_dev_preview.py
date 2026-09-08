@@ -24,7 +24,6 @@ own internal links call it "/portfolio/", matching the live site's convention):
     p4/projects.html  -> {base}/portfolio/index.html
     p4/blog.html      -> {base}/blog/index.html
     p4/post.html      -> {base}/blog/posts/2026-08-22.html   (the one real post page)
-    p4/contact.html   -> {base}/contact/index.html
 """
 import hashlib
 import os
@@ -45,7 +44,6 @@ PAGES = [
     (os.path.join(P4, "projects.html"), "portfolio/index.html"),
     (os.path.join(P4, "blog.html"), "blog/index.html"),
     (os.path.join(P4, "post.html"), "blog/posts/2026-08-22.html"),
-    (os.path.join(P4, "contact.html"), "contact/index.html"),
 ]
 
 STATIC_ASSETS = [

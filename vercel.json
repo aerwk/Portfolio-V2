@@ -35,8 +35,7 @@
     { "source": "/dev/v3", "destination": "/dev/v3/index.html" },
     { "source": "/dev/v3/about", "destination": "/dev/v3/about/index.html" },
     { "source": "/dev/v3/portfolio", "destination": "/dev/v3/portfolio/index.html" },
-    { "source": "/dev/v3/blog", "destination": "/dev/v3/blog/index.html" },
-    { "source": "/dev/v3/contact", "destination": "/dev/v3/contact/index.html" }
+    { "source": "/dev/v3/blog", "destination": "/dev/v3/blog/index.html" }
   ],
   "headers": [
     {
