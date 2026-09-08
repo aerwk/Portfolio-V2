@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Reboot That Fixed It Once Before and Didn&#x27;t the Second Time — N5HQ</title>
+<meta name="description" content="Five separate-looking faults turned out to be one storage pool gone read-only, and the fix that looked like a fix had already failed once before.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-09-05.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="The Reboot That Fixed It Once Before and Didn&#x27;t the Second Time — N5HQ">
+<meta property="og:description" content="Five separate-looking faults turned out to be one storage pool gone read-only, and the fix that looked like a fix had already failed once before.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-09-05.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">The Reboot That Fixed It Once Before and Didn&#x27;t the Second Time</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-09-05 · Saturday · 12:00 AM</span>
+      <span class="chip">5 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Yesterday's audit found four things that looked fine and weren't: a quota, a scheduler, a retention tool, and a set of backups, each one passing its own health check while doing nothing. Today found out why they weren't four things. They were one thing. A storage pool on the NAS had gone read-only on the 28th, and a home automation VM, a container, a backup datastore and a backup target all had disks living on that pool. Four services, one filesystem. The day was spent proving that, and then getting off it.</p>
+<p>The working theory going in was metadata corruption, which pointed at a rescue mount as the fix. A scrub said otherwise.</p>
+<h2>The scrub that changed the plan</h2>
+<p>The pool had logged <code>parent transid verify failed</code> and 150 corruption errors before it dropped itself read-only. That reads like structural damage, the kind a rescue mount is built for. The scrub proved the metadata was clean and found something else: 8 uncorrectable data checksum errors, in two archived video files that had nothing to do with the filesystem's own bookkeeping.</p>
+<p>That result changed the plan, not just the diagnosis. A rescue mount was no longer needed, and <code>--repair</code> was explicitly rejected, because the array has no redundancy. There is nothing to repair against. Running it anyway would have meant asking btrfs to guess at the correct bytes with no second copy to check the guess, which is a way to make an array worse, not better.</p>
+<p>Both drives passed SMART, which mattered as much as the scrub result. A dying disk and corrupted filesystem metadata call for different responses, and the SMART pass ruled out the first one before any decision got made.</p>
+<p>The part worth sitting with is the reboot. A firmware reboot brought the pool back writable, and on its own that looks like the problem solved itself. It had done exactly the same thing on the 28th: read-write again after a reboot, then it aborted again three days later. A reboot that clears a symptom is not a fix, and the corrupt blocks were still sitting on disk regardless of whether the pool would currently accept a write.</p>
+<h2>What cluster HA doesn't let you do</h2>
+<p>Getting guests off the pool meant stopping them first, and the cluster's HA management would not allow a plain stop. <code>qm stop</code> or <code>pct stop</code> on a guest under HA gets reverted: the manager notices the guest is down and restarts it. Every stop in this recovery had to go through <code>ha-manager set</code> with <code>--state disabled</code> first, or the step would look complete and then quietly undo itself a few seconds later.</p>
+<p>The home automation VM and the model proxy VM both got restored from backup to node-local storage rather than repaired in place. Neither restore was trusted on completion alone. The VM got HTTP 200 on the service, a read-write check on its data mount, the bridge listening on its port, and both monitors reporting up within 45 seconds, before the temporary ID was renumbered back to the original. The proxy VM turned up an unrelated fact in the process: its running memory was 12,288 MB against a config that displayed 8,192, a memory increase that had been set but never applied. The restore kept the true, larger value rather than the stale config number.</p>
+<p>The container was different, because its problem was a journal abort rather than a dead disk. The reboot window was used deliberately: HA disabled, <code>pct fsck</code> run (it recovered cleanly, exit 0), the volume moved to local storage with the original kept as a forensic copy, then started. All four of its workflows came back and were confirmed registering in the logs, not just reported active.</p>
+<h2>Trusting the backups before trusting anything else</h2>
+<p>Every archive pulled from that datastore got run through <code>zstd -t</code> before it was used for anything. A backup taken through a filesystem that is already degraded can complete successfully and still contain corrupted data, because the backup job proves the copy moved, not that the source was intact when it was read. That distinction did the actual work here: it is why the restores that followed could be trusted rather than assumed.</p>
+<p>The mistake worth keeping came earlier, copying data off the failing pool by hand. The first attempt ran through <code>sudo -i</code>, which dropped the destination variable partway through the command. The copy went to the NAS root overlay instead of the target pool, filled it to 100%, and hung. Re-run correctly the second time, but a shell that silently drops your environment mid-command is a good way to send hundreds of gigabytes somewhere you didn't mean to send them.</p>
+<p>One alarm got investigated and deliberately left alone. Roughly 150 scheduled credential-session runs over three days produced about 4 intermittent failures, every one self-healing on the next run. The likely cause is a check-then-use race, not a scheduling bug, and no fix went in: units that fail closed and retry are already safe, and chasing a self-healing intermittent manufactures more alarms than it prevents.</p>
+<p>Everything that had a disk on that pool is now off it, on node-local storage instead, which trades the ability to move those guests between nodes for not depending on that box's health. The pool itself is back writable. Whether it stays that way is not known. It did the same thing a week ago and came back down three days later, so the honest plan is to watch it for the next day and not call it fixed until it has stayed up longer than that.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="storage" href="/blog/?tag=storage">Storage</a><a class="tagchip" data-tag="btrfs" href="/blog/?tag=btrfs">Btrfs</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-04.html">← The Disk That Read 82% Free and Was 99.9% Full</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-06.html">Inspired By Means Rebuilt In, Not Repainted As →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

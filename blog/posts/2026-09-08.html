@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Abort-On-Failure Hook Had One Failure Mode It Couldn&#x27;t Catch — N5HQ</title>
+<meta name="description" content="A commit hook, a design folder and a redesign preview all lived in exactly one place. Today each one got a second copy, and the hook turned out to need it most.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-09-08.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="The Abort-On-Failure Hook Had One Failure Mode It Couldn&#x27;t Catch — N5HQ">
+<meta property="og:description" content="A commit hook, a design folder and a redesign preview all lived in exactly one place. Today each one got a second copy, and the hook turned out to need it most.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-09-08.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">The Abort-On-Failure Hook Had One Failure Mode It Couldn&#x27;t Catch</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Web</span>
+      <span class="chip">2026-09-08 · Tuesday · 7:40 PM</span>
+      <span class="chip">5 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>The through-line today was things that only existed in one place. A commit hook that lived nowhere but one machine's <code>.git/hooks/</code>. A design source folder the repository was told to ignore, with no history behind it at all. A redesign that could only be seen by a browser if it overwrote the live site. By the end of the day all three had a second home, and the hook is the one worth explaining first, because losing it quietly undoes a fix that was made for exactly that reason.</p>
+<p>The site's hero stat tiles pull live container counts over ssh and rewrite three pages' worth of numbers on every commit. That logic has always lived in a <code>pre-commit</code> hook, which by design is server-local — nothing in <code>.git/hooks/</code> is tracked, cloned, or backed up by the same process that backs up the repository. Earlier this year that hook was rewritten to abort the commit loudly if it can't reach the host or gets back a non-numeric or zero count, replacing an older version that failed silently and let stale numbers ship. That fix was correct. It also has a dependency nobody had written down: an abort-on-failure hook is only as safe as its own survival. A hook that no-ops when it disappears is harmless by construction. A hook that's supposed to stop a bad commit stops nothing once it isn't there, and a missing file doesn't abort anything — it just lets the commit through, which is the exact silent-failure shape the rewrite was built to prevent. The fix and its own precondition were sitting in two different places, and only one of them was tracked.</p>
+<h2>Making the hook survive itself</h2>
+<p>The fix was to stop treating the hook as a fact about one machine and start treating it as a fact about the repository. The hook is now tracked source at <code>scripts/hooks/pre-commit</code>, 123 lines, with a README next to it explaining what it does and why it aborts instead of degrading. <code>.git/hooks/pre-commit</code> is a symlink into that tracked file rather than a copy, so there's no second version to drift out of sync with the first — editing the hook means editing the one file that's actually in git. It doesn't make the hook run anywhere automatically; a fresh clone still has to install the symlink itself. But it means the hook can be read, diffed, and restored from history instead of being retyped from memory, which is the property that was missing.</p>
+<h2>A design folder with no before</h2>
+<p>The second thing with exactly one copy was less abstract: the entire redesign — logo iterations, stylesheet revisions, the whole design system — lives in a folder the repository has always ignored, on purpose, so design-in-progress never leaks into the tracked site. That's a reasonable rule for what ships. It has a cost nobody had priced: the folder has no history whatsoever. If a CSS change went wrong there was no <code>git diff</code> to read and no earlier commit to check out — the only recovery path was last night's vault snapshot, which is a much coarser tool than "the version before the glow went wrong."</p>
+<p>The fix was a second, private repository nested inside the working tree, scoped to that one folder. The parent repo still ignores it, so neither repo can see into the other — nothing about the public site history changes. Seventy-seven design files now have real commit history for the first time, and the first push was confirmed by checking the ref on the server afterward rather than trusted because the client exited clean. That distinction mattered on this project before, for an unrelated repository, so it wasn't optional this time.</p>
+<h2>A preview instead of a rewrite</h2>
+<p>The redesign itself went up at <code>/dev/v3</code> on the lab host rather than replacing the live portfolio. The alternative — a canary slice of production traffic — got rejected for a plain reason: the design is still changing daily, and a canary implies something stable enough to compare against. A <code>/dev</code> path says draft and means it. The mechanics are small: a routing rewrite sends <code>/dev/*</code> from the portfolio host to the lab host, <code>noindex</code> sits on every page in the preview, and the lab host's robots file now disallows <code>/dev/</code> outright. None of that is meant to be clever, just to keep an unfinished design out of search results while it's still visibly unfinished.</p>
+<p>Getting the preview tree out of the design source is a 379-line Python generator rather than a hand copy, because hand-copying six pages drifts the moment the source changes twice in an afternoon, and it had already changed more than that today. The generator does one thing worth keeping: it checks its own output before calling the build good. Every internal link gets base-path-rewritten for the <code>/dev/v3</code> prefix, and the generator regex-scans the result for anything that wasn't — an unprefixed link would point straight back at the live site from inside a preview page, which is the one failure mode that would be easy to miss by eye and easy to catch by grep. The build fails if it finds one. Idempotency got the same treatment: run the generator twice and diff the output rather than assume a second run changes nothing, because "should be idempotent" and "is idempotent" are different claims.</p>
+<p>The same pass pulled the wordmark and a display font out of the markup. Both had been base64-inlined into every page, about 93 KB of it, repeated across all six pages because inlining doesn't cache. Extracted to real files, the shared assets come to about 62 KB total, cached once instead of shipped six times, and the six pages' combined HTML went from 916 KB to 127 KB.</p>
+<p>The honest gap is the blog. The preview lists all 34 posts, and exactly one of them has real body content — the rest render from metadata only, because giving all of them the new chrome means teaching the blog generator the new template, and that's deferred to cutover rather than half-done now. Nine navigation tests passed against the deployed preview in a real browser, which covers the chrome. It doesn't cover the posts that aren't there yet.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="git" href="/blog/?tag=git">Git</a><a class="tagchip" data-tag="tooling" href="/blog/?tag=tooling">Tooling</a><a class="tagchip" data-tag="deploy" href="/blog/?tag=deploy">Deploy</a><a class="tagchip" data-tag="python" href="/blog/?tag=python">Python</a><a class="tagchip" data-tag="design" href="/blog/?tag=design">Design</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-07.html">← An Animation You Cannot Pause Is One You Cannot Review</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

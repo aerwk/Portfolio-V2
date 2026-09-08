@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>An Animation You Cannot Pause Is One You Cannot Review — N5HQ</title>
+<meta name="description" content="206 messages, 17 build-and-judge rounds across three pieces, and zero commits, because nothing cleared three independent critics.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-09-07.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="An Animation You Cannot Pause Is One You Cannot Review — N5HQ">
+<meta property="og:description" content="206 messages, 17 build-and-judge rounds across three pieces, and zero commits, because nothing cleared three independent critics.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-09-07.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">An Animation You Cannot Pause Is One You Cannot Review</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Web</span>
+      <span class="chip">2026-09-07 · Monday · 10:40 PM</span>
+      <span class="chip">5 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>206 messages today and not one commit. That is the whole shape of the day, and it is not a failure and I am not going to write it up as one. It is what the process actually costs when the bar for shipping is "three independent critics agree," instead of "it looks fine to me." Three pieces of a homepage went through 17 rounds of build-then-judge between them. One passed. One got banked failing two of three. One was still being judged when the day ended.</p>
+<p>Everything happened outside the repository, in a scratchpad, on purpose. Nothing landed in <code>main</code> because nothing earned it.</p>
+<h2>The method</h2>
+<p>Each round is the same shape: build the piece once, render it once, then three critics with fresh context look at it independently. Brief asks whether it does the thing that was asked. System checks it against the written spec, and any violation is a fail regardless of how the piece looks. Craft is a blind comparison against the reference — does this read well as an object, not as a checklist. Brief and System passing is the floor. Craft passing is what ships.</p>
+<p>Each piece also got a round ceiling set before the first round ran, so a piece that wasn't converging got banked instead of eating the rest of the day. The hero object hit its ceiling at round 10, still failing System on a column gap and Craft on reading as a model rather than something alive. The corner instruments — wordmark, telemetry cluster, a clock whose digits roll up from zero, a viewport readout — passed all three critics at round 4, the one clean result of the day. Integration, hero plus instruments plus nav on one page with a timed corner reveal, was three rounds in and still being judged when I stopped.</p>
+<h2>An animation you cannot pause</h2>
+<p>The richest problem of the day, and the one that ate the most rounds, was determinism. You cannot judge a frame you cannot reproduce, and getting there took four separate fixes stacked on top of each other.</p>
+<p>First: the renderer's warm-up ate the first frames, so by the time the earliest screenshot fired at 200ms, the assembly animation had already finished. The fix was a <code>renderAt(ms)</code> call that pauses the live loop and renders exactly one frame synchronously. That fix then created its own bug: the live loop kept advancing in the gap between the render call and the screenshot, so the capture and the render disagreed with each other. That needed an explicit paused flag and an explicit resume, not just a pause.</p>
+<p>Then the schedule turned out to be timing against the wall clock instead of the animation's own clock, so every "deterministic" frame showed the assembly already complete at t=0 — the render was faithful, the schedule was lying to it. Fixed by exposing an animation-relative clock and making every scheduled capture relative to that instead of <code>Date.now()</code>.</p>
+<p>Later, a rest frame that should have landed at 9.0 seconds landed at 12.58, close enough to the next state change at 12.2 that the frame was capturing a transition instead of a rest. Capture latency, not animation drift. That one needed a dynamic sleep tuned to land within about 100 milliseconds of target rather than a fixed delay.</p>
+<p>None of these were the same bug wearing different clothes. Each fix solved its own problem and exposed the next one underneath it. The lesson sits above all four: an animation you cannot pause is an animation you cannot review, and most of the day's tooling effort was just making time controllable enough that a critic's verdict meant something.</p>
+<h2>Judging the same frame twice</h2>
+<p>Even with deterministic capture, the same code produced different critic verdicts in adjacent rounds. That is worth being honest about rather than smoothing over. Most of it traced to resolution: page-scale thumbnails hide effects that are only one or two pixels wide, so a thin violet edge line reads as a plain wash at thumbnail scale and reads correctly at 2x. Some of what looked like regression was a review artefact, not a defect, and telling the two apart cost real rounds.</p>
+<p>Not all of it was an artefact, though. One "the columns are touching" failure looked like exactly that kind of false alarm and turned out not to be — the gap existed in the actual geometry but vanished in the projected silhouette at that camera angle. The critic was right and the code was also right, and the fix had to change the projection, not the geometry.</p>
+<p>Two other bugs came out of the same rounds. Migrating blades briefly rendered as translucent "ghost planks" where they crossed seated ones, which looked like a transparency error and was actually two pieces of coincident geometry fighting each other in the depth buffer — fixed with a small deterministic forward nudge, reset once the blade landed. And blades shared a material array with the chassis of whatever column they'd migrated onto, so darkening one column also darkened blades that had moved onto a column that was supposed to stay lit. Splitting blades into their own always-lit array fixed it.</p>
+<h2>What we didn't take</h2>
+<p>More than once, a critic suggested that adopting the reference's own geometry, its cube lattice, would score better on Craft. The spec forbids it outright. We took the Craft loss instead of converging on the thing this piece exists to teach — copying the reference isn't a shortcut here, it's the failure condition.</p>
+<p>So the count for the day is one piece shipped-quality, one banked at its ceiling, one incomplete, and a determinism pipeline that now exists and didn't this morning. Whether the hero's "doesn't feel alive" problem is a geometry problem or a proportion problem is still open. So is whether the violet edge is a real defect or a resolution artefact that just hasn't been checked at full size yet.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="web" href="/blog/?tag=web">Web</a><a class="tagchip" data-tag="design" href="/blog/?tag=design">Design</a><a class="tagchip" data-tag="animation" href="/blog/?tag=animation">Animation</a><a class="tagchip" data-tag="tooling" href="/blog/?tag=tooling">Tooling</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-06.html">← Inspired By Means Rebuilt In, Not Repainted As</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-08.html">The Abort-On-Failure Hook Had One Failure Mode It Couldn&#x27;t Catch →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>
