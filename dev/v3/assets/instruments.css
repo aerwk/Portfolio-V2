@@ -3,14 +3,33 @@
    Faces: Doto 400, fallback Jersey 10 (display/wordmark), Inter (body/heading),
    JetBrains Mono (label).
    Spacing: 4 / 12 / 64. No shadows, no borders except the 1px vein divider
-   the caller may add around this component (not added here). */
+   the caller may add around this component (not added here).
+
+   ---------- fluid edge-draft scaling (2026-09-08/09) ----------
+   Two anchors: 1440x900 (today's fixed-px design, must stay byte-identical)
+   and 2504px wide (Eric's 2K-monitor spec: corners 100px/60px in, lockup
+   ~300px, everything else 1.35x). Ramp is linear in `100vw - 1440px`, which
+   is exactly 0 at the low anchor, so every clamp() pins bit-exact at 1440
+   regardless of the slope's rounding — see design-system.md "Fluid scaling"
+   for the full derivation. Four tokens, expected to be re-declared (byte-
+   identical) in every page's own :root, since this file is meant to be
+   linked or ported standalone:
+     --n5i-inset-x / --n5i-inset-y  corner padding, from the viewport edge
+     --n5i-lockup-w                 wordmark lockup width (drives height via
+                                     aspect-ratio; NEVER set height directly)
+     --n5i-u                        the "everything else" scale, encoded as
+                                     a LENGTH (1px..1.35px) so `calc(N * var(--n5i-u))`
+                                     type-checks as number*length=length. This
+                                     is the one number that scales type,
+                                     spacing, icons, the clock cluster, etc.
+   Hairlines (1px borders/rules/dividers) are deliberately NOT scaled. */
 
 .n5i-root,
 .n5i-root * { box-sizing: border-box; }
 
 .n5i-root {
   color: var(--bone, #e4dfda);
-  font: 400 16px/1.25 var(--n5i-sans, 'Inter', system-ui, -apple-system, sans-serif);
+  font: 400 calc(16 * var(--n5i-u, 1px))/1.25 var(--n5i-sans, 'Inter', system-ui, -apple-system, sans-serif);
 }
 
 /* ---------- shared atoms ---------- */
@@ -18,11 +37,11 @@
 .n5i-cluster {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: calc(4 * var(--n5i-u, 1px));
 }
 
 .n5i-label {
-  font: 400 12px/1.25 var(--n5i-mono, 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, monospace);
+  font: 400 calc(12 * var(--n5i-u, 1px))/1.25 var(--n5i-mono, 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, monospace);
   letter-spacing: -0.05em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -31,18 +50,21 @@
 .n5i-dim { opacity: 0.55; }
 
 .n5i-mark {
-  font: 400 40px/0.70 var(--n5i-display, 'Doto', 'Jersey 10', system-ui, monospace);
+  font: 400 calc(40 * var(--n5i-u, 1px))/0.70 var(--n5i-display, 'Doto', 'Jersey 10', system-ui, monospace);
   text-decoration: none;
   color: inherit;
   display: inline-block;
-  padding-top: 6px;
+  padding-top: calc(6 * var(--n5i-u, 1px));
 }
-.n5i-logo-img{height:40px;width:auto;display:block}
+.n5i-logo-img{height:calc(40 * var(--n5i-u, 1px));width:auto;display:block}
 /* Logo lockup: still image at rest; while a clip plays, a canvas replaces it with the clip's
    frames keyed from black to alpha per frame (the exports have a solid black background, and
    the corner is its own stacking context so blend modes cannot reach the carbon ground). The
-   <video>s are never displayed, only decoded. Width follows the role label under it. */
-.n5i-lockup{position:relative;display:block;width:100%;aspect-ratio:1698/804;height:auto;padding-top:0;line-height:0}
+   <video>s are never displayed, only decoded. Width tracks the role label under it at rest
+   (min-width is below the label's own max-content width at 1440, so nothing changes there);
+   above ~1441px min-width takes over as the corner's shrink-to-fit driver and carries the
+   lockup up to --n5i-lockup-w (~300px at 2504) — width stays 100% (never set height). */
+.n5i-lockup{position:relative;display:block;width:100%;min-width:var(--n5i-lockup-w, 147px);aspect-ratio:1698/804;height:auto;padding-top:0;line-height:0}
 .n5i-lockup .lk-rest,.n5i-lockup .lk-hover,.n5i-lockup .lk-canvas,.n5i-lockup .lk-clip{position:absolute;inset:0;width:100%;height:100%;display:block}
 .n5i-lockup .lk-rest,.n5i-lockup .lk-hover{object-fit:contain}
 .n5i-lockup .lk-hover{opacity:0}
@@ -75,7 +97,7 @@
    visibility:hidden) so that antialiasing stays greyscale, not subpixel. */
 
 .n5i-odo {
-  --n5i-row: 20px;     /* fallback row height; JS overwrites with the exact px */
+  --n5i-row: calc(20 * var(--n5i-u, 1px));     /* fallback row height; JS overwrites with the exact px */
   --n5i-pos: 0;        /* current row index (0-9, or 10-19 mid-carry) */
   --n5i-dur: 500ms;    /* per-tick transition duration, caller may override */
   display: inline-block;
@@ -106,8 +128,11 @@
   line-height: var(--n5i-lh, var(--n5i-row));
 }
 
-.n5i-odo--display { --n5i-row: 56px; }
-.n5i-odo--label   { --n5i-row: 15px; }
+/* fallbacks only — JS (snapRow) overwrites --n5i-row with the exact measured
+   px the instant fonts are ready, so these just need to scale for no-JS/
+   pre-paint parity, not be perfectly ink-fitted */
+.n5i-odo--display { --n5i-row: calc(56 * var(--n5i-u, 1px)); }
+.n5i-odo--label   { --n5i-row: calc(15 * var(--n5i-u, 1px)); }
 
 @media (prefers-reduced-motion: reduce) {
   .n5i-odo-strip { transition: none !important; }
@@ -124,12 +149,15 @@
 }
 
 .n5i-clock-disp {
-  font: 400 80px/0.70 'Bigger Display', var(--n5i-display, 'Doto', 'Jersey 10', system-ui, monospace);
+  font: 400 calc(80 * var(--n5i-u, 1px))/0.70 'Bigger Display', var(--n5i-display, 'Doto', 'Jersey 10', system-ui, monospace);
   font-variant-numeric: tabular-nums;
-  /* Bigger Display ships one style (weight 900 in its OS/2 table) — a 1px
-     same-colour stroke is the only way to go heavier. Paint-only: layout
-     and the odometer's ink fitting are untouched (Eric, 2026-09-08). */
-  -webkit-text-stroke: 1px currentColor;
+  /* Bigger Display ships one style (weight 900 in its OS/2 table) — a same-
+     colour stroke is the only way to go heavier. Paint-only: layout and the
+     odometer's ink fitting are untouched (Eric, 2026-09-08). Scaled with
+     --n5i-u (2026-09-09) so the stroke stays the same RELATIVE weight
+     against the glyph as the digits grow 1.35x, instead of visually
+     thinning out at 1px against an 80->108px face. */
+  -webkit-text-stroke: calc(1 * var(--n5i-u, 1px)) currentColor;
   white-space: nowrap;
   display: inline-flex;
   /* stretch, not baseline — the AM/PM stack needs the full height of the
@@ -145,16 +173,17 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-left: 4px;
+  margin-left: calc(4 * var(--n5i-u, 1px));
 }
 
 .n5i-ap-stack span {
-  font: 400 30px/0.70 'Bigger Display', var(--n5i-display, 'Doto', 'Jersey 10', system-ui, monospace);
+  font: 400 calc(30 * var(--n5i-u, 1px))/0.70 'Bigger Display', var(--n5i-display, 'Doto', 'Jersey 10', system-ui, monospace);
   color: var(--bone);
   /* AM/PM go the other way (Eric, 2026-09-08): the face has only its Black
      cut, so a thin stroke in the ground colour erodes the glyph edges and
-     reads as a lighter weight. Paint-only. */
-  -webkit-text-stroke: 0.6px var(--carbon);
+     reads as a lighter weight. Paint-only. Scaled with --n5i-u, same
+     rationale as .n5i-clock-disp above. */
+  -webkit-text-stroke: calc(0.6 * var(--n5i-u, 1px)) var(--carbon);
 }
 
 /* a 10% ghost of the inactive meridian (Eric, 2026-09-08: "lower the transparency
@@ -164,7 +193,7 @@
   opacity: .1;
 }
 
-.n5i-clock-colon { padding: 0 2px; animation: n5i-colon-blink 1s steps(1, end) infinite; }
+.n5i-clock-colon { padding: 0 calc(2 * var(--n5i-u, 1px)); animation: n5i-colon-blink 1s steps(1, end) infinite; }
 
 @keyframes n5i-colon-blink {
   0%, 49% { opacity: 1; }
@@ -176,13 +205,13 @@
 .n5i-tele {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: calc(4 * var(--n5i-u, 1px));
   align-items: flex-end;
   text-align: right;
 }
 
 .n5i-tele-line {
-  font: 400 12px/1.25 var(--n5i-mono, 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, monospace);
+  font: 400 calc(12 * var(--n5i-u, 1px))/1.25 var(--n5i-mono, 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, monospace);
   letter-spacing: -0.05em;
   text-transform: uppercase;
   font-variant-numeric: tabular-nums;
@@ -191,17 +220,17 @@
 
 .n5i-tele-line b { font-weight: 400; }
 
-/* the state line: one 4px dot in the violet glow, and nothing else on the page */
+/* the state line: one dot in the violet glow, and nothing else on the page */
 
 .n5i-state {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: calc(4 * var(--n5i-u, 1px));
 }
 
 .n5i-dot {
-  width: 4px;
-  height: 4px;
+  width: calc(4 * var(--n5i-u, 1px));
+  height: calc(4 * var(--n5i-u, 1px));
   border-radius: 9999px;
   background: var(--glow, #a493ff);
   display: inline-block;
@@ -234,10 +263,10 @@
 
 .n5i-dim-readout {
   display: inline-block;
-  font: 400 12px/1.25 var(--n5i-mono, 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, monospace);
+  font: 400 calc(12 * var(--n5i-u, 1px))/1.25 var(--n5i-mono, 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, monospace);
   letter-spacing: -0.05em;
   font-variant-numeric: tabular-nums;
-  margin-left: 12px;
+  margin-left: calc(12 * var(--n5i-u, 1px));
   position: relative;
   top: -.45em;
   white-space: nowrap;
@@ -252,7 +281,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 4px;
+  gap: calc(4 * var(--n5i-u, 1px));
 }
 
 .n5i-readouts .n5i-dim-readout {
@@ -278,15 +307,15 @@
    "About" label — Local time is the only label in this corner. */
 
 .n5i-clocksentence {
-  max-width: 44ch;
-  font: 400 16px/1.25 var(--n5i-sans, 'Inter', system-ui, -apple-system, sans-serif);
-  margin-top: 4px;   /* + the cluster's 4px gap = 8px from the label to the digit cap top */
+  max-width: 44ch; /* ch is relative to this element's own (scaled) font-size, so it grows with --n5i-u automatically */
+  font: 400 calc(16 * var(--n5i-u, 1px))/1.25 var(--n5i-sans, 'Inter', system-ui, -apple-system, sans-serif);
+  margin-top: calc(4 * var(--n5i-u, 1px));   /* + the cluster's scaled gap = 2x that from the label to the digit cap top */
 }
 
 /* the trailing timezone line reads as a separate footnote, not another
-   line of the cluster — cluster-gap (12px), not element-gap (4px) */
+   line of the cluster — cluster-gap, not element-gap */
 .n5i-tz-label {
-  margin-top: 12px;
+  margin-top: calc(12 * var(--n5i-u, 1px));
 }
 
 .n5i-clock-inline {

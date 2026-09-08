@@ -17,6 +17,21 @@
   --n5i-mono:'JetBrains Mono','IBM Plex Mono',ui-monospace,Menlo,monospace;
   --n5i-sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
   --n5i-display:'Doto','Jersey 10',system-ui,monospace;
+
+  /* ---------- fluid edge-draft scaling (2026-09-08/09) ----------
+     Two anchors: 1440x900 (today, must stay byte-identical — the clamp's
+     ramp term is `100vw - 1440px`, exactly 0 at that width regardless of
+     slope rounding) and 2504px wide (Eric's spec: corners 100/60px in,
+     lockup ~300px, everything else 1.35x). Byte-identical copy of this
+     block lives in p3/home.html's inline :root — see design-system.md
+     "Fluid scaling" for the full derivation and the drift-risk note.
+     --n5i-u is a LENGTH (1px..1.35px) so `calc(N * var(--n5i-u))` type-
+     checks as number*length=length; hairlines (1px borders/rules) are
+     deliberately NOT multiplied by it. */
+  --n5i-inset-x: clamp(12px, calc(12px + (100vw - 1440px) * 0.082707), 100px);
+  --n5i-inset-y: clamp(12px, calc(12px + (100vw - 1440px) * 0.045113), 60px);
+  --n5i-lockup-w: clamp(147px, calc(147px + (100vw - 1440px) * 0.143797), 300px);
+  --n5i-u: clamp(1px, calc(1px + (100vw - 1440px) * 0.000329), 1.35px);
 }
 
 *{ box-sizing:border-box; margin:0; padding:0; }
@@ -25,7 +40,7 @@ html,body{
   width:100%;
   background:var(--carbon);
   color:var(--bone);
-  font:400 16px/1.25 var(--n5i-sans);
+  font:400 calc(16 * var(--n5i-u))/1.25 var(--n5i-sans);
   -webkit-font-smoothing:antialiased;
   overflow:auto;
   height:auto;
@@ -40,17 +55,17 @@ body{ position:relative; min-height:100vh; }
   z-index:10;
   background:var(--carbon);
   color:var(--bone);
-  padding:8px 16px;
-  font:400 14px/1.25 var(--n5i-sans);
+  padding:calc(8 * var(--n5i-u)) calc(16 * var(--n5i-u));
+  font:400 calc(14 * var(--n5i-u))/1.25 var(--n5i-sans);
   text-decoration:underline;
 }
-.skip-link:focus{ left:12px; top:12px; }
+.skip-link:focus{ left:var(--n5i-inset-x); top:var(--n5i-inset-y); }
 
 /* ---------- corners (ported from home.html, unchanged) ---------- */
 .corner{
   position:fixed;
   z-index:2;
-  padding:12px;
+  padding:var(--n5i-inset-y) var(--n5i-inset-x);
   /* load choreography: readable at rest (opacity .15, not 0) as a static
      fallback before JS runs; subpage.js settles this to full via WAAPI. */
   opacity:.15;
@@ -60,18 +75,18 @@ body{ position:relative; min-height:100vh; }
 .tr{ top:0; right:0; }
 
 .role{
-  font:400 12px/1.25 var(--n5i-mono);
+  font:400 calc(12 * var(--n5i-u))/1.25 var(--n5i-mono);
   letter-spacing:-0.05em;
   text-transform:uppercase;
   color:var(--bone-55);
-  margin-top:4px;
+  margin-top:calc(4 * var(--n5i-u));
   white-space:nowrap;
 }
 
 /* ---------- instruments.css atoms the corner needs (ported, not linked) ---------- */
-.n5i-cluster{ display:flex; flex-direction:column; gap:4px; }
+.n5i-cluster{ display:flex; flex-direction:column; gap:calc(4 * var(--n5i-u)); }
 .n5i-label{
-  font:400 12px/1.25 var(--n5i-mono);
+  font:400 calc(12 * var(--n5i-u))/1.25 var(--n5i-mono);
   letter-spacing:-0.05em;
   text-transform:uppercase;
   white-space:nowrap;
@@ -79,16 +94,20 @@ body{ position:relative; min-height:100vh; }
 .n5i-dim{ opacity:.55; }
 
 .n5i-mark{
-  font:400 40px/0.70 var(--n5i-display);
+  font:400 calc(40 * var(--n5i-u))/0.70 var(--n5i-display);
   text-decoration:none;
   color:inherit;
   display:inline-block;
-  padding-top:6px;
+  padding-top:calc(6 * var(--n5i-u));
 }
 /* Logo lockup: still image at rest; while a clip plays, a canvas replaces it
    with the clip's frames keyed from black to alpha per frame. The <video>s
-   are never displayed, only decoded. Width follows the role label under it. */
-.n5i-lockup{ position:relative; display:block; width:100%; aspect-ratio:1698/804; height:auto; padding-top:0; line-height:0; }
+   are never displayed, only decoded. Width tracks the role label under it at
+   rest (min-width sits below the label's own max-content width at 1440, so
+   nothing changes there); above ~1441px min-width becomes the corner's
+   shrink-to-fit driver and carries the lockup to --n5i-lockup-w (~300px at
+   2504) — width stays 100% (never set height). */
+.n5i-lockup{ position:relative; display:block; width:100%; min-width:var(--n5i-lockup-w); aspect-ratio:1698/804; height:auto; padding-top:0; line-height:0; }
 .n5i-lockup .lk-rest,.n5i-lockup .lk-hover,.n5i-lockup .lk-canvas,.n5i-lockup .lk-clip{position:absolute;inset:0;width:100%;height:100%;display:block}
 .n5i-lockup .lk-rest,.n5i-lockup .lk-hover{object-fit:contain}
 .n5i-lockup .lk-hover{opacity:0}
@@ -110,9 +129,9 @@ body{ position:relative; min-height:100vh; }
   position:relative;
   overflow:hidden;
   display:inline-block;
-  padding:3px 11px;
+  padding:calc(3 * var(--n5i-u)) calc(11 * var(--n5i-u));
   border-radius:9999px;
-  font:400 12px/1.25 var(--n5i-mono);
+  font:400 calc(12 * var(--n5i-u))/1.25 var(--n5i-mono);
   letter-spacing:-0.05em;
   text-transform:uppercase;
   text-decoration:none;
@@ -164,27 +183,28 @@ body{ position:relative; min-height:100vh; }
   display:flex;
   flex-direction:column;
   align-items:flex-end;
-  gap:4px;
+  gap:calc(4 * var(--n5i-u));
 }
 /* separates the four page pills from the Login pill below it — ported from home's
-   .n5i-nav-rule, same Vein divider token and geometry */
+   .n5i-nav-rule, same Vein divider token and geometry. Height is a 1px hairline,
+   deliberately not scaled. */
 .n5i-nav-rule{
-  width:28px;
+  width:calc(28 * var(--n5i-u));
   height:1px;
   background:var(--vein);
-  margin:12px 25px 12px 0;
+  margin:calc(12 * var(--n5i-u)) calc(25 * var(--n5i-u)) calc(12 * var(--n5i-u)) 0;
 }
 .n5i-socials{
   display:flex;
   align-items:center;
   justify-content:flex-end;
-  gap:4px;
-  margin:-2px 6px 0 0;
+  gap:calc(4 * var(--n5i-u));
+  margin:calc(-2 * var(--n5i-u)) calc(6 * var(--n5i-u)) 0 0;
 }
 .pill.ico{
   padding:0;
-  width:23px;
-  height:23px;
+  width:calc(23 * var(--n5i-u));
+  height:calc(23 * var(--n5i-u));
   display:inline-flex;
   align-items:center;
   justify-content:center;
@@ -196,10 +216,10 @@ body{ position:relative; min-height:100vh; }
 
 /* pill-lg — the one text pill on /contact/: 16px Inter, not uppercase */
 .pill-lg{
-  font:400 16px/1.25 var(--n5i-sans);
+  font:400 calc(16 * var(--n5i-u))/1.25 var(--n5i-sans);
   letter-spacing:normal;
   text-transform:none;
-  padding:8px 18px;
+  padding:calc(8 * var(--n5i-u)) calc(18 * var(--n5i-u));
 }
 
 @media (prefers-reduced-motion: reduce){
@@ -207,12 +227,33 @@ body{ position:relative; min-height:100vh; }
 }
 
 /* ---------- content column ---------- */
+/* margin-left/-right are DERIVED, not magic numbers (2026-09-09) — they must
+   never be left fixed once the corner insets/lockup scale, or the column
+   collides with a 300px logo or runs under the nav (see design-system.md
+   "Fluid scaling"). Left = 2x the corner's own horizontal inset + the
+   lockup's width (i.e. the .tl corner's own shrink-to-fit width, so the
+   column can never sit under it by construction) + a scaled breathing gap
+   (53px @1440 -> 224px total, matching today exactly; 71.55px @2504 ->
+   571.55px total).
+   Right = ALSO 2x the corner inset (matching the .tr corner's own
+   shrink-to-fit box, which is 2*inset-x + its intrinsic nav content —
+   both sides use --n5i-inset-x, same as .tl) + a scaled gap standing in for
+   that intrinsic nav content — 176px @1440 -> 200px total (today's value,
+   unchanged), 437.6px @2504 -> 437.6px total. First cut of this formula
+   used only 1x inset-x and shrank the clearance at wide viewports (88px at
+   1440 down to ~30px at 2504) because the .tr corner's own box gains a
+   SECOND inset-x on its far side that a single-inset-x margin never
+   accounted for — caught by Playwright measurement (measure3.mjs) at
+   2504/3440, not by inspection. With 2x inset-x on both sides of this
+   comparison, clearance is monotonic: ~88px (1440) -> ~103px (1920) ->
+   ~114px (2504 and beyond, both tokens maxed) — verified against the
+   nav's actual rendered width, not assumed. */
 main.page{
   position:relative;
   z-index:1;
-  margin-left:224px;
-  margin-right:200px;
-  padding:96px 0 128px;
+  margin-left:calc(2 * var(--n5i-inset-x) + var(--n5i-lockup-w) + 53 * var(--n5i-u));
+  margin-right:calc(2 * var(--n5i-inset-x) + 176 * var(--n5i-u));
+  padding:calc(96 * var(--n5i-u)) 0 calc(128 * var(--n5i-u));
   opacity:.15;
   transform:translateY(10px);
 }
@@ -221,7 +262,7 @@ main.page{
 }
 
 .page .label{
-  font:400 12px/1.25 var(--n5i-mono);
+  font:400 calc(12 * var(--n5i-u))/1.25 var(--n5i-mono);
   letter-spacing:-0.05em;
   text-transform:uppercase;
   color:var(--bone-55);
@@ -231,70 +272,70 @@ main.page{
    an h2, a post opened on its own stays an h1. Type follows the class, not
    the tag, so the outline can be correct without the design changing. */
 .page h1, .page .post-title-h{
-  font:400 30px/1.1 var(--n5i-sans);
+  font:400 calc(30 * var(--n5i-u))/1.1 var(--n5i-sans);
   letter-spacing:-0.02em;
   color:var(--bone);
-  margin-top:4px;
+  margin-top:calc(4 * var(--n5i-u));
 }
 .page .lede{
-  margin-top:12px;
+  margin-top:calc(12 * var(--n5i-u));
   max-width:40ch;
 }
 .page p{ max-width:40ch; }
 
-.page section{ margin-top:64px; }
+.page section{ margin-top:calc(64 * var(--n5i-u)); }
 .page section > .label{ display:block; }
 .page section > h2{
-  font:400 16px/1.25 var(--n5i-sans);
+  font:400 calc(16 * var(--n5i-u))/1.25 var(--n5i-sans);
   color:var(--bone);
-  margin-top:4px;
+  margin-top:calc(4 * var(--n5i-u));
 }
 
 /* Blog landing (Eric, 2026-09-08): a 24px gap under the "Latest blog" section label,
    matching the .post-list gap under "All posts" — scoped to this one section so the
    breadcrumb's own spacing on a standalone/tree-selected post view (where it's the
    first thing in main.page, flush with the page's own top padding) is untouched. */
-#blog-landing-view section{ margin-bottom:24px; }
+#blog-landing-view section{ margin-bottom:calc(24 * var(--n5i-u)); }
 
 .page .list{
   list-style:none;
   max-width:72ch;
-  margin-top:24px;
+  margin-top:calc(24 * var(--n5i-u));
 }
 .page .list li{
   border-top:1px solid var(--vein);
-  padding:12px 0;
+  padding:calc(12 * var(--n5i-u)) 0;
 }
 .page .list .row{
   display:flex;
   align-items:baseline;
   justify-content:space-between;
-  gap:12px;
+  gap:calc(12 * var(--n5i-u));
 }
 .page .list .row .title{
-  font:400 16px/1.25 var(--n5i-sans);
+  font:400 calc(16 * var(--n5i-u))/1.25 var(--n5i-sans);
   color:var(--bone);
 }
 .page .list .row .status{
-  font:400 12px/1.25 var(--n5i-mono);
+  font:400 calc(12 * var(--n5i-u))/1.25 var(--n5i-mono);
   letter-spacing:-0.05em;
   text-transform:uppercase;
   color:var(--bone-55);
   white-space:nowrap;
 }
-.page .list .sentence{ margin-top:4px; max-width:72ch; }
+.page .list .sentence{ margin-top:calc(4 * var(--n5i-u)); max-width:72ch; }
 .page .list .tags{
   display:block;
-  margin-top:4px;
-  font:400 12px/1.25 var(--n5i-mono);
+  margin-top:calc(4 * var(--n5i-u));
+  font:400 calc(12 * var(--n5i-u))/1.25 var(--n5i-mono);
   letter-spacing:-0.05em;
   color:var(--bone-55);
 }
 
 .page .social-row{
   display:flex;
-  gap:8px;
-  margin-top:24px;
+  gap:calc(8 * var(--n5i-u));
+  margin-top:calc(24 * var(--n5i-u));
   flex-wrap:wrap;
 }
 
@@ -385,30 +426,30 @@ main.page{
 }
 
 /* ---------- Post rows (/blog/) ---------- */
-.post-list{ max-width:72ch; margin-top:24px; }
+.post-list{ max-width:72ch; margin-top:calc(24 * var(--n5i-u)); }
 .post-row{
   display:grid;
   grid-template-columns:14ch 1fr;
-  gap:16px;
-  padding:12px 0;
+  gap:calc(16 * var(--n5i-u));
+  padding:calc(12 * var(--n5i-u)) 0;
   border-top:1px solid var(--vein);
   text-decoration:none;
   color:var(--bone);
   max-width:72ch;
 }
 .post-meta{
-  font:400 12px/1.25 var(--n5i-mono);
+  font:400 calc(12 * var(--n5i-u))/1.25 var(--n5i-mono);
   letter-spacing:-0.05em;
   text-transform:uppercase;
   color:var(--bone-55);
   white-space:nowrap;
 }
 .post-title{
-  font:400 16px/1.25 var(--n5i-sans);
+  font:400 calc(16 * var(--n5i-u))/1.25 var(--n5i-sans);
   color:var(--bone);
   text-decoration:underline;
   text-decoration-color:var(--bone-55);
-  text-underline-offset:3px;
+  text-underline-offset:calc(3 * var(--n5i-u));
   transition:text-decoration-color .15s ease-out;
 }
 .post-row:hover .post-title,
@@ -421,42 +462,42 @@ main.page{
 
 /* ---------- Post prose (/blog/posts/*) ---------- */
 /* long-form measure is wider than the 40ch lede/paragraph default above */
-.page .post-chips{ margin-top:12px; }
-.prose{ max-width:60ch; margin-top:24px; }
+.page .post-chips{ margin-top:calc(12 * var(--n5i-u)); }
+.prose{ max-width:60ch; margin-top:calc(24 * var(--n5i-u)); }
 .prose h2, .prose h3{
-  font:400 20px/1.25 var(--n5i-sans);
+  font:400 calc(20 * var(--n5i-u))/1.25 var(--n5i-sans);
   color:var(--bone);
-  margin:40px 0 12px;
+  margin:calc(40 * var(--n5i-u)) 0 calc(12 * var(--n5i-u));
 }
 .prose p{
   max-width:60ch;
-  margin:0 0 16px;
+  margin:0 0 calc(16 * var(--n5i-u));
   line-height:1.5;
 }
 .prose ul,
 .prose ol{
   max-width:60ch;
   padding-left:1.2em;
-  margin:0 0 16px;
+  margin:0 0 calc(16 * var(--n5i-u));
   line-height:1.5;
 }
 .prose code{
-  font:400 14px/1.25 var(--n5i-mono);
+  font:400 calc(14 * var(--n5i-u))/1.25 var(--n5i-mono);
 }
 .prose pre{
-  font:400 13px/1.5 var(--n5i-mono);
+  font:400 calc(13 * var(--n5i-u))/1.5 var(--n5i-mono);
   overflow-x:auto;
   border-top:1px solid var(--vein);
   border-bottom:1px solid var(--vein);
-  padding:12px 0;
+  padding:calc(12 * var(--n5i-u)) 0;
   background:none;
 }
 .prose blockquote{
   border-left:1px solid var(--vein);
-  padding-left:16px;
+  padding-left:calc(16 * var(--n5i-u));
   color:var(--bone-55);
   max-width:60ch;
-  margin:0 0 16px;
+  margin:0 0 calc(16 * var(--n5i-u));
 }
 
 /* ---------- accordion (projects page; reuses .pill mechanics) ---------- */
@@ -473,9 +514,9 @@ main.page{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:8px;
+  gap:calc(8 * var(--n5i-u));
   width:100%;
-  padding:10px 16px;
+  padding:calc(10 * var(--n5i-u)) calc(16 * var(--n5i-u));
   box-sizing:border-box;
 }
 /* Disclosure indicator (Eric, 2026-09-08): collapsed points right, expanded points down —
@@ -528,56 +569,58 @@ main.page{
    and does nothing to stop that title's full unwrapped width from being counted
    during the shrink-to-fit pass, so without a hard cap here a long title silently
    stretched the corner to 632px in testing and slid it under main.page (which
-   starts at x:224) — the exact failure mode the task called out. --tree-w gives
-   every row (trigger AND leaf) a fixed (non-percentage) max-width a hair under the
-   measured 147.2px, so the corner can never grow past what the wordmark already
-   pins it to, regardless of how long a future post title gets. */
+   started at x:224) — the exact failure mode the task called out. --tree-w gives
+   every row (trigger AND leaf) a fixed (non-percentage) max-width — tied directly to
+   --n5i-lockup-w (2026-09-09), not a separate literal, since that token IS the
+   lockup's own min-width and therefore the corner's real shrink-to-fit driver once
+   scaling pushes the lockup past the role label's max-content width; the corner can
+   never grow past what the wordmark already pins it to, at any viewport width. */
 .blog-tree{
-  --tree-w:147px;
+  --tree-w:var(--n5i-lockup-w);
   width:100%;
   max-width:var(--tree-w);
-  margin-top:8px; /* + the 4px .n5i-cluster gap above = 12px cluster gap */
+  margin-top:calc(8 * var(--n5i-u)); /* + the .n5i-cluster gap above = the cluster gap */
   display:flex;
   flex-direction:column;
-  gap:4px;
+  gap:calc(4 * var(--n5i-u));
 }
 .tree-root,
 .tree-year,
-.tree-month{ display:flex; flex-direction:column; gap:4px; }
+.tree-month{ display:flex; flex-direction:column; gap:calc(4 * var(--n5i-u)); }
 
-/* compact padding: the shared .acc-trigger padding (10px 16px) is sized for the 72ch
-   content-column buttons on /projects/; the corner is ≈147px wide, so this pair of
-   classes (specificity 0,0,3,0, beats the shared 0,0,2,0 rule by source order+count)
-   tightens it without touching the shared rule. */
+/* compact padding: the shared .acc-trigger padding (10px 16px, scaled) is sized for
+   the 72ch content-column buttons on /projects/; the corner is much narrower, so this
+   pair of classes (specificity 0,0,3,0, beats the shared 0,0,2,0 rule by source
+   order+count) tightens it without touching the shared rule. */
 .acc-trigger.tree-trigger .pill-l,
 .acc-trigger.tree-trigger .pill-c{
-  padding:6px 10px;
-  gap:6px;
+  padding:calc(6 * var(--n5i-u)) calc(10 * var(--n5i-u));
+  gap:calc(6 * var(--n5i-u));
 }
 .tree-label{
   display:flex;
   align-items:center;
-  gap:6px;
+  gap:calc(6 * var(--n5i-u));
   overflow:hidden;
   white-space:nowrap;
 }
 .tree-glyph{
-  font:400 12px/1 var(--n5i-mono);
+  font:400 calc(12 * var(--n5i-u))/1 var(--n5i-mono);
   flex:none;
   opacity:.55; /* opacity, not a bone-55 color, so it dims correctly on both the
                   normal (bone-on-carbon) AND the open/violet-fill (white) pill states */
 }
 
 .tree-leaves{ list-style:none; }
-.tree-leaves li + li{ margin-top:2px; }
+.tree-leaves li + li{ margin-top:calc(2 * var(--n5i-u)); }
 .tree-leaf{
   display:flex;
   align-items:baseline;
-  gap:6px;
-  padding:4px 10px;
+  gap:calc(6 * var(--n5i-u));
+  padding:calc(4 * var(--n5i-u)) calc(10 * var(--n5i-u));
   text-decoration:none;
   color:var(--bone-55);
-  font:400 12px/1.4 var(--n5i-mono);
+  font:400 calc(12 * var(--n5i-u))/1.4 var(--n5i-mono);
   letter-spacing:-0.05em;
   min-width:0;
 }
@@ -622,9 +665,9 @@ main.page{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap:12px;
+  gap:calc(12 * var(--n5i-u));
   max-width:72ch;
-  margin-top:16px;
+  margin-top:calc(16 * var(--n5i-u));
 }
 /* both slots always render (even empty) so the surviving control keeps its side
    at either end of the archive — an empty slot has zero intrinsic width, so

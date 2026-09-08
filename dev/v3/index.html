@@ -23,13 +23,28 @@
     --n5i-mono:'JetBrains Mono','IBM Plex Mono',ui-monospace,Menlo,monospace;
     --n5i-sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
     --n5i-display:'Doto','Jersey 10',system-ui,monospace;
+
+    /* ---------- fluid edge-draft scaling (2026-09-08/09) ----------
+       Byte-identical copy of the block in p4/subpage.css's :root — see
+       design-system.md "Fluid scaling" for the derivation and the drift-
+       risk note (two copies, since this page is self-contained and does
+       not load subpage.css). Two anchors: 1440x900 (today, must stay
+       byte-identical — the ramp term `100vw - 1440px` is exactly 0 at
+       that width regardless of slope rounding) and 2504px wide (Eric's
+       spec: corners 100/60px in, lockup ~300px, everything else 1.35x).
+       --n5i-u is a LENGTH (1px..1.35px) so `calc(N * var(--n5i-u))`
+       type-checks as number*length=length; hairlines are NOT scaled. */
+    --n5i-inset-x: clamp(12px, calc(12px + (100vw - 1440px) * 0.082707), 100px);
+    --n5i-inset-y: clamp(12px, calc(12px + (100vw - 1440px) * 0.045113), 60px);
+    --n5i-lockup-w: clamp(147px, calc(147px + (100vw - 1440px) * 0.143797), 300px);
+    --n5i-u: clamp(1px, calc(1px + (100vw - 1440px) * 0.000329), 1.35px);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{
     width:100%;height:100%;
     background:var(--carbon);
     color:var(--bone);
-    font:400 16px/1.25 var(--n5i-sans);
+    font:400 calc(16 * var(--n5i-u))/1.25 var(--n5i-sans);
     -webkit-font-smoothing:antialiased;
     overflow:hidden;
   }
@@ -44,7 +59,7 @@
   .corner{
     position:absolute;
     z-index:2;
-    padding:12px;
+    padding:var(--n5i-inset-y) var(--n5i-inset-x);
     /* load choreography: readable at rest (opacity .15, not 0) as a static
        fallback before JS runs; the actual settle to full is driven by the
        Web Animations API below (transform+opacity only, 500ms ease-out,
@@ -60,11 +75,11 @@
   .br{ bottom:0; right:0; }
 
   .role{
-    font:400 12px/1.25 var(--n5i-mono);
+    font:400 calc(12 * var(--n5i-u))/1.25 var(--n5i-mono);
     letter-spacing:-0.05em;
     text-transform:uppercase;
     color:var(--bone-55);
-    margin-top:4px;
+    margin-top:calc(4 * var(--n5i-u));
   }
 
   /* Pill hover = the reference's (yinger.dev) shipped mechanics, read from
@@ -80,9 +95,9 @@
     position:relative;
     overflow:hidden;
     display:inline-block;
-    padding:3px 11px;
+    padding:calc(3 * var(--n5i-u)) calc(11 * var(--n5i-u));
     border-radius:9999px;
-    font:400 12px/1.25 var(--n5i-mono);
+    font:400 calc(12 * var(--n5i-u))/1.25 var(--n5i-mono);
     letter-spacing:-0.05em;
     text-transform:uppercase;
     text-decoration:none;
@@ -122,19 +137,21 @@
     display:flex;
     flex-direction:column;
     align-items:flex-end;
-    gap:4px;
+    gap:calc(4 * var(--n5i-u));
   }
 
   /* separates the four page pills from the Login pill below it, matching
-     the same "Vein" divider token used for list-item dividers elsewhere */
+     the same "Vein" divider token used for list-item dividers elsewhere.
+     Height is a 1px hairline, deliberately not scaled. */
   .n5i-nav-rule{
-    width:28px;
+    width:calc(28 * var(--n5i-u));
     height:1px;
     background:var(--vein);
-    /* measured off Eric's reference: 21px under the icons, 23px above the
-       LOGIN cap line, right edge 14px in from the text edge (the pills'
-       12px padding puts their text 12px inside the box, so 25px here) */
-    margin:12px 25px 12px 0; /* 16px before the icons grew 4px downward into 23px discs */
+    /* measured off Eric's reference at 1440: 21px under the icons, 23px above
+       the LOGIN cap line, right edge 14px in from the text edge (the pills'
+       12px padding puts their text 12px inside the box, so 25px here) — all
+       now scaled by --n5i-u along with everything else in this corner */
+    margin:calc(12 * var(--n5i-u)) calc(25 * var(--n5i-u)) calc(12 * var(--n5i-u)) 0;
   }
 
   .n5i-socials{
@@ -144,14 +161,14 @@
     /* each icon is a 23px disc pill (4px of disc around the 15px glyph);
        gap/margins are the reference's 12px / 2px 10px minus that 4px, so
        the glyphs sit exactly where alignment04.png put them and the rule +
-       Login below do not move */
-    gap:4px;
-    margin:-2px 6px 0 0;
+       Login below do not move — all scaled by --n5i-u together */
+    gap:calc(4 * var(--n5i-u));
+    margin:calc(-2 * var(--n5i-u)) calc(6 * var(--n5i-u)) 0 0;
   }
   .pill.ico{
     padding:0;
-    width:23px;
-    height:23px;
+    width:calc(23 * var(--n5i-u));
+    height:calc(23 * var(--n5i-u));
     display:inline-flex;
     align-items:center;
     justify-content:center;
