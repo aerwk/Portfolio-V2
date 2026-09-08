@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardlink That Never Once Linked Anything — N5HQ</title>
+<meta name="description" content="A hardlink setting had been silently copying whole files all along, and the review behind it found two more things that only looked safe.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-08-21.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="The Hardlink That Never Once Linked Anything — N5HQ">
+<meta property="og:description" content="A hardlink setting had been silently copying whole files all along, and the review behind it found two more things that only looked safe.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-08-21.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">The Hardlink That Never Once Linked Anything</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-08-21 · Friday · 7:57 AM</span>
+      <span class="chip">5 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Today started as research into Maintainerr, a tool that would trim old images and distro archives out of the library on a schedule instead of by hand. It turned into something else within the first twenty minutes: a setting both Radarr and Sonarr have had switched on the whole time turned out to have never once done what it says. The rest of the day was a design review for moving the monitoring stack off the main host, and the two things that review caught before anything moved matter more than the plan itself.</p>
+<p>The through-line is the same across all of it: a thing reporting success and a thing actually working are not the same claim, and today was mostly spent finding the gap between them.</p>
+<h2>The hardlink that never linked anything</h2>
+<p>Both Radarr and Sonarr are set to <code>copyUsingHardlinks: true</code>. A hardlink means the library copy and the completed-download copy point at the same data on disk, so the file exists once, and deleting either reference doesn't touch the underlying bytes until both are gone. Checking the files directly instead of trusting the setting was what caught it: both copies came back with <code>Links: 1</code>. A real hardlink shows <code>2</code>. These are two separate files.</p>
+<p>The mount between the download directory and the library is sshfs over SFTP, and that protocol has no hardlink call to make. When the app asks for one and the filesystem underneath can't do it, the copy falls back to writing a full second file instead of failing. Nothing errors. The setting reads back as enabled because it is enabled; it has just never been able to do the thing it's enabled to do. The consequence is specific: deleting a library file reclaims only that file's space, the completed-download copy sits there untouched, and the measured duplication across the two libraries comes to 229 GB.</p>
+<p>That also closed out the reason I'd opened Maintainerr research in the first place. A deletion tool pointed at a library with an active, silent duplication bug would have been cleaning up half the mess at best.</p>
+<h2>A version pinned on purpose</h2>
+<p>The rest of the Maintainerr work was picking a version rather than picking a default. The image went in pinned to <code>ghcr.io/jorenn92/maintainerr:v3.24.0</code>, not <code>latest</code>. The <code>v3.0.0</code> release changed the tool's schema outright, and the <code>v3.x</code> line has a documented history of breaking changes against <code>v2.x</code> since. Pinning an exact tag against that history isn't caution for its own sake, it's the one deployment decision this stack doesn't already have on record.</p>
+<p>Radarr, Sonarr, Tautulli and Bazarr all run on <code>latest</code> right now, each with a comment in the compose file that says <code>PIN-ME</code>. Nobody has acted on any of them. Deployment for Maintainerr got written up and left unexecuted for the day, but the version line in it is the one place this round of work is more careful than the stack it's joining.</p>
+<h2>Two ways a plan looked safe and wasn't</h2>
+<p>The monitoring-migration design covers moving nine containers off the main host onto a guest on the second node, and the review pass on that plan is where the day's other findings came from.</p>
+<p>The first is an uptime monitor problem that has nothing to do with uptime. Roughly 66 home-automation entities are keyed to monitor IDs, not to names or URLs. Deleting a monitor and recreating it against the same target gets a new ID, and every entity pointed at the old one goes dark with no error on either side, because nothing about a home-automation integration failing quietly looks like a monitoring problem. The fix is procedural rather than technical: monitors get edited in place from here on, never deleted and rebuilt, no matter how much cleaner a fresh one would be.</p>
+<p>The second is a Grafana problem that isn't in Grafana's own backup path. About 15 dashboards exist only inside that container's data volume. No export, nothing checked into version control anywhere. Losing that volume loses the dashboards permanently, and nothing in the standard container lifecycle protects against that by default; a routine <code>docker volume rm</code> during cleanup would have been indistinguishable from success until someone went looking for a dashboard that wasn't there.</p>
+<p>Neither of these came from the plan itself. They came from reading the plan a second time specifically looking for what it assumed rather than what it stated.</p>
+<h2>A backup, and proof the check works</h2>
+<p>The one thing that did get executed today rather than designed was a backup of the three volumes behind the monitoring stack, ahead of any move. They're root-owned, so a plain copy wasn't an option without more access than made sense to grant for a one-off; they got tarred through a container that could read them and written to a third machine, neither the source nor the eventual destination. Prometheus came out at 2.85 GB, Grafana at 95 MB, Loki at 194 MB.</p>
+<p>SHA256 on the source and the destination matched exactly, and the archive listings held what they were supposed to: ULID blocks, the Grafana database file, 22,139 Loki chunks. That much would normally be where this stops. Instead I corrupted a copy of one of the archives on purpose and reran the same check, to see whether it would actually catch a bad file or just report a matching hash because the process ran without an error. It failed, the way it should have. A verification step that has never been watched fail is not a verification step, it's an assumption wearing a checksum.</p>
+<p>What the backup was for happens tomorrow, and none of that is here yet.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="storage" href="/blog/?tag=storage">Storage</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a><a class="tagchip" data-tag="backups" href="/blog/?tag=backups">Backups</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-08-13.html">← A Regex Ate Half a Selector and CSS Didn&#x27;t Complain</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-08-22.html">Every Number I Started With Was Measuring Something Else →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

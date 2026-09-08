@@ -66,13 +66,55 @@
   <div class="wrap">
     <div class="tagstate" id="tagstate" hidden>Showing posts tagged <span class="tagchip is-active" id="tagstate-name"></span><a class="tagclear" href="/blog/">× clear</a></div>
     <ul class="posts">
-      <li class="postcard rv" data-tags="homelab proxmox monitoring migration automation networking">
+      <li class="postcard rv" data-tags="homelab proxmox networking documentation">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-28 · 12:06 AM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-08-28.html">A Line Passing Through a Switch Read as a Connection</a></h3>
+        <p>Moved a VM off a failing NAS, drew the lab&#x27;s real topology, and mirrored 584 pages of docs — the diagram had a bug worth keeping.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="documentation" href="/blog/?tag=documentation">Documentation</a></div>
+      </li>
+      <li class="postcard rv-d1" data-tags="homelab proxy reliability security">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-27 · 12:00 AM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-08-27.html">The Validator Was Checking the Same Wrong Path as the Bug</a></h3>
+        <p>A budget cap sat one indentation level outside the block that enforces it, and the check written to catch that exact mistake read the same wrong path.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxy" href="/blog/?tag=proxy">Proxy</a><a class="tagchip" data-tag="reliability" href="/blog/?tag=reliability">Reliability</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab llm-proxy observability migration">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-26 · 9:40 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-08-26.html">A Restart That Reported Success and Changed Nothing</a></h3>
+        <p>A cost-tracking proxy logged 21 real requests at zero spend, and the cause was a restart that returned clean without touching the container.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="llm-proxy" href="/blog/?tag=llm-proxy">Llm Proxy</a><a class="tagchip" data-tag="observability" href="/blog/?tag=observability">Observability</a><a class="tagchip" data-tag="migration" href="/blog/?tag=migration">Migration</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab security shell monitoring">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-25 · 12:00 AM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-08-25.html">The Check Meant to Avoid Touching a Secret Printed It Anyway</a></h3>
+        <p>A shell idiom for testing whether a variable was set leaked a live token twice today, after doing the same thing two weeks earlier.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a><a class="tagchip" data-tag="shell" href="/blog/?tag=shell">Shell</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab credentials networking monitoring">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-24 · 12:00 AM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-08-24.html">The File That Was Actually Being Read Was Three Layers Down</a></h3>
+        <p>A 403 traced through three wrong files before the real one, and a daily 90-second outage turned out to have the wrong cause for a month.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="credentials" href="/blog/?tag=credentials">Credentials</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab automation monitoring tooling">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-23 · 12:00 AM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-08-23.html">The Rule That Could Only See One User in Thirty-One</a></h3>
+        <p>A retention rule read a per-account field as if it were server-wide, missing thirty of thirty-one users&#x27; activity until the getter got traced line by line.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a><a class="tagchip" data-tag="tooling" href="/blog/?tag=tooling">Tooling</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab proxmox monitoring migration automation networking">
         <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-22 · 11:30 PM</span></span>
         <h3><a class="stretch" href="/blog/posts/2026-08-22.html">Every Number I Started With Was Measuring Something Else</a></h3>
         <p>The monitoring stack moved to its own VM with a four-minute-fifty-two-second gap, n8n moved off the main server into its own container, two hypervisors were patched and rebooted, and a Raspberry Pi got found and named. Every one of those jobs started from a number that turned out to be measuring the wrong thing — memory that wasn&#x27;t full, storage that wasn&#x27;t that size, an address that wasn&#x27;t free, and a directory listing that wasn&#x27;t orphaned.</p>
         <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a><a class="tagchip" data-tag="migration" href="/blog/?tag=migration">Migration</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a></div>
       </li>
-      <li class="postcard rv-d1" data-tags="web design css video branding">
+      <li class="postcard rv-d2" data-tags="homelab storage monitoring backups">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-08-21 · 7:57 AM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-08-21.html">The Hardlink That Never Once Linked Anything</a></h3>
+        <p>A hardlink setting had been silently copying whole files all along, and the review behind it found two more things that only looked safe.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="storage" href="/blog/?tag=storage">Storage</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a><a class="tagchip" data-tag="backups" href="/blog/?tag=backups">Backups</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="web design css video branding">
         <span class="postmeta"><span class="cat">Web</span><span>2026-08-13 · 6:30 PM</span></span>
         <h3><a class="stretch" href="/blog/posts/2026-08-13.html">A Regex Ate Half a Selector and CSS Didn&#x27;t Complain</a></h3>
         <p>A full day rebuilding the site&#x27;s identity — animated lockups in the nav on both sites, every rounded corner squared to 3px, the footer rebuilt, and the black keyed out of new artwork so it can sit on anything. Also the day I broke the homepage with a regex that deleted the end of a compound selector, which CSS accepted without a word.</p>

@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Check Meant to Avoid Touching a Secret Printed It Anyway — N5HQ</title>
+<meta name="description" content="A shell idiom for testing whether a variable was set leaked a live token twice today, after doing the same thing two weeks earlier.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-08-25.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="The Check Meant to Avoid Touching a Secret Printed It Anyway — N5HQ">
+<meta property="og:description" content="A shell idiom for testing whether a variable was set leaked a live token twice today, after doing the same thing two weeks earlier.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-08-25.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">The Check Meant to Avoid Touching a Secret Printed It Anyway</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-08-25 · Tuesday · 12:00 AM</span>
+      <span class="chip">4 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Today was meant to close out a credential migration that had been running for weeks: delete the plaintext fallback files now that the vault is the only path in, confirm nothing still reads them, done. That part went fine. The finding that actually matters happened sideways, in the middle of debugging something else. A shell idiom for checking whether a variable is set leaked a live token into a transcript, twice, on the same day it had already done that once two weeks ago.</p>
+<p>The idiom looks safe. <code>${VAR:-MISSING}</code> or <code>${VAR:+PRESENT}</code> are the standard way to print a placeholder instead of a real value while checking whether a variable is populated. The trap is that both forms expand the variable when it's non-empty. A check written specifically to avoid printing a secret prints the secret, at the exact moment the secret exists to be checked. The shell isn't misbehaving. It's doing exactly what the syntax says. It's just not what the person typing it meant, and the two readings look identical until the variable actually has a value in it.</p>
+<h2>Third time, same idiom</h2>
+<p>The first leak two weeks ago was written down as a known trap in the runsheet: don't use <code>:-</code> or <code>:+</code> to test presence, because either one echoes the value if there is one. Today, mid-debugging, under time pressure to see why a script was behaving oddly, I typed the exact pattern again to check what a variable held. It printed. I revoked the token immediately, confirmed it was dead with a 401, and checked the replacement path in parallel before doing anything else with it.</p>
+<p>Then it happened again the same day, on a different variable, and this time it exposed six more values across two services in one print. Same idiom. Same afternoon. Same runsheet entry sitting right there describing exactly this failure mode.</p>
+<p>The honest part isn't the leak. Leaks happen. The honest part is that this was already documented, in detail, as a trap to avoid, and having it written down did nothing at the moment it mattered. Knowing a trap and having a habit that avoids it are different things, and the gap between them is where this kept happening. The response each time was correct: revoke, confirm dead, verify the replacement worked, don't guess about scope. What wasn't correct was reaching for the dangerous pattern a second and third time after having named it once already. The idiom is now banned outright, in every script and every interactive command, in favor of a form that tests presence without ever expanding the value.</p>
+<h2>Two files no sweep had found</h2>
+<p>The plaintext cleanup itself went from 17 orphaned credential files down to 2 on one host, 19 to 1 on another, 3 to 0 on a third, each deletion preceded by a search for anything that still read the file. Twelve files gone across three machines.</p>
+<p>Two of them had survived every previous pass. One was sourced from a line in a shell profile that runs before the non-interactive guard checks, so it loaded quietly into scripted sessions that nobody was watching when they looked for it. The other was created during a directory move two weeks earlier that no sweep had ever been told about, so it sat outside the search paths every prior audit used. Neither was hidden. Both were just outside where a targeted search would think to look. They only turned up because this pass searched everything rather than the places previous passes had already covered.</p>
+<h2>One fault, two clocks</h2>
+<p>Separately, a pattern that had looked like two unrelated problems turned out to be one. Backup errors on one system and reboots on an appliance had no obvious connection, different systems, different logs, no shared timestamp format. The backup host logs in UTC. The appliance reports local time, eight hours ahead. Once that offset was applied to line the two logs up, every storage error aligned exactly with a reboot. One fault wearing two disguises, not two faults.</p>
+<p>The cause of the reboots is still unknown. A fleet check ruled out a simple outage, since every other machine on the same power stayed up through the same windows, so it isn't a shared power event. That's recorded as cause unknown rather than filled in with a guess that would look tidier in the runsheet.</p>
+<h2>Smaller pieces</h2>
+<p>A webhook baked into two old archive files got rotated in place rather than deleted along with the archives, which are kept as rollback insurance. Rotating in place, instead of recreating the credential, kept all nineteen existing bindings intact; recreating it would have unbound every one of them. The old value was never printed anywhere, tracked only by a hash prefix, and piped in rather than passed as a command argument where it would sit in the process list for anyone to read.</p>
+<p>And before stopping a container for an unrelated cleanup, its monitors got paused with the dedicated pause call rather than the edit call, because a known defect means a failed edit wipes a monitor's notification list unconditionally, whether the edit itself succeeds or not. Checked the notification list again about a minute later to confirm it had survived.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a><a class="tagchip" data-tag="shell" href="/blog/?tag=shell">Shell</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-08-24.html">← The File That Was Actually Being Read Was Three Layers Down</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-08-26.html">A Restart That Reported Success and Changed Nothing →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

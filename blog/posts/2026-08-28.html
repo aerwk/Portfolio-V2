@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Line Passing Through a Switch Read as a Connection — N5HQ</title>
+<meta name="description" content="Moved a VM off a failing NAS, drew the lab&#x27;s real topology, and mirrored 584 pages of docs — the diagram had a bug worth keeping.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-08-28.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="A Line Passing Through a Switch Read as a Connection — N5HQ">
+<meta property="og:description" content="Moved a VM off a failing NAS, drew the lab&#x27;s real topology, and mirrored 584 pages of docs — the diagram had a bug worth keeping.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-08-28.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">A Line Passing Through a Switch Read as a Connection</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-08-28 · Friday · 12:06 AM</span>
+      <span class="chip">5 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Three things got done tonight and none of them fought me, which is unusual enough to notice. The disk copy came out clean, the documentation mirror finished on schedule, and the one real problem of the night was a bug in a diagram I drew myself an hour later. That bug is the part worth the most words: a line meant to show a fallback path was routed straight down, passed through the box of a switch that has no uplink at all, and read as a connection to anyone looking at it. Nobody wired that switch to anything. The diagram just never said so.</p>
+<p>The through-line for the day is smaller than that one bug but it's the same shape: format and drawing tools do exactly what they're told, and what they're told isn't always what you meant.</p>
+<h2>Off the failing NAS, onto local disk</h2>
+<p>The main VM's disk had been living on a NAS that was throwing read failures and sitting on over a terabyte of space it couldn't give back. The fix was to stop depending on it. I cloned the 150 GiB disk image to local NVMe-backed storage on the node, and four sectors came back zero-filled in the copy — offsets 30360, 30361, 53642 and 73119 MiB. That's a 0.0026% corruption rate, and every one of those sectors landed in unused space, not in anything the filesystem was using.</p>
+<p>I didn't take "unused space" on faith. After boot, root mounted read-write, the filesystem reported zero errors, and every service came up healthy. RAM got trimmed from 16 GB to 12 GB in the same move, since the appliance's disk pressure was no longer a reason to hold that much headroom. Backups now read off healthy local storage instead of a NAS that was actively failing reads.</p>
+<p>The gotcha showed up after I deleted the 150 GB copy back on the appliance to reclaim the space. <code>df</code> reported the same usage before and after. The space didn't come back. I didn't chase it — the whole point of the move was to stop relying on that box — but it's worth knowing that a delete on that appliance isn't a reclaim, it's just a delete.</p>
+<h2>A line passing through a switch read as a connection</h2>
+<p>The other piece of tonight was drawing the lab as it actually is: a LAN topology (gateway, core switch, three nodes, storage, access points, the overlay network) and a cluster-detail view (cluster links, fencing and watchdog state, shared-storage assignments, a table of nodes and guests). The data came from the hourly-generated state snapshot rather than from memory, so the drawing was supposed to reflect what's actually running, not what I remembered building.</p>
+<p>One node has a dashed fallback line in the cluster-detail view. I drew it going straight down toward its real destination, and on the way it happened to pass through the box of a switch that sits off to one side, isolated, with no uplink at all. Visually, a line through a box reads as a line touching a box. It doesn't matter that the line's actual destination is somewhere else — adjacency in a diagram is a claim, and mine was making one I hadn't intended and didn't check for.</p>
+<p>It got caught the way it's supposed to get caught: someone looked at the drawing and asked why that node and that switch were connected. They aren't. The switch has no uplink, full stop, and the diagram was asserting a link that doesn't exist. That's exactly the job a diagram has, to surface a wrong belief before it becomes an assumption someone builds on.</p>
+<p>The fix was two parts. I routed the fallback line around the switch's box instead of through it, and I added an explicit "no direct link" marker on the switch itself, so the absence is stated rather than left for the reader to infer from a gap. Leaving it as silent empty space would have worked until the next person redrew the same section and reintroduced the same line, this time on purpose because it "looked fine before." Whitespace isn't neutral. If a line crosses a box, the reader assumes you meant it to.</p>
+<p>I also recoloured the whole thing — the original black-and-dark-brown palette was hard to read at a glance, and a neutral slate reads better against the node icons.</p>
+<h2>584 pages, five agents, one deliberate gap</h2>
+<p>The last piece was mirroring a documentation site to local Markdown, 584 pages across 6.8 MB and five sections: concepts, tasks, reference, tutorials, setup. I ran five agents in parallel, one per section, because the sections don't depend on each other and wall-clock time was the only cost. Each agent found its own pages from the site's sitemap instead of guessing at links off a nav bar, then pulled the main content, stripped chrome, and kept headings, code blocks, tables and command syntax exactly as published.</p>
+<p>Concepts came back at 187 files and 50,093 lines, tasks at 213 files and 57,850 lines, reference at 118, tutorials at 44, setup at 22. The one deliberate cut was inside reference: the generated API section runs to hundreds of near-identical per-object pages, and mirroring all of them would have made the result harder to search, not easier. I kept the top-level index and wrote the reasoning into the provenance file, so the gap reads as a decision and not as an agent that ran out of steam.</p>
+<p>The provenance also says plainly what it doesn't know: the mirror records a fetch date, not a version. The live site tracks its latest release, so six months from now this copy will be accurate to a day I can name and inaccurate to whatever shipped after it, and there's no way to tell which parts of it have drifted without checking upstream again.</p>
+<p>A 6.8 MB directory isn't something you can hold in working context, so I wrapped it in a small router that maps a question to the file that answers it and reads that file on demand. The router states its own scope, including the part it skipped, for the same reason the diagram now says "no direct link" instead of leaving a gap.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="documentation" href="/blog/?tag=documentation">Documentation</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-08-27.html">← The Validator Was Checking the Same Wrong Path as the Bug</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>
