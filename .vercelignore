@@ -3,3 +3,12 @@
 # Access gate; anything Vercel serves is public and would bypass that gate.
 portal-src/
 archive/
+
+# Blog version variants. Only the SUMMARY of each post is published, and it is
+# published as the rendered page under blog/posts/. The .original.md and
+# .tldr.md files here are held back until the v3 design ships its
+# tl;dr / summary / original switcher. Vercel serves every static file it is
+# given, so without this line these would be publicly fetchable as raw
+# markdown at /blog/versions/<date>.original.md. Tracked in git on purpose —
+# excluded from the deploy, not from version control.
+blog/versions/
