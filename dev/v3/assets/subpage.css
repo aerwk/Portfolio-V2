@@ -823,19 +823,17 @@ main.page{
    node/core/memory counts and the Proxmox VE version — lead the section,
    ahead of the live Docker stat-row (Eric asked for cluster first, then
    stacks, then tooling, under one "HomeLab" label rather than three). These
-   four use the same .stat-tile visual family but deliberately carry NO
-   data-stat attribute: the pre-commit hook's sed only ever targets
+   four, plus the VLAN-count tile appended after Networks in the second row,
+   use the same .stat-tile visual family but deliberately carry NO data-stat
+   attribute: the pre-commit hook's sed only ever targets
    data-stat="stacks|containers|images|volumes|networks", and giving a static
    value a data-stat key (even a new one) would misleadingly imply it's
-   hook-managed when it isn't. No sub-label separates the two .stat-row groups
-   any more — .stat-row's own 24u top margin is what gives the live-stat row
-   its gap under the VLANs caption line. */
-.page .cluster-vlans{
-  margin-top:calc(12 * var(--n5i-u));
-  font:400 calc(12 * var(--n5i-u))/1.25 var(--n5i-mono);
-  letter-spacing:-0.05em;
-  color:var(--bone-55);
-}
+   hook-managed when it isn't. The VLAN names list that used to run as a
+   caption line under the cluster row was dropped (Eric, 2026-09-09) in favor
+   of a plain "5 VLANs" tile sitting next to "10 Networks" — no separate
+   .cluster-vlans component needed any more. No sub-label separates the two
+   .stat-row groups — .stat-row's own 24u top margin is what gives the
+   live-stat row its gap under the cluster row. */
 
 /* ---------- /about/ only: tool marquee ----------
    Ports the convention already live on home/index.html's "Technology stack"
