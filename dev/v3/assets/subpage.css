@@ -779,3 +779,77 @@ main.page{
 #blog-post-view[hidden],
 #blog-list-view[hidden],
 #blog-listing-view[hidden]{ display:none; }
+
+/* ---------- /about/ only: telemetry stat tiles ----------
+   Reuses the exact data-stat markup convention the pre-commit hook's sed
+   depends on (data-stat="KEY"><b>N</b>, pulled from home/index.html's
+   .mtile tiles) but re-themed to the edge-draft telemetry-cluster look
+   described in ds-tab.html § Instruments (mono uppercase labels, tabular
+   nums) instead of the old card/shadow treatment — no cards, no shadows,
+   no gradients, consistent with the rest of this stylesheet. */
+.stat-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:calc(28 * var(--n5i-u)) calc(36 * var(--n5i-u));
+  margin-top:calc(24 * var(--n5i-u));
+  max-width:72ch;
+}
+.stat-tile{ display:flex; flex-direction:column; gap:calc(2 * var(--n5i-u)); }
+.stat-tile b{
+  font:400 calc(24 * var(--n5i-u))/1.1 var(--n5i-sans);
+  font-variant-numeric:tabular-nums;
+  color:var(--bone);
+}
+.stat-tile span{
+  font:400 calc(12 * var(--n5i-u))/1.25 var(--n5i-mono);
+  letter-spacing:-0.05em;
+  text-transform:uppercase;
+  color:var(--bone-55);
+  white-space:nowrap;
+}
+
+/* ---------- /about/ only: tool marquee ----------
+   Ports the convention already live on home/index.html's "Technology stack"
+   band (.marq/.marq-track: doubled track, edge-masked, infinite translateX
+   loop, decorative aria-hidden container) — re-themed to this stylesheet's
+   mono/Bone-55 telemetry-line type instead of home's sans/grey-dim, since
+   the logo SVGs already ship a fixed grey fill (no invert filter needed
+   here). A deliberate, Eric-approved exception to the "no icons anywhere
+   except the bottom-right social row" rule (see ds-tab.html) — the marquee
+   stays decorative/aria-hidden and is paired with a .sr-only text list so
+   the tool names are still announced to assistive tech. */
+.marq{
+  overflow:hidden;
+  max-width:72ch;
+  margin-top:calc(24 * var(--n5i-u));
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+}
+.marq-track{
+  display:flex;
+  gap:calc(32 * var(--n5i-u));
+  width:max-content;
+  animation:n5i-marq 32s linear infinite;
+}
+@keyframes n5i-marq{
+  from{ transform:translateX(0); }
+  to{ transform:translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce){
+  .marq-track{ animation:none; }
+}
+.marq-track span{
+  display:inline-flex;
+  align-items:center;
+  gap:calc(6 * var(--n5i-u));
+  font:400 calc(12 * var(--n5i-u))/1.25 var(--n5i-mono);
+  letter-spacing:-0.05em;
+  text-transform:uppercase;
+  color:var(--bone-55);
+  white-space:nowrap;
+}
+.marq-track img{
+  width:calc(16 * var(--n5i-u));
+  height:calc(16 * var(--n5i-u));
+  display:block;
+}

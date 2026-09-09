@@ -21,7 +21,7 @@
 set -uo pipefail
 
 cd "$(git rev-parse --show-toplevel)" 2>/dev/null || exit 0
-TARGETS="home/index.html lab/index.html portfolio/homelab/index.html"
+TARGETS="home/index.html lab/index.html portfolio/homelab/index.html dev/v3/about/index.html"
 
 if [ "${SKIP_STAT_HOOK:-0}" = "1" ]; then
   echo "pre-commit: SKIP_STAT_HOOK=1 — leaving data-stat tiles untouched." >&2

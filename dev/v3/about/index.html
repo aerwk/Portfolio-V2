@@ -43,25 +43,131 @@
 <main class="page" id="main">
   <p class="label">About</p>
   <h1>Eric Li</h1>
-  <p class="lede">I design, deploy, and maintain real infrastructure. My homelab runs five isolated VLANs, 32 containerised services on a three-node Proxmox VE cluster with 2-of-3 quorum, and a full monitoring stack 24/7, with guests spread across all three nodes so one machine failing is not an outage — every piece built and documented from scratch.</p>
+  <p class="lede">I run a self-hosted network and server stack — UniFi, Proxmox, containers — that 29 friends and family use, putting in 5,769 hours over the last year between them. I work in the mining industry today; I'm building the certifications and hands-on depth to move into network engineering and site reliability work next.</p>
 
   <section>
-    <p class="label">About Me</p>
-    <p>I'm moving into tech full-time by 2027, focused on networking and data science, and I'd rather prove it with systems that run than a job title I don't hold yet.</p>
-    <ul class="list">
-      <li>
-        <div class="row"><span class="title">10</span><span class="status">Projects</span></div>
-        <p class="sentence">Portfolio builds plus four production networks deployed.</p>
-      </li>
-      <li>
-        <div class="row"><span class="title">4</span><span class="status">Certifications</span></div>
-        <p class="sentence">Industry credentials, in progress.</p>
-      </li>
-      <li>
-        <div class="row"><span class="title">3</span><span class="status">Years Hands-On</span></div>
-        <p class="sentence">Self-directed, building and breaking real systems.</p>
-      </li>
-    </ul>
+    <p class="label">Live</p>
+    <div class="stat-row">
+      <div class="stat-tile" data-stat="stacks"><b>5</b><span>Stacks</span></div>
+      <div class="stat-tile" data-stat="containers"><b>21</b><span>Containers</span></div>
+      <div class="stat-tile" data-stat="images"><b>61</b><span>Images</span></div>
+      <div class="stat-tile" data-stat="volumes"><b>5</b><span>Volumes</span></div>
+      <div class="stat-tile" data-stat="networks"><b>10</b><span>Networks</span></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="label">Tooling</p>
+    <div class="marq" aria-hidden="true">
+      <div class="marq-track">
+        <span><img src="/dev/v3/assets/logos/bazarr.svg" alt="" width="20" height="20" loading="lazy">Bazarr</span><span><img src="/dev/v3/assets/logos/cloudflare.svg" alt="" width="20" height="20" loading="lazy">Cloudflare</span><span><img src="/dev/v3/assets/logos/docker.svg" alt="" width="20" height="20" loading="lazy">Docker</span><span><img src="/dev/v3/assets/logos/forgejo.svg" alt="" width="20" height="20" loading="lazy">Forgejo</span><span><img src="/dev/v3/assets/logos/grafana.svg" alt="" width="20" height="20" loading="lazy">Grafana</span><span><img src="/dev/v3/assets/logos/homeassistant.svg" alt="" width="20" height="20" loading="lazy">Home Assistant</span><span><img src="/dev/v3/assets/logos/immich.svg" alt="" width="20" height="20" loading="lazy">Immich</span><span><img src="/dev/v3/assets/logos/linux.svg" alt="" width="20" height="20" loading="lazy">Linux</span><span><img src="/dev/v3/assets/logos/loki.svg" alt="" width="20" height="20" loading="lazy">Loki</span><span><img src="/dev/v3/assets/logos/n8n.svg" alt="" width="20" height="20" loading="lazy">n8n</span><span><img src="/dev/v3/assets/logos/nginx.svg" alt="" width="20" height="20" loading="lazy">Nginx</span><span><img src="/dev/v3/assets/logos/overseerr.svg" alt="" width="20" height="20" loading="lazy">Overseerr</span><span><img src="/dev/v3/assets/logos/portainer.svg" alt="" width="20" height="20" loading="lazy">Portainer</span><span><img src="/dev/v3/assets/logos/postgresql.svg" alt="" width="20" height="20" loading="lazy">PostgreSQL</span><span><img src="/dev/v3/assets/logos/prometheus.svg" alt="" width="20" height="20" loading="lazy">Prometheus</span><span><img src="/dev/v3/assets/logos/prowlarr.svg" alt="" width="20" height="20" loading="lazy">Prowlarr</span><span><img src="/dev/v3/assets/logos/proxmox.svg" alt="" width="20" height="20" loading="lazy">Proxmox</span><span><img src="/dev/v3/assets/logos/proxmoxbackup.svg" alt="" width="20" height="20" loading="lazy">Proxmox Backup</span><span><img src="/dev/v3/assets/logos/radarr.svg" alt="" width="20" height="20" loading="lazy">Radarr</span><span><img src="/dev/v3/assets/logos/redis.svg" alt="" width="20" height="20" loading="lazy">Redis</span><span><img src="/dev/v3/assets/logos/sonarr.svg" alt="" width="20" height="20" loading="lazy">Sonarr</span><span><img src="/dev/v3/assets/logos/stirlingpdf.svg" alt="" width="20" height="20" loading="lazy">Stirling-PDF</span><span><img src="/dev/v3/assets/logos/tailscale.svg" alt="" width="20" height="20" loading="lazy">Tailscale</span><span><img src="/dev/v3/assets/logos/tautulli.svg" alt="" width="20" height="20" loading="lazy">Tautulli</span><span><img src="/dev/v3/assets/logos/unifi.svg" alt="" width="20" height="20" loading="lazy">UniFi</span><span><img src="/dev/v3/assets/logos/uptimekuma.svg" alt="" width="20" height="20" loading="lazy">Uptime Kuma</span>
+        <span><img src="/dev/v3/assets/logos/bazarr.svg" alt="" width="20" height="20" loading="lazy">Bazarr</span><span><img src="/dev/v3/assets/logos/cloudflare.svg" alt="" width="20" height="20" loading="lazy">Cloudflare</span><span><img src="/dev/v3/assets/logos/docker.svg" alt="" width="20" height="20" loading="lazy">Docker</span><span><img src="/dev/v3/assets/logos/forgejo.svg" alt="" width="20" height="20" loading="lazy">Forgejo</span><span><img src="/dev/v3/assets/logos/grafana.svg" alt="" width="20" height="20" loading="lazy">Grafana</span><span><img src="/dev/v3/assets/logos/homeassistant.svg" alt="" width="20" height="20" loading="lazy">Home Assistant</span><span><img src="/dev/v3/assets/logos/immich.svg" alt="" width="20" height="20" loading="lazy">Immich</span><span><img src="/dev/v3/assets/logos/linux.svg" alt="" width="20" height="20" loading="lazy">Linux</span><span><img src="/dev/v3/assets/logos/loki.svg" alt="" width="20" height="20" loading="lazy">Loki</span><span><img src="/dev/v3/assets/logos/n8n.svg" alt="" width="20" height="20" loading="lazy">n8n</span><span><img src="/dev/v3/assets/logos/nginx.svg" alt="" width="20" height="20" loading="lazy">Nginx</span><span><img src="/dev/v3/assets/logos/overseerr.svg" alt="" width="20" height="20" loading="lazy">Overseerr</span><span><img src="/dev/v3/assets/logos/portainer.svg" alt="" width="20" height="20" loading="lazy">Portainer</span><span><img src="/dev/v3/assets/logos/postgresql.svg" alt="" width="20" height="20" loading="lazy">PostgreSQL</span><span><img src="/dev/v3/assets/logos/prometheus.svg" alt="" width="20" height="20" loading="lazy">Prometheus</span><span><img src="/dev/v3/assets/logos/prowlarr.svg" alt="" width="20" height="20" loading="lazy">Prowlarr</span><span><img src="/dev/v3/assets/logos/proxmox.svg" alt="" width="20" height="20" loading="lazy">Proxmox</span><span><img src="/dev/v3/assets/logos/proxmoxbackup.svg" alt="" width="20" height="20" loading="lazy">Proxmox Backup</span><span><img src="/dev/v3/assets/logos/radarr.svg" alt="" width="20" height="20" loading="lazy">Radarr</span><span><img src="/dev/v3/assets/logos/redis.svg" alt="" width="20" height="20" loading="lazy">Redis</span><span><img src="/dev/v3/assets/logos/sonarr.svg" alt="" width="20" height="20" loading="lazy">Sonarr</span><span><img src="/dev/v3/assets/logos/stirlingpdf.svg" alt="" width="20" height="20" loading="lazy">Stirling-PDF</span><span><img src="/dev/v3/assets/logos/tailscale.svg" alt="" width="20" height="20" loading="lazy">Tailscale</span><span><img src="/dev/v3/assets/logos/tautulli.svg" alt="" width="20" height="20" loading="lazy">Tautulli</span><span><img src="/dev/v3/assets/logos/unifi.svg" alt="" width="20" height="20" loading="lazy">UniFi</span><span><img src="/dev/v3/assets/logos/uptimekuma.svg" alt="" width="20" height="20" loading="lazy">Uptime Kuma</span>
+      </div>
+    </div>
+    <p class="sr-only">Tools and platforms: Bazarr, Cloudflare, Docker, Forgejo, Grafana, Home Assistant, Immich, Linux, Loki, n8n, Nginx, Overseerr, Portainer, PostgreSQL, Prometheus, Prowlarr, Proxmox, Proxmox Backup, Radarr, Redis, Sonarr, Stirling-PDF, Tailscale, Tautulli, UniFi, Uptime Kuma.</p>
+  </section>
+
+  <section>
+    <button type="button" class="pill acc-trigger" aria-expanded="false" aria-controls="panel-goal" id="trig-goal" data-acc-trigger data-acc-group="about">
+      <span class="pill-l">Goal<svg class="acc-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      <span class="pill-c" aria-hidden="true">Goal<svg class="acc-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+    </button>
+    <div class="acc-panel" id="panel-goal" role="region" aria-labelledby="trig-goal" inert>
+      <div class="prose">
+        <p>I'm moving from the mining industry into network engineering, with site reliability engineering and DevOps as the next step after that. The infrastructure I run at home — routing, virtualization, containers, monitoring — isn't a hobby I'm describing after the fact; it's the same stack I'm aiming to work on professionally, just without a job title attached yet. Analysis and automation (PowerBI, spreadsheets) are part of that toolkit, not a separate direction — they're how I've already been solving problems at work, and they carry straight over into infrastructure automation.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <button type="button" class="pill acc-trigger" aria-expanded="false" aria-controls="panel-skills" id="trig-skills" data-acc-trigger data-acc-group="about">
+      <span class="pill-l">Skills I'm Building<svg class="acc-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      <span class="pill-c" aria-hidden="true">Skills I'm Building<svg class="acc-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+    </button>
+    <div class="acc-panel" id="panel-skills" role="region" aria-labelledby="trig-skills" inert>
+      <div class="prose">
+        <p>Framed against the areas the industry itself uses (network engineering, Linux administration, containers/orchestration, and core security) rather than invented categories — a mix of what's already been run hands-on at home and what's next on the list.</p>
+
+        <h2>Networking</h2>
+        <ul>
+          <li>Subnetting and IP addressing</li>
+          <li>VLANs and switching</li>
+          <li>Static and dynamic routing</li>
+          <li>DNS and DHCP</li>
+          <li>Firewalls and reverse proxying</li>
+        </ul>
+
+        <h2>Linux &amp; systems administration</h2>
+        <ul>
+          <li>Filesystems, permissions, and package management</li>
+          <li>Process and service management (systemd)</li>
+          <li>Log management and troubleshooting</li>
+          <li>Shell scripting for repeatable tasks</li>
+        </ul>
+
+        <h2>Containers &amp; orchestration</h2>
+        <ul>
+          <li>Docker: images, Compose, container networking</li>
+          <li>Container security and image hygiene</li>
+          <li>Kubernetes fundamentals: pods, deployments, services, networking</li>
+          <li>Building toward cluster administration on hardware bought specifically for it</li>
+        </ul>
+
+        <h2>Infrastructure operations</h2>
+        <ul>
+          <li>Virtualization and hypervisor management (Proxmox)</li>
+          <li>Monitoring and observability (metrics, logs, dashboards)</li>
+          <li>Backup and recovery planning</li>
+          <li>Infrastructure-as-code and configuration management, as the next layer on top of what's already automated by hand</li>
+        </ul>
+
+        <h2>Security fundamentals</h2>
+        <ul>
+          <li>Firewall policy and network segmentation</li>
+          <li>Access control and encryption basics</li>
+          <li>Intrusion detection/prevention concepts</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <button type="button" class="pill acc-trigger" aria-expanded="false" aria-controls="panel-certs" id="trig-certs" data-acc-trigger data-acc-group="about">
+      <span class="pill-l">Certification Roadmap<svg class="acc-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      <span class="pill-c" aria-hidden="true">Certification Roadmap<svg class="acc-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+    </button>
+    <div class="acc-panel" id="panel-certs" role="region" aria-labelledby="trig-certs" inert>
+      <div class="prose">
+        <p>I don't hold any certifications yet. This is the order I'm working through them in, matched to the skills above — not a list of credentials I already have.</p>
+        <ol>
+          <li>CompTIA Network+</li>
+          <li>CompTIA Linux+</li>
+          <li>CompTIA Security+</li>
+          <li>Cisco CCNA</li>
+          <li>Cisco CCNP</li>
+          <li>CKA (Certified Kubernetes Administrator)</li>
+        </ol>
+        <p>The CKA sits last because it needs real cluster hardware to study on properly — which is most of why that hardware exists now.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <button type="button" class="pill acc-trigger" aria-expanded="false" aria-controls="panel-background" id="trig-background" data-acc-trigger data-acc-group="about">
+      <span class="pill-l">Background<svg class="acc-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      <span class="pill-c" aria-hidden="true">Background<svg class="acc-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+    </button>
+    <div class="acc-panel" id="panel-background" role="region" aria-labelledby="trig-background" inert>
+      <div class="prose">
+        <p>I've been building PCs since I was 13. That turned into building racing simulators, then building PCs for other people, then — because I kept getting asked what to buy and for how much — spreadsheets to work out pricing for friends and family. None of that was infrastructure work yet, but it was the same instinct: look at a system, find where it's inefficient, fix it.</p>
+        <p>The homelab started as an attempt to cut stacked subscription costs, north of $200 a month at the worst point. Untangling that turned into a genuinely long rabbit hole: standing up a self-hosted Plex library, then Radarr, Sonarr, and Prowlarr to manage what fed it, then a Discord bot to handle requests so I wasn't doing it by hand. I opened the library up to friends and family rather than making everyone solve the same problem separately — 29 people use it now, 23 of them regularly, and between them they've put in 5,769 hours over the past year.</p>
+        <p>Running that for other people meant it had to actually stay up, which is where the networking side started. I'd already been setting up networks for friends and family, and at home I was running ASUS AiMesh. Adding IoT devices meant adding an app per device to manage them, so I picked up a Raspberry Pi 5 to run Home Assistant and put everything behind one interface instead. The mesh setup led me straight into bufferbloat, which is what pushed me to UniFi — and once I was there, it made sense to move camera coverage from Swann to UniFi Protect as well, for one system instead of two.</p>
+        <p>The Pi 5 ran out of headroom for what I was asking of it, so I moved onto a secondhand micro PC running Linux and containers. That box is where VLANs, DNS, and network security stopped being theory — I needed them to keep services separated and reachable at the same time. From there I built out a home server running open-source alternatives to the hosted tools I'd been paying for.</p>
+        <p>Alongside that, I started digitising old family VHS tapes so relatives could watch recordings they otherwise couldn't play back anymore. Kept at full quality for future re-encoding, that filled about 8TB — 4TB internal, 4TB external — fast, which is what justified a proper NAS and NAS-rated drives rather than another drive bolted onto a desktop.</p>
+        <p>Container count kept climbing and compute didn't keep up, so I went looking for cheap secondhand micro PCs to get hands-on with Proxmox properly. Learning what Kubernetes actually does reframed the goal again: stop working around limited hardware and get hardware that can run a cluster properly. That hardware is what I've been assembling since — and getting the knowledge behind it certified is the roadmap above.</p>
+        <p>My own framing: a "tragic but enlightening" pursuit, mostly driven by trying to get out from under a subscription-saturated way of paying for things.</p>
+      </div>
+    </div>
   </section>
 </main>
 
