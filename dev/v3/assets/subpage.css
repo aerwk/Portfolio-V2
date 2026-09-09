@@ -299,6 +299,11 @@ main.page{
   margin-top:calc(12 * var(--n5i-u));
   max-width:40ch;
 }
+/* /about/ only (Eric, 2026-09-09 reorder): Goal now sits between h1 and .lede
+   (Goal, then the About summary, then HomeLab). .lede's 12u top margin above
+   was tuned to sit right under h1 — directly after a full section it reads
+   too tight, so match the section rhythm (64u) when .lede follows one instead. */
+.page section + .lede{ margin-top:calc(64 * var(--n5i-u)); }
 .page p{ max-width:40ch; }
 
 .page section{ margin-top:calc(64 * var(--n5i-u)); }
@@ -812,6 +817,23 @@ main.page{
   text-transform:uppercase;
   color:var(--bone-55);
   white-space:nowrap;
+}
+
+/* /about/ "The Cluster" (Eric, 2026-09-09): static homelab-cluster facts —
+   node/core/memory counts and the Proxmox VE version — added below the live
+   Docker stat-row above. These four use the same .stat-tile visual family but
+   deliberately carry NO data-stat attribute: the pre-commit hook's sed only
+   ever targets data-stat="stacks|containers|images|volumes|networks", and
+   giving a static value a data-stat key (even a new one) would misleadingly
+   imply it's hook-managed when it isn't. The "The Cluster" .label above this
+   second .stat-row is what visually separates the two groups; .stat-row's own
+   24u top margin already gives it the right gap under the label. */
+.page .stat-row + .label{ margin-top:calc(24 * var(--n5i-u)); }
+.page .cluster-vlans{
+  margin-top:calc(12 * var(--n5i-u));
+  font:400 calc(12 * var(--n5i-u))/1.25 var(--n5i-mono);
+  letter-spacing:-0.05em;
+  color:var(--bone-55);
 }
 
 /* ---------- /about/ only: tool marquee ----------
