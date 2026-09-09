@@ -244,7 +244,16 @@ function __n5ReadPostRows(){
    hand-written; the blog swap IIFE further below (which binds the leaf clicks) runs later
    still, so it too sees the finished tree. window.__n5RebuildBlogTree exposes the builder
    itself (idempotent — clears and rebuilds the whole <nav> each call) purely as a test hook
-   for confirming the auto-update behaviour without a real deploy. */
+   for confirming the auto-update behaviour without a real deploy.
+
+   Eric, 2026-09-09: "the tree does not work for a mobile page... The nav tree will have to
+   be replaced by a drop down menu to select year, month and day." buildMobileNav() below
+   (also called on every rebuild, same window.__n5RebuildBlogTree hook) is that replacement:
+   three <select>s, populated from groupPosts(readPosts()) — the exact same call buildTree()
+   itself makes, a few lines down — so the tree and the selects are two renderings of one
+   read, never two reads that could disagree. Which of the two actually paints is a pure CSS
+   decision (subpage.css `@media (max-width:767px)`), not a JS one — see that stylesheet's
+   "Mobile Year/Month/Day archive selector" comment. */
 (function(){
   var tree = document.querySelector('[data-blog-tree]');
   var listView = document.getElementById('blog-list-view');
@@ -415,8 +424,174 @@ function __n5ReadPostRows(){
     tree.appendChild(root);
   }
 
-  buildTree();
-  window.__n5RebuildBlogTree = buildTree;
+  /* Mobile cascading Year -> Month -> Day selector (Eric, 2026-09-09: "the tree does
+     not work for a mobile page... The nav tree will have to be replaced by a drop
+     down menu to select year, month and day"). A parallel, CSS-swapped sibling to the
+     tree built above, not a rewrite of it — [data-blog-mobile-nav] and [data-blog-tree]
+     coexist in the DOM at all times (see the "Mobile Year/Month/Day archive selector"
+     comment in subpage.css); this function only fills the three <select>s, off the
+     same groupPosts(readPosts()) call buildTree() itself just made, so the two can
+     never end up listing a different set of years/months/days. No-op (silently, like
+     every other guard in this file) if blog.html's markup for it isn't present —
+     lets this run harmlessly on any future page that reuses this IIFE without the
+     mobile markup.
+
+     Navigation: reuses the site's ONE real post-navigation mechanism rather than
+     inventing a second — see showPost()/the [data-post-nav] delegate in the swap IIFE
+     below. A <select>'s 'change' event has no [data-post-nav] ancestor of its own to
+     piggyback that delegate on, so the hidden, already-DOM-connected proxy anchor
+     next to these selects (data-blog-mobile-proxy in blog.html) gets stamped with the
+     resolved post id and .click()'d instead — a *connected* element, deliberately:
+     dispatching .click() on a detached node never bubbles as far as `document`, so a
+     freshly created-but-unattached <a> would silently do nothing here.
+
+     Resolution rule for Year/Month changes (Eric's "avoid a dead/broken state" —
+     this exact wording, and the worked example, are what's implemented): changing
+     Year or Month is a coarser choice than whatever the visitor had selected before,
+     so each one resolves to the LATEST post inside the newly chosen scope — the same
+     "always show latest" principle the landing view itself uses (getLatestId(), in
+     the swap IIFE below). Year change -> latest month in that year -> latest day in
+     that month. Month change (year unchanged) -> latest day in that month. Day change
+     is the final, most specific field — it navigates immediately, no further
+     resolution needed, standard cascading-select UX (no separate "Go" button).
+
+     window.__n5SyncMobileNav (set at the bottom of this function) is the other half
+     of "the two must never fight over which post is current": renderPost(), the swap
+     IIFE's single post-rendering choke point (used by every trigger — landing init,
+     tree-leaf clicks, prev/next, listing rows, AND this selector's own proxy-click
+     navigation), calls it after every render so these three <select>s always reflect
+     whatever post is actually showing, however it got there — the requirement being
+     that rotating a phone past 768px must show the tree pointing at the same post the
+     selects last showed, never a second, independently-tracked notion of "current". */
+  var MOBILE_NAV_ID_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+  function buildMobileNav(){
+    var nav = document.querySelector('[data-blog-mobile-nav]');
+    if (!nav) return;
+    var yearSel = nav.querySelector('[data-blog-nav-year]');
+    var monthSel = nav.querySelector('[data-blog-nav-month]');
+    var daySel = nav.querySelector('[data-blog-nav-day]');
+    var proxy = nav.querySelector('[data-blog-mobile-proxy]');
+    if (!yearSel || !monthSel || !daySel || !proxy) return;
+
+    var years = groupPosts(readPosts()); // ascending at every level, same as buildTree()
+
+    function findYear(y){
+      for (var i = 0; i < years.length; i++) if (years[i].year === y) return years[i];
+      return null;
+    }
+    function findMonth(yearNode, m){
+      if (!yearNode) return null;
+      for (var i = 0; i < yearNode.months.length; i++) if (yearNode.months[i].month === m) return yearNode.months[i];
+      return null;
+    }
+
+    /* Native <select>s only (no custom widget) — but a raw post title can run to
+       80+ characters, and an unbounded <option> can force a phone's native picker
+       overlay absurdly wide. There is no reliable way to measure that OS-drawn
+       overlay's width from here (it is not part of the page's own layout box, even
+       in Playwright), so 32 characters is a conservative, judgement-call cap: short
+       enough to keep "DD — Title…" under ~40 characters total on the narrowest
+       phones tested (390px), long enough that most of this blog's real titles
+       (see #blog-list-view above) still read as distinct entries rather than
+       identical truncated stubs. */
+    var TITLE_TRUNCATE_AT = 32;
+    function truncateTitle(title){
+      if (title.length <= TITLE_TRUNCATE_AT) return title;
+      return title.slice(0, TITLE_TRUNCATE_AT - 1) + '…';
+    }
+
+    function fillSelect(sel, items, valueFn, labelFn){
+      sel.innerHTML = '';
+      items.forEach(function(item){
+        var opt = document.createElement('option');
+        opt.value = valueFn(item);
+        opt.textContent = labelFn(item);
+        sel.appendChild(opt);
+      });
+    }
+    function fillYearOptions(){
+      fillSelect(yearSel, years, function(y){ return y.year; }, function(y){ return y.year; });
+    }
+    function fillMonthOptions(yearNode){
+      var months = yearNode ? yearNode.months : [];
+      fillSelect(monthSel, months, function(mo){ return mo.month; },
+        function(mo){ return MONTH_NAMES[parseInt(mo.month, 10) - 1] || mo.month; });
+    }
+    function fillDayOptions(monthNode){
+      var leaves = monthNode ? monthNode.leaves : [];
+      fillSelect(daySel, leaves, function(p){ return p.id; },
+        function(p){ return p.day + ' — ' + truncateTitle(p.title); });
+    }
+
+    /* Paints all three selects to reflect a known-good post id with no cascading
+       side effects and no navigation — used for the initial paint below AND as
+       window.__n5SyncMobileNav, the external resync hook renderPost() calls after
+       every render (see the top-of-function comment). */
+    function setSelectsTo(id){
+      var m = MOBILE_NAV_ID_RE.exec(id || '');
+      if (!m) return;
+      var yearNode = findYear(m[1]);
+      fillMonthOptions(yearNode);
+      var monthNode = findMonth(yearNode, m[2]);
+      fillDayOptions(monthNode);
+      yearSel.value = m[1];
+      monthSel.value = m[2];
+      daySel.value = id;
+    }
+
+    function navigate(id){
+      proxy.setAttribute('data-post-nav', id);
+      proxy.click();
+    }
+
+    yearSel.addEventListener('change', function(){
+      var yearNode = findYear(yearSel.value);
+      fillMonthOptions(yearNode);
+      var latestMonth = yearNode ? yearNode.months[yearNode.months.length - 1] : null;
+      if (latestMonth) monthSel.value = latestMonth.month;
+      fillDayOptions(latestMonth);
+      var latestPost = latestMonth ? latestMonth.leaves[latestMonth.leaves.length - 1] : null;
+      if (latestPost) { daySel.value = latestPost.id; navigate(latestPost.id); }
+    });
+
+    monthSel.addEventListener('change', function(){
+      var yearNode = findYear(yearSel.value);
+      var monthNode = findMonth(yearNode, monthSel.value);
+      fillDayOptions(monthNode);
+      var latestPost = monthNode ? monthNode.leaves[monthNode.leaves.length - 1] : null;
+      if (latestPost) { daySel.value = latestPost.id; navigate(latestPost.id); }
+    });
+
+    daySel.addEventListener('change', function(){
+      if (daySel.value) navigate(daySel.value);
+    });
+
+    fillYearOptions();
+    window.__n5SyncMobileNav = setSelectsTo;
+
+    /* Initial paint: if a post is already marked current on the tree (a rebuild
+       happening after the page has already navigated somewhere), reflect that;
+       otherwise default to the latest post in the newly built data, matching the
+       tree/landing's own "always show latest" default on a fresh load. */
+    var currentLeaf = document.querySelector('[data-blog-leaf][aria-current="page"]');
+    var initialId = currentLeaf ? currentLeaf.getAttribute('data-post-id') : null;
+    if (!initialId) {
+      var lastYear = years[years.length - 1];
+      var lastMonth = lastYear ? lastYear.months[lastYear.months.length - 1] : null;
+      var lastPost = lastMonth ? lastMonth.leaves[lastMonth.leaves.length - 1] : null;
+      initialId = lastPost ? lastPost.id : null;
+    }
+    if (initialId) setSelectsTo(initialId);
+  }
+
+  function rebuildBlogNav(){
+    buildTree();
+    buildMobileNav();
+  }
+
+  rebuildBlogNav();
+  window.__n5RebuildBlogTree = rebuildBlogNav;
 })();
 
 /* Projects page accordion: Completed / In Progress / Upcoming, single-open.
@@ -665,13 +840,24 @@ function __n5ReadPostRows(){
   /* The one rendering path: fills the breadcrumb + body + prev/next for a given
      post id. Used by the landing state (latest post), tree-leaf clicks, prev/next
      clicks, and listing-row clicks alike. asSub demotes the headings for the
-     embedded-under-the-landing case. */
+     embedded-under-the-landing case.
+     Eric, 2026-09-09 (mobile Year/Month/Day selector): every one of those triggers —
+     PLUS the mobile selector's own proxy-click navigation, which also lands here via
+     showPost() — funnels through this one function, so it's the single correct place
+     to keep the mobile <select>s in sync with whatever post just got rendered.
+     window.__n5SyncMobileNav (defined in the tree-builder IIFE above, only when
+     blog.html's mobile-nav markup exists) repaints those three selects to match id;
+     this is the other half of "the tree and the selects must never disagree about
+     the current post" — see that IIFE's buildMobileNav() comment for the full
+     reasoning. Guarded on the hook existing so this line is a silent no-op on any
+     page without the mobile markup (post.html, or a future page reusing this IIFE). */
   function renderPost(id, asSub){
     var ok = renderFull(id) || renderExcerpt(id);
     if (ok) {
       buildCrumb(id);
       setHeadingLevels(asSub);
       insertPrevNext(id);
+      if (window.__n5SyncMobileNav) window.__n5SyncMobileNav(id);
     }
     return ok;
   }

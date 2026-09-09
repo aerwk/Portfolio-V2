@@ -677,6 +677,82 @@ main.page{
   .tree-leaf:focus-visible .tree-title{ transition:none; }
 }
 
+/* ---------- Mobile Year/Month/Day archive selector (/blog/ only; <768px) ----------
+   Eric, 2026-09-09: "the tree does not work for a mobile page. Is it possible to do
+   a nav tree. The nav tree will have to be replaced by a drop down menu to select
+   year, month and day." The three-level accordion above reads fine in a 147px-capped
+   desktop column, but the same ├──/└── glyph rows are a poor fit once main.page's
+   own width becomes the constraint — a phone has no 147px side column to put a tree
+   in, and shrinking the tree's type further would make it untappable. Rather than
+   reflow .blog-tree's own markup at small widths, subpage.js builds a second,
+   independent selector (native <select>s — see [data-blog-mobile-nav] in blog.html
+   and the "Mobile cascading Year/Month/Day selector" comment in subpage.js) from the
+   exact same grouped post data the tree itself is built from, so the two can never
+   disagree about what years/months/days exist. This stylesheet is the ONLY thing
+   that decides which of the two paints — no JS rebuild on resize, exactly like
+   `.tr nav`'s own flip between the vertical-desktop and flattened-mobile layouts a
+   few rules up. `.blog-mobile-nav{display:none}` is the unconditional (outside any
+   media query) desktop default: a fully display:none subtree is invisible AND out of
+   the Tab order per the HTML spec, so nothing extra (inert, aria-hidden) is needed to
+   keep three <select>s a keyboard user would otherwise stumble over out of a desktop
+   Tab sequence.
+   [data-blog-mobile-nav] lives OUTSIDE #c-tl's n5i-cluster in the markup on purpose,
+   not nested next to .blog-tree the way the desktop reader might expect — that
+   cluster is a shrink-to-fit flex column pinned to the wordmark's own width
+   (--n5i-lockup-w, 147px below 1440px — see the .blog-tree comment above for the
+   full derivation), and three <select>s full of real post titles need the phone's
+   actual content width, not a 147px sliver. Giving the cluster itself width:100% to
+   fit them would blow the wordmark logo up to full viewport width too, which nothing
+   asked for and nothing else in this design wants. Placed as its own top-level
+   sibling of #c-tl/#c-tr in the body instead: order:1 below ties it with .tl (the
+   corner div) in the mobile flex column below, and its DOM position — right after
+   #c-tl's closing tag, before #c-tr — breaks that tie in its favour, landing it
+   exactly where the tree used to sit: under the wordmark, above the header nav pills. */
+.blog-mobile-nav{ display:none; }
+
+@media (max-width: 767px){
+  .blog-tree{ display:none; }
+  .blog-mobile-nav{
+    display:flex;
+    flex-direction:column;
+    gap:calc(8 * var(--n5i-u));
+    width:100%;
+    max-width:420px; /* readable select rows without stretching edge-to-edge on wide phones */
+    padding:0 var(--n5i-inset-x);
+    order:1;
+  }
+  .mnav-field{ display:flex; flex-direction:column; gap:calc(4 * var(--n5i-u)); }
+  .mnav-select{
+    width:100%;
+    background:var(--carbon);
+    color:var(--bone);
+    border:1px solid var(--vein);
+    border-radius:2px;
+    padding:calc(8 * var(--n5i-u)) calc(10 * var(--n5i-u));
+    font:400 calc(14 * var(--n5i-u))/1.3 var(--n5i-sans);
+  }
+  .mnav-select:hover,
+  .mnav-select:focus-visible{ border-color:var(--violet); }
+}
+
+/* Visually-hidden but still-announced label text (the three <select>s above need a
+   real <label> each for a screen reader / form-mode assistive tech, per the task's
+   "this is a form control, not a decorative element" — but a visible "Year"/"Month"/
+   "Day" caption above each select would just repeat what the select's own selected
+   option already says). Standard 1px-clip technique, not display:none (which VoiceOver
+   and friends *do* skip) and not the .sr-only-on-focus "skip link" treatment above
+   (that one is meant to reappear on :focus; a <label> is never itself focusable — its
+   `for` target is what receives focus — so it has no reason to ever un-hide). */
+.sr-only{
+  position:absolute;
+  width:1px; height:1px;
+  padding:0; margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+
 /* ---------- Post prev/next (Eric, 2026-09-08: "< Previous and Next >... so it
    can cycle between posts") ---------- */
 .post-prevnext{

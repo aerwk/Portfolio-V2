@@ -529,6 +529,69 @@
     })(cols[i]);
   }
 
+  /* ---------- resize: keep the row-snap live, not just a mount-time snapshot ----------
+     snapRow (and fitInk, same technique) measures the CURRENT computed font
+     size via canvas ink metrics and caches the result as a literal px
+     value (--n5i-row/--n5i-lh on odometer columns; el.style.height/
+     lineHeight on the AM/PM spans) — a one-time snapshot, not a live
+     binding. That was fine while nothing on the page changed size after
+     mount, but the type scale here is fluid: --n5i-u re-evaluates on every
+     resize via clamp(calc(100vw...)), so the clock's font-size
+     (calc(80 * var(--n5i-u))) grows or shrinks the INSTANT the window is
+     dragged, while the cached row height/line-box does not, until
+     something re-measures it. Where the stale box also has
+     overflow:hidden — every .n5i-odo column — outgrowing it means the
+     digit's own top or bottom is clipped by its own column, which is
+     exactly Eric's report (2026-09-09): "as the browser becomes larger,
+     the clock font gets larger too, but then it becomes cut off... perhaps
+     these borders could be transparent?" — there are no borders; this
+     freeze is what he was seeing as one. A fresh page load never shows it
+     (mount's own whenReady below runs snapAllRows once, after fonts
+     settle, at whatever width the page happened to load at) — it only
+     appears once the SAME loaded page is resized afterward, which is
+     exactly how Eric reproduced it and exactly why a fresh page.goto() at
+     a wider width alone won't catch a regression here; only a live resize
+     will.
+     Fix: re-run the same snap on resize. Debounced 120ms, the same idiom
+     and duration as mountDimensionReadout's own resize handler above (for
+     consistency, not because the number is special) — reflow only
+     settles once the drag pauses, and every intermediate frame during a
+     drag would otherwise force a synchronous layout read for nothing.
+     Wrapped in whenReady() rather than called directly so a resize that
+     fires before fonts have actually finished loading still waits for
+     document.fonts.ready before measuring — a measurement taken against
+     the fallback face is wrong in the same way an unsettled measurement
+     at mount would be (see whenReady's own comment above).
+     The AM/PM spans (fitInk) are re-run alongside the odometer columns for
+     the same reason — they're sized by the same measure-once-at-mount
+     technique, in the same cluster, off the same fluid --n5i-u — even
+     though .n5i-ap-stack has no overflow:hidden of its own so a stale
+     size there reads as drift rather than a hard clip; cheap to keep
+     correct in the same pass rather than leave a second, quieter version
+     of this exact bug sitting right next to the one being fixed.
+     One more thing a plain snapAllRows() call would get wrong: .n5i-odo-
+     strip transitions `transform`, and that transform is
+     translateY(calc(var(--n5i-row) * -1 * var(--n5i-pos))) — a function OF
+     --n5i-row. Changing --n5i-row here (without touching --n5i-pos at all)
+     still changes the transform's resolved value, so the browser would
+     animate the strip sliding to its new offset over whatever --n5i-dur
+     was last set to (500ms, typically) — a visible, unwanted slide on
+     every resize pause, on top of the clipping fix. Zero the duration on
+     every strip first (same idiom as buildOdometerColumn/settle() above),
+     so the re-snap itself is instant; the next real tick's own
+     setOdometerDigit sets --n5i-dur again before it rolls, so ordinary
+     ticking is unaffected. */
+  function resnapClockCluster() {
+    var i;
+    for (i = 0; i < allCols.length; i++) {
+      var strip = allCols[i].querySelector('.n5i-odo-strip');
+      if (strip) strip.style.setProperty('--n5i-dur', '0ms');
+    }
+    snapAllRows();
+    var apSpans = document.querySelectorAll('.n5i-ap-stack span');
+    for (i = 0; i < apSpans.length; i++) fitInk(apSpans[i]);
+  }
+
   function mount(root) {
     root = root || document;
     var nodes = root.querySelectorAll('[data-n5i]');
@@ -553,6 +616,12 @@
       for (j = 0; j < starts.length; j++) starts[j]();
     });
     alignReadouts(root);
+
+    var resnapT;
+    global.addEventListener('resize', function () {
+      clearTimeout(resnapT);
+      resnapT = setTimeout(function () { whenReady(resnapClockCluster); }, 120);
+    });
   }
 
   global.N5Instruments = {
