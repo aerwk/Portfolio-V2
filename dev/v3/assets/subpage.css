@@ -816,6 +816,13 @@ main.page{
   max-width:72ch;
 }
 .stat-tile{ display:flex; flex-direction:column; gap:calc(2 * var(--n5i-u)); }
+/* /about/ "HomeLab" cluster row (Eric, 2026-09-09): centers just the four
+   cluster-fact tiles (Nodes/Cores/Memory/Proxmox VE), not the live Docker
+   stat-row below it, which stays left-aligned like the rest of the page.
+   justify-content centers the tile group as a block within the 72ch column;
+   text-align centers each tile's own number-over-label pair. */
+.stat-row-center{ justify-content:center; }
+.stat-row-center .stat-tile{ align-items:center; text-align:center; }
 .stat-tile b{
   font:400 calc(24 * var(--n5i-u))/1.1 var(--n5i-sans);
   font-variant-numeric:tabular-nums;
