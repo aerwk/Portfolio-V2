@@ -493,11 +493,13 @@ main.page{
 /* long-form measure is wider than the 40ch lede/paragraph default above */
 .page .post-chips{ margin-top:calc(12 * var(--n5i-u)); }
 .prose{ max-width:60ch; margin-top:calc(24 * var(--n5i-u)); }
-/* /about/ Goal (Eric, 2026-09-09): briefly narrowed to 40ch to match the
-   lede (.prose-lede), then reverted the same day -- /about/ reads as a
-   long-form page like the blog, so Goal keeps the standard 60ch .prose
-   measure the accordion panels and blog posts already use, rather than
-   the lede's tighter 40ch. */
+/* /about/ Goal (Eric, 2026-09-09): went 60ch -> 40ch (matching the lede)
+   -> reverted to 60ch -> now 72ch, matching the .stat-row/.list/.acc-trigger/
+   .marq measure elsewhere on this page. .prose-wide overrides just Goal's
+   instance; the Skills/Certifications/Background accordion panels keep the
+   standard 60ch .prose measure, unaffected. */
+.prose.prose-wide,
+.prose.prose-wide p{ max-width:72ch; }
 .prose h2, .prose h3{
   font:400 calc(20 * var(--n5i-u))/1.25 var(--n5i-sans);
   color:var(--bone);
@@ -806,11 +808,16 @@ main.page{
 .stat-row{
   display:flex;
   flex-wrap:wrap;
+  justify-content:center;
   gap:calc(28 * var(--n5i-u)) calc(36 * var(--n5i-u));
   margin-top:calc(24 * var(--n5i-u));
   max-width:72ch;
 }
-.stat-tile{ display:flex; flex-direction:column; gap:calc(2 * var(--n5i-u)); }
+/* Eric, 2026-09-09: centered -- both stat-tile groups (the cluster row AND
+   the live Docker row) as a block within the column, and each tile's own
+   number-over-label internally. .stat-row is /about/-only (not shared with
+   any other page), so this is the base rule, not a scoped modifier. */
+.stat-tile{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:calc(2 * var(--n5i-u)); }
 .stat-tile b{
   font:400 calc(24 * var(--n5i-u))/1.1 var(--n5i-sans);
   font-variant-numeric:tabular-nums;
@@ -852,13 +859,12 @@ main.page{
    the tool names are still announced to assistive tech. */
 .marq{
   overflow:hidden;
-  /* 40ch, not the 72ch .list/.acc-trigger/.stat-row use elsewhere on this page
-     -- the reading column those elements share with the pill/tile grid is wider
-     than the actual TEXT column (.lede and .page p both cap at 40ch), and the
-     marquee reads against the text column since it sits directly under prose,
-     not against the pill row. Eric, 2026-09-09: still looked wider than
-     everything else after the first pass matched it to 72ch instead. */
-  max-width:40ch;
+  /* Eric, 2026-09-09: 72ch -> 40ch (matching the lede/text column) -> back to
+     72ch, matching .list/.acc-trigger/.stat-row -- the page moved toward the
+     wider measure everywhere (Goal's prose, the HomeLab stat tiles), so the
+     marquee now extends to cover that same width again instead of the
+     narrower text-column measure. */
+  max-width:72ch;
   margin-top:calc(24 * var(--n5i-u));
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
   mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
