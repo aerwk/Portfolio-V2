@@ -295,6 +295,28 @@ main.page{
   color:var(--bone);
   margin-top:calc(4 * var(--n5i-u));
 }
+/* Page-identity headers only (Eric, 2026-09-09: "the header of every page should
+   be using the Bigger font, same one as the clock on home page") -- About/Projects/
+   Blog's own <h1> (Eric L. / XP Farm / Tech Journey Journal), NOT individual blog
+   post titles, which stay on the plain .page h1 Inter treatment above: a 900-weight
+   capitals-only display face reads fine for a four-word page name but would fight a
+   full-length article headline. Bigger Display is capitals-and-digits-only (see the
+   @font-face below and its use on the home clock), so text-transform:uppercase is
+   required, not decorative -- without it any lowercase glyph the face lacks falls
+   back to the next font in the stack mid-word. `.page h1.page-title` (two selectors)
+   deliberately outweighs the plain `.page h1` rule above so the override always wins
+   regardless of source order. */
+@font-face{
+  font-family:'Bigger Display';
+  src:url(bigger-display.otf) format('opentype');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+.page h1.page-title{
+  font-family:'Bigger Display', var(--n5i-sans);
+  text-transform:uppercase;
+}
 .page .lede{
   margin-top:calc(12 * var(--n5i-u));
   max-width:40ch;
@@ -721,10 +743,13 @@ main.page{
    actual content width, not a 147px sliver. Giving the cluster itself width:100% to
    fit them would blow the wordmark logo up to full viewport width too, which nothing
    asked for and nothing else in this design wants. Placed as its own top-level
-   sibling of #c-tl/#c-tr in the body instead: order:1 below ties it with .tl (the
-   corner div) in the mobile flex column below, and its DOM position — right after
-   #c-tl's closing tag, before #c-tr — breaks that tie in its favour, landing it
-   exactly where the tree used to sit: under the wordmark, above the header nav pills. */
+   sibling of #c-tl/#c-tr in the body instead, at the END of the mobile flex column
+   (order:4, after main.page's order:3 below). It originally sat at order:1, tied
+   with .tl and landing it under the wordmark, above the header nav pills, in the
+   tree's old spot. Eric asked for that reversed (2026-09-09): the dropdown
+   appearing before the actual page content read as inconsistent with every other
+   subpage, where the corners are followed straight by main.page with nothing in
+   between. Content leads on mobile here too now, with the dropdown trailing after it. */
 .blog-mobile-nav{ display:none; }
 
 @media (max-width: 767px){
@@ -736,7 +761,7 @@ main.page{
     width:100%;
     max-width:420px; /* readable select rows without stretching edge-to-edge on wide phones */
     padding:0 var(--n5i-inset-x);
-    order:1;
+    order:4;
   }
   .mnav-field{ display:flex; flex-direction:column; gap:calc(4 * var(--n5i-u)); }
   .mnav-select{
