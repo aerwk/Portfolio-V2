@@ -735,21 +735,25 @@ main.page{
    the Tab order per the HTML spec, so nothing extra (inert, aria-hidden) is needed to
    keep three <select>s a keyboard user would otherwise stumble over out of a desktop
    Tab sequence.
-   [data-blog-mobile-nav] lives OUTSIDE #c-tl's n5i-cluster in the markup on purpose,
-   not nested next to .blog-tree the way the desktop reader might expect — that
-   cluster is a shrink-to-fit flex column pinned to the wordmark's own width
-   (--n5i-lockup-w, 147px below 1440px — see the .blog-tree comment above for the
-   full derivation), and three <select>s full of real post titles need the phone's
-   actual content width, not a 147px sliver. Giving the cluster itself width:100% to
-   fit them would blow the wordmark logo up to full viewport width too, which nothing
-   asked for and nothing else in this design wants. Placed as its own top-level
-   sibling of #c-tl/#c-tr in the body instead, at the END of the mobile flex column
-   (order:4, after main.page's order:3 below). It originally sat at order:1, tied
-   with .tl and landing it under the wordmark, above the header nav pills, in the
-   tree's old spot. Eric asked for that reversed (2026-09-09): the dropdown
-   appearing before the actual page content read as inconsistent with every other
-   subpage, where the corners are followed straight by main.page with nothing in
-   between. Content leads on mobile here too now, with the dropdown trailing after it. */
+   [data-blog-mobile-nav] is not nested next to .blog-tree in #c-tl the way the desktop
+   reader might expect — that cluster is a shrink-to-fit flex column pinned to the
+   wordmark's own width (--n5i-lockup-w, 147px below 1440px — see the .blog-tree
+   comment above for the full derivation), and three <select>s full of real post
+   titles need the phone's actual content width, not a 147px sliver. Giving the
+   cluster itself width:100% to fit them would blow the wordmark logo up to full
+   viewport width too, which nothing asked for and nothing else in this design wants.
+
+   Placement went through two passes (Eric, 2026-09-09, both same day). First: a
+   top-level sibling of #c-tl/#c-tr in <body>, positioned via a flex `order` on
+   <body>'s direct children — order:1 (tied with .tl, landing it under the wordmark,
+   above the header nav pills) then order:4 (after main.page, so content led and the
+   dropdown trailed everything). Both were wrong for the same reason: a single fixed
+   position can't answer "between the header and the latest post" on the landing view
+   AND "right before whatever's selected" once the header's gone. Second pass moved
+   the markup inside #main instead, between #blog-landing-view and #blog-post-view
+   (see blog.html) — real DOM position now does both jobs for free with no `order`
+   and no JS view-switching hook: see the placement comment on the element itself in
+   blog.html for the mechanism. Nothing in this rule needs an `order` value any more. */
 .blog-mobile-nav{ display:none; }
 
 @media (max-width: 767px){
@@ -760,8 +764,7 @@ main.page{
     gap:calc(8 * var(--n5i-u));
     width:100%;
     max-width:420px; /* readable select rows without stretching edge-to-edge on wide phones */
-    padding:0 var(--n5i-inset-x);
-    order:4;
+    margin:calc(24 * var(--n5i-u)) 0;
   }
   .mnav-field{ display:flex; flex-direction:column; gap:calc(4 * var(--n5i-u)); }
   .mnav-select{

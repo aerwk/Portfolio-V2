@@ -38,43 +38,6 @@
 
   <nav class="blog-tree" data-blog-tree aria-label="Blog archive"></nav></div>
 
-<!-- Mobile Year/Month/Day archive selector (Eric, 2026-09-09: "the tree does not work
-     for a mobile page... The nav tree will have to be replaced by a drop down menu to
-     select year, month and day"). Deliberately NOT nested inside #c-tl above — see the
-     "[data-blog-mobile-nav] lives OUTSIDE #c-tl's n5i-cluster" comment on
-     .blog-mobile-nav in subpage.css for why the width math forces it out to its own
-     top-level sibling here. A second, parallel piece of markup, coexisting with
-     .blog-tree at all times: subpage.css's `@media (max-width:767px)` block is the
-     ONLY thing that decides which one paints (hidden at every other width via the
-     unconditional `.blog-mobile-nav{display:none}` base rule), and subpage.js's tree-
-     builder IIFE fills these three <select>s from the exact same grouped post data
-     the tree above is built from, so the two can never list a different set of
-     years/months/days. Each <select> gets a real (if visually hidden) <label> — this
-     is a form control a screen reader needs to announce correctly, not a decorative
-     element; see .sr-only in subpage.css. The trailing anchor is a navigation proxy,
-     not a fourth field: a <select>'s 'change' event has no [data-post-nav] ancestor
-     of its own to piggyback the page's one real post-navigation mechanism on, so JS
-     stamps the resolved post id onto this ALREADY-CONNECTED element and .click()s it,
-     which is what actually reaches the document-level [data-post-nav] delegate below
-     (a detached element's click never bubbles as far as `document` — see the "Mobile
-     cascading Year/Month/Day selector" comment in subpage.js for the full reasoning
-     and the cascading-resolution rule the change handlers use). -->
-<nav class="blog-mobile-nav" data-blog-mobile-nav aria-label="Blog archive, by date">
-  <div class="mnav-field">
-    <label class="sr-only" for="blog-nav-year">Year</label>
-    <select class="mnav-select" id="blog-nav-year" data-blog-nav-year></select>
-  </div>
-  <div class="mnav-field">
-    <label class="sr-only" for="blog-nav-month">Month</label>
-    <select class="mnav-select" id="blog-nav-month" data-blog-nav-month></select>
-  </div>
-  <div class="mnav-field">
-    <label class="sr-only" for="blog-nav-day">Day</label>
-    <select class="mnav-select" id="blog-nav-day" data-blog-nav-day></select>
-  </div>
-  <a data-blog-mobile-proxy hidden></a>
-</nav>
-
 <div class="corner tr" id="c-tr">
   <nav aria-label="Links">
     <a class="pill" href="/dev/v3/about/"><span class="pill-l">About ↗</span><span class="pill-c" aria-hidden="true">About ↗</span></a>
@@ -157,6 +120,60 @@
     <p class="label">Latest blog</p>
   </section>
   </div>
+
+  <!-- Mobile Year/Month/Day archive selector (Eric, 2026-09-09: "the tree does not work
+       for a mobile page... The nav tree will have to be replaced by a drop down menu to
+       select year, month and day"). A second, parallel piece of markup, coexisting with
+       .blog-tree at all times: subpage.css's `@media (max-width:767px)` block is the
+       ONLY thing that decides which one paints (hidden at every other width via the
+       unconditional `.blog-mobile-nav{display:none}` base rule), and subpage.js's tree-
+       builder IIFE fills these three <select>s from the exact same grouped post data
+       the tree above is built from, so the two can never list a different set of
+       years/months/days.
+
+       Placement (Eric, 2026-09-09, second pass): sits here, between #blog-landing-view
+       and #blog-post-view, deliberately -- not because it "belongs" to either view, but
+       because both of Eric's placement rules fall out of this ONE spot for free, with no
+       JS required to move it between view states:
+         - Landing visible (initial load, #blog-landing-view unhidden): this renders
+           between the "Tech Journey Journal" header/lede and the latest post, exactly
+           where Eric asked for it.
+         - Landing hidden (a post or a listing has been selected -- see setActiveView()
+           in subpage.js): #blog-landing-view collapses to nothing, so this is now the
+           first visible thing, sitting directly above whichever of #blog-post-view or
+           #blog-listing-view is the one currently unhidden -- "before the post/listing
+           selected," as asked, without caring which of the two it is.
+       Originally lived OUTSIDE #main entirely, as a top-level sibling of #c-tl/#c-tr,
+       positioned via a flex `order` on <body>'s direct children -- moved inside #main
+       and off `order` entirely once real DOM position could do the same job with no CSS
+       coordination needed between two files.
+
+       Each <select> gets a real (if visually hidden) <label> — this is a form control a
+       screen reader needs to announce correctly, not a decorative element; see .sr-only
+       in subpage.css. The trailing anchor is a navigation proxy, not a fourth field: a
+       <select>'s 'change' event has no [data-post-nav] ancestor of its own to piggyback
+       the page's one real post-navigation mechanism on, so JS stamps the resolved post
+       id onto this ALREADY-CONNECTED element and .click()s it, which is what actually
+       reaches the document-level [data-post-nav] delegate (a detached element's click
+       never bubbles as far as `document` — see the "Mobile cascading Year/Month/Day
+       selector" comment in subpage.js for the full reasoning and the cascading-
+       resolution rule the change handlers use). -->
+  <nav class="blog-mobile-nav" data-blog-mobile-nav aria-label="Blog archive, by date">
+    <div class="mnav-field">
+      <label class="sr-only" for="blog-nav-year">Year</label>
+      <select class="mnav-select" id="blog-nav-year" data-blog-nav-year></select>
+    </div>
+    <div class="mnav-field">
+      <label class="sr-only" for="blog-nav-month">Month</label>
+      <select class="mnav-select" id="blog-nav-month" data-blog-nav-month></select>
+    </div>
+    <div class="mnav-field">
+      <label class="sr-only" for="blog-nav-day">Day</label>
+      <select class="mnav-select" id="blog-nav-day" data-blog-nav-day></select>
+    </div>
+    <a data-blog-mobile-proxy hidden></a>
+  </nav>
+
 
   <!-- Single post render target, shared by the landing state's latest post AND every
        tree-selected post — one rendering path, per Eric's "do not build a second rendering
