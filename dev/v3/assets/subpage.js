@@ -676,6 +676,11 @@ function __n5ReadPostRows(){
   var tree = document.querySelector('[data-blog-tree]');
   var listView = document.getElementById('blog-list-view');
   var landingView = document.getElementById('blog-landing-view');
+  /* landingTail is #blog-landing-view's other half (the "Latest blog" section) --
+     split into a second DOM node (2026-09-09, third mobile-nav pass) so the mobile
+     dropdown could sit between them without becoming a descendant of either. The two
+     are one logical view: always hidden/shown together below, never independently. */
+  var landingTail = document.getElementById('blog-landing-tail');
   var postView = document.getElementById('blog-post-view');
   var listingView = document.getElementById('blog-listing-view');
   var crumbNav = postView && postView.querySelector('[data-post-crumb]');
@@ -683,7 +688,7 @@ function __n5ReadPostRows(){
   var listingCrumbEl = listingView && listingView.querySelector('[data-listing-crumb]');
   var listingCountEl = listingView && listingView.querySelector('[data-listing-count]');
   var listingRowsEl = listingView && listingView.querySelector('[data-listing-rows]');
-  if (!tree || !listView || !landingView || !postView || !crumbNav || !body ||
+  if (!tree || !listView || !landingView || !landingTail || !postView || !crumbNav || !body ||
       !listingView || !listingCrumbEl || !listingCountEl || !listingRowsEl) return;
 
   var POSTS = window.__N5_BLOG_POSTS || {};
@@ -875,6 +880,13 @@ function __n5ReadPostRows(){
     listingView.hidden = (which !== 'listing');
   }
 
+  /* landingView + landingTail are one logical view split across two DOM nodes (see
+     the comment on landingTail above) -- always toggled together, never separately. */
+  function setLandingHidden(hidden){
+    landingView.hidden = hidden;
+    landingTail.hidden = hidden;
+  }
+
   /* Click the real trigger buttons (only the ones not already open) rather than
      poking aria-expanded/inert by hand, so a programmatic open goes through the exact
      same code path — and single-open-per-group invariant — as a real user click. No
@@ -915,7 +927,7 @@ function __n5ReadPostRows(){
     openAncestorPath(id);
     setCurrentLeaf(leaf || tree.querySelector('[data-post-id="' + id + '"]'));
     setActiveView('post');
-    landingView.hidden = true;
+    setLandingHidden(true);
   }
 
   /* Breadcrumb-triggered listing (Change 1, 2026-09-08: moved off tree-node clicks —
@@ -980,7 +992,7 @@ function __n5ReadPostRows(){
   function showListing(scope){
     renderListing(scope);
     setActiveView('listing');
-    landingView.hidden = true;
+    setLandingHidden(true);
   }
 
   /* Never hardcoded: the first a.post-row in the (newest-first) list. */
@@ -1002,7 +1014,7 @@ function __n5ReadPostRows(){
     openAncestorPath(id);
     setCurrentLeaf(tree.querySelector('[data-post-id="' + id + '"]'));
     renderPost(id, true);
-    landingView.hidden = false;
+    setLandingHidden(false);
   }
 
   /* Leaf clicks: open that post, exactly as before. */

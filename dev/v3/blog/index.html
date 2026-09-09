@@ -23,6 +23,7 @@
 <noscript><style>
   #blog-list-view[hidden]{ display:block !important; }
   #blog-landing-view{ display:none !important; }
+  #blog-landing-tail{ display:none !important; }
   #blog-post-view{ display:none !important; }
   #blog-listing-view{ display:none !important; }
 </style></noscript>
@@ -115,10 +116,6 @@
   <p class="label">Blog</p>
   <h1 class="page-title">Tech Journey Journal</h1>
   <p class="lede">What changed, what prompted it, what broke, and what I learned getting it working again. Written as I go, so the record shows the route — where I started, where I am, and where I'm going.</p>
-
-  <section>
-    <p class="label">Latest blog</p>
-  </section>
   </div>
 
   <!-- Mobile Year/Month/Day archive selector (Eric, 2026-09-09: "the tree does not work
@@ -131,22 +128,21 @@
        the tree above is built from, so the two can never list a different set of
        years/months/days.
 
-       Placement (Eric, 2026-09-09, second pass): sits here, between #blog-landing-view
-       and #blog-post-view, deliberately -- not because it "belongs" to either view, but
-       because both of Eric's placement rules fall out of this ONE spot for free, with no
-       JS required to move it between view states:
-         - Landing visible (initial load, #blog-landing-view unhidden): this renders
-           between the "Tech Journey Journal" header/lede and the latest post, exactly
-           where Eric asked for it.
-         - Landing hidden (a post or a listing has been selected -- see setActiveView()
-           in subpage.js): #blog-landing-view collapses to nothing, so this is now the
-           first visible thing, sitting directly above whichever of #blog-post-view or
-           #blog-listing-view is the one currently unhidden -- "before the post/listing
-           selected," as asked, without caring which of the two it is.
-       Originally lived OUTSIDE #main entirely, as a top-level sibling of #c-tl/#c-tr,
-       positioned via a flex `order` on <body>'s direct children -- moved inside #main
-       and off `order` entirely once real DOM position could do the same job with no CSS
-       coordination needed between two files.
+       Placement (Eric, 2026-09-09, third pass — "above Latest Blog, below Tech Journey
+       Journal"): #blog-landing-view was split in two so this could sit BETWEEN its
+       pieces without becoming a descendant of either. #blog-landing-view now holds
+       just the head (label/h1/lede); #blog-landing-tail below holds the old "Latest
+       blog" section. subpage.js hides and un-hides the two together (see landingView /
+       landingTail in the IIFE below) — one logical view, two DOM nodes. This element
+       stays their sibling in between, never nested inside either, which is exactly what
+       makes it survive both hiding: whichever of the two pairs is visible, this ends up
+       sandwiched between them (or, once the whole landing pair hides on navigation —
+       see setActiveView() in subpage.js — as the first visible thing, directly above
+       whichever of #blog-post-view/#blog-listing-view is unhidden). Second pass (before
+       this one) tried putting it as a single sibling of the WHOLE (unsplit)
+       #blog-landing-view instead — that only ever placed it after "Latest blog", never
+       between the header and it. First pass, before that, lived OUTSIDE #main entirely
+       and used a flex `order` on <body>'s direct children.
 
        Each <select> gets a real (if visually hidden) <label> — this is a form control a
        screen reader needs to announce correctly, not a decorative element; see .sr-only
@@ -174,6 +170,11 @@
     <a data-blog-mobile-proxy hidden></a>
   </nav>
 
+  <div id="blog-landing-tail">
+  <section>
+    <p class="label">Latest blog</p>
+  </section>
+  </div>
 
   <!-- Single post render target, shared by the landing state's latest post AND every
        tree-selected post — one rendering path, per Eric's "do not build a second rendering
