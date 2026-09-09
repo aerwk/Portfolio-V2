@@ -493,6 +493,16 @@ main.page{
 /* long-form measure is wider than the 40ch lede/paragraph default above */
 .page .post-chips{ margin-top:calc(12 * var(--n5i-u)); }
 .prose{ max-width:60ch; margin-top:calc(24 * var(--n5i-u)); }
+/* /about/ Goal (Eric, 2026-09-09): Goal sits right under the lede as the
+   page's other short, prominent statement, but it was using the same 60ch
+   .prose measure built for long-form accordion/blog-post content -- visibly
+   wider than the 40ch lede next to it. .prose-lede narrows just this one
+   instance back to the lede's own 40ch, without touching the Skills/
+   Certifications/Background accordion panels, which keep the wider 60ch
+   measure their longer lists/paragraphs actually need. Two classes so it
+   beats .prose p's specificity regardless of source order. */
+.prose.prose-lede,
+.prose.prose-lede p{ max-width:40ch; }
 .prose h2, .prose h3{
   font:400 calc(20 * var(--n5i-u))/1.25 var(--n5i-sans);
   color:var(--bone);
