@@ -302,6 +302,12 @@ main.page{
 .page p{ max-width:40ch; }
 
 .page section{ margin-top:calc(64 * var(--n5i-u)); }
+/* /about/ (Eric, 2026-09-09): "I don't think there needs to be such big gaps between the
+   collapsible pill boxes." Scoped to consecutive accordion sections only (a section whose
+   first child is an .acc-trigger, immediately following another one) so the gap ABOVE the
+   first accordion section (Skills, following the always-visible Goal/HomeLab sections)
+   keeps the normal 64px rhythm — only the Skills->Certs and Certs->Background gaps tighten. */
+.page section:has(> .acc-trigger) + section:has(> .acc-trigger){ margin-top:calc(24 * var(--n5i-u)); }
 .page section > .label{ display:block; }
 .page section > h2{
   font:400 calc(16 * var(--n5i-u))/1.25 var(--n5i-sans);
