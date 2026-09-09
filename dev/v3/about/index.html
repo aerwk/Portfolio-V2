@@ -65,6 +65,22 @@
       <div class="stat-tile" data-stat="images"><b>61</b><span>Images</span></div>
       <div class="stat-tile" data-stat="volumes"><b>5</b><span>Volumes</span></div>
       <div class="stat-tile" data-stat="networks"><b>10</b><span>Networks</span></div>
+    </div>
+    <!-- Network/IoT/Camera/UniFi device counts (Eric, 2026-09-10): placeholder
+         numbers only -- Eric confirmed layout first, real UniFi-controller data
+         as a separate follow-up (this row isn't wired to anything live yet,
+         unlike the data-stat row above it). VLANs moves down from that row into
+         this one, since Eric wants it grouped with the rest of the live network
+         data rather than with the Docker counts. Replace the four placeholder
+         <b> values with a real query (likely the unifi-network MCP plugin or a
+         controller API call from the pre-commit hook, same pattern as the
+         Docker stats) when that follow-up happens -- do not treat these four as
+         real facts anywhere else on the site until they are. -->
+    <div class="stat-row">
+      <div class="stat-tile"><b>12</b><span>Network Devices</span></div>
+      <div class="stat-tile"><b>8</b><span>IoT Devices</span></div>
+      <div class="stat-tile"><b>6</b><span>Camera Devices</span></div>
+      <div class="stat-tile"><b>5</b><span>UniFi Devices</span></div>
       <div class="stat-tile"><b>5</b><span>VLANs</span></div>
     </div>
     <div class="marq" aria-hidden="true">
