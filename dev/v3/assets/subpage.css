@@ -819,16 +819,17 @@ main.page{
   white-space:nowrap;
 }
 
-/* /about/ "The Cluster" (Eric, 2026-09-09): static homelab-cluster facts —
-   node/core/memory counts and the Proxmox VE version — added below the live
-   Docker stat-row above. These four use the same .stat-tile visual family but
-   deliberately carry NO data-stat attribute: the pre-commit hook's sed only
-   ever targets data-stat="stacks|containers|images|volumes|networks", and
-   giving a static value a data-stat key (even a new one) would misleadingly
-   imply it's hook-managed when it isn't. The "The Cluster" .label above this
-   second .stat-row is what visually separates the two groups; .stat-row's own
-   24u top margin already gives it the right gap under the label. */
-.page .stat-row + .label{ margin-top:calc(24 * var(--n5i-u)); }
+/* /about/ "HomeLab" section (Eric, 2026-09-09): static homelab-cluster facts —
+   node/core/memory counts and the Proxmox VE version — lead the section,
+   ahead of the live Docker stat-row (Eric asked for cluster first, then
+   stacks, then tooling, under one "HomeLab" label rather than three). These
+   four use the same .stat-tile visual family but deliberately carry NO
+   data-stat attribute: the pre-commit hook's sed only ever targets
+   data-stat="stacks|containers|images|volumes|networks", and giving a static
+   value a data-stat key (even a new one) would misleadingly imply it's
+   hook-managed when it isn't. No sub-label separates the two .stat-row groups
+   any more — .stat-row's own 24u top margin is what gives the live-stat row
+   its gap under the VLANs caption line. */
 .page .cluster-vlans{
   margin-top:calc(12 * var(--n5i-u));
   font:400 calc(12 * var(--n5i-u))/1.25 var(--n5i-mono);
