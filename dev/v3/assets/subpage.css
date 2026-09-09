@@ -314,7 +314,8 @@ main.page{
    plain Inter heading did before this change, most noticeably on mobile where
    --n5i-u floors at 1px and there's no larger desktop size masking it. Bumped to
    38u so the rendered cap-height reads at least as large as the old Inter 30u
-   did, at every width, not just desktop.
+   did, at every width, not just desktop. Still read too small on desktop (Eric,
+   2026-09-10: "1.5x bigger") -- 38u * 1.5 = 57u.
 
    Specificity: `.page h1.page-title` (element+two-classes) and `main.page
    .post-title-h` (element+two-classes) are both one point above the base rule's
@@ -332,7 +333,7 @@ main.page{
 .page h1.page-title,
 main.page .post-title-h{
   font-family:'Bigger Display', var(--n5i-sans);
-  font-size:calc(38 * var(--n5i-u));
+  font-size:calc(57 * var(--n5i-u));
   text-transform:uppercase;
 }
 .page .lede{
