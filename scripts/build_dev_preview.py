@@ -53,6 +53,19 @@ STATIC_ASSETS = [
     (os.path.join(P4, "subpage.js"), "assets/subpage.js"),
 ]
 
+# The /about/ tooling marquee references the site's real logo set by absolute
+# path (/assets/logos/*.svg); base_prefix_internal_links() rewrites that to
+# {base}/assets/logos/*.svg for every emitted page, so those files must exist
+# under dev/v3/assets/logos/ too, not just at the site root. Pulled in as a
+# glob (not hardcoded names) so a logo added or removed at the site root is
+# reflected here without touching this script again.
+LOGOS_DIR = os.path.join(REPO, "assets", "logos")
+STATIC_ASSETS += [
+    (os.path.join(LOGOS_DIR, name), f"assets/logos/{name}")
+    for name in sorted(os.listdir(LOGOS_DIR))
+    if name.endswith(".svg")
+]
+
 # instruments.css is not a straight copy: its @font-face carries the base64 OTF,
 # which gets extracted like the other embedded assets (see extract_font()).
 INSTRUMENTS_CSS = os.path.join(P3, "instruments.css")
