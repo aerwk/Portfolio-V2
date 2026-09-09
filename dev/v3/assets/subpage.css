@@ -295,17 +295,33 @@ main.page{
   color:var(--bone);
   margin-top:calc(4 * var(--n5i-u));
 }
-/* Page-identity headers only (Eric, 2026-09-09: "the header of every page should
-   be using the Bigger font, same one as the clock on home page") -- About/Projects/
-   Blog's own <h1> (Eric L. / XP Farm / Tech Journey Journal), NOT individual blog
-   post titles, which stay on the plain .page h1 Inter treatment above: a 900-weight
-   capitals-only display face reads fine for a four-word page name but would fight a
-   full-length article headline. Bigger Display is capitals-and-digits-only (see the
-   @font-face below and its use on the home clock), so text-transform:uppercase is
-   required, not decorative -- without it any lowercase glyph the face lacks falls
-   back to the next font in the stack mid-word. `.page h1.page-title` (two selectors)
-   deliberately outweighs the plain `.page h1` rule above so the override always wins
-   regardless of source order. */
+/* Page-identity headers (Eric, 2026-09-09: "the header of every page should be
+   using the Bigger font, same one as the clock on home page") -- About/Projects/
+   Blog's own <h1> (Eric L. / XP Farm / Tech Journey Journal), via .page-title.
+   Extended the same day to every blog POST title too (.post-title-h, added by
+   setHeadingLevels() in subpage.js to whichever post is currently shown, h1 or
+   demoted h2, plus post.html's own static <h1> -- see the class on that markup):
+   Eric's reasoning is that a selected post becomes the page's own first segment
+   at that point, the same role .page-title plays elsewhere, so it should carry
+   the same type. Bigger Display is capitals-and-digits-only (see the @font-face
+   below and its use on the home clock), so text-transform:uppercase is required,
+   not decorative -- without it any lowercase glyph the face lacks falls back to
+   the next font in the stack mid-word.
+
+   Size: Bigger Display's actual glyph ink sits smaller within its em-box than
+   Inter's (same as the difference between typefaces generally, just more visible
+   on a display face) -- at the base rule's 30u it read visibly SMALLER than the
+   plain Inter heading did before this change, most noticeably on mobile where
+   --n5i-u floors at 1px and there's no larger desktop size masking it. Bumped to
+   38u so the rendered cap-height reads at least as large as the old Inter 30u
+   did, at every width, not just desktop.
+
+   Specificity: `.page h1.page-title` (element+two-classes) and `main.page
+   .post-title-h` (element+two-classes) are both one point above the base rule's
+   two branches (`.page h1` is class+element; `.page .post-title-h` is two
+   classes), so the override always wins regardless of source order -- plain
+   `.page .post-title-h` alone would only TIE the base rule's own `.page
+   .post-title-h` branch and depend on file order instead. */
 @font-face{
   font-family:'Bigger Display';
   src:url(bigger-display.otf) format('opentype');
@@ -313,8 +329,10 @@ main.page{
   font-style:normal;
   font-display:swap;
 }
-.page h1.page-title{
+.page h1.page-title,
+main.page .post-title-h{
   font-family:'Bigger Display', var(--n5i-sans);
+  font-size:calc(38 * var(--n5i-u));
   text-transform:uppercase;
 }
 .page .lede{
