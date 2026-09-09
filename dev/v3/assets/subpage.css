@@ -851,6 +851,18 @@ main.page .post-title-h{
    described in ds-tab.html § Instruments (mono uppercase labels, tabular
    nums) instead of the old card/shadow treatment — no cards, no shadows,
    no gradients, consistent with the rest of this stylesheet. */
+/* Sub-labels identifying each of the three stat-rows (Eric, 2026-09-10: "the
+   first row is the pve stack", "middle one atm is the unifi camera network",
+   "this is the network stack") -- same type as .page .label, just with its own
+   top margin since it sits BETWEEN rows rather than opening a section; the
+   following .stat-row's own 24u top margin supplies the gap underneath it. */
+.stat-row-label{
+  font:400 calc(12 * var(--n5i-u))/1.25 var(--n5i-mono);
+  letter-spacing:-0.05em;
+  text-transform:uppercase;
+  color:var(--bone-55);
+  margin-top:calc(32 * var(--n5i-u));
+}
 .stat-row{
   display:flex;
   flex-wrap:wrap;

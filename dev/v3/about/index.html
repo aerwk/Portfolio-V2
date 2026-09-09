@@ -53,12 +53,17 @@
 
   <section>
     <p class="label">HomeLab</p>
+    <p class="stat-row-label">PVE Stack</p>
     <div class="stat-row">
       <div class="stat-tile"><b>3</b><span>Nodes</span></div>
       <div class="stat-tile"><b>18</b><span>Cores</span></div>
       <div class="stat-tile"><b>80GB</b><span>Memory</span></div>
       <div class="stat-tile"><b>9.2.10</b><span>Proxmox VE</span></div>
     </div>
+    <!-- Eric, 2026-09-10: "atm" -- this row is UniFi camera-network data today,
+         flagged as provisional/likely to change (a different grouping, or this
+         row's own stats, once the real live wiring described below happens). -->
+    <p class="stat-row-label">UniFi Camera Network</p>
     <div class="stat-row">
       <div class="stat-tile" data-stat="stacks"><b>5</b><span>Stacks</span></div>
       <div class="stat-tile" data-stat="containers"><b>21</b><span>Containers</span></div>
@@ -76,6 +81,7 @@
          controller API call from the pre-commit hook, same pattern as the
          Docker stats) when that follow-up happens -- do not treat these four as
          real facts anywhere else on the site until they are. -->
+    <p class="stat-row-label">Network Stack</p>
     <div class="stat-row">
       <div class="stat-tile"><b>12</b><span>Devices</span></div>
       <div class="stat-tile"><b>8</b><span>IoT</span></div>
