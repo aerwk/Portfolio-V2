@@ -826,7 +826,13 @@ main.page{
    the tool names are still announced to assistive tech. */
 .marq{
   overflow:hidden;
-  max-width:72ch;
+  /* 40ch, not the 72ch .list/.acc-trigger/.stat-row use elsewhere on this page
+     -- the reading column those elements share with the pill/tile grid is wider
+     than the actual TEXT column (.lede and .page p both cap at 40ch), and the
+     marquee reads against the text column since it sits directly under prose,
+     not against the pill row. Eric, 2026-09-09: still looked wider than
+     everything else after the first pass matched it to 72ch instead. */
+  max-width:40ch;
   margin-top:calc(24 * var(--n5i-u));
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
   mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
