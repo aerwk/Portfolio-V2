@@ -305,12 +305,11 @@ main.page{
     overflow-y:auto;
     overscroll-behavior-y:contain;
     -webkit-overflow-scrolling:touch;
-    /* Vein, 1px — design-system.md's only sanctioned divider device ("1px
-       dividers; never a card border"). A single LEADING edge (border-left),
-       not a full border box, so the pane reads as a scroll region sitting
-       next to the chrome, not a bordered card — the same reasoning the
-       system already applies to .post-row's border-top divider. */
-    border-left:1px solid var(--vein);
+    /* NO border-left. A 1px Vein leading edge was added here 2026-09-11 so the
+       pane would read as a distinct region; Eric removed it the same day — the
+       body text sat directly on the rule and looked propped against it. The
+       pane is defined by its own scroll behaviour and the whitespace around it,
+       not by a drawn edge. Do not reinstate a border here without asking. */
     /* Subtle, Vein-toned scrollbar — never the violet accent. */
     scrollbar-width:thin;
     scrollbar-color:var(--vein) transparent;
