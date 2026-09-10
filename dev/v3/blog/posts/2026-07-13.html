@@ -1,0 +1,134 @@
+<!doctype html>
+<!-- GENERATED FILE. Produced by scripts/build_dev_preview.py from the design
+     source in `01 Design/design-loop/src` (gitignored). Do not hand-edit this
+     file directly -- edit the source and re-run the generator instead. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I Gave the AI a Browser, and We Shipped the Redesign — Eric Li</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#12130f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/dev/v3/assets/subpage.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="corner tl n5i-cluster" id="c-tl">
+    <a class="n5i-mark n5i-lockup" href="/dev/v3/" aria-label="Eric Li"><img class="lk-rest" src="/dev/v3/assets/logo-rest.png" alt="Eric Li"><img class="lk-hover" src="/dev/v3/assets/logo-hover.png" alt="" aria-hidden="true"><canvas class="lk-canvas" aria-hidden="true"></canvas><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/dev/v3/assets/logo-entry.webm" type="video/webm"><source src="/dev/v3/assets/logo-entry.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverout" muted playsinline preload="auto"><source src="/dev/v3/assets/logo-exit.webm" type="video/webm"><source src="/dev/v3/assets/logo-exit.mp4" type="video/mp4"></video></a><script>(function(){var m=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;var a=document.currentScript.previousElementSibling;if(!m&&a&&a.classList.contains("n5i-lockup"))a.classList.add("lk-armed")})()</script>
+
+<span class="role">DevOps &amp; Infrastructure</span>
+
+  <nav class="blog-tree" data-blog-tree aria-label="Blog archive"></nav></div>
+
+
+<div class="corner tr" id="c-tr">
+  <nav aria-label="Links">
+    <a class="pill" href="/dev/v3/about/"><span class="pill-l">About ↗</span><span class="pill-c" aria-hidden="true">About ↗</span></a>
+    <a class="pill" href="/dev/v3/portfolio/"><span class="pill-l">Projects ↗</span><span class="pill-c" aria-hidden="true">Projects ↗</span></a>
+    <a class="pill" href="/dev/v3/blog/" aria-current="page"><span class="pill-l">Blog ↗</span><span class="pill-c" aria-hidden="true">Blog ↗</span></a>
+    <a class="pill" href="mailto:helloworld@n5hq.me"><span class="pill-l">EMAIL ↗</span><span class="pill-c" aria-hidden="true">EMAIL ↗</span></a>
+    <div class="n5i-socials" aria-label="Social links">
+      <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="GitHub"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span></a>
+      <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="LinkedIn"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span></a>
+      <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="Instagram"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span></a>
+    </div>
+    <span class="n5i-nav-rule" aria-hidden="true"></span>
+    <a class="pill" href="https://portal.n5hq.me"><span class="pill-l">Login →</span><span class="pill-c" aria-hidden="true">Login →</span></a>
+  </nav>
+</div>
+
+<main class="page" id="main">
+  <div id="blog-list-view" hidden>
+  <p class="label">Blog</p>
+  <h1 class="page-title">Tech Journey Journal</h1>
+  <p class="lede">What changed, what prompted it, what broke, and what I learned getting it working again. Written as I go, so the record shows the route — where I started, where I am, and where I'm going.</p>
+
+  <section>
+    <p class="label">All posts</p>
+    <div class="post-list">
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-08.html"><span class="post-meta">Web · 2026-09-08</span><span class="post-title">The Abort-On-Failure Hook Had One Failure Mode It Couldn't Catch</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-07.html"><span class="post-meta">Web · 2026-09-07</span><span class="post-title">An Animation You Cannot Pause Is One You Cannot Review</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-06.html"><span class="post-meta">Web · 2026-09-06</span><span class="post-title">Inspired By Means Rebuilt In, Not Repainted As</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-05.html"><span class="post-meta">Homelab · 2026-09-05</span><span class="post-title">The Reboot That Fixed It Once Before and Didn't the Second Time</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-04.html"><span class="post-meta">Homelab · 2026-09-04</span><span class="post-title">The Disk That Read 82% Free and Was 99.9% Full</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-28.html"><span class="post-meta">Homelab · 2026-08-28</span><span class="post-title">A Line Passing Through a Switch Read as a Connection</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-27.html"><span class="post-meta">Homelab · 2026-08-27</span><span class="post-title">The Validator Was Checking the Same Wrong Path as the Bug</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-26.html"><span class="post-meta">Homelab · 2026-08-26</span><span class="post-title">A Restart That Reported Success and Changed Nothing</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-25.html"><span class="post-meta">Homelab · 2026-08-25</span><span class="post-title">The Check Meant to Avoid Touching a Secret Printed It Anyway</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-24.html"><span class="post-meta">Homelab · 2026-08-24</span><span class="post-title">The File That Was Actually Being Read Was Three Layers Down</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-23.html"><span class="post-meta">Homelab · 2026-08-23</span><span class="post-title">The Rule That Could Only See One User in Thirty-One</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-22.html"><span class="post-meta">Homelab · 2026-08-22</span><span class="post-title">Every Number I Started With Was Measuring Something Else</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-21.html"><span class="post-meta">Homelab · 2026-08-21</span><span class="post-title">The Hardlink That Never Once Linked Anything</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-13.html"><span class="post-meta">Web · 2026-08-13</span><span class="post-title">A Regex Ate Half a Selector and CSS Didn't Complain</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-12.html"><span class="post-meta">Homelab · 2026-08-12</span><span class="post-title">Four Things Were Quietly Doing Nothing and All of Them Looked Fine</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-11.html"><span class="post-meta">Homelab · 2026-08-11</span><span class="post-title">Everything Redundant Turned Out to Share Something</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-10.html"><span class="post-meta">Homelab · 2026-08-10</span><span class="post-title">The Host Wasn't Dead and the Backups Weren't Real — Both Passed Every Check Anyway</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-09.html"><span class="post-meta">Homelab · 2026-08-09</span><span class="post-title">Three Times This Morning, Something Told Me It Worked and Hadn't</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-08.html"><span class="post-meta">Homelab · 2026-08-08</span><span class="post-title">The Checks Kept Passing While the Thing Under Them Was Broken, Four Times Today</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-07.html"><span class="post-meta">Homelab · 2026-08-07</span><span class="post-title">A Repo Containing the CLI but Not the Deployment Is Half of It</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-31.html"><span class="post-meta">Homelab · 2026-07-31</span><span class="post-title">The Night I Learned a Model Can't Be Trusted to Report on Itself</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-30.html"><span class="post-meta">Homelab · 2026-07-30</span><span class="post-title">The Only Backup Was Still Open in the Chat Window</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-29.html"><span class="post-meta">Projects · 2026-07-29</span><span class="post-title">I Built a Downloads Sorter in Six Hours, and Every Bug in It Looked Like Working Code</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-28.html"><span class="post-meta">Homelab · 2026-07-28</span><span class="post-title">A Second Server in the Morning, an Open Front Door by Midnight</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-27.html"><span class="post-meta">Homelab · 2026-07-27</span><span class="post-title">The Wi-Fi Was Pinned to One Channel by a Network That Was Switched Off</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-26.html"><span class="post-meta">Homelab · 2026-07-26</span><span class="post-title">I Diagnosed the Same Outage Twice and Got Two Different Answers</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-25.html"><span class="post-meta">Projects · 2026-07-25</span><span class="post-title">Twenty-Three Cents to Read a Photo, and Almost None of It Was the Photo</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-24.html"><span class="post-meta">Homelab · 2026-07-24</span><span class="post-title">I Asked If My Containers Were Up to Date, and Ended the Day Running My Own Git Forge</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-16.html"><span class="post-meta">Homelab · 2026-07-16</span><span class="post-title">I Certified the Network at 2.5 Gigabit, Then Spent Three Hours Losing to a USB Dongle</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-14.html"><span class="post-meta">Projects · 2026-07-14</span><span class="post-title">Discord In, Linux ISOs Out</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-13.html"><span class="post-meta">Projects · 2026-07-13</span><span class="post-title">I Gave the AI a Browser, and We Shipped the Redesign</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-12.html"><span class="post-meta">Homelab · 2026-07-12</span><span class="post-title">Two Rooms That Turn Themselves Off, Once I Worked Out What They Were Called</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-02.html"><span class="post-meta">Homelab · 2026-07-02</span><span class="post-title">I Sat Down to Add One Button and Rebuilt Half My Smart Home</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-01.html"><span class="post-meta">Homelab · 2026-07-01</span><span class="post-title">I Built a Status Page, and It Caught My NAS Crashing Before I Finished Setting It Up</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-30.html"><span class="post-meta">Homelab · 2026-06-30</span><span class="post-title">The Outage Was Already Over, and the Fake Flash Drive Wasn't Fake</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-29.html"><span class="post-meta">Homelab · 2026-06-29</span><span class="post-title">Twenty-Five Containers Updated, and the Cleanup That Ate My Rollback</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-28.html"><span class="post-meta">Homelab · 2026-06-28</span><span class="post-title">Moving Immich to the NAS — and the Drive That Tried to Take My Photos With It</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-21.html"><span class="post-meta">Projects · 2026-06-21</span><span class="post-title">Taking the Email Off the Page, and Knowing When to Undo a Logo</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-20.html"><span class="post-meta">Projects · 2026-06-20</span><span class="post-title">The Copy Goes Live, and the Lab Page Turns Personal</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-13.html"><span class="post-meta">Projects · 2026-06-13</span><span class="post-title">Sharper Words, Smaller Cards: A Copy Pass on the Portfolio</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-12.html"><span class="post-meta">Projects · 2026-06-12</span><span class="post-title">Three Designs, a Domain Cutover, and the Linux ISO Stack Comes Home</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-11.html"><span class="post-meta">Homelab · 2026-06-11</span><span class="post-title">Storage Fixes, Vault Cleanup, and the Reboot That Bit Back</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-10.html"><span class="post-meta">Homelab · 2026-06-10</span><span class="post-title">Network Fixes, Tailscale, and a NIC Upgrade</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-09.html"><span class="post-meta">Projects · 2026-06-09</span><span class="post-title">Automating the Blog &amp; Cleaning Up the Portfolio</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-08.html"><span class="post-meta">Projects · 2026-06-08</span><span class="post-title">Building Momentum: Homelab Services + Website Launch</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-07.html"><span class="post-meta">Homelab · 2026-06-07</span><span class="post-title">Home Assistant Goes Public</span></a>
+    </div>
+  </section>
+  </div>
+
+  <nav class="post-crumb label" aria-label="Breadcrumb"><span class="crumb-seg">BLOG</span><span aria-hidden="true"> &gt; </span><span class="crumb-seg">2026</span><span aria-hidden="true"> &gt; </span><span class="crumb-seg">JUL</span><span aria-hidden="true"> &gt; </span><span class="crumb-seg">13</span></nav>
+  <h1 class="post-title-h">I Gave the AI a Browser, and We Shipped the Redesign</h1>
+  <p class="post-chips label">Projects · 2026-07-13 · Monday · 2:30 AM · 4 min read · 95% AI · Eric Li</p>
+
+  <nav class="post-prevnext" aria-label="Post navigation"><span class="pn-prev"><a class="pill" href="/dev/v3/blog/posts/2026-07-12.html" title="Two Rooms That Turn Themselves Off, Once I Worked Out What They Were Called"><span class="pill-l">‹ Previous</span><span class="pill-c" aria-hidden="true">‹ Previous</span></a></span><span class="pn-next"><a class="pill" href="/dev/v3/blog/posts/2026-07-14.html" title="Discord In, Linux ISOs Out"><span class="pill-l">Next ›</span><span class="pill-c" aria-hidden="true">Next ›</span></a></span></nav>
+
+  <article class="prose">
+<p>The redesign I'd been chasing for two days had one bottleneck left, and it was me. Claude built the thing on a preview port, but it couldn't see what it built — every visual check meant me opening a browser, squinting, and describing what looked wrong. Today we fixed the loop itself: Playwright and a headless Chromium went onto the server. Five missing system libraries and one sudo later, the AI could take its own screenshots at any viewport width. The very first automated pass caught a bug my eyes had missed for a week: the hero says I've deployed networks across homes "up to 1,000 m²", and that area symbol was a single exotic Unicode character no font on the server could draw. Visitors with the wrong font stack were seeing a tofu box in the middle of my headline. One character swap, verified with a fresh screenshot, done.</p>
+<h2>The footer taught me about caches</h2>
+<p>First real job: rebuild the footer to match the getlayers.ai reference — a floating glass card instead of a full-width slab, brand and socials on the left, my homelab status line on the right, one horizontal link row underneath. The first version I loaded looked like a ransom note: gigantic pink GitHub and Instagram icons stacked down the page. The cause was a compound one — my browser had cached the old stylesheet, and the new social icons had no fallback dimensions of their own, so without the fresh CSS they exploded to full width. The fix was both: hard sizes on every SVG, and a version stamp on the stylesheet URL so nobody's cache can serve the old design against the new markup again. I also pulled the Lab link out of the top navigation while we were in there. That page is my door into my own containers, not a menu item for visitors; it now lives quietly in the footer.</p>
+<h2>A purple planet with ethernet cables</h2>
+<p>The About section used to have a giant N5HQ watermark behind it. It now has a scene. Scroll toward About and a server rack flies in from the left edge, spinning exactly twice, while a small violet dot grows into a planet. When the section centres, the whole backdrop locks in place as a fixed background for the rest of the site, and the rack keeps rotating with your scroll — forward when you scroll down, backwards when you scroll up.</p>
+<p>The planet went through four versions in one evening. Flat gradient blobs looked cheap. So we pulled NASA's Blue Marble map, converted it to a purple duotone in a canvas — dark seas, pale lavender continents — and wrapped it around the sphere with real proportions, 180 degrees facing you at a time. A fractal cloud layer drifts faster than the terrain underneath, which is the trick that makes a sliding texture read as a turning sphere. Then the detail I'm most pleased with: the rack in front of the planet has nine port squares drawn on it, and nine thin cables now patch out of those ports to world capitals, which sparkle like their lights just came on. When a city drifts toward the planet's edge, its cable reels back in and the port picks up the next capital rising on the other side. My homelab, cabled into the world. It's the most literal logo my setup will ever have.</p>
+<h2>The homelab pages got honest</h2>
+<p>The homelab case-study page had nine identical text cards and nothing to look at. It now opens with a photo of the actual rack — gateway, patch panel, switch, the OptiPlex, the UGREEN NAS beside it — next to a terminal-styled panel of live numbers: 7 stacks, 27 containers, 39 images, 11 volumes, 12 networks, plus spec cards for compute and storage. Those numbers aren't hand-typed anymore either; the pre-commit hook that already stamped the homepage tiles from the Docker daemon now updates all three pages that show them, on every push. The green constellation of services from the homepage hero — UniFi, Docker, Grafana, Immich and friends — became the fixed background for both homelab pages. And the blog section's old subtitle, "Notes from the transition", is now "Notes from the journey", because the original phrasing could read as a very different kind of transition than the career one I meant.</p>
+<h2>Ship it</h2>
+<p>The whole thing went out tonight: one big commit, fast-forwarded to main, deployed, then verified against production — right stylesheet version, the Earth texture serving, the NAS card live. After that we cleaned up the loose ends: a proper social-preview image so links to the site stop unfurling as plain text, and a local dev copy of the site moved onto the port where the old, retired version of the site had been quietly running for two weeks. The old server is gone; the current site is now what I edit locally before anything goes public.</p>
+<p>There's a logo brewing too — a research pass across twenty-odd tech and letter-N marks, distilled into three original directions for an N5 mark. That decision is tomorrow's problem. Today the site finally looks like the thing I've been describing to people, and for the first time the AI that builds it can see it too.</p>
+  </article>
+
+  <section>
+    <div class="social-row">
+      <a class="pill" href="/dev/v3/blog/"><span class="pill-l">All posts ↗</span><span class="pill-c" aria-hidden="true">All posts ↗</span></a>
+    </div>
+  </section>
+</main>
+
+<script>window.__N5_BASE='/dev/v3';</script>
+<script src="/dev/v3/assets/subpage.js"></script>
+</body>
+</html>

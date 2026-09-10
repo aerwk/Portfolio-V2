@@ -1,0 +1,147 @@
+<!doctype html>
+<!-- GENERATED FILE. Produced by scripts/build_dev_preview.py from the design
+     source in `01 Design/design-loop/src` (gitignored). Do not hand-edit this
+     file directly -- edit the source and re-run the generator instead. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Discord In, Linux ISOs Out — Eric Li</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#12130f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/dev/v3/assets/subpage.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="corner tl n5i-cluster" id="c-tl">
+    <a class="n5i-mark n5i-lockup" href="/dev/v3/" aria-label="Eric Li"><img class="lk-rest" src="/dev/v3/assets/logo-rest.png" alt="Eric Li"><img class="lk-hover" src="/dev/v3/assets/logo-hover.png" alt="" aria-hidden="true"><canvas class="lk-canvas" aria-hidden="true"></canvas><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/dev/v3/assets/logo-entry.webm" type="video/webm"><source src="/dev/v3/assets/logo-entry.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverout" muted playsinline preload="auto"><source src="/dev/v3/assets/logo-exit.webm" type="video/webm"><source src="/dev/v3/assets/logo-exit.mp4" type="video/mp4"></video></a><script>(function(){var m=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;var a=document.currentScript.previousElementSibling;if(!m&&a&&a.classList.contains("n5i-lockup"))a.classList.add("lk-armed")})()</script>
+
+<span class="role">DevOps &amp; Infrastructure</span>
+
+  <nav class="blog-tree" data-blog-tree aria-label="Blog archive"></nav></div>
+
+
+<div class="corner tr" id="c-tr">
+  <nav aria-label="Links">
+    <a class="pill" href="/dev/v3/about/"><span class="pill-l">About ↗</span><span class="pill-c" aria-hidden="true">About ↗</span></a>
+    <a class="pill" href="/dev/v3/portfolio/"><span class="pill-l">Projects ↗</span><span class="pill-c" aria-hidden="true">Projects ↗</span></a>
+    <a class="pill" href="/dev/v3/blog/" aria-current="page"><span class="pill-l">Blog ↗</span><span class="pill-c" aria-hidden="true">Blog ↗</span></a>
+    <a class="pill" href="mailto:helloworld@n5hq.me"><span class="pill-l">EMAIL ↗</span><span class="pill-c" aria-hidden="true">EMAIL ↗</span></a>
+    <div class="n5i-socials" aria-label="Social links">
+      <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="GitHub"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span></a>
+      <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="LinkedIn"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span></a>
+      <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="Instagram"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span></a>
+    </div>
+    <span class="n5i-nav-rule" aria-hidden="true"></span>
+    <a class="pill" href="https://portal.n5hq.me"><span class="pill-l">Login →</span><span class="pill-c" aria-hidden="true">Login →</span></a>
+  </nav>
+</div>
+
+<main class="page" id="main">
+  <div id="blog-list-view" hidden>
+  <p class="label">Blog</p>
+  <h1 class="page-title">Tech Journey Journal</h1>
+  <p class="lede">What changed, what prompted it, what broke, and what I learned getting it working again. Written as I go, so the record shows the route — where I started, where I am, and where I'm going.</p>
+
+  <section>
+    <p class="label">All posts</p>
+    <div class="post-list">
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-08.html"><span class="post-meta">Web · 2026-09-08</span><span class="post-title">The Abort-On-Failure Hook Had One Failure Mode It Couldn't Catch</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-07.html"><span class="post-meta">Web · 2026-09-07</span><span class="post-title">An Animation You Cannot Pause Is One You Cannot Review</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-06.html"><span class="post-meta">Web · 2026-09-06</span><span class="post-title">Inspired By Means Rebuilt In, Not Repainted As</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-05.html"><span class="post-meta">Homelab · 2026-09-05</span><span class="post-title">The Reboot That Fixed It Once Before and Didn't the Second Time</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-04.html"><span class="post-meta">Homelab · 2026-09-04</span><span class="post-title">The Disk That Read 82% Free and Was 99.9% Full</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-28.html"><span class="post-meta">Homelab · 2026-08-28</span><span class="post-title">A Line Passing Through a Switch Read as a Connection</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-27.html"><span class="post-meta">Homelab · 2026-08-27</span><span class="post-title">The Validator Was Checking the Same Wrong Path as the Bug</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-26.html"><span class="post-meta">Homelab · 2026-08-26</span><span class="post-title">A Restart That Reported Success and Changed Nothing</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-25.html"><span class="post-meta">Homelab · 2026-08-25</span><span class="post-title">The Check Meant to Avoid Touching a Secret Printed It Anyway</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-24.html"><span class="post-meta">Homelab · 2026-08-24</span><span class="post-title">The File That Was Actually Being Read Was Three Layers Down</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-23.html"><span class="post-meta">Homelab · 2026-08-23</span><span class="post-title">The Rule That Could Only See One User in Thirty-One</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-22.html"><span class="post-meta">Homelab · 2026-08-22</span><span class="post-title">Every Number I Started With Was Measuring Something Else</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-21.html"><span class="post-meta">Homelab · 2026-08-21</span><span class="post-title">The Hardlink That Never Once Linked Anything</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-13.html"><span class="post-meta">Web · 2026-08-13</span><span class="post-title">A Regex Ate Half a Selector and CSS Didn't Complain</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-12.html"><span class="post-meta">Homelab · 2026-08-12</span><span class="post-title">Four Things Were Quietly Doing Nothing and All of Them Looked Fine</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-11.html"><span class="post-meta">Homelab · 2026-08-11</span><span class="post-title">Everything Redundant Turned Out to Share Something</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-10.html"><span class="post-meta">Homelab · 2026-08-10</span><span class="post-title">The Host Wasn't Dead and the Backups Weren't Real — Both Passed Every Check Anyway</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-09.html"><span class="post-meta">Homelab · 2026-08-09</span><span class="post-title">Three Times This Morning, Something Told Me It Worked and Hadn't</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-08.html"><span class="post-meta">Homelab · 2026-08-08</span><span class="post-title">The Checks Kept Passing While the Thing Under Them Was Broken, Four Times Today</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-07.html"><span class="post-meta">Homelab · 2026-08-07</span><span class="post-title">A Repo Containing the CLI but Not the Deployment Is Half of It</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-31.html"><span class="post-meta">Homelab · 2026-07-31</span><span class="post-title">The Night I Learned a Model Can't Be Trusted to Report on Itself</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-30.html"><span class="post-meta">Homelab · 2026-07-30</span><span class="post-title">The Only Backup Was Still Open in the Chat Window</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-29.html"><span class="post-meta">Projects · 2026-07-29</span><span class="post-title">I Built a Downloads Sorter in Six Hours, and Every Bug in It Looked Like Working Code</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-28.html"><span class="post-meta">Homelab · 2026-07-28</span><span class="post-title">A Second Server in the Morning, an Open Front Door by Midnight</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-27.html"><span class="post-meta">Homelab · 2026-07-27</span><span class="post-title">The Wi-Fi Was Pinned to One Channel by a Network That Was Switched Off</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-26.html"><span class="post-meta">Homelab · 2026-07-26</span><span class="post-title">I Diagnosed the Same Outage Twice and Got Two Different Answers</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-25.html"><span class="post-meta">Projects · 2026-07-25</span><span class="post-title">Twenty-Three Cents to Read a Photo, and Almost None of It Was the Photo</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-24.html"><span class="post-meta">Homelab · 2026-07-24</span><span class="post-title">I Asked If My Containers Were Up to Date, and Ended the Day Running My Own Git Forge</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-16.html"><span class="post-meta">Homelab · 2026-07-16</span><span class="post-title">I Certified the Network at 2.5 Gigabit, Then Spent Three Hours Losing to a USB Dongle</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-14.html"><span class="post-meta">Projects · 2026-07-14</span><span class="post-title">Discord In, Linux ISOs Out</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-13.html"><span class="post-meta">Projects · 2026-07-13</span><span class="post-title">I Gave the AI a Browser, and We Shipped the Redesign</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-12.html"><span class="post-meta">Homelab · 2026-07-12</span><span class="post-title">Two Rooms That Turn Themselves Off, Once I Worked Out What They Were Called</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-02.html"><span class="post-meta">Homelab · 2026-07-02</span><span class="post-title">I Sat Down to Add One Button and Rebuilt Half My Smart Home</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-01.html"><span class="post-meta">Homelab · 2026-07-01</span><span class="post-title">I Built a Status Page, and It Caught My NAS Crashing Before I Finished Setting It Up</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-30.html"><span class="post-meta">Homelab · 2026-06-30</span><span class="post-title">The Outage Was Already Over, and the Fake Flash Drive Wasn't Fake</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-29.html"><span class="post-meta">Homelab · 2026-06-29</span><span class="post-title">Twenty-Five Containers Updated, and the Cleanup That Ate My Rollback</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-28.html"><span class="post-meta">Homelab · 2026-06-28</span><span class="post-title">Moving Immich to the NAS — and the Drive That Tried to Take My Photos With It</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-21.html"><span class="post-meta">Projects · 2026-06-21</span><span class="post-title">Taking the Email Off the Page, and Knowing When to Undo a Logo</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-20.html"><span class="post-meta">Projects · 2026-06-20</span><span class="post-title">The Copy Goes Live, and the Lab Page Turns Personal</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-13.html"><span class="post-meta">Projects · 2026-06-13</span><span class="post-title">Sharper Words, Smaller Cards: A Copy Pass on the Portfolio</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-12.html"><span class="post-meta">Projects · 2026-06-12</span><span class="post-title">Three Designs, a Domain Cutover, and the Linux ISO Stack Comes Home</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-11.html"><span class="post-meta">Homelab · 2026-06-11</span><span class="post-title">Storage Fixes, Vault Cleanup, and the Reboot That Bit Back</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-10.html"><span class="post-meta">Homelab · 2026-06-10</span><span class="post-title">Network Fixes, Tailscale, and a NIC Upgrade</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-09.html"><span class="post-meta">Projects · 2026-06-09</span><span class="post-title">Automating the Blog &amp; Cleaning Up the Portfolio</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-08.html"><span class="post-meta">Projects · 2026-06-08</span><span class="post-title">Building Momentum: Homelab Services + Website Launch</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-07.html"><span class="post-meta">Homelab · 2026-06-07</span><span class="post-title">Home Assistant Goes Public</span></a>
+    </div>
+  </section>
+  </div>
+
+  <nav class="post-crumb label" aria-label="Breadcrumb"><span class="crumb-seg">BLOG</span><span aria-hidden="true"> &gt; </span><span class="crumb-seg">2026</span><span aria-hidden="true"> &gt; </span><span class="crumb-seg">JUL</span><span aria-hidden="true"> &gt; </span><span class="crumb-seg">14</span></nav>
+  <h1 class="post-title-h">Discord In, Linux ISOs Out</h1>
+  <p class="post-chips label">Projects · 2026-07-14 · Tuesday · 8:55 AM · 7 min read · 90% AI · Eric Li</p>
+
+  <nav class="post-prevnext" aria-label="Post navigation"><span class="pn-prev"><a class="pill" href="/dev/v3/blog/posts/2026-07-13.html" title="I Gave the AI a Browser, and We Shipped the Redesign"><span class="pill-l">‹ Previous</span><span class="pill-c" aria-hidden="true">‹ Previous</span></a></span><span class="pn-next"><a class="pill" href="/dev/v3/blog/posts/2026-07-16.html" title="I Certified the Network at 2.5 Gigabit, Then Spent Three Hours Losing to a USB Dongle"><span class="pill-l">Next ›</span><span class="pill-c" aria-hidden="true">Next ›</span></a></span></nav>
+
+  <article class="prose">
+<p>My home server archives Linux ISOs. Some of them are feature-length images that ship once and never change, like an LTS release. Others are rolling-release distros: a new point release every week, sometimes for fifteen years straight, and completists want the full back-catalogue. The household requests these ISOs by typing a name at a Discord bot, and a chain of services does the rest: the bot hands the request to Seerr, Seerr hands it to the fetchers, the fetchers find a source and download it. All very hands-off, except for the last metre, which was me.</p>
+<h2>The last metre</h2>
+<p>The library software organises the collection into eight shelves: feature ISOs and rolling-release ISOs, each split by origin — anime, Asian, English, foreign — plus one hand-curated kids shelf that nobody but me touches. Each shelf watches its own folder. The fetchers, though, drop everything into two landing folders that no shelf watches at all. So every requested ISO downloaded perfectly, then sat invisible until I noticed the household asking where it was, shelled in, and dragged it to the right folder by hand. An automated pipeline with a human as the final conveyor belt.</p>
+<p>The obvious fix was the request app's built-in routing rules, and it turned out to be a trap. Route by genre and by language sounds fine until an animated ISO from Japan matches both the Animation rule and the Asian-language rule, and the app's documentation doesn't say which one wins. The only way to find out was to fire real requests and watch where they landed. I'd be debugging a black box with live ammunition.</p>
+<h2>A small librarian</h2>
+<p>Instead the server got one more container: forty lines of compose and a Python script that wakes every fifteen minutes, looks at whatever landed in the transit folders, and asks the metadata service what each ISO actually is. The rules are mine, written down where I can read them: anything tagged Animation goes to the anime shelf no matter what language it speaks, live-action in an Asian language goes to the Asian shelf, English goes to English, and the kids shelf is never, ever, touched by a machine. Moves are renames on the same filesystem, so a fifty-gigabyte archive shelves itself instantly instead of copying, and the fetcher's bookkeeping gets updated so it doesn't go looking for files in the old spot.</p>
+<p>First live sweep, it found two rolling-release distros stranded in transit, read their metadata, and filed one under English and one under anime. Both appeared on their shelves before I'd finished reading the log line.</p>
+<h2>The release archives that wouldn't fetch</h2>
+<p>While I was in there, a longer-standing annoyance: requesting a full season-sized release archive of a rolling distro almost never worked, and single point releases only sometimes. The causes were stacked three deep, which is why it always looked random.</p>
+<p>First, a global size cap of five gigabytes, sensible for one point release, meant every full archive was rejected on sight — those run twenty to forty gigabytes. Raised to fifty: big enough for any real archive, still small enough to reject the fake two-hundred-gigabyte "releases" that are never what they claim. Second, quality floors. I set them to ten megabytes a minute deliberately, because I still want the content to be quality; bottom-shelf re-encodes can stay where they are. Third, the actual killer: the busiest indexer was handing out download files through a mirror site that had quietly died. Every grab hung for a hundred and twelve seconds, failed, and each failure put the indexer in a penalty timeout, which made everything downstream look broken in new and confusing ways. The fix was one setting: prefer magnet links, skip the corpse of the mirror entirely. Grabs went from a two-minute timeout to four seconds.</p>
+<p>Proof run: asked for a missing point release from a distro nine major versions deep. Found, fetched, and on the shelf inside a minute. There's a back-catalogue of about a thousand missing point releases across the collection that's suddenly within reach.</p>
+<h2>Housekeeping</h2>
+<p>The request app also got a rename. It runs Seerr now, the successor to Overseerr, but its public address still said otherwise. The tricky part of renaming a gated service is the gap where the new name exists but the login gate doesn't, so the gate was armed for both names before the new one existed, then the old name was dropped once the switch was verified. Portal tile, uptime monitors, done.</p>
+<p>So the pipeline is closed. Type a name into Discord, and a few minutes later the ISO is on the correct shelf, sorted by what it is and where it's from, with nobody dragging files anywhere. The server hands out Linux ISOs like a package manager now. As it always should have.</p>
+<h2>The reboot nobody watched</h2>
+<p>The morning's work ended with a deliberate act of violence: reboot the whole server and see what comes back on its own. Everything on this box is supposed to survive that — the containers, the network mounts, the tunnel, and the two Discord bots that let me drive the server from my phone. Supposed to. The only way to know is to pull the trigger with a baseline captured and a verification script waiting.</p>
+<p>Verdict: sixteen out of sixteen service probes up, all three network mounts back, and the photo library visible the moment its container started — that last one matters because it used to lose a race against the NAS mount at boot and wake up staring at an empty directory. One systemd drop-in (make Docker wait for remote filesystems) killed that race permanently. The verification script did report one failure, which turned out to be the best kind: a service that looked dead was just socket-activated, dozing until something first knocks. The box now provably returns from a power cut with nobody logged in, and the bots answer from the couch before I've noticed the lights blinked.</p>
+<h2>Going public</h2>
+<p>The Discord bridge itself — two small bots, one that carries the conversation into a live Claude Code session and one that only knows four words (<code>!start</code> <code>!stop</code> <code>!restart</code> <code>!status</code>) — had been asked about enough that it deserved to stop being a private pile of scripts. So the evening went to open-sourcing it: <a href="https://github.com/aerwk/disclaude-sesh">disclaude-sesh</a>.</p>
+<p>Publishing homelab plumbing is mostly a privacy exercise. The private version had my paths, my Discord IDs, my quirks baked in everywhere. The public one got a single config file, placeholder IDs, and — importantly — different defaults than I run: the risky conveniences (skipping permission prompts, patching the plugin to move approval buttons into a channel) are opt-in flags with their trade-offs documented, not the out-of-the-box behavior. Then an automated sanitizer pass grepped the whole tree for everything from tokens to interface names before the first commit ever existed. Nothing personal survived into history.</p>
+<p>The README got two installation paths, because the project is itself about AI-assisted ops: a full manual tutorial for humans who want to understand every step, and a single copy-paste prompt that hands the entire server-side setup to Claude Code while the human only does the two things it can't — click around the Discord Developer Portal and send a pairing DM.</p>
+<h2>Release buttons</h2>
+<p>First release means version one point oh, live badges on the README — star count, latest release, how many people are online in the Discord — and a lesson at the very end: one commit message credited another project as the style reference for the page layout. Harmless? On a public repo the commit log <em>is</em> published content, and it should describe the change, not the mood board. Scrubbing two words from an already-pushed message costs a history rewrite, a moved tag, and re-pointed release notes. Cheap on a repo that's three hours old; a good habit to have learned before it wasn't.</p>
+<p>One day, one arc: the request pipeline stopped needing me in the morning, the server proved it doesn't need me at boot, and by midnight the whole remote-control rig became something a stranger can install without ever seeing my setup. The couch is now a fully supported deployment target.</p>
+  </article>
+
+  <section>
+    <div class="social-row">
+      <a class="pill" href="/dev/v3/blog/"><span class="pill-l">All posts ↗</span><span class="pill-c" aria-hidden="true">All posts ↗</span></a>
+    </div>
+  </section>
+</main>
+
+<script>window.__N5_BASE='/dev/v3';</script>
+<script src="/dev/v3/assets/subpage.js"></script>
+</body>
+</html>

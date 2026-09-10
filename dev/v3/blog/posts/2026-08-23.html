@@ -1,0 +1,138 @@
+<!doctype html>
+<!-- GENERATED FILE. Produced by scripts/build_dev_preview.py from the design
+     source in `01 Design/design-loop/src` (gitignored). Do not hand-edit this
+     file directly -- edit the source and re-run the generator instead. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Rule That Could Only See One User in Thirty-One — Eric Li</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#12130f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/dev/v3/assets/subpage.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="corner tl n5i-cluster" id="c-tl">
+    <a class="n5i-mark n5i-lockup" href="/dev/v3/" aria-label="Eric Li"><img class="lk-rest" src="/dev/v3/assets/logo-rest.png" alt="Eric Li"><img class="lk-hover" src="/dev/v3/assets/logo-hover.png" alt="" aria-hidden="true"><canvas class="lk-canvas" aria-hidden="true"></canvas><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/dev/v3/assets/logo-entry.webm" type="video/webm"><source src="/dev/v3/assets/logo-entry.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverout" muted playsinline preload="auto"><source src="/dev/v3/assets/logo-exit.webm" type="video/webm"><source src="/dev/v3/assets/logo-exit.mp4" type="video/mp4"></video></a><script>(function(){var m=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;var a=document.currentScript.previousElementSibling;if(!m&&a&&a.classList.contains("n5i-lockup"))a.classList.add("lk-armed")})()</script>
+
+<span class="role">DevOps &amp; Infrastructure</span>
+
+  <nav class="blog-tree" data-blog-tree aria-label="Blog archive"></nav></div>
+
+
+<div class="corner tr" id="c-tr">
+  <nav aria-label="Links">
+    <a class="pill" href="/dev/v3/about/"><span class="pill-l">About ↗</span><span class="pill-c" aria-hidden="true">About ↗</span></a>
+    <a class="pill" href="/dev/v3/portfolio/"><span class="pill-l">Projects ↗</span><span class="pill-c" aria-hidden="true">Projects ↗</span></a>
+    <a class="pill" href="/dev/v3/blog/" aria-current="page"><span class="pill-l">Blog ↗</span><span class="pill-c" aria-hidden="true">Blog ↗</span></a>
+    <a class="pill" href="mailto:helloworld@n5hq.me"><span class="pill-l">EMAIL ↗</span><span class="pill-c" aria-hidden="true">EMAIL ↗</span></a>
+    <div class="n5i-socials" aria-label="Social links">
+      <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="GitHub"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span></a>
+      <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="LinkedIn"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span></a>
+      <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="Instagram"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span></a>
+    </div>
+    <span class="n5i-nav-rule" aria-hidden="true"></span>
+    <a class="pill" href="https://portal.n5hq.me"><span class="pill-l">Login →</span><span class="pill-c" aria-hidden="true">Login →</span></a>
+  </nav>
+</div>
+
+<main class="page" id="main">
+  <div id="blog-list-view" hidden>
+  <p class="label">Blog</p>
+  <h1 class="page-title">Tech Journey Journal</h1>
+  <p class="lede">What changed, what prompted it, what broke, and what I learned getting it working again. Written as I go, so the record shows the route — where I started, where I am, and where I'm going.</p>
+
+  <section>
+    <p class="label">All posts</p>
+    <div class="post-list">
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-08.html"><span class="post-meta">Web · 2026-09-08</span><span class="post-title">The Abort-On-Failure Hook Had One Failure Mode It Couldn't Catch</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-07.html"><span class="post-meta">Web · 2026-09-07</span><span class="post-title">An Animation You Cannot Pause Is One You Cannot Review</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-06.html"><span class="post-meta">Web · 2026-09-06</span><span class="post-title">Inspired By Means Rebuilt In, Not Repainted As</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-05.html"><span class="post-meta">Homelab · 2026-09-05</span><span class="post-title">The Reboot That Fixed It Once Before and Didn't the Second Time</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-04.html"><span class="post-meta">Homelab · 2026-09-04</span><span class="post-title">The Disk That Read 82% Free and Was 99.9% Full</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-28.html"><span class="post-meta">Homelab · 2026-08-28</span><span class="post-title">A Line Passing Through a Switch Read as a Connection</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-27.html"><span class="post-meta">Homelab · 2026-08-27</span><span class="post-title">The Validator Was Checking the Same Wrong Path as the Bug</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-26.html"><span class="post-meta">Homelab · 2026-08-26</span><span class="post-title">A Restart That Reported Success and Changed Nothing</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-25.html"><span class="post-meta">Homelab · 2026-08-25</span><span class="post-title">The Check Meant to Avoid Touching a Secret Printed It Anyway</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-24.html"><span class="post-meta">Homelab · 2026-08-24</span><span class="post-title">The File That Was Actually Being Read Was Three Layers Down</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-23.html"><span class="post-meta">Homelab · 2026-08-23</span><span class="post-title">The Rule That Could Only See One User in Thirty-One</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-22.html"><span class="post-meta">Homelab · 2026-08-22</span><span class="post-title">Every Number I Started With Was Measuring Something Else</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-21.html"><span class="post-meta">Homelab · 2026-08-21</span><span class="post-title">The Hardlink That Never Once Linked Anything</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-13.html"><span class="post-meta">Web · 2026-08-13</span><span class="post-title">A Regex Ate Half a Selector and CSS Didn't Complain</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-12.html"><span class="post-meta">Homelab · 2026-08-12</span><span class="post-title">Four Things Were Quietly Doing Nothing and All of Them Looked Fine</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-11.html"><span class="post-meta">Homelab · 2026-08-11</span><span class="post-title">Everything Redundant Turned Out to Share Something</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-10.html"><span class="post-meta">Homelab · 2026-08-10</span><span class="post-title">The Host Wasn't Dead and the Backups Weren't Real — Both Passed Every Check Anyway</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-09.html"><span class="post-meta">Homelab · 2026-08-09</span><span class="post-title">Three Times This Morning, Something Told Me It Worked and Hadn't</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-08.html"><span class="post-meta">Homelab · 2026-08-08</span><span class="post-title">The Checks Kept Passing While the Thing Under Them Was Broken, Four Times Today</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-07.html"><span class="post-meta">Homelab · 2026-08-07</span><span class="post-title">A Repo Containing the CLI but Not the Deployment Is Half of It</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-31.html"><span class="post-meta">Homelab · 2026-07-31</span><span class="post-title">The Night I Learned a Model Can't Be Trusted to Report on Itself</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-30.html"><span class="post-meta">Homelab · 2026-07-30</span><span class="post-title">The Only Backup Was Still Open in the Chat Window</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-29.html"><span class="post-meta">Projects · 2026-07-29</span><span class="post-title">I Built a Downloads Sorter in Six Hours, and Every Bug in It Looked Like Working Code</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-28.html"><span class="post-meta">Homelab · 2026-07-28</span><span class="post-title">A Second Server in the Morning, an Open Front Door by Midnight</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-27.html"><span class="post-meta">Homelab · 2026-07-27</span><span class="post-title">The Wi-Fi Was Pinned to One Channel by a Network That Was Switched Off</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-26.html"><span class="post-meta">Homelab · 2026-07-26</span><span class="post-title">I Diagnosed the Same Outage Twice and Got Two Different Answers</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-25.html"><span class="post-meta">Projects · 2026-07-25</span><span class="post-title">Twenty-Three Cents to Read a Photo, and Almost None of It Was the Photo</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-24.html"><span class="post-meta">Homelab · 2026-07-24</span><span class="post-title">I Asked If My Containers Were Up to Date, and Ended the Day Running My Own Git Forge</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-16.html"><span class="post-meta">Homelab · 2026-07-16</span><span class="post-title">I Certified the Network at 2.5 Gigabit, Then Spent Three Hours Losing to a USB Dongle</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-14.html"><span class="post-meta">Projects · 2026-07-14</span><span class="post-title">Discord In, Linux ISOs Out</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-13.html"><span class="post-meta">Projects · 2026-07-13</span><span class="post-title">I Gave the AI a Browser, and We Shipped the Redesign</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-12.html"><span class="post-meta">Homelab · 2026-07-12</span><span class="post-title">Two Rooms That Turn Themselves Off, Once I Worked Out What They Were Called</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-02.html"><span class="post-meta">Homelab · 2026-07-02</span><span class="post-title">I Sat Down to Add One Button and Rebuilt Half My Smart Home</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-01.html"><span class="post-meta">Homelab · 2026-07-01</span><span class="post-title">I Built a Status Page, and It Caught My NAS Crashing Before I Finished Setting It Up</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-30.html"><span class="post-meta">Homelab · 2026-06-30</span><span class="post-title">The Outage Was Already Over, and the Fake Flash Drive Wasn't Fake</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-29.html"><span class="post-meta">Homelab · 2026-06-29</span><span class="post-title">Twenty-Five Containers Updated, and the Cleanup That Ate My Rollback</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-28.html"><span class="post-meta">Homelab · 2026-06-28</span><span class="post-title">Moving Immich to the NAS — and the Drive That Tried to Take My Photos With It</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-21.html"><span class="post-meta">Projects · 2026-06-21</span><span class="post-title">Taking the Email Off the Page, and Knowing When to Undo a Logo</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-20.html"><span class="post-meta">Projects · 2026-06-20</span><span class="post-title">The Copy Goes Live, and the Lab Page Turns Personal</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-13.html"><span class="post-meta">Projects · 2026-06-13</span><span class="post-title">Sharper Words, Smaller Cards: A Copy Pass on the Portfolio</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-12.html"><span class="post-meta">Projects · 2026-06-12</span><span class="post-title">Three Designs, a Domain Cutover, and the Linux ISO Stack Comes Home</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-11.html"><span class="post-meta">Homelab · 2026-06-11</span><span class="post-title">Storage Fixes, Vault Cleanup, and the Reboot That Bit Back</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-10.html"><span class="post-meta">Homelab · 2026-06-10</span><span class="post-title">Network Fixes, Tailscale, and a NIC Upgrade</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-09.html"><span class="post-meta">Projects · 2026-06-09</span><span class="post-title">Automating the Blog &amp; Cleaning Up the Portfolio</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-08.html"><span class="post-meta">Projects · 2026-06-08</span><span class="post-title">Building Momentum: Homelab Services + Website Launch</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-07.html"><span class="post-meta">Homelab · 2026-06-07</span><span class="post-title">Home Assistant Goes Public</span></a>
+    </div>
+  </section>
+  </div>
+
+  <nav class="post-crumb label" aria-label="Breadcrumb"><span class="crumb-seg">BLOG</span><span aria-hidden="true"> &gt; </span><span class="crumb-seg">2026</span><span aria-hidden="true"> &gt; </span><span class="crumb-seg">AUG</span><span aria-hidden="true"> &gt; </span><span class="crumb-seg">23</span></nav>
+  <h1 class="post-title-h">The Rule That Could Only See One User in Thirty-One</h1>
+  <p class="post-chips label">Homelab · 2026-08-23 · Sunday · 12:00 AM · 5 min read · 90% AI · Eric Li</p>
+
+  <nav class="post-prevnext" aria-label="Post navigation"><span class="pn-prev"><a class="pill" href="/dev/v3/blog/posts/2026-08-22.html" title="Every Number I Started With Was Measuring Something Else"><span class="pill-l">‹ Previous</span><span class="pill-c" aria-hidden="true">‹ Previous</span></a></span><span class="pn-next"><a class="pill" href="/dev/v3/blog/posts/2026-08-24.html" title="The File That Was Actually Being Read Was Three Layers Down"><span class="pill-l">Next ›</span><span class="pill-c" aria-hidden="true">Next ›</span></a></span></nav>
+
+  <article class="prose">
+<p>Sunday was a retention policy for the Linux ISO library, most of it between 00:23 and 04:00, followed by a healthcheck fix, a gap closed in the nightly backups, and four new checks that watch for something up/down monitoring cannot see at all. The day's actual finding showed up twice in two different shapes: a field name that wasn't telling the truth about its scope, and an explanation, written down and acted on twice, that direct testing proved backward. A property name is not documentation. Neither is a document that hasn't been tested against the thing it describes.</p>
+<h2>The rule that could see one user</h2>
+<p>The retention rule was meant to flag anything nobody had pulled in eighteen months, guarded so nothing newer than a year could ever get caught. It used Plex's own <code>lastPlayedAt</code> field. The first sweep matched 426 items at 3161 GiB, which sounded plausible for a library that size, so I tuned thresholds against it for a while before looking at the field itself.</p>
+<p>Reading the getter instead of trusting the name showed it resolves to <code>lastViewedAt</code> on the calling account only. The server has thirty-one users. The rule was seeing one of them and treating the other thirty's activity as if it had never happened. Six items in that first sweep had been pulled recently, by users the rule never checked.</p>
+<p>The fix was switching the source to Tautulli's aggregate <code>lastPlayedAt</code>, which rolls up every account instead of one. After that the real sweep landed at 251 items and 1435 GiB, which is what I should have started tuning against. Two fields, same name, different scope, and the only way to find that out was to open the implementation and read what it actually returned rather than what it was called.</p>
+<h2>The timezone that wasn't</h2>
+<p>A separate cron job had been firing at the wrong hour for a while, and three files already had the explanation written down: the Alpine base image lacks <code>tzdata</code>, so Node falls back to UTC. That line had been copied between documents and acted on twice, both times by rebuilding the image with tzdata added, and it kept not fixing anything.</p>
+<p>Testing it directly showed the claim was wrong in the specific way that's hardest to catch, because it was half right. The container's shell <code>date</code> binary genuinely has no tzdata and genuinely prints UTC. Node in that same image does not depend on it: it ships its own bundled ICU data and resolves zones correctly with nothing in <code>/usr/share/zoneinfo</code> at all. One tool's real limitation got generalized to the whole runtime, and because the shell test seemed to confirm it, nobody went and checked what the process that actually mattered was doing.</p>
+<p>The real cause was that <code>TZ</code> had been changed in <code>.env</code> twenty-two hours earlier and the container had never been recreated to pick it up. <code>docker compose restart</code> doesn't reread <code>.env</code>, it only restarts the process; the environment is fixed at container creation, so a <code>restart</code> after an env change is a no-op wearing a success message. That caught me twice in the same day before I stopped reaching for it out of habit. Fixing the cron hour needed both the corrected value and <code>docker compose up -d</code> to actually apply it. Either alone leaves the job firing at the old time. All three files got a dated correction rather than a silent edit, since the wrong version had already been acted on twice and deserved a record of that.</p>
+<h2>Thirteen days quiet</h2>
+<p>The reason for building freshness checks at all was a database that sat corrupt for thirteen days while every up/down signal said the service was fine: container healthy, <code>/health</code> endpoint returning 200, scheduled jobs "running" on schedule. None of that checks whether the work is actually happening, only whether the process that's supposed to do it is still alive.</p>
+<p>Four checks went in that read logs for evidence of real activity instead of a heartbeat, and alert when that evidence goes quiet. Thresholds came from observed cadence rather than a round number: 14 hours against a job that normally runs every 6 (2.3x), 3 hours against two jobs that normally run every 15 and 30 minutes, 2 hours against one that runs roughly every 6. All four use <code>maxretries=0</code> and <code>resendInterval=1</code>, so a real gap shows up on the first check instead of waiting out a retry window the way the existing backup monitors do.</p>
+<p>Before any of the four got wired to a notification, I forced both directions on purpose: made the log signal go quiet and confirmed the DOWN fired, then restored it and confirmed UP fired too. An alert nobody has watched actually trip is a guess about an alert, not a working one. The backup gap that started the day off got closed the same way, minus the database that's still corrupt: <code>Page 2779: never used</code>, wrong entry counts on three indexes, reproducible on a plain read outside of any backup process, so it's the data, not the backup tooling. Snapshotting it anyway would only turn the nightly job red for a fault the backup can't fix. It's excluded with a comment pointing at the repair, which hasn't happened yet.</p>
+<h2>What's left</h2>
+<p>The corrupt database is still corrupt. Four keys inventoried during the day's other work are still live and unrotated, on the reasoning that rotating them is a decision for whoever owns the downtime, not something to do at 2 a.m. because it seemed tidy. And the freshness pattern that closed a thirteen-day blind spot on one service is sitting there proven and unrepeated, with roughly seven more services that have exactly the same kind of gap.</p>
+  </article>
+
+  <section>
+    <div class="social-row">
+      <a class="pill" href="/dev/v3/blog/"><span class="pill-l">All posts ↗</span><span class="pill-c" aria-hidden="true">All posts ↗</span></a>
+    </div>
+  </section>
+</main>
+
+<script>window.__N5_BASE='/dev/v3';</script>
+<script src="/dev/v3/assets/subpage.js"></script>
+</body>
+</html>

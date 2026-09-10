@@ -1,0 +1,138 @@
+<!doctype html>
+<!-- GENERATED FILE. Produced by scripts/build_dev_preview.py from the design
+     source in `01 Design/design-loop/src` (gitignored). Do not hand-edit this
+     file directly -- edit the source and re-run the generator instead. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Check Meant to Avoid Touching a Secret Printed It Anyway — Eric Li</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#12130f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/dev/v3/assets/subpage.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="corner tl n5i-cluster" id="c-tl">
+    <a class="n5i-mark n5i-lockup" href="/dev/v3/" aria-label="Eric Li"><img class="lk-rest" src="/dev/v3/assets/logo-rest.png" alt="Eric Li"><img class="lk-hover" src="/dev/v3/assets/logo-hover.png" alt="" aria-hidden="true"><canvas class="lk-canvas" aria-hidden="true"></canvas><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/dev/v3/assets/logo-entry.webm" type="video/webm"><source src="/dev/v3/assets/logo-entry.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverout" muted playsinline preload="auto"><source src="/dev/v3/assets/logo-exit.webm" type="video/webm"><source src="/dev/v3/assets/logo-exit.mp4" type="video/mp4"></video></a><script>(function(){var m=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;var a=document.currentScript.previousElementSibling;if(!m&&a&&a.classList.contains("n5i-lockup"))a.classList.add("lk-armed")})()</script>
+
+<span class="role">DevOps &amp; Infrastructure</span>
+
+  <nav class="blog-tree" data-blog-tree aria-label="Blog archive"></nav></div>
+
+
+<div class="corner tr" id="c-tr">
+  <nav aria-label="Links">
+    <a class="pill" href="/dev/v3/about/"><span class="pill-l">About ↗</span><span class="pill-c" aria-hidden="true">About ↗</span></a>
+    <a class="pill" href="/dev/v3/portfolio/"><span class="pill-l">Projects ↗</span><span class="pill-c" aria-hidden="true">Projects ↗</span></a>
+    <a class="pill" href="/dev/v3/blog/" aria-current="page"><span class="pill-l">Blog ↗</span><span class="pill-c" aria-hidden="true">Blog ↗</span></a>
+    <a class="pill" href="mailto:helloworld@n5hq.me"><span class="pill-l">EMAIL ↗</span><span class="pill-c" aria-hidden="true">EMAIL ↗</span></a>
+    <div class="n5i-socials" aria-label="Social links">
+      <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="GitHub"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span></a>
+      <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="LinkedIn"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span></a>
+      <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="Instagram"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span></a>
+    </div>
+    <span class="n5i-nav-rule" aria-hidden="true"></span>
+    <a class="pill" href="https://portal.n5hq.me"><span class="pill-l">Login →</span><span class="pill-c" aria-hidden="true">Login →</span></a>
+  </nav>
+</div>
+
+<main class="page" id="main">
+  <div id="blog-list-view" hidden>
+  <p class="label">Blog</p>
+  <h1 class="page-title">Tech Journey Journal</h1>
+  <p class="lede">What changed, what prompted it, what broke, and what I learned getting it working again. Written as I go, so the record shows the route — where I started, where I am, and where I'm going.</p>
+
+  <section>
+    <p class="label">All posts</p>
+    <div class="post-list">
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-08.html"><span class="post-meta">Web · 2026-09-08</span><span class="post-title">The Abort-On-Failure Hook Had One Failure Mode It Couldn't Catch</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-07.html"><span class="post-meta">Web · 2026-09-07</span><span class="post-title">An Animation You Cannot Pause Is One You Cannot Review</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-06.html"><span class="post-meta">Web · 2026-09-06</span><span class="post-title">Inspired By Means Rebuilt In, Not Repainted As</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-05.html"><span class="post-meta">Homelab · 2026-09-05</span><span class="post-title">The Reboot That Fixed It Once Before and Didn't the Second Time</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-04.html"><span class="post-meta">Homelab · 2026-09-04</span><span class="post-title">The Disk That Read 82% Free and Was 99.9% Full</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-28.html"><span class="post-meta">Homelab · 2026-08-28</span><span class="post-title">A Line Passing Through a Switch Read as a Connection</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-27.html"><span class="post-meta">Homelab · 2026-08-27</span><span class="post-title">The Validator Was Checking the Same Wrong Path as the Bug</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-26.html"><span class="post-meta">Homelab · 2026-08-26</span><span class="post-title">A Restart That Reported Success and Changed Nothing</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-25.html"><span class="post-meta">Homelab · 2026-08-25</span><span class="post-title">The Check Meant to Avoid Touching a Secret Printed It Anyway</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-24.html"><span class="post-meta">Homelab · 2026-08-24</span><span class="post-title">The File That Was Actually Being Read Was Three Layers Down</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-23.html"><span class="post-meta">Homelab · 2026-08-23</span><span class="post-title">The Rule That Could Only See One User in Thirty-One</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-22.html"><span class="post-meta">Homelab · 2026-08-22</span><span class="post-title">Every Number I Started With Was Measuring Something Else</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-21.html"><span class="post-meta">Homelab · 2026-08-21</span><span class="post-title">The Hardlink That Never Once Linked Anything</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-13.html"><span class="post-meta">Web · 2026-08-13</span><span class="post-title">A Regex Ate Half a Selector and CSS Didn't Complain</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-12.html"><span class="post-meta">Homelab · 2026-08-12</span><span class="post-title">Four Things Were Quietly Doing Nothing and All of Them Looked Fine</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-11.html"><span class="post-meta">Homelab · 2026-08-11</span><span class="post-title">Everything Redundant Turned Out to Share Something</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-10.html"><span class="post-meta">Homelab · 2026-08-10</span><span class="post-title">The Host Wasn't Dead and the Backups Weren't Real — Both Passed Every Check Anyway</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-09.html"><span class="post-meta">Homelab · 2026-08-09</span><span class="post-title">Three Times This Morning, Something Told Me It Worked and Hadn't</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-08.html"><span class="post-meta">Homelab · 2026-08-08</span><span class="post-title">The Checks Kept Passing While the Thing Under Them Was Broken, Four Times Today</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-07.html"><span class="post-meta">Homelab · 2026-08-07</span><span class="post-title">A Repo Containing the CLI but Not the Deployment Is Half of It</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-31.html"><span class="post-meta">Homelab · 2026-07-31</span><span class="post-title">The Night I Learned a Model Can't Be Trusted to Report on Itself</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-30.html"><span class="post-meta">Homelab · 2026-07-30</span><span class="post-title">The Only Backup Was Still Open in the Chat Window</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-29.html"><span class="post-meta">Projects · 2026-07-29</span><span class="post-title">I Built a Downloads Sorter in Six Hours, and Every Bug in It Looked Like Working Code</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-28.html"><span class="post-meta">Homelab · 2026-07-28</span><span class="post-title">A Second Server in the Morning, an Open Front Door by Midnight</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-27.html"><span class="post-meta">Homelab · 2026-07-27</span><span class="post-title">The Wi-Fi Was Pinned to One Channel by a Network That Was Switched Off</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-26.html"><span class="post-meta">Homelab · 2026-07-26</span><span class="post-title">I Diagnosed the Same Outage Twice and Got Two Different Answers</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-25.html"><span class="post-meta">Projects · 2026-07-25</span><span class="post-title">Twenty-Three Cents to Read a Photo, and Almost None of It Was the Photo</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-24.html"><span class="post-meta">Homelab · 2026-07-24</span><span class="post-title">I Asked If My Containers Were Up to Date, and Ended the Day Running My Own Git Forge</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-16.html"><span class="post-meta">Homelab · 2026-07-16</span><span class="post-title">I Certified the Network at 2.5 Gigabit, Then Spent Three Hours Losing to a USB Dongle</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-14.html"><span class="post-meta">Projects · 2026-07-14</span><span class="post-title">Discord In, Linux ISOs Out</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-13.html"><span class="post-meta">Projects · 2026-07-13</span><span class="post-title">I Gave the AI a Browser, and We Shipped the Redesign</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-12.html"><span class="post-meta">Homelab · 2026-07-12</span><span class="post-title">Two Rooms That Turn Themselves Off, Once I Worked Out What They Were Called</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-02.html"><span class="post-meta">Homelab · 2026-07-02</span><span class="post-title">I Sat Down to Add One Button and Rebuilt Half My Smart Home</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-01.html"><span class="post-meta">Homelab · 2026-07-01</span><span class="post-title">I Built a Status Page, and It Caught My NAS Crashing Before I Finished Setting It Up</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-30.html"><span class="post-meta">Homelab · 2026-06-30</span><span class="post-title">The Outage Was Already Over, and the Fake Flash Drive Wasn't Fake</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-29.html"><span class="post-meta">Homelab · 2026-06-29</span><span class="post-title">Twenty-Five Containers Updated, and the Cleanup That Ate My Rollback</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-28.html"><span class="post-meta">Homelab · 2026-06-28</span><span class="post-title">Moving Immich to the NAS — and the Drive That Tried to Take My Photos With It</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-21.html"><span class="post-meta">Projects · 2026-06-21</span><span class="post-title">Taking the Email Off the Page, and Knowing When to Undo a Logo</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-20.html"><span class="post-meta">Projects · 2026-06-20</span><span class="post-title">The Copy Goes Live, and the Lab Page Turns Personal</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-13.html"><span class="post-meta">Projects · 2026-06-13</span><span class="post-title">Sharper Words, Smaller Cards: A Copy Pass on the Portfolio</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-12.html"><span class="post-meta">Projects · 2026-06-12</span><span class="post-title">Three Designs, a Domain Cutover, and the Linux ISO Stack Comes Home</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-11.html"><span class="post-meta">Homelab · 2026-06-11</span><span class="post-title">Storage Fixes, Vault Cleanup, and the Reboot That Bit Back</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-10.html"><span class="post-meta">Homelab · 2026-06-10</span><span class="post-title">Network Fixes, Tailscale, and a NIC Upgrade</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-09.html"><span class="post-meta">Projects · 2026-06-09</span><span class="post-title">Automating the Blog &amp; Cleaning Up the Portfolio</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-08.html"><span class="post-meta">Projects · 2026-06-08</span><span class="post-title">Building Momentum: Homelab Services + Website Launch</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-07.html"><span class="post-meta">Homelab · 2026-06-07</span><span class="post-title">Home Assistant Goes Public</span></a>
+    </div>
+  </section>
+  </div>
+
+  <nav class="post-crumb label" aria-label="Breadcrumb"><span class="crumb-seg">BLOG</span><span aria-hidden="true"> &gt; </span><span class="crumb-seg">2026</span><span aria-hidden="true"> &gt; </span><span class="crumb-seg">AUG</span><span aria-hidden="true"> &gt; </span><span class="crumb-seg">25</span></nav>
+  <h1 class="post-title-h">The Check Meant to Avoid Touching a Secret Printed It Anyway</h1>
+  <p class="post-chips label">Homelab · 2026-08-25 · Tuesday · 12:00 AM · 4 min read · 90% AI · Eric Li</p>
+
+  <nav class="post-prevnext" aria-label="Post navigation"><span class="pn-prev"><a class="pill" href="/dev/v3/blog/posts/2026-08-24.html" title="The File That Was Actually Being Read Was Three Layers Down"><span class="pill-l">‹ Previous</span><span class="pill-c" aria-hidden="true">‹ Previous</span></a></span><span class="pn-next"><a class="pill" href="/dev/v3/blog/posts/2026-08-26.html" title="A Restart That Reported Success and Changed Nothing"><span class="pill-l">Next ›</span><span class="pill-c" aria-hidden="true">Next ›</span></a></span></nav>
+
+  <article class="prose">
+<p>Today was meant to close out a credential migration that had been running for weeks: delete the plaintext fallback files now that the vault is the only path in, confirm nothing still reads them, done. That part went fine. The finding that actually matters happened sideways, in the middle of debugging something else. A shell idiom for checking whether a variable is set leaked a live token into a transcript, twice, on the same day it had already done that once two weeks ago.</p>
+<p>The idiom looks safe. <code>${VAR:-MISSING}</code> or <code>${VAR:+PRESENT}</code> are the standard way to print a placeholder instead of a real value while checking whether a variable is populated. The trap is that both forms expand the variable when it's non-empty. A check written specifically to avoid printing a secret prints the secret, at the exact moment the secret exists to be checked. The shell isn't misbehaving. It's doing exactly what the syntax says. It's just not what the person typing it meant, and the two readings look identical until the variable actually has a value in it.</p>
+<h2>Third time, same idiom</h2>
+<p>The first leak two weeks ago was written down as a known trap in the runsheet: don't use <code>:-</code> or <code>:+</code> to test presence, because either one echoes the value if there is one. Today, mid-debugging, under time pressure to see why a script was behaving oddly, I typed the exact pattern again to check what a variable held. It printed. I revoked the token immediately, confirmed it was dead with a 401, and checked the replacement path in parallel before doing anything else with it.</p>
+<p>Then it happened again the same day, on a different variable, and this time it exposed six more values across two services in one print. Same idiom. Same afternoon. Same runsheet entry sitting right there describing exactly this failure mode.</p>
+<p>The honest part isn't the leak. Leaks happen. The honest part is that this was already documented, in detail, as a trap to avoid, and having it written down did nothing at the moment it mattered. Knowing a trap and having a habit that avoids it are different things, and the gap between them is where this kept happening. The response each time was correct: revoke, confirm dead, verify the replacement worked, don't guess about scope. What wasn't correct was reaching for the dangerous pattern a second and third time after having named it once already. The idiom is now banned outright, in every script and every interactive command, in favor of a form that tests presence without ever expanding the value.</p>
+<h2>Two files no sweep had found</h2>
+<p>The plaintext cleanup itself went from 17 orphaned credential files down to 2 on one host, 19 to 1 on another, 3 to 0 on a third, each deletion preceded by a search for anything that still read the file. Twelve files gone across three machines.</p>
+<p>Two of them had survived every previous pass. One was sourced from a line in a shell profile that runs before the non-interactive guard checks, so it loaded quietly into scripted sessions that nobody was watching when they looked for it. The other was created during a directory move two weeks earlier that no sweep had ever been told about, so it sat outside the search paths every prior audit used. Neither was hidden. Both were just outside where a targeted search would think to look. They only turned up because this pass searched everything rather than the places previous passes had already covered.</p>
+<h2>One fault, two clocks</h2>
+<p>Separately, a pattern that had looked like two unrelated problems turned out to be one. Backup errors on one system and reboots on an appliance had no obvious connection, different systems, different logs, no shared timestamp format. The backup host logs in UTC. The appliance reports local time, eight hours ahead. Once that offset was applied to line the two logs up, every storage error aligned exactly with a reboot. One fault wearing two disguises, not two faults.</p>
+<p>The cause of the reboots is still unknown. A fleet check ruled out a simple outage, since every other machine on the same power stayed up through the same windows, so it isn't a shared power event. That's recorded as cause unknown rather than filled in with a guess that would look tidier in the runsheet.</p>
+<h2>Smaller pieces</h2>
+<p>A webhook baked into two old archive files got rotated in place rather than deleted along with the archives, which are kept as rollback insurance. Rotating in place, instead of recreating the credential, kept all nineteen existing bindings intact; recreating it would have unbound every one of them. The old value was never printed anywhere, tracked only by a hash prefix, and piped in rather than passed as a command argument where it would sit in the process list for anyone to read.</p>
+<p>And before stopping a container for an unrelated cleanup, its monitors got paused with the dedicated pause call rather than the edit call, because a known defect means a failed edit wipes a monitor's notification list unconditionally, whether the edit itself succeeds or not. Checked the notification list again about a minute later to confirm it had survived.</p>
+  </article>
+
+  <section>
+    <div class="social-row">
+      <a class="pill" href="/dev/v3/blog/"><span class="pill-l">All posts ↗</span><span class="pill-c" aria-hidden="true">All posts ↗</span></a>
+    </div>
+  </section>
+</main>
+
+<script>window.__N5_BASE='/dev/v3';</script>
+<script src="/dev/v3/assets/subpage.js"></script>
+</body>
+</html>

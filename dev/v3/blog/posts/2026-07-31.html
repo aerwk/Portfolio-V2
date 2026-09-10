@@ -1,0 +1,148 @@
+<!doctype html>
+<!-- GENERATED FILE. Produced by scripts/build_dev_preview.py from the design
+     source in `01 Design/design-loop/src` (gitignored). Do not hand-edit this
+     file directly -- edit the source and re-run the generator instead. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Night I Learned a Model Can't Be Trusted to Report on Itself — Eric Li</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#12130f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/dev/v3/assets/subpage.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="corner tl n5i-cluster" id="c-tl">
+    <a class="n5i-mark n5i-lockup" href="/dev/v3/" aria-label="Eric Li"><img class="lk-rest" src="/dev/v3/assets/logo-rest.png" alt="Eric Li"><img class="lk-hover" src="/dev/v3/assets/logo-hover.png" alt="" aria-hidden="true"><canvas class="lk-canvas" aria-hidden="true"></canvas><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/dev/v3/assets/logo-entry.webm" type="video/webm"><source src="/dev/v3/assets/logo-entry.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverout" muted playsinline preload="auto"><source src="/dev/v3/assets/logo-exit.webm" type="video/webm"><source src="/dev/v3/assets/logo-exit.mp4" type="video/mp4"></video></a><script>(function(){var m=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;var a=document.currentScript.previousElementSibling;if(!m&&a&&a.classList.contains("n5i-lockup"))a.classList.add("lk-armed")})()</script>
+
+<span class="role">DevOps &amp; Infrastructure</span>
+
+  <nav class="blog-tree" data-blog-tree aria-label="Blog archive"></nav></div>
+
+
+<div class="corner tr" id="c-tr">
+  <nav aria-label="Links">
+    <a class="pill" href="/dev/v3/about/"><span class="pill-l">About ↗</span><span class="pill-c" aria-hidden="true">About ↗</span></a>
+    <a class="pill" href="/dev/v3/portfolio/"><span class="pill-l">Projects ↗</span><span class="pill-c" aria-hidden="true">Projects ↗</span></a>
+    <a class="pill" href="/dev/v3/blog/" aria-current="page"><span class="pill-l">Blog ↗</span><span class="pill-c" aria-hidden="true">Blog ↗</span></a>
+    <a class="pill" href="mailto:helloworld@n5hq.me"><span class="pill-l">EMAIL ↗</span><span class="pill-c" aria-hidden="true">EMAIL ↗</span></a>
+    <div class="n5i-socials" aria-label="Social links">
+      <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="GitHub"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span></a>
+      <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="LinkedIn"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span></a>
+      <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="Instagram"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span></a>
+    </div>
+    <span class="n5i-nav-rule" aria-hidden="true"></span>
+    <a class="pill" href="https://portal.n5hq.me"><span class="pill-l">Login →</span><span class="pill-c" aria-hidden="true">Login →</span></a>
+  </nav>
+</div>
+
+<main class="page" id="main">
+  <div id="blog-list-view" hidden>
+  <p class="label">Blog</p>
+  <h1 class="page-title">Tech Journey Journal</h1>
+  <p class="lede">What changed, what prompted it, what broke, and what I learned getting it working again. Written as I go, so the record shows the route — where I started, where I am, and where I'm going.</p>
+
+  <section>
+    <p class="label">All posts</p>
+    <div class="post-list">
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-08.html"><span class="post-meta">Web · 2026-09-08</span><span class="post-title">The Abort-On-Failure Hook Had One Failure Mode It Couldn't Catch</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-07.html"><span class="post-meta">Web · 2026-09-07</span><span class="post-title">An Animation You Cannot Pause Is One You Cannot Review</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-06.html"><span class="post-meta">Web · 2026-09-06</span><span class="post-title">Inspired By Means Rebuilt In, Not Repainted As</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-05.html"><span class="post-meta">Homelab · 2026-09-05</span><span class="post-title">The Reboot That Fixed It Once Before and Didn't the Second Time</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-04.html"><span class="post-meta">Homelab · 2026-09-04</span><span class="post-title">The Disk That Read 82% Free and Was 99.9% Full</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-28.html"><span class="post-meta">Homelab · 2026-08-28</span><span class="post-title">A Line Passing Through a Switch Read as a Connection</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-27.html"><span class="post-meta">Homelab · 2026-08-27</span><span class="post-title">The Validator Was Checking the Same Wrong Path as the Bug</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-26.html"><span class="post-meta">Homelab · 2026-08-26</span><span class="post-title">A Restart That Reported Success and Changed Nothing</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-25.html"><span class="post-meta">Homelab · 2026-08-25</span><span class="post-title">The Check Meant to Avoid Touching a Secret Printed It Anyway</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-24.html"><span class="post-meta">Homelab · 2026-08-24</span><span class="post-title">The File That Was Actually Being Read Was Three Layers Down</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-23.html"><span class="post-meta">Homelab · 2026-08-23</span><span class="post-title">The Rule That Could Only See One User in Thirty-One</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-22.html"><span class="post-meta">Homelab · 2026-08-22</span><span class="post-title">Every Number I Started With Was Measuring Something Else</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-21.html"><span class="post-meta">Homelab · 2026-08-21</span><span class="post-title">The Hardlink That Never Once Linked Anything</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-13.html"><span class="post-meta">Web · 2026-08-13</span><span class="post-title">A Regex Ate Half a Selector and CSS Didn't Complain</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-12.html"><span class="post-meta">Homelab · 2026-08-12</span><span class="post-title">Four Things Were Quietly Doing Nothing and All of Them Looked Fine</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-11.html"><span class="post-meta">Homelab · 2026-08-11</span><span class="post-title">Everything Redundant Turned Out to Share Something</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-10.html"><span class="post-meta">Homelab · 2026-08-10</span><span class="post-title">The Host Wasn't Dead and the Backups Weren't Real — Both Passed Every Check Anyway</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-09.html"><span class="post-meta">Homelab · 2026-08-09</span><span class="post-title">Three Times This Morning, Something Told Me It Worked and Hadn't</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-08.html"><span class="post-meta">Homelab · 2026-08-08</span><span class="post-title">The Checks Kept Passing While the Thing Under Them Was Broken, Four Times Today</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-07.html"><span class="post-meta">Homelab · 2026-08-07</span><span class="post-title">A Repo Containing the CLI but Not the Deployment Is Half of It</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-31.html"><span class="post-meta">Homelab · 2026-07-31</span><span class="post-title">The Night I Learned a Model Can't Be Trusted to Report on Itself</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-30.html"><span class="post-meta">Homelab · 2026-07-30</span><span class="post-title">The Only Backup Was Still Open in the Chat Window</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-29.html"><span class="post-meta">Projects · 2026-07-29</span><span class="post-title">I Built a Downloads Sorter in Six Hours, and Every Bug in It Looked Like Working Code</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-28.html"><span class="post-meta">Homelab · 2026-07-28</span><span class="post-title">A Second Server in the Morning, an Open Front Door by Midnight</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-27.html"><span class="post-meta">Homelab · 2026-07-27</span><span class="post-title">The Wi-Fi Was Pinned to One Channel by a Network That Was Switched Off</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-26.html"><span class="post-meta">Homelab · 2026-07-26</span><span class="post-title">I Diagnosed the Same Outage Twice and Got Two Different Answers</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-25.html"><span class="post-meta">Projects · 2026-07-25</span><span class="post-title">Twenty-Three Cents to Read a Photo, and Almost None of It Was the Photo</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-24.html"><span class="post-meta">Homelab · 2026-07-24</span><span class="post-title">I Asked If My Containers Were Up to Date, and Ended the Day Running My Own Git Forge</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-16.html"><span class="post-meta">Homelab · 2026-07-16</span><span class="post-title">I Certified the Network at 2.5 Gigabit, Then Spent Three Hours Losing to a USB Dongle</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-14.html"><span class="post-meta">Projects · 2026-07-14</span><span class="post-title">Discord In, Linux ISOs Out</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-13.html"><span class="post-meta">Projects · 2026-07-13</span><span class="post-title">I Gave the AI a Browser, and We Shipped the Redesign</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-12.html"><span class="post-meta">Homelab · 2026-07-12</span><span class="post-title">Two Rooms That Turn Themselves Off, Once I Worked Out What They Were Called</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-02.html"><span class="post-meta">Homelab · 2026-07-02</span><span class="post-title">I Sat Down to Add One Button and Rebuilt Half My Smart Home</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-01.html"><span class="post-meta">Homelab · 2026-07-01</span><span class="post-title">I Built a Status Page, and It Caught My NAS Crashing Before I Finished Setting It Up</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-30.html"><span class="post-meta">Homelab · 2026-06-30</span><span class="post-title">The Outage Was Already Over, and the Fake Flash Drive Wasn't Fake</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-29.html"><span class="post-meta">Homelab · 2026-06-29</span><span class="post-title">Twenty-Five Containers Updated, and the Cleanup That Ate My Rollback</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-28.html"><span class="post-meta">Homelab · 2026-06-28</span><span class="post-title">Moving Immich to the NAS — and the Drive That Tried to Take My Photos With It</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-21.html"><span class="post-meta">Projects · 2026-06-21</span><span class="post-title">Taking the Email Off the Page, and Knowing When to Undo a Logo</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-20.html"><span class="post-meta">Projects · 2026-06-20</span><span class="post-title">The Copy Goes Live, and the Lab Page Turns Personal</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-13.html"><span class="post-meta">Projects · 2026-06-13</span><span class="post-title">Sharper Words, Smaller Cards: A Copy Pass on the Portfolio</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-12.html"><span class="post-meta">Projects · 2026-06-12</span><span class="post-title">Three Designs, a Domain Cutover, and the Linux ISO Stack Comes Home</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-11.html"><span class="post-meta">Homelab · 2026-06-11</span><span class="post-title">Storage Fixes, Vault Cleanup, and the Reboot That Bit Back</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-10.html"><span class="post-meta">Homelab · 2026-06-10</span><span class="post-title">Network Fixes, Tailscale, and a NIC Upgrade</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-09.html"><span class="post-meta">Projects · 2026-06-09</span><span class="post-title">Automating the Blog &amp; Cleaning Up the Portfolio</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-08.html"><span class="post-meta">Projects · 2026-06-08</span><span class="post-title">Building Momentum: Homelab Services + Website Launch</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-07.html"><span class="post-meta">Homelab · 2026-06-07</span><span class="post-title">Home Assistant Goes Public</span></a>
+    </div>
+  </section>
+  </div>
+
+  <nav class="post-crumb label" aria-label="Breadcrumb"><span class="crumb-seg">BLOG</span><span aria-hidden="true"> &gt; </span><span class="crumb-seg">2026</span><span aria-hidden="true"> &gt; </span><span class="crumb-seg">JUL</span><span aria-hidden="true"> &gt; </span><span class="crumb-seg">31</span></nav>
+  <h1 class="post-title-h">The Night I Learned a Model Can't Be Trusted to Report on Itself</h1>
+  <p class="post-chips label">Homelab · 2026-07-31 · Friday · 5:46 AM · 10 min read · 92% AI · Eric Li</p>
+
+  <nav class="post-prevnext" aria-label="Post navigation"><span class="pn-prev"><a class="pill" href="/dev/v3/blog/posts/2026-07-30.html" title="The Only Backup Was Still Open in the Chat Window"><span class="pill-l">‹ Previous</span><span class="pill-c" aria-hidden="true">‹ Previous</span></a></span><span class="pn-next"><a class="pill" href="/dev/v3/blog/posts/2026-08-07.html" title="A Repo Containing the CLI but Not the Deployment Is Half of It"><span class="pill-l">Next ›</span><span class="pill-c" aria-hidden="true">Next ›</span></a></span></nav>
+
+  <article class="prose">
+<p>I was about to be away for a week with no reliable way to reach any of this remotely. That's the whole shape of the night: not a project deadline, a self-imposed one. Anything left undecided by morning would sit blocked for seven days, so between just after midnight and quarter to six I forced the decisions instead. The session had picked up threads from before midnight and, somewhere in the middle of it, went quiet for about five hours. When it came back it said so itself: "This session resumed after a ~5 hour gap." That admission turned out to matter more than it looked, because the first thing waiting on the other side of the gap was a session that had already done the work I was about to redo.</p>
+<p>The work itself was Phase 0 — a battery of go/no-go checks for n5-board, the Kanban board my agents will eventually read and write on their own. Before building it, I wanted proof that a handful of risky assumptions about the harness actually hold up in production rather than in theory. Six checks, each with a code: does a shared token's background refresh break other sessions running at the same time, does an API key still work a day after being minted, can the sandbox actually fence off which hosts a worker can reach, does argv-based execution block shell injection, does the harness honestly report which model served a session, and does a project's <code>CLAUDE.md</code> actually load into a worker's context.</p>
+<h2>The sandbox that died three times</h2>
+<p>The network-fencing test — run, it turned out, by a parallel session I'd authorised earlier and left running through the quiet stretch — went looking for a sandbox and found it dead in three different ways before I gave up on it.</p>
+<p>First it found <code>socat</code> missing from the host entirely. Supplying it from userspace uncovered the real blocker: <code>kernel.apparmor_restrict_unprivileged_userns=1</code> stops the nested user namespace the sandbox's seccomp helper needs, failing with <code>apply-seccomp: write /proc/self/setgroups... Permission denied</code>. A second attempt inside a throwaway privileged container on the second node, meant to isolate whether the allowlist itself works once that restriction is out of the way, hit a different wall: <code>apply-seccomp: write /proc/self/uid_map: Operation not permitted</code>, an AppArmor profile denial. The agent would not work around that one by loosening the container's own AppArmor profile to unconfined — the harness's own classifier flagged it as a security-bypass pattern, and it left the block standing rather than override it.</p>
+<p>I made the call at 03:47: "rely on the firewall rule definitely, that's the thing that has been designed to be a firewall." The sandbox layer is retired; nftables is now the only thing controlling egress. That decision closed a real bug on the way out — a sandbox that fails to start had been reporting <code>is_error:false</code> while every command inside it silently failed. Fail-open. A worker in that state looks healthy and does nothing, which is worse than looking broken.</p>
+<h2>A model reporting on itself, three ways</h2>
+<p>The strongest thread of the night showed up in three unrelated tests, and it was the same failure each time: you cannot ask a model to describe its own state and trust the answer.</p>
+<p>The first was the <code>CLAUDE.md</code>-loading test. Round one asked the model to self-report whether something was absent from its own context — a confabulation-prone question by design, and my own evaluator caught it, scoring the result 3.6 out of 5 and noting that "the safety-critical cell is the weakest-evidenced cell in the table." Round two threw the model's opinion out entirely and used a mechanical hook instead, logging file loads without asking anyone anything. On that evidence — 13 <code>InstructionsLoaded</code> events with no flag set, zero events across three runs with <code>--setting-sources user</code> — the flag genuinely suppresses a project's <code>CLAUDE.md</code> rather than just being a workspace-trust artifact.</p>
+<p>The second was the model-resolution test, and it found something worse than a wrong answer: a <em>confidently</em> wrong one. A subagent declared against a retired model ID got a hard 404, the orchestrator silently retried on a current model, and the task finished with marker files written — a card closing green while running on a model nobody asked for. Then it found that the <code>system/init</code> stream event, the thing you'd naturally trust to say which model is running, reports the model <em>requested</em>, not the model actually <em>served</em>. Under a fallback model it read back the retired ID even while a different model was doing the work. The only signals that don't lie are <code>modelUsage</code> and the persisted <code>message.model</code> field. Along the way it also confirmed that a fallback model doesn't apply to subagent-pinned models at all, which had been sitting in the plan as a real protection and wasn't one.</p>
+<p>The third was smaller but belongs in the same list: the plan had assumed a model could hash its own context to prove it hadn't been tampered with. It can't. Between the three, the pattern that survived the night is consistent — stop asking the model what it is or what it has, and replace that with something a file can prove: a marker, a hook log, a field the harness writes rather than one the model reports.</p>
+<h2>The soak that ran all night and didn't answer</h2>
+<p>The one test built to be the most careful gave the least. Token-refresh safety under concurrent sessions was deliberately run as a standalone background soak rather than an agent, because dispatching an agent to check it would itself add a competing session and wreck the measurement — three concurrent calls every 150 seconds across the token's roughly 4.77-hour natural window. I tried to force the refresh boundary manually around 03:33 to skip the wait, and the harness's own classifier blocked that as credential manipulation. It deferred to the block instead of finding a way around it and told me to do it myself if I wanted it faster. I didn't push.</p>
+<p>It didn't matter. At round 13 of 130 one of the three concurrent calls came back with an <code>AUTH</code> failure before any refresh had happened at all, which by the test's own logic means a clean pass is no longer reachable. It ran to quota exhaustion anyway and closed as <code>INDETERMINATE — quota-limited, refresh safety not measured</code>. No answer, after all that engineering. I'd rather say that plainly than round it up to something safer-sounding.</p>
+<h2>A session I didn't know was still running</h2>
+<p>Two smaller things surfaced almost by accident. Coming out of the five-hour gap, the session noticed the plan file's line count and header positions had shifted since it last read them, stopped, and read the file properly instead of overwriting it — a separate session I'd authorised earlier had already done the sandbox and <code>CLAUDE.md</code> work while this one sat quiet.</p>
+<p>While checking for stray processes I found a tmux session that had been running continuously since Tuesday, permission checks disabled, under an account holding root SSH access to the second node. The plan claimed it had been "Removed. Nothing depends on it." It hadn't been. I told it to take both that session and its supervisor down, which it did, and disabled them at the systemd level so they can't respawn on reboot — the trade-off being that this removes the Discord <code>!start</code> recovery path; SSH and the web UI still work.</p>
+<h2>Subtitle sidecars, and a mistake I'd already written a lesson about</h2>
+<p>Past four in the morning I switched to something smaller: adding Bazarr to the stack to fetch English subtitle sidecars for anything arriving through Sonarr or Radarr without them, the worst gap being on a few long-running rolling-release distros in the library. It went in cleanly on the same identical-path mount the rest of the stack uses, right after Sonarr, backup taken first. One real bug on the way in — a stale FUSE handle on that mount left it reporting "Socket not connected" while the host and everything else on it were fine, fixed by restarting the container to rebind.</p>
+<p>Then came the mistake, and it's the best-documented one of the night because it caught itself. At 04:14 it reported only about 67 items "wanted" and concluded the coverage gap was mostly solving itself through subtitle tracks already embedded in the files — checked with <code>ffprobe</code> against one point release, which came back with two embedded English tracks in 3.7 seconds over the mount. Comfortable conclusion, and it went looking for the real gap elsewhere: reading the running Bazarr source rather than the docs, which is how it found that two of the commonly recommended subtitle providers don't exist in this version at all, and two more are force-disabled at the build level. One survivor, a proxy in front of one of the disabled providers, wasn't on that list and turned out to be the real route — six results for an item that had shown zero coverage, 31 downloads, all from it.</p>
+<p>Then, at 04:42, it caught the actual problem — only 836 of 13,375 point releases, 6.3%, had been scanned, and the scan had not finished. Its own line: "I got this wrong, and it's the same mistake I just wrote a runsheet lesson about." The "67 wanted, mostly solved" number was never a result, it was a snapshot of an index that had barely started. By 05:43 the scan had reached 14.1%, the one-shot images were fully indexed, and the wanted count had climbed from 38 to 166 on one library and 105 to 120 on another as the scan turned up more gaps than it closed — the expected shape of an unfinished scan, not a regression. It also caught a runsheet claim it had itself repeated earlier, that one provider was blocked by Cloudflare; the actual container log said <code>ConfigurationError... 'User-agent config missing'</code>, fixed by setting a browser user agent and clearing a stale throttle.</p>
+<p>One more provider got enabled and then reverted: the embedded-subtitle route, which turned out to need "Treat Embedded Subtitles as Downloaded" switched off to do anything, and switching that off would have flipped roughly 13,000 items to wanted and forced multi-terabyte demuxing over the remote mount to produce sidecar files that are already redundant with the tracks embedded in the images. Not worth it, left alone.</p>
+<p>By 05:46 the honest diagnosis was that most of the 166 still-wanted items aren't a coverage problem at all — they're a score problem. One had six candidate matches, all scoring 61 against a minimum of 90; another scored 56 against a minimum of 70. The fix on the table is a hash-matching provider rather than lowering the threshold, and lowering it is a quality call that's mine to make, not the session's, so it left it alone. What's left for me: sign up for that provider to close the one-shot-image gap, and hand-restart Bazarr after any mount bounce until the mount-recovery unit is taught to include it, which needs root it doesn't currently have.</p>
+<p>A separate false alarm closed out the night — I thought the agent had frozen on my terminal again, but it hadn't. I'd run <code>/resume</code> in a fresh terminal against a session already running live in the background, which correctly refused and left that terminal parked burning CPU on an idle child process for nothing. Not the known auto-update wedge, just a dead end.</p>
+<p>Two things happened twice tonight and they're the same thing: a model's opinion of itself proved worthless three separate times, and a claim repeated from a plan or a runsheet turned out to be stale twice, caught only by checking the running system instead of the document describing it. Neither is a new rule so much as the same rule, twice confirmed.</p>
+  </article>
+
+  <section>
+    <div class="social-row">
+      <a class="pill" href="/dev/v3/blog/"><span class="pill-l">All posts ↗</span><span class="pill-c" aria-hidden="true">All posts ↗</span></a>
+    </div>
+  </section>
+</main>
+
+<script>window.__N5_BASE='/dev/v3';</script>
+<script src="/dev/v3/assets/subpage.js"></script>
+</body>
+</html>

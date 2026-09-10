@@ -330,7 +330,12 @@ window.__n5Subpage = (function(){
   }
 
   function buildTree(){
-    if (!treeNav || !blogEls) return;
+    /* Decoupled from blogEls (PHASE 5, B2, 2026-09-11): the archive tree is
+       chrome that lives OUTSIDE #main and needs only treeNav + a live
+       #blog-list-view to render — it must populate on a lone generated post
+       page just as it does on the blog index. blogEls (the landing/post/
+       listing views) is blog-INDEX-only and irrelevant here. */
+    if (!treeNav) return;
     var years = groupPosts(readPosts());
 
     var root = el('div', 'tree-root');
@@ -385,7 +390,11 @@ window.__n5Subpage = (function(){
   }
 
   function buildMobileNav(root){
-    if (!blogEls || !root) return;
+    /* Decoupled from blogEls for the same reason as buildTree() above — the
+       mobile date-picker is chrome, not blog-index view state. On a page
+       with no [data-blog-mobile-nav] (every generated post page) the guard
+       just below this one already no-ops. */
+    if (!root) return;
     var nav = root.querySelector('[data-blog-mobile-nav]');
     if (!nav) return;
     var yearSel = nav.querySelector('[data-blog-nav-year]');
@@ -448,7 +457,18 @@ window.__n5Subpage = (function(){
     }
 
     function navigate(id){
-      proxy.setAttribute('data-post-nav', id);
+      /* The router owns post navigation now (PHASE 5, B2): give the hidden
+         proxy anchor a REAL href so the router's own delegated document
+         click listener (matchRoute() on a[href]) picks up this synthetic
+         click, fetches the real generated post page, and swaps the pane —
+         the same path a genuine <a href> click takes. Previously this set
+         data-post-nav and relied on a bespoke [data-post-nav] handler that
+         called showPost() directly; that handler is gone. */
+      var rows = __n5ReadPostRows();
+      var row = null;
+      for (var i = 0; i < rows.length; i++) { if (rows[i].id === id) { row = rows[i]; break; } }
+      if (!row) return;
+      proxy.href = row.href;
       proxy.click();
     }
 
@@ -674,13 +694,20 @@ window.__n5Subpage = (function(){
     openTriggers(buttons);
   }
 
-  function showPost(id, leaf){
-    if (!blogEls) return;
-    if (!renderPost(id)) return;
+  /* PHASE 5, B2 (2026-09-11): a lone generated post page has no blogEls (no
+     landing/post/listing views — see initBlogModule() below), so there is
+     no POSTS-derived "current id" to read. Derive it straight from the
+     URL instead — the one thing every post page reliably has. */
+  function getCurrentPostIdFromLocation(){
+    var m = hrefRe().exec(location.pathname);
+    return m ? m[1] : null;
+  }
+
+  function highlightCurrentPost(){
+    var id = getCurrentPostIdFromLocation();
+    if (!id) return;
     openAncestorPath(id);
-    setCurrentLeaf(leaf || (treeNav && treeNav.querySelector('[data-post-id="' + id + '"]')));
-    setActiveView('post');
-    setLandingHidden(true);
+    setCurrentLeaf(treeNav && treeNav.querySelector('[data-post-id="' + id + '"]'));
   }
 
   function collectListing(scope){
@@ -770,24 +797,21 @@ window.__n5Subpage = (function(){
      re-binding on each init() would double- (then triple-) attach. Every
      handler consults the CURRENT module state (blogEls/treeNav) at fire
      time, so it stays correct across any number of destroy()/init() cycles
-     with no rebinding needed. ---- */
+     with no rebinding needed. ----
 
-  if (treeNav) {
-    treeNav.addEventListener('click', function(e){
-      var leaf = e.target.closest && e.target.closest('[data-blog-leaf]');
-      if (!leaf || !treeNav.contains(leaf)) return;
-      e.preventDefault();
-      showPost(leaf.getAttribute('data-post-id'), leaf);
-    });
-  }
-
-  document.addEventListener('click', function(e){
-    var a = e.target.closest && e.target.closest('[data-post-nav]');
-    if (!a || !blogEls) return;
-    e.preventDefault();
-    var id = a.getAttribute('data-post-nav');
-    showPost(id, treeNav && treeNav.querySelector('[data-post-id="' + id + '"]'));
-  });
+     PHASE 5, B2 (2026-09-11): the tree-leaf handler and the [data-post-nav]
+     handler used to live here, each calling e.preventDefault() then
+     showPost() to render a post IN PLACE inside blog.html's #blog-post-view.
+     Both are gone. Every post is now a real page at blog/posts/<date>.html
+     and every leaf/[data-post-nav] anchor already carries that real href
+     (tree leaves: makeLeaf() above; listing rows: renderListing() below;
+     prev/next pills: buildPrevNext() below; the mobile-nav proxy: navigate()
+     above). leaf -> treeNav -> document is ONE bubble path, so preventDefault
+     here was exactly what stopped the router's own delegated click listener
+     (subpage.js, router IIFE, e.defaultPrevented guard) from ever seeing
+     these clicks. Removing both handlers lets the click reach the router
+     unmolested, which matchRoute()s it to 'post' and does the real pane
+     swap/fetch — nothing else needs to run for a click on these anchors. */
 
   document.addEventListener('click', function(e){
     var btn = e.target.closest && e.target.closest('[data-crumb-scope]');
@@ -806,6 +830,15 @@ window.__n5Subpage = (function(){
   function initBlogModule(root){
     if (!treeNav) return;
     var listView = root.querySelector('#blog-list-view');
+    if (!listView) return; // not a blog-family page (About/Projects) — tree stays untouched
+
+    /* PHASE 5, B2 (2026-09-11): tree-building needs only treeNav + this
+       #blog-list-view — nothing below this point is required for it. Run it
+       unconditionally for ANY page that has a list view, including a lone
+       generated post page, so the archive tree no longer goes dark there. */
+    buildTree();
+    buildMobileNav(root);
+
     var landingView = root.querySelector('#blog-landing-view');
     var landingTail = root.querySelector('#blog-landing-tail');
     var postView = root.querySelector('#blog-post-view');
@@ -815,9 +848,20 @@ window.__n5Subpage = (function(){
     var listingCrumbEl = listingView && listingView.querySelector('[data-listing-crumb]');
     var listingCountEl = listingView && listingView.querySelector('[data-listing-count]');
     var listingRowsEl = listingView && listingView.querySelector('[data-listing-rows]');
-    if (!listView || !landingView || !landingTail || !postView || !crumbNav || !body ||
-        !listingView || !listingCrumbEl || !listingCountEl || !listingRowsEl) {
-      return; // not a blog page (About/Projects/a lone post page) — no-op
+    var isBlogIndex = !!(landingView && landingTail && postView && crumbNav && body &&
+      listingView && listingCrumbEl && listingCountEl && listingRowsEl);
+
+    if (!isBlogIndex) {
+      /* A lone generated post page (or any future page shipping only a
+         #blog-list-view): no landing/post/listing views to drive, and none
+         should be synthesized — the page's own static article.prose is the
+         content, untouched. Just reflect where we are in the tree. */
+      blogEls = null;
+      POSTS = {};
+      window.__N5_BLOG_POSTS = POSTS;
+      currentLeaf = null;
+      highlightCurrentPost();
+      return;
     }
 
     var postsEl = root.querySelector('#n5-blog-posts');
@@ -842,8 +886,6 @@ window.__n5Subpage = (function(){
     };
     currentLeaf = null;
 
-    buildTree();
-    buildMobileNav(root);
     initLanding();
   }
 
@@ -1106,6 +1148,18 @@ window.__n5Subpage = (function(){
 
         api.destroy();
         oldMain.replaceWith(imported); // never innerHTML — see contract note 4
+
+        /* PHASE 5, B2 (2026-09-11): pushState moved BEFORE api.init() (it used to run
+           after). A generated post page's init path (highlightCurrentPost(), see
+           __n5Subpage above) derives "which post is this" from location.pathname —
+           on a forward navigation that must already be the NEW url by the time init()
+           runs, or the tree can't tell which leaf/branch to mark current. A popstate
+           (back/forward) needs no such call here: the browser has already updated
+           location by the time its handler fires. */
+        if (isForward) {
+          history.pushState({ n5subpage: true, url: url, scrollY: 0 }, '', url);
+        }
+
         api.init(imported);
         api.reveal(imported);
 
@@ -1114,7 +1168,6 @@ window.__n5Subpage = (function(){
         focusAfterSwap(imported);
 
         if (isForward) {
-          history.pushState({ n5subpage: true, url: url, scrollY: 0 }, '', url);
           window.scrollTo(0, 0);
         } else {
           window.scrollTo(0, scrollTarget || 0);

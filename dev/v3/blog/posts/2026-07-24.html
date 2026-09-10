@@ -1,0 +1,152 @@
+<!doctype html>
+<!-- GENERATED FILE. Produced by scripts/build_dev_preview.py from the design
+     source in `01 Design/design-loop/src` (gitignored). Do not hand-edit this
+     file directly -- edit the source and re-run the generator instead. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I Asked If My Containers Were Up to Date, and Ended the Day Running My Own Git Forge — Eric Li</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#12130f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/dev/v3/assets/subpage.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="corner tl n5i-cluster" id="c-tl">
+    <a class="n5i-mark n5i-lockup" href="/dev/v3/" aria-label="Eric Li"><img class="lk-rest" src="/dev/v3/assets/logo-rest.png" alt="Eric Li"><img class="lk-hover" src="/dev/v3/assets/logo-hover.png" alt="" aria-hidden="true"><canvas class="lk-canvas" aria-hidden="true"></canvas><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/dev/v3/assets/logo-entry.webm" type="video/webm"><source src="/dev/v3/assets/logo-entry.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverout" muted playsinline preload="auto"><source src="/dev/v3/assets/logo-exit.webm" type="video/webm"><source src="/dev/v3/assets/logo-exit.mp4" type="video/mp4"></video></a><script>(function(){var m=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;var a=document.currentScript.previousElementSibling;if(!m&&a&&a.classList.contains("n5i-lockup"))a.classList.add("lk-armed")})()</script>
+
+<span class="role">DevOps &amp; Infrastructure</span>
+
+  <nav class="blog-tree" data-blog-tree aria-label="Blog archive"></nav></div>
+
+
+<div class="corner tr" id="c-tr">
+  <nav aria-label="Links">
+    <a class="pill" href="/dev/v3/about/"><span class="pill-l">About ↗</span><span class="pill-c" aria-hidden="true">About ↗</span></a>
+    <a class="pill" href="/dev/v3/portfolio/"><span class="pill-l">Projects ↗</span><span class="pill-c" aria-hidden="true">Projects ↗</span></a>
+    <a class="pill" href="/dev/v3/blog/" aria-current="page"><span class="pill-l">Blog ↗</span><span class="pill-c" aria-hidden="true">Blog ↗</span></a>
+    <a class="pill" href="mailto:helloworld@n5hq.me"><span class="pill-l">EMAIL ↗</span><span class="pill-c" aria-hidden="true">EMAIL ↗</span></a>
+    <div class="n5i-socials" aria-label="Social links">
+      <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="GitHub"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span></a>
+      <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="LinkedIn"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span></a>
+      <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="Instagram"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span></a>
+    </div>
+    <span class="n5i-nav-rule" aria-hidden="true"></span>
+    <a class="pill" href="https://portal.n5hq.me"><span class="pill-l">Login →</span><span class="pill-c" aria-hidden="true">Login →</span></a>
+  </nav>
+</div>
+
+<main class="page" id="main">
+  <div id="blog-list-view" hidden>
+  <p class="label">Blog</p>
+  <h1 class="page-title">Tech Journey Journal</h1>
+  <p class="lede">What changed, what prompted it, what broke, and what I learned getting it working again. Written as I go, so the record shows the route — where I started, where I am, and where I'm going.</p>
+
+  <section>
+    <p class="label">All posts</p>
+    <div class="post-list">
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-08.html"><span class="post-meta">Web · 2026-09-08</span><span class="post-title">The Abort-On-Failure Hook Had One Failure Mode It Couldn't Catch</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-07.html"><span class="post-meta">Web · 2026-09-07</span><span class="post-title">An Animation You Cannot Pause Is One You Cannot Review</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-06.html"><span class="post-meta">Web · 2026-09-06</span><span class="post-title">Inspired By Means Rebuilt In, Not Repainted As</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-05.html"><span class="post-meta">Homelab · 2026-09-05</span><span class="post-title">The Reboot That Fixed It Once Before and Didn't the Second Time</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-04.html"><span class="post-meta">Homelab · 2026-09-04</span><span class="post-title">The Disk That Read 82% Free and Was 99.9% Full</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-28.html"><span class="post-meta">Homelab · 2026-08-28</span><span class="post-title">A Line Passing Through a Switch Read as a Connection</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-27.html"><span class="post-meta">Homelab · 2026-08-27</span><span class="post-title">The Validator Was Checking the Same Wrong Path as the Bug</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-26.html"><span class="post-meta">Homelab · 2026-08-26</span><span class="post-title">A Restart That Reported Success and Changed Nothing</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-25.html"><span class="post-meta">Homelab · 2026-08-25</span><span class="post-title">The Check Meant to Avoid Touching a Secret Printed It Anyway</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-24.html"><span class="post-meta">Homelab · 2026-08-24</span><span class="post-title">The File That Was Actually Being Read Was Three Layers Down</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-23.html"><span class="post-meta">Homelab · 2026-08-23</span><span class="post-title">The Rule That Could Only See One User in Thirty-One</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-22.html"><span class="post-meta">Homelab · 2026-08-22</span><span class="post-title">Every Number I Started With Was Measuring Something Else</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-21.html"><span class="post-meta">Homelab · 2026-08-21</span><span class="post-title">The Hardlink That Never Once Linked Anything</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-13.html"><span class="post-meta">Web · 2026-08-13</span><span class="post-title">A Regex Ate Half a Selector and CSS Didn't Complain</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-12.html"><span class="post-meta">Homelab · 2026-08-12</span><span class="post-title">Four Things Were Quietly Doing Nothing and All of Them Looked Fine</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-11.html"><span class="post-meta">Homelab · 2026-08-11</span><span class="post-title">Everything Redundant Turned Out to Share Something</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-10.html"><span class="post-meta">Homelab · 2026-08-10</span><span class="post-title">The Host Wasn't Dead and the Backups Weren't Real — Both Passed Every Check Anyway</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-09.html"><span class="post-meta">Homelab · 2026-08-09</span><span class="post-title">Three Times This Morning, Something Told Me It Worked and Hadn't</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-08.html"><span class="post-meta">Homelab · 2026-08-08</span><span class="post-title">The Checks Kept Passing While the Thing Under Them Was Broken, Four Times Today</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-08-07.html"><span class="post-meta">Homelab · 2026-08-07</span><span class="post-title">A Repo Containing the CLI but Not the Deployment Is Half of It</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-31.html"><span class="post-meta">Homelab · 2026-07-31</span><span class="post-title">The Night I Learned a Model Can't Be Trusted to Report on Itself</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-30.html"><span class="post-meta">Homelab · 2026-07-30</span><span class="post-title">The Only Backup Was Still Open in the Chat Window</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-29.html"><span class="post-meta">Projects · 2026-07-29</span><span class="post-title">I Built a Downloads Sorter in Six Hours, and Every Bug in It Looked Like Working Code</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-28.html"><span class="post-meta">Homelab · 2026-07-28</span><span class="post-title">A Second Server in the Morning, an Open Front Door by Midnight</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-27.html"><span class="post-meta">Homelab · 2026-07-27</span><span class="post-title">The Wi-Fi Was Pinned to One Channel by a Network That Was Switched Off</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-26.html"><span class="post-meta">Homelab · 2026-07-26</span><span class="post-title">I Diagnosed the Same Outage Twice and Got Two Different Answers</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-25.html"><span class="post-meta">Projects · 2026-07-25</span><span class="post-title">Twenty-Three Cents to Read a Photo, and Almost None of It Was the Photo</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-24.html"><span class="post-meta">Homelab · 2026-07-24</span><span class="post-title">I Asked If My Containers Were Up to Date, and Ended the Day Running My Own Git Forge</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-16.html"><span class="post-meta">Homelab · 2026-07-16</span><span class="post-title">I Certified the Network at 2.5 Gigabit, Then Spent Three Hours Losing to a USB Dongle</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-14.html"><span class="post-meta">Projects · 2026-07-14</span><span class="post-title">Discord In, Linux ISOs Out</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-13.html"><span class="post-meta">Projects · 2026-07-13</span><span class="post-title">I Gave the AI a Browser, and We Shipped the Redesign</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-12.html"><span class="post-meta">Homelab · 2026-07-12</span><span class="post-title">Two Rooms That Turn Themselves Off, Once I Worked Out What They Were Called</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-02.html"><span class="post-meta">Homelab · 2026-07-02</span><span class="post-title">I Sat Down to Add One Button and Rebuilt Half My Smart Home</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-07-01.html"><span class="post-meta">Homelab · 2026-07-01</span><span class="post-title">I Built a Status Page, and It Caught My NAS Crashing Before I Finished Setting It Up</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-30.html"><span class="post-meta">Homelab · 2026-06-30</span><span class="post-title">The Outage Was Already Over, and the Fake Flash Drive Wasn't Fake</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-29.html"><span class="post-meta">Homelab · 2026-06-29</span><span class="post-title">Twenty-Five Containers Updated, and the Cleanup That Ate My Rollback</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-28.html"><span class="post-meta">Homelab · 2026-06-28</span><span class="post-title">Moving Immich to the NAS — and the Drive That Tried to Take My Photos With It</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-21.html"><span class="post-meta">Projects · 2026-06-21</span><span class="post-title">Taking the Email Off the Page, and Knowing When to Undo a Logo</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-20.html"><span class="post-meta">Projects · 2026-06-20</span><span class="post-title">The Copy Goes Live, and the Lab Page Turns Personal</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-13.html"><span class="post-meta">Projects · 2026-06-13</span><span class="post-title">Sharper Words, Smaller Cards: A Copy Pass on the Portfolio</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-12.html"><span class="post-meta">Projects · 2026-06-12</span><span class="post-title">Three Designs, a Domain Cutover, and the Linux ISO Stack Comes Home</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-11.html"><span class="post-meta">Homelab · 2026-06-11</span><span class="post-title">Storage Fixes, Vault Cleanup, and the Reboot That Bit Back</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-10.html"><span class="post-meta">Homelab · 2026-06-10</span><span class="post-title">Network Fixes, Tailscale, and a NIC Upgrade</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-09.html"><span class="post-meta">Projects · 2026-06-09</span><span class="post-title">Automating the Blog &amp; Cleaning Up the Portfolio</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-08.html"><span class="post-meta">Projects · 2026-06-08</span><span class="post-title">Building Momentum: Homelab Services + Website Launch</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-06-07.html"><span class="post-meta">Homelab · 2026-06-07</span><span class="post-title">Home Assistant Goes Public</span></a>
+    </div>
+  </section>
+  </div>
+
+  <nav class="post-crumb label" aria-label="Breadcrumb"><span class="crumb-seg">BLOG</span><span aria-hidden="true"> &gt; </span><span class="crumb-seg">2026</span><span aria-hidden="true"> &gt; </span><span class="crumb-seg">JUL</span><span aria-hidden="true"> &gt; </span><span class="crumb-seg">24</span></nav>
+  <h1 class="post-title-h">I Asked If My Containers Were Up to Date, and Ended the Day Running My Own Git Forge</h1>
+  <p class="post-chips label">Homelab · 2026-07-24 · Friday · 9:45 PM · 9 min read · 93% AI · Eric Li</p>
+
+  <nav class="post-prevnext" aria-label="Post navigation"><span class="pn-prev"><a class="pill" href="/dev/v3/blog/posts/2026-07-16.html" title="I Certified the Network at 2.5 Gigabit, Then Spent Three Hours Losing to a USB Dongle"><span class="pill-l">‹ Previous</span><span class="pill-c" aria-hidden="true">‹ Previous</span></a></span><span class="pn-next"><a class="pill" href="/dev/v3/blog/posts/2026-07-25.html" title="Twenty-Three Cents to Read a Photo, and Almost None of It Was the Photo"><span class="pill-l">Next ›</span><span class="pill-c" aria-hidden="true">Next ›</span></a></span></nav>
+
+  <article class="prose">
+<p>The day began with maintenance too ordinary to deserve a paragraph. Seventeen containers pulled and recreated, ten and a half gigabytes of dead images pruned, then a full upgrade and a reboot. The box was down for twenty-six seconds, its first reboot since the fourteenth, and thirty containers came back with nothing restart-looping.</p>
+<p>Four minutes later I opened a fresh session and typed six words: are all my docker containers updated? The answer was yes — twenty-seven of twenty-nine images current, the two flagged stale being digest pins the photo stack deliberately holds. Except I'd just spent half a Friday finding that out, and I'd have to spend it again next month. Thirty-six minutes later I was asking for a machine that would do the asking for me.</p>
+<h2>Teaching the server to ask on its own</h2>
+<p>The shape I wanted: something wakes before dawn, checks host packages and container images, and sorts each one into apply, skip, or come ask me — with a model reading the actual changelogs and a Discord message when the call is above its pay grade.</p>
+<p>n8n went on port 5678 as the scheduler. The design decision I'd defend to anyone is that the workflows are dumb: they're thin SSH wrappers, and every scrap of logic lives in shell scripts in <code>~/bin</code>, so I can run any stage by hand instead of poking at boxes on a canvas. The judge is a headless Claude call with web search, about twenty cents a run, working from plain-English criteria — including one that says if you're uncertain about a major bump, say skip and explain why, and a human can apply it manually. Giving a scheduler root deserved care, so the sudoers rule is exact-match with no wildcards anywhere: a wildcard there is an invitation to inject options as root.</p>
+<p>The approval loop took longest to get honest. Every conditional placed after a Discord call saw nothing at all, because a Discord webhook responds with an empty body, which had quietly created a latent bug where the reboot-required branch could never have fired. It would have looked fine forever.</p>
+<h2>The verdict that never arrived</h2>
+<p>Here is the one I'll be telling people about.</p>
+<p>Twice, at 16:25 and again a minute later, the judge ran against a real batch of eleven pending host packages. Both times it came back clean: update, risk low, with reasoning that all eleven were routine patch and point-release bumps, no removals and no major version jumps. Both times, the pipeline reported skip.</p>
+<p>The verdicts were never wrong. The parsing was. Somewhere in the orchestrator I'd written a bash default-value expression of the form <code>${JUDGE:-{}}</code>, meaning "the judge output, or an empty JSON object if it's missing". Bash doesn't read it that way. It takes the default as <code>{</code> and treats the second brace as a literal character to append. So a valid JSON verdict came out of the substitution with a stray closing brace stapled to the end, failed to parse, and fell through to the safe branch. The safe branch is skip.</p>
+<p>That is the failure mode worth being frightened of. Nothing errored, nothing alerted, the workflow succeeded, Discord stayed quiet, and the automation did absolutely nothing in a way that looked exactly like a well-behaved system with no work to do. An automation that fails safe is still an automation that silently does nothing. And the reason I built it was that I couldn't tell by looking whether my containers were current — so a pipeline that lies by omission is worse than no pipeline, because now I trust it.</p>
+<p>The fix was small: default to a null literal instead of a brace, then check the parsed result is the type you expected before acting on it. The lesson is bigger. Anything that can decide "do nothing" has to prove it decided that, rather than merely arriving there.</p>
+<h2>A README nobody had to write twice</h2>
+<p>Mid-afternoon I asked for a README covering the whole homelab, and for as many agents as it took to find out what the homelab actually contains. Ten went out in parallel and all ten came back, and the surprise was two live problems nobody had gone looking for: a stale boot cron still starting a deprecated site and crash-looping against a port another service now owns, and a reverse proxy squatting on ports 80 and 443 while fronting nothing. Sending ten readers through your own house is an audit whether you meant it to be or not.</p>
+<p>The follow-on was to stop writing docs by hand. A watcher listens for Docker container-create events, waits sixty seconds so a burst of containers counts as one change, and fires a webhook. On the other end a script redacts anything resembling a token out of the compose file and has a model write the page. The insight that made one watcher cover both paths: a terminal <code>docker compose up</code> and a Portainer stack deploy both recreate containers with compose labels, so a create event is the universal trigger. Nine pages bootstrapped in about six minutes.</p>
+<h2>The Claw that wouldn't link</h2>
+<p>Then a detour with a real wrong answer in it. My handheld PC had a USB-C 2.5-gigabit adapter plugged into the office access point's spare ethernet port, and was getting nothing.</p>
+<p>My first diagnosis was confident and wrong. I said it was the admin gate: a firewall policy that only lets whitelisted machines onto the management network, which neatly explains a device with a cable and no service. On any other day that's the answer. Not this one. Address sweeps of the subnet found no trace of the machine at all, so it never got as far as asking for an address and the firewall never had the chance to refuse it. The port was down at zero link speed, and stayed down through autonegotiation, forced 2.5 gigabit and forced 1. When a link won't come up at any speed the fault is on the far side of the cable — most likely no driver for that Realtek chipset on the Windows install, so the adapter never initialises.</p>
+<p>There was also a self-inflicted casualty. Twenty minutes earlier, without noticing, I had unplugged a small five-port switch to free up that port, and it was sitting there dark. Since it only does one gigabit it will never link on a port I've now forced to 2.5, so the override has to come off before it goes back. I went looking for one dead link and made a second one.</p>
+<h2>Built at six, shelved at nine</h2>
+<p>In between, I built a thing and then decided not to run it, which I want to record as a decision rather than a failure. The idea: drop a phone photo of a work-order sheet in a folder, get the handwritten numbers read out, validated against a field schema with types, ranges and a confidence floor, and written into its own styled tab in an Excel workbook. It worked. Three photo-realistic test sheets in three formats each extracted sixteen out of sixteen fields with zero errors, a pure-noise image was rejected with every field null at zero confidence, and re-dropping a processed sheet produced no duplicate tab and no duplicate index row.</p>
+<p>Three hours after asking for an always-on service, I asked for it to be taken offline and filed as a project I could come back to. Not deleted — stopped and disabled, unit file kept, one command brings it back. The honest reason is that it reads a form layout invented for the demo. My actual work-order sheet has never been configured, and running a live service against a form that doesn't exist is theatre.</p>
+<h2>Thirty-three minutes to a git forge</h2>
+<p>At 21:07 I asked for agents to research Forgejo and come back only with something viable. I sent the prompt twice inside twenty-five seconds, which tells you how much patience I had left.</p>
+<p>Three research agents reported within five minutes. Forgejo is a hard fork of Gitea since early 2024, run by a German non-profit; version 16 is out but non-LTS with an end of life this October, so the LTS release it was. The inventory was the useful part: only four repositories on the box are mine, and there was exactly one hard coupling worth protecting — Vercel auto-deploys from GitHub, and Vercel cannot talk to a self-hosted forge. That constraint decided the architecture. Forgejo becomes primary, GitHub becomes a push-mirror target, and every push still lands on GitHub, so nothing had to move. Six repositories migrated, one with all four of its releases.</p>
+<p>Two mirror syncs returned HTTP 500 and the cause was mundane: the new git-SSH host on port 2222 wasn't in <code>known_hosts</code>, so host-key verification failed behind an unhelpful status code. A branch pushed to Forgejo then appeared on GitHub in under thirty seconds, and deleting it propagated too. Backups went on a nightly timer to the NAS, proven with a 433 MB dump landing and its monitor going green.</p>
+<p>Prompt at 21:07, "Forgejo is live" at 21:40. Thirty-three minutes for research, decision, deployment, six migrations, mirrors, backups and monitoring. Fast enough that I checked the timestamps twice.</p>
+<p>Except one of those things I didn't do. At 21:21, two minutes after the container came up, a documentation page for the new stack appeared on disk, with the live container line in it showing an uptime of fifty-nine seconds. The watcher I'd built three and a half hours earlier had seen a container it didn't recognise, waited its sixty seconds, and written the page. Nobody asked. I found out by looking at a file modification time.</p>
+<p>The day started because I couldn't tell whether my containers were current without going and looking. It ended with the server updating itself on a schedule, asking permission when it isn't sure, and documenting things I install before I've finished installing them. I'm no longer the one who checks. I'm the one who gets asked.</p>
+  </article>
+
+  <section>
+    <div class="social-row">
+      <a class="pill" href="/dev/v3/blog/"><span class="pill-l">All posts ↗</span><span class="pill-c" aria-hidden="true">All posts ↗</span></a>
+    </div>
+  </section>
+</main>
+
+<script>window.__N5_BASE='/dev/v3';</script>
+<script src="/dev/v3/assets/subpage.js"></script>
+</body>
+</html>

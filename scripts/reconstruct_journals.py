@@ -33,6 +33,21 @@ The body written here is the post's own prose flattened to text. It is not
 faithful Markdown and is not meant to be re-rendered — it exists so read_time()
 computes the same figure the post already displays. Never run --force against
 this staging directory.
+
+How lossy, concretely: 2026-08-22 has 10 <h2> and 3 <strong> in its published
+page and 0 '## ' headings and 0 '**bold**' after reconstruction. Headings come
+back as bare text lines, indistinguishable from paragraphs, so re-rendering
+turns every section heading into a paragraph and the loss is silent.
+
+The trap that follows: deleting a post's HTML and rebuilding it against a
+staging dir from this script regenerates it from the flattened body. The post
+comes back structurally flatter with no error. Only delete a post's HTML when
+you are supplying a real Markdown body for it, as the September summaries did.
+
+If you need a faithful body for an existing post, the published HTML is the
+only source. The vault journals are "No work evidenced" stubs for most
+pre-September days, and this script's output is plain text. Convert from the
+HTML properly rather than reusing either.
 """
 import datetime
 import glob
