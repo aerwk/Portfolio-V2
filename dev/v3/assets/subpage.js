@@ -1154,7 +1154,7 @@ window.__n5Subpage = (function(){
            (back/forward) needs no such call here: the browser has already updated
            location by the time its handler fires. */
         if (isForward) {
-          history.pushState({ n5subpage: true, url: url, scrollY: 0 }, '', url);
+          history.pushState({ n5subpage: true, url: url, paneScrollTop: 0 }, '', url);
         }
 
         api.init(imported);
@@ -1164,11 +1164,13 @@ window.__n5Subpage = (function(){
         setActivePill(route);
         focusAfterSwap(imported);
 
-        if (isForward) {
-          window.scrollTo(0, 0);
-        } else {
-          window.scrollTo(0, scrollTarget || 0);
-        }
+        /* Freeze-pane layout (2026-09-11): the DOCUMENT never scrolls, so
+           window.scrollTo() is no longer the right handle — main.page (the
+           freshly-swapped-in `imported`) is the scrolling element. Forward
+           nav always starts a fresh view at the top; a popstate restores
+           whatever the pane's scroll position was when the user left it
+           (captured in navigate(), below). */
+        imported.scrollTop = isForward ? 0 : (scrollTarget || 0);
       })
       .catch(function(err){
         if (window.console) console.error('[n5subpage] route swap failed, falling back to full navigation', err);
@@ -1178,9 +1180,13 @@ window.__n5Subpage = (function(){
 
   function navigate(url, route){
     try {
+      /* Capture the OUTGOING pane's scroll position (not window.scrollY —
+         the document doesn't scroll; main.page does) into the state we're
+         leaving behind, so a later popstate back to it can restore it. */
+      var outgoingMain = document.getElementById('main');
       var curState = (history.state && history.state.n5subpage) ? history.state : { n5subpage: true, url: window.location.href };
       history.replaceState(
-        { n5subpage: true, url: curState.url || window.location.href, scrollY: window.scrollY || window.pageYOffset || 0 },
+        { n5subpage: true, url: curState.url || window.location.href, paneScrollTop: outgoingMain ? outgoingMain.scrollTop : 0 },
         '', window.location.href
       );
     } catch (e) {}
@@ -1189,7 +1195,7 @@ window.__n5Subpage = (function(){
 
   try {
     if (!history.state || !history.state.n5subpage) {
-      history.replaceState({ n5subpage: true, url: window.location.href, scrollY: 0 }, '', window.location.href);
+      history.replaceState({ n5subpage: true, url: window.location.href, paneScrollTop: 0 }, '', window.location.href);
     }
   } catch (e) {}
 
@@ -1215,7 +1221,7 @@ window.__n5Subpage = (function(){
     if (!state || !state.n5subpage) { window.location.reload(); return; }
     var route = matchRoute(window.location.pathname);
     if (!route) { window.location.reload(); return; }
-    doSwap(window.location.href, route, false, state.scrollY || 0);
+    doSwap(window.location.href, route, false, state.paneScrollTop || 0);
   });
 })();
 

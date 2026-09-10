@@ -53,10 +53,17 @@ html,body{
   color:var(--bone);
   font:400 calc(16 * var(--n5i-u))/1.25 var(--n5i-sans);
   -webkit-font-smoothing:antialiased;
-  overflow:auto;
-  height:auto;
+  /* Freeze-pane layout (2026-09-11): main.page becomes the only scrolling
+     region at desktop widths (see "content column" below) — the document
+     itself must never scroll, so the corners it's pinned beside never move.
+     Reopened to a normal scrolling document below 768px (see the phone
+     media query near the bottom of this file) — a viewport-pinned,
+     internally-scrolling pane is the wrong call on a phone; the corners
+     already flatten back into normal flow there. */
+  overflow:hidden;
+  height:100vh;
 }
-body{ position:relative; min-height:100vh; }
+body{ position:relative; height:100vh; }
 
 /* ---------- skip link ---------- */
 .skip-link{
@@ -277,6 +284,40 @@ main.page{
 }
 @media (prefers-reduced-motion: reduce){
   main.page{ opacity:1; transform:none; }
+}
+
+/* ---------- freeze-pane geometry (2026-09-11) ----------
+   main.page becomes a bounded, internally-scrolling viewing pane instead of
+   part of the scrolling document — https://dimension.dev/'s reference: a
+   pinned chrome column beside a bounded pane, nothing else ever scrolls.
+   `inset:0` pins the box to all four viewport edges; the SAME derived
+   margin-left/margin-right above still apply on a fixed box with opposite
+   offsets set (standard CSS box-model behaviour), so the pane's visible
+   edges land exactly where the content column always sat — only the
+   scrolling mechanism changed, not the geometry. Desktop-only: below 768px
+   the corners flatten into normal flow (existing max-width:767px block)
+   and the document itself is the right thing to scroll, so this block is
+   gated the same way. */
+@media (min-width:768px){
+  main.page{
+    position:fixed;
+    inset:0;
+    overflow-y:auto;
+    overscroll-behavior-y:contain;
+    -webkit-overflow-scrolling:touch;
+    /* Vein, 1px — design-system.md's only sanctioned divider device ("1px
+       dividers; never a card border"). A single LEADING edge (border-left),
+       not a full border box, so the pane reads as a scroll region sitting
+       next to the chrome, not a bordered card — the same reasoning the
+       system already applies to .post-row's border-top divider. */
+    border-left:1px solid var(--vein);
+    /* Subtle, Vein-toned scrollbar — never the violet accent. */
+    scrollbar-width:thin;
+    scrollbar-color:var(--vein) transparent;
+  }
+  main.page::-webkit-scrollbar{ width:8px; }
+  main.page::-webkit-scrollbar-track{ background:transparent; }
+  main.page::-webkit-scrollbar-thumb{ background:var(--vein); border:2px solid transparent; background-clip:content-box; }
 }
 
 .page .label{
@@ -659,6 +700,30 @@ main.page .post-title-h{
   display:flex;
   flex-direction:column;
   gap:calc(4 * var(--n5i-u));
+}
+/* .blog-tree stays pinned inside .corner.tl (chrome, outside the pane — see
+   the freeze-pane geometry block above), but 46 leaves is taller than a
+   900px viewport at 1440. .tl itself is capped to the viewport height and
+   the tree gets its own independent scroll region within it, so the tree
+   is fully reachable without the corner ever growing past the viewport or
+   the wordmark/role label above it scrolling away. Desktop-only, gated the
+   same as the pane geometry above; .blog-tree is display:none below 768px
+   in favour of the mobile Year/Month/Day selector, so nothing to reset there. */
+@media (min-width:768px){
+  .tl{
+    max-height:100vh;
+    overflow:hidden;
+  }
+  .blog-tree{
+    flex:1 1 auto;
+    min-height:0;
+    overflow-y:auto;
+    scrollbar-width:thin;
+    scrollbar-color:var(--vein) transparent;
+  }
+  .blog-tree::-webkit-scrollbar{ width:6px; }
+  .blog-tree::-webkit-scrollbar-track{ background:transparent; }
+  .blog-tree::-webkit-scrollbar-thumb{ background:var(--vein); }
 }
 .tree-root,
 .tree-year,
