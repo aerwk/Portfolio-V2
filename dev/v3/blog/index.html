@@ -69,6 +69,8 @@
   <section>
     <p class="label">All posts</p>
     <div class="post-list">
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-10.html"><span class="post-meta">Homelab · 2026-09-10</span><span class="post-title">No Root, No Decoder, No Problem: Reading a HEIC Photo and an 84-Page PDF on a Container With Nothing Installed</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-09.html"><span class="post-meta">Web · 2026-09-09</span><span class="post-title">A Day With No Journal, Reconstructed From Git and a Backfill That Fixes the Same Problem</span></a>
       <a class="post-row" href="/dev/v3/blog/posts/2026-09-08.html"><span class="post-meta">Web · 2026-09-08</span><span class="post-title">The Abort-On-Failure Hook Had One Failure Mode It Couldn't Catch</span></a>
       <a class="post-row" href="/dev/v3/blog/posts/2026-09-07.html"><span class="post-meta">Web · 2026-09-07</span><span class="post-title">An Animation You Cannot Pause Is One You Cannot Review</span></a>
       <a class="post-row" href="/dev/v3/blog/posts/2026-09-06.html"><span class="post-meta">Web · 2026-09-06</span><span class="post-title">Inspired By Means Rebuilt In, Not Repainted As</span></a>
@@ -209,21 +211,36 @@
     <div class="post-list" data-listing-rows></div>
   </div>
 
-  <template id="post-tpl-2026-09-08">
-  <h1>The Abort-On-Failure Hook Had One Failure Mode It Couldn't Catch</h1>
-  <p class="post-chips label">Web · 2026-09-08 · Tuesday · 7:40 PM · 2 min read · 90% AI · Eric Li</p>
+  <template id="post-tpl-2026-09-10">
+  <h1>No Root, No Decoder, No Problem: Reading a HEIC Photo and an 84-Page PDF on a Container With Nothing Installed</h1>
+  <p class="post-chips label">Homelab · 2026-09-10 · Thursday · 3:25 PM · 3 min read · 90% AI · Eric Li</p>
 
   <article class="prose">
-<p>The pre-commit hook that rewrites the site's hero stat tiles from live container counts is now tracked source instead of a file that only ever existed on one machine. It lives at <code>scripts/hooks/pre-commit</code> (123 lines) with a README next to it, and <code>.git/hooks/pre-commit</code> is now a symlink into that tracked file rather than a separate copy, so there is one file to edit and diff instead of two that can drift apart. The hook still aborts the commit loudly if it can't reach the host or gets back a non-numeric or zero count, a behavior added earlier this year to replace an older version that failed silently. Putting the hook under version control closes the gap that fix left open: an abort-on-failure hook that exists nowhere but one machine's <code>.git/hooks/</code> can vanish without a trace, and a missing hook aborts nothing.</p>
-<p>The redesign's entire design source, 77 files of logo iterations and stylesheet revisions, got its own nested private git repository, scoped to just that one folder so the public site history stays untouched. It's the first time any of that work has had commit history, and the first push was confirmed by checking the ref on the server rather than trusting a clean exit code.</p>
-<p>The redesign itself shipped as a preview at <code>/dev/v3</code> on the lab host: a routing rewrite from the portfolio host, <code>noindex</code> on every page, and a <code>robots.txt</code> disallow on <code>/dev/</code> so it stays out of search results while it's still changing daily. A 379-line Python generator builds the preview tree from the design source rather than a hand copy, and it checks its own output before calling a build good: every internal link gets rewritten for the <code>/dev/v3</code> base path, the generator regex-scans the result for anything that wasn't, and the build fails on an unprefixed link. It also diffs two consecutive runs against each other rather than assuming the generator is idempotent by design.</p>
-<h2>Also today</h2>
-<p>The same pass pulled the wordmark and a display font out of the markup, where both had been base64-inlined into all six preview pages, about 93 KB repeated per page because inlining doesn't cache. Extracted to real files and cached once instead of shipped six times, the six pages' combined HTML dropped from 916 KB to 127 KB.</p>
-<p>The honest gap: the preview lists all 34 blog posts, but only one has real body content. The rest render from metadata only until the blog generator learns the new template. Nine navigation tests passed against the deployed preview in a real browser, which covers the chrome, not the posts that aren't there yet.</p>
+<p>The night closed out with three small commits, labelling the three HomeLab stat rows on the About page: PVE, UniFi camera, network stack, nothing more than that. The real day started at 2 PM, with a new client engagement and a constraint that turned into the actual story: this machine has no root, and two of the file formats the work arrived in were ones it could not open at all.</p>
+<h2>A 100-room IPTV job, and two files nothing here could read</h2>
+<p>A hotel client dropped in a vendor invoice PDF and a set of iPhone site-survey photos for a 100-room IPTV system build. Both were unreadable on arrival. The photos were HEIC, and this container has no HEIC decoder anywhere: no <code>heif-convert</code>, no ImageMagick, no ffmpeg, no vips, no PIL, and no <code>pip</code> to install one. The PDF was 84 pages, and this environment's PDF reader needs a page-range argument past 10 pages, which shells out to <code>pdftoppm</code>, also not installed.</p>
+<p>Neither problem had a shortcut, because there's no root on this box to <code>apt install</code> anything with. The fix for both was the same shape: find an unprivileged path to the missing binary and build a small tool around it rather than wait for a package.</p>
+<p><code>heic2jpg.sh</code> gets there by downloading the <code>.deb</code> packages directly. <code>apt-get download</code> works without root even though <code>apt-get install</code> doesn't. It unpacks them by hand with <code>dpkg-deb -x</code> into a cache directory, then runs <code>heif-convert</code> against that unpacked tree with <code>LD_LIBRARY_PATH</code> and <code>LIBHEIF_PLUGIN_PATH</code> pointed at it. The plugin path turned out to be the part that wasn't obvious: <code>heif-convert</code> fails with "no decoder" without it, because the actual codec plugins (<code>libde265</code>, <code>dav1d</code>, <code>aom</code>) ship as separate packages from <code>libheif</code> itself.</p>
+<p>The PDF needed a different tool, because the problem wasn't "no decoder" so much as "the text layer isn't the point." The vendor deck was image-heavy, topology diagrams, admin UI screenshots, spec tables, and a text-only conversion would have thrown away most of what mattered. <code>pdf-extract-images.py</code> pulls images out of the PDF directly: <code>/DCTDecode</code> streams are already JPEG and get written out verbatim, and <code>/FlateDecode</code> streams are raw bitmaps that get wrapped into a valid PNG by hand, using nothing but <code>zlib</code> and <code>struct</code> from the standard library, no PIL, no pypdf, no poppler. Run against the actual 84-page, 273-image deck, it kept 248 of those images after dropping five exact duplicates and anything under a 40,000-pixel minimum, split into 96 JPEGs, 128 PNGs, and 24 separated out as greyscale alpha masks rather than real content.</p>
+<p>Neither tool is clever. Both exist because "no root" is a real constraint here, not a hypothetical one, and the answer to that constraint was to write something small and dependency-free rather than ask for a package that isn't coming.</p>
+<h2>Planned, not built</h2>
+<p>An idea came up in the evening for a different kind of change: loading pages into a shared viewing pane on the redesign preview instead of a full page load for every navigation. It got planned that night: the transition design, the blockers found in a first pass over the source, what has to move before a swap can work cleanly. Nothing from it shipped today. It gets built the next day.</p>
   </article>
   </template>
 <script type="application/json" id="n5-blog-posts">
 {
+  "2026-09-10": {
+    "category": "Homelab",
+    "date": "2026-09-10 · 3:25 PM",
+    "title": "No Root, No Decoder, No Problem: Reading a HEIC Photo and an 84-Page PDF on a Container With Nothing Installed",
+    "summary": "A new client engagement arrived as an iPhone photo set and a vendor PDF, and this container could read neither: no HEIC decoder, no PDF renderer, no root to install one. Two dependency-free tools fixed that."
+  },
+  "2026-09-09": {
+    "category": "Web",
+    "date": "2026-09-09 · 11:56 PM",
+    "title": "A Day With No Journal, Reconstructed From Git and a Backfill That Fixes the Same Problem",
+    "summary": "Twenty-four commits, four unrelated threads, and no journal entry at all for the day itself: written back from git and transcripts, which is exactly the failure mode the day's own backfill was fixing."
+  },
   "2026-09-08": {
     "category": "Web",
     "date": "2026-09-08 · 7:40 PM",

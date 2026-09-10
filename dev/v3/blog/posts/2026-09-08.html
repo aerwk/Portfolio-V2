@@ -51,6 +51,8 @@
   <section>
     <p class="label">All posts</p>
     <div class="post-list">
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-10.html"><span class="post-meta">Homelab · 2026-09-10</span><span class="post-title">No Root, No Decoder, No Problem: Reading a HEIC Photo and an 84-Page PDF on a Container With Nothing Installed</span></a>
+      <a class="post-row" href="/dev/v3/blog/posts/2026-09-09.html"><span class="post-meta">Web · 2026-09-09</span><span class="post-title">A Day With No Journal, Reconstructed From Git and a Backfill That Fixes the Same Problem</span></a>
       <a class="post-row" href="/dev/v3/blog/posts/2026-09-08.html"><span class="post-meta">Web · 2026-09-08</span><span class="post-title">The Abort-On-Failure Hook Had One Failure Mode It Couldn't Catch</span></a>
       <a class="post-row" href="/dev/v3/blog/posts/2026-09-07.html"><span class="post-meta">Web · 2026-09-07</span><span class="post-title">An Animation You Cannot Pause Is One You Cannot Review</span></a>
       <a class="post-row" href="/dev/v3/blog/posts/2026-09-06.html"><span class="post-meta">Web · 2026-09-06</span><span class="post-title">Inspired By Means Rebuilt In, Not Repainted As</span></a>
@@ -105,7 +107,7 @@
   <h1 class="post-title-h">The Abort-On-Failure Hook Had One Failure Mode It Couldn't Catch</h1>
   <p class="post-chips label">Web · 2026-09-08 · Tuesday · 7:40 PM · 2 min read · 90% AI · Eric Li</p>
 
-  <nav class="post-prevnext" aria-label="Post navigation"><span class="pn-prev"><a class="pill" href="/dev/v3/blog/posts/2026-09-07.html" title="An Animation You Cannot Pause Is One You Cannot Review"><span class="pill-l">‹ Previous</span><span class="pill-c" aria-hidden="true">‹ Previous</span></a></span><span class="pn-next"></span></nav>
+  <nav class="post-prevnext" aria-label="Post navigation"><span class="pn-prev"><a class="pill" href="/dev/v3/blog/posts/2026-09-07.html" title="An Animation You Cannot Pause Is One You Cannot Review"><span class="pill-l">‹ Previous</span><span class="pill-c" aria-hidden="true">‹ Previous</span></a></span><span class="pn-next"><a class="pill" href="/dev/v3/blog/posts/2026-09-09.html" title="A Day With No Journal, Reconstructed From Git and a Backfill That Fixes the Same Problem"><span class="pill-l">Next ›</span><span class="pill-c" aria-hidden="true">Next ›</span></a></span></nav>
 
   <article class="prose">
 <p>The pre-commit hook that rewrites the site's hero stat tiles from live container counts is now tracked source instead of a file that only ever existed on one machine. It lives at <code>scripts/hooks/pre-commit</code> (123 lines) with a README next to it, and <code>.git/hooks/pre-commit</code> is now a symlink into that tracked file rather than a separate copy, so there is one file to edit and diff instead of two that can drift apart. The hook still aborts the commit loudly if it can't reach the host or gets back a non-numeric or zero count, a behavior added earlier this year to replace an older version that failed silently. Putting the hook under version control closes the gap that fix left open: an abort-on-failure hook that exists nowhere but one machine's <code>.git/hooks/</code> can vanish without a trace, and a missing hook aborts nothing.</p>

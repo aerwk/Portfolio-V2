@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>No Root, No Decoder, No Problem: Reading a HEIC Photo and an 84-Page PDF on a Container With Nothing Installed — N5HQ</title>
+<meta name="description" content="A new client engagement arrived as an iPhone photo set and a vendor PDF, and this container could read neither: no HEIC decoder, no PDF renderer, no root to install one. Two dependency-free tools fixed that.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-09-10.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="No Root, No Decoder, No Problem: Reading a HEIC Photo and an 84-Page PDF on a Container With Nothing Installed — N5HQ">
+<meta property="og:description" content="A new client engagement arrived as an iPhone photo set and a vendor PDF, and this container could read neither: no HEIC decoder, no PDF renderer, no root to install one. Two dependency-free tools fixed that.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-09-10.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">No Root, No Decoder, No Problem: Reading a HEIC Photo and an 84-Page PDF on a Container With Nothing Installed</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-09-10 · Thursday · 3:25 PM</span>
+      <span class="chip">3 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>The night closed out with three small commits, labelling the three HomeLab stat rows on the About page: PVE, UniFi camera, network stack, nothing more than that. The real day started at 2 PM, with a new client engagement and a constraint that turned into the actual story: this machine has no root, and two of the file formats the work arrived in were ones it could not open at all.</p>
+<h2>A 100-room IPTV job, and two files nothing here could read</h2>
+<p>A hotel client dropped in a vendor invoice PDF and a set of iPhone site-survey photos for a 100-room IPTV system build. Both were unreadable on arrival. The photos were HEIC, and this container has no HEIC decoder anywhere: no <code>heif-convert</code>, no ImageMagick, no ffmpeg, no vips, no PIL, and no <code>pip</code> to install one. The PDF was 84 pages, and this environment's PDF reader needs a page-range argument past 10 pages, which shells out to <code>pdftoppm</code>, also not installed.</p>
+<p>Neither problem had a shortcut, because there's no root on this box to <code>apt install</code> anything with. The fix for both was the same shape: find an unprivileged path to the missing binary and build a small tool around it rather than wait for a package.</p>
+<p><code>heic2jpg.sh</code> gets there by downloading the <code>.deb</code> packages directly. <code>apt-get download</code> works without root even though <code>apt-get install</code> doesn't. It unpacks them by hand with <code>dpkg-deb -x</code> into a cache directory, then runs <code>heif-convert</code> against that unpacked tree with <code>LD_LIBRARY_PATH</code> and <code>LIBHEIF_PLUGIN_PATH</code> pointed at it. The plugin path turned out to be the part that wasn't obvious: <code>heif-convert</code> fails with "no decoder" without it, because the actual codec plugins (<code>libde265</code>, <code>dav1d</code>, <code>aom</code>) ship as separate packages from <code>libheif</code> itself.</p>
+<p>The PDF needed a different tool, because the problem wasn't "no decoder" so much as "the text layer isn't the point." The vendor deck was image-heavy, topology diagrams, admin UI screenshots, spec tables, and a text-only conversion would have thrown away most of what mattered. <code>pdf-extract-images.py</code> pulls images out of the PDF directly: <code>/DCTDecode</code> streams are already JPEG and get written out verbatim, and <code>/FlateDecode</code> streams are raw bitmaps that get wrapped into a valid PNG by hand, using nothing but <code>zlib</code> and <code>struct</code> from the standard library, no PIL, no pypdf, no poppler. Run against the actual 84-page, 273-image deck, it kept 248 of those images after dropping five exact duplicates and anything under a 40,000-pixel minimum, split into 96 JPEGs, 128 PNGs, and 24 separated out as greyscale alpha masks rather than real content.</p>
+<p>Neither tool is clever. Both exist because "no root" is a real constraint here, not a hypothetical one, and the answer to that constraint was to write something small and dependency-free rather than ask for a package that isn't coming.</p>
+<h2>Planned, not built</h2>
+<p>An idea came up in the evening for a different kind of change: loading pages into a shared viewing pane on the redesign preview instead of a full page load for every navigation. It got planned that night: the transition design, the blockers found in a first pass over the source, what has to move before a swap can work cleanly. Nothing from it shipped today. It gets built the next day.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="python" href="/blog/?tag=python">Python</a><a class="tagchip" data-tag="tooling" href="/blog/?tag=tooling">Tooling</a><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="pdf" href="/blog/?tag=pdf">Pdf</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-09.html">← A Day With No Journal, Reconstructed From Git and a Backfill That Fixes the Same Problem</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>
