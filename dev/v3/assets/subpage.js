@@ -16,10 +16,13 @@
                        // with nothing initialised. MUST NOT cancel a reveal
                        // animation on an element staying in the DOM (see the
                        // reveal() comment below for why).
-       reveal(root)    // Targets [root, .blog-tree], delay 0, 500ms,
-                       // .15 -> 1 / translateY(10px) -> 0, ease-out, fill:'both'.
-                       // Reduced motion: opacity:1/transform:none inline, no
-                       // animation. Guarantees a readable end state even on error.
+       reveal(root)    // Targets [root, .blog-tree]. INSTANT (2026-09-11):
+                       // forces opacity:1/transform:none inline immediately,
+                       // no animation — a router swap must not look like a
+                       // page load. The 500ms .15->1 load fade is now
+                       // exclusive to the initial page load
+                       // (runInitialReveal(), not part of this contract).
+                       // Guarantees a readable end state even on error.
      }
 
    All three return void. The router (bottom of this file) calls them in
@@ -108,30 +111,24 @@ window.__n5Subpage = (function(){
   /* Pane-swap reveal: contract's reveal(root). Targets root itself plus the
      persistent archive tree (outside <main>, in .corner.tl) — a swap that
      changed the tree (arriving/leaving /blog/) must reveal it too, or it
-     pops in at full opacity while the pane still fades under it. */
+     pops in at full opacity while the pane still fades under it.
+
+     INSTANT, not animated (2026-09-11, perceived-latency fix). This function
+     is only ever called from the router's swap path (doSwap(), bottom of
+     this file) — never from the initial page load, which runs
+     runInitialReveal() below instead. A router swap is not a page load: the
+     `window` sentinel survives the click, the fetch resolves in ~70ms, and
+     staying on the page must not be dressed up to look like leaving it. The
+     old 500ms .15->1 fade reused the load choreography here and made every
+     nav click read as a page load — exactly the symptom this fixes. So on a
+     swap there is nothing to animate: force both targets straight to their
+     readable end state, same as the reduced-motion branch always did. This
+     keeps the same "finally"-style guarantee (forceReadable itself is
+     try/catch-wrapped) without ever parking the pane at CSS rest (.15) for
+     any measurable time. */
   function reveal(root){
     var targets = [root, document.querySelector('.blog-tree')].filter(function(t){ return !!t; });
-    if (isReducedMotion()) {
-      targets.forEach(forceReadable);
-      return;
-    }
-    targets.forEach(function(t){
-      try {
-        var anim = t.animate(
-          [
-            { opacity: .15, transform: 'translateY(10px)' },
-            { opacity: 1, transform: 'none' }
-          ],
-          { duration: 500, delay: 0, easing: 'ease-out', fill: 'both' }
-        );
-        revealAnims.push(anim);
-      } catch (e) {
-        /* .animate() itself threw (unsupported target, detached element, etc.) —
-           the guarantee still has to hold: force the readable end state directly
-           rather than leaving the element parked at CSS rest (opacity:.15). */
-        forceReadable(t);
-      }
-    });
+    targets.forEach(forceReadable);
   }
 
   /* Initial page-load reveal: corners at 0ms, content column at 180ms, header
