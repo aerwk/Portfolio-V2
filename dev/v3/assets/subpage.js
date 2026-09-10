@@ -23,10 +23,19 @@
                        // exclusive to the initial page load
                        // (runInitialReveal(), not part of this contract).
                        // Guarantees a readable end state even on error.
+       showListing(scope) // Defect 2 (2026-09-11): shows a listing view
+                       // (root/year/month) in the CURRENT <main>. Only
+                       // works when the current page is the blog shell
+                       // (blogEls set) — returns true if it rendered,
+                       // false (no-op) otherwise. The router uses this
+                       // after swapping in the blog shell from a page
+                       // that had no listing view of its own to show.
      }
 
-   All three return void. The router (bottom of this file) calls them in
-   sequence: destroy() -> replaceWith(newMain) -> init(newMain) -> reveal(newMain).
+   All four return void except showListing (returns boolean). The router
+   (bottom of this file) calls destroy()/init()/reveal() in sequence:
+   destroy() -> replaceWith(newMain) -> init(newMain) -> [showListing(scope)
+   if a listing view was requested] -> reveal(newMain).
 */
 
 /* Base-path helpers (added for the /dev/v3 deploy build, scripts/build_dev_preview.py):
@@ -696,7 +705,20 @@ window.__n5Subpage = (function(){
      no POSTS-derived "current id" to read. Derive it straight from the
      URL instead — the one thing every post page reliably has. */
   function getCurrentPostIdFromLocation(){
-    var m = hrefRe().exec(location.pathname);
+    /* Defect 3 (2026-09-11): the address bar no longer changes on a pane
+       swap, so location.pathname is USELESS here -- it would always be
+       whatever the very first page load's path was. The LOGICAL url of
+       what's currently displayed lives in history.state.url instead (set
+       by the router's doSwap()/initial-load replaceState). Falls back to
+       location.pathname only if history.state isn't populated yet (should
+       not happen by file-execution order -- the router IIFE's initial
+       replaceState runs before this bottom-of-file init() call -- but kept
+       defensive rather than assumed). */
+    var path = location.pathname;
+    try {
+      if (history.state && history.state.url) path = new URL(history.state.url).pathname;
+    } catch (e) { /* keep location.pathname fallback */ }
+    var m = hrefRe().exec(path);
     return m ? m[1] : null;
   }
 
@@ -762,11 +784,26 @@ window.__n5Subpage = (function(){
     });
   }
 
-  function showListing(scope){
+  function applyListingScope(scope){
     if (!blogEls) return;
     renderListing(scope);
     setActiveView('listing');
     setLandingHidden(true);
+  }
+
+  /* Public contract method (Defect 2, 2026-09-11): lets the router drive a
+     listing view once it has swapped in the blog shell (blogEls only exists
+     against that shell's #blog-listing-view). No-ops (returns false) when
+     called against a page that isn't the blog shell -- e.g. if some future
+     caller invokes this before a swap has happened. The delegated
+     [data-crumb-scope] click handler below still opens the tree path AND
+     shows the listing when blogEls is already set (crumb clicked while on
+     /blog/ itself); this method exists for the router's own call sites. */
+  function showListing(scope){
+    if (!blogEls) return false;
+    openScopePath(scope);
+    applyListingScope(scope);
+    return true;
   }
 
   function getLatestId(){
@@ -812,12 +849,35 @@ window.__n5Subpage = (function(){
 
   document.addEventListener('click', function(e){
     var btn = e.target.closest && e.target.closest('[data-crumb-scope]');
-    if (!btn || !blogEls) return;
+    if (!btn) return;
+    /* preventDefault unconditionally once a [data-crumb-scope] element is
+       matched (Defect 2 fix, 2026-09-11): this used to bail before
+       preventDefault when blogEls was null, which meant JS-on visitors on a
+       lone generated post page got the SAME plain navigation as no-JS
+       (silently useless -- the whole point of shipping data-crumb-scope
+       here is to do better than that). Now: still no-JS-safe (real href
+       stays as a fallback), but JS-on always intercepts. */
     e.preventDefault();
     var scope;
     try { scope = JSON.parse(btn.getAttribute('data-crumb-scope')); } catch (err) { return; }
-    openScopePath(scope);
-    showListing(scope);
+    if (blogEls) {
+      openScopePath(scope);
+      applyListingScope(scope);
+      /* Defect 3 (2026-09-11): push a history entry for this in-place view
+         change too (no fetch/swap happens here — same page, same logical
+         url — only the visible view inside <main> changed), so Back walks
+         one step at a time through landing -> listing -> a deeper listing,
+         same as it would for a real page-to-page nav. See the router IIFE
+         for window.__n5PushListingView; it no-ops harmlessly if that IIFE
+         hasn't run yet (should not happen — file-order guarantees it has). */
+      if (window.__n5PushListingView) window.__n5PushListingView(scope);
+      return;
+    }
+    /* No blogEls on this page (e.g. a lone generated post page) -- hand off
+       to the router (defined in its own IIFE further down this file) to
+       swap in the blog shell and show this scope there. See that IIFE for
+       window.__n5RouteToListing. */
+    if (window.__n5RouteToListing) window.__n5RouteToListing(scope);
   });
 
   /* =========================================================================
@@ -912,7 +972,7 @@ window.__n5Subpage = (function(){
     blogEls = null;
   }
 
-  return { init: init, destroy: destroy, reveal: reveal };
+  return { init: init, destroy: destroy, reveal: reveal, showListing: showListing };
 })();
 
 /* Initial call moved to the very bottom of this file (see the closing
@@ -1126,7 +1186,17 @@ window.__n5Subpage = (function(){
     catch (e) { try { target.focus(); } catch (e2) {} }
   }
 
-  function doSwap(url, route, isForward, scrollTarget){
+  /* Defect 3 (2026-09-11): the address bar must never change on a pane
+     swap. pushState now passes location.href as the second navigation
+     argument (same displayed URL) instead of `url` — but still pushes a
+     NEW history entry, so Back/Forward keeps walking through the views one
+     at a time. Since the bar itself no longer reflects what's on screen,
+     the LOGICAL url of what's displayed travels in the history state's
+     `url` field instead (read back by getCurrentPostIdFromLocation() and by
+     popstate below). `view` optionally carries {type:'listing', scope}
+     so Back can restore a listing, not just the landing/about/projects/post
+     default init() gives every page. */
+  function doSwap(url, route, isForward, scrollTarget, view){
     var api = window.__n5Subpage;
     fetch(url, { credentials: 'same-origin' })
       .then(function(res){
@@ -1148,16 +1218,30 @@ window.__n5Subpage = (function(){
 
         /* PHASE 5, B2 (2026-09-11): pushState moved BEFORE api.init() (it used to run
            after). A generated post page's init path (highlightCurrentPost(), see
-           __n5Subpage above) derives "which post is this" from location.pathname —
-           on a forward navigation that must already be the NEW url by the time init()
-           runs, or the tree can't tell which leaf/branch to mark current. A popstate
-           (back/forward) needs no such call here: the browser has already updated
-           location by the time its handler fires. */
+           __n5Subpage above) derives "which post is this" from history.state.url —
+           on a forward navigation that must already be the NEW logical url by the
+           time init() runs, or the tree can't tell which leaf/branch to mark
+           current. A popstate (back/forward) needs no such call here: the browser
+           has already restored the target history entry's state by the time its
+           handler fires. */
         if (isForward) {
-          history.pushState({ n5subpage: true, url: url, paneScrollTop: 0 }, '', url);
+          history.pushState({ n5subpage: true, url: url, view: view, paneScrollTop: 0 }, '', location.href);
         }
 
         api.init(imported);
+
+        /* Apply a requested non-default view (currently only a listing)
+           AFTER init() (which already ran the page's own default — e.g.
+           initLanding() for the blog shell) and BEFORE focus/reveal, so
+           focusAfterSwap() below lands on the listing's own heading rather
+           than the about-to-be-hidden landing h1. api.showListing() itself
+           no-ops (returns false) if this swapped-in page somehow isn't the
+           blog shell — defensive; the router's own call sites always target
+           the blog shell when they pass a listing view. */
+        if (view && view.type === 'listing' && api.showListing) {
+          api.showListing(view.scope);
+        }
+
         api.reveal(imported);
 
         document.title = title;
@@ -1178,25 +1262,66 @@ window.__n5Subpage = (function(){
       });
   }
 
-  function navigate(url, route){
+  function navigate(url, route, view){
     try {
       /* Capture the OUTGOING pane's scroll position (not window.scrollY —
          the document doesn't scroll; main.page does) into the state we're
-         leaving behind, so a later popstate back to it can restore it. */
+         leaving behind, so a later popstate back to it can restore it.
+         Also preserve the outgoing entry's own `view` (Defect 3) — if the
+         user is leaving a listing view, a later Back to this entry must
+         still know to restore that listing, not silently drop to landing. */
       var outgoingMain = document.getElementById('main');
       var curState = (history.state && history.state.n5subpage) ? history.state : { n5subpage: true, url: window.location.href };
-      history.replaceState(
-        { n5subpage: true, url: curState.url || window.location.href, paneScrollTop: outgoingMain ? outgoingMain.scrollTop : 0 },
-        '', window.location.href
-      );
+      var replacement = {
+        n5subpage: true,
+        url: curState.url || window.location.href,
+        paneScrollTop: outgoingMain ? outgoingMain.scrollTop : 0
+      };
+      if (curState.view) replacement.view = curState.view;
+      history.replaceState(replacement, '', window.location.href);
     } catch (e) {}
-    doSwap(url, route, true, 0);
+    doSwap(url, route, true, 0, view);
   }
 
+  /* Defect 2 (2026-09-11): entry point for the blog module's delegated
+     [data-crumb-scope] click handler when it fires on a page with no
+     blogEls (a lone generated post page) — swap in the blog shell exactly
+     like a normal /blog/ navigation, then show the requested listing scope
+     in that freshly-swapped pane instead of the shell's default landing
+     view. Exposed on window rather than merged into the blog module's IIFE
+     to keep the router/blog-module split clean (see file header). */
+  window.__n5RouteToListing = function(scope){
+    navigate(__n5Base() + '/blog/', 'blog', { type: 'listing', scope: scope });
+  };
+
+  /* Defect 3 (2026-09-11): companion to __n5RouteToListing above, for the
+     case where a crumb click shows a listing WITHOUT any swap (blogEls was
+     already set — the blog shell is already live). Pushes a NEW history
+     entry (same logical url, since no navigation happened) carrying the
+     listing's `view` so Back steps out of it one entry at a time instead of
+     the click being invisible to history entirely. */
+  window.__n5PushListingView = function(scope){
+    try {
+      var curState = (history.state && history.state.n5subpage) ? history.state : { n5subpage: true, url: window.location.href };
+      var mainEl = document.getElementById('main');
+      history.pushState({
+        n5subpage: true,
+        url: curState.url || window.location.href,
+        view: { type: 'listing', scope: scope },
+        paneScrollTop: mainEl ? mainEl.scrollTop : 0
+      }, '', location.href);
+    } catch (e) {}
+  };
+
+  /* Always reset on load (Defect 3, 2026-09-11) — was previously guarded by
+     `if (!history.state || !history.state.n5subpage)`, which meant a stale
+     history.state left over from a prior session (however unlikely in a
+     given browser) could survive a hard reload and mis-seed `url`/`view`.
+     Resetting unconditionally is the simple, safe fix: on a hard reload the
+     address bar IS the logical url (there is nothing to restore), so `url`
+     always becomes location.href here and any stale `view` is dropped. */
   try {
-    if (!history.state || !history.state.n5subpage) {
-      history.replaceState({ n5subpage: true, url: window.location.href, paneScrollTop: 0 }, '', window.location.href);
-    }
+    history.replaceState({ n5subpage: true, url: window.location.href, paneScrollTop: 0 }, '', window.location.href);
   } catch (e) {}
 
   document.addEventListener('click', function(e){
@@ -1219,9 +1344,15 @@ window.__n5Subpage = (function(){
   window.addEventListener('popstate', function(e){
     var state = e.state;
     if (!state || !state.n5subpage) { window.location.reload(); return; }
-    var route = matchRoute(window.location.pathname);
+    /* Defect 3 (2026-09-11): the address bar never changed, so
+       window.location.pathname/href are USELESS here — they're always the
+       very first page's URL. The LOGICAL url of what to restore lives in
+       the popped state's own `url` field instead. */
+    var route;
+    try { route = matchRoute(new URL(state.url).pathname); }
+    catch (e2) { window.location.reload(); return; }
     if (!route) { window.location.reload(); return; }
-    doSwap(window.location.href, route, false, state.paneScrollTop || 0);
+    doSwap(state.url, route, false, state.paneScrollTop || 0, state.view);
   });
 })();
 

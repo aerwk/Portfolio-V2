@@ -388,18 +388,38 @@ def load_all_posts():
 
 
 def post_breadcrumb_html(post):
+    """Emit EXACTLY what renderCrumbSegs() in subpage.js (~:520-544) produces
+    client-side for a post breadcrumb -- BLOG / year / month as clickable
+    `data-crumb-scope` buttons (see the click handler + [data-crumb-scope]
+    router hand-off, ~:813-840) and the trailing day as a plain, non-
+    interactive span (Defect 1, 2026-09-11). Scope JSON uses
+    separators=(',', ':') to match what JSON.stringify() produces
+    client-side -- no extra whitespace, since the verify suite does
+    byte-identity checks on this markup."""
     year = post["date"][0:4]
     month_num = post["date"][5:7]
     day_num = post["date"][8:10]
     mon = MONTH_ABBR.get(month_num)
     if not mon:
         raise SystemExit(f"post {post['date']!r}: unrecognised month {month_num!r}")
-    segs = ["BLOG", year, mon, day_num]
+    segs = [
+        ("BLOG", {"type": "root"}),
+        (year, {"type": "year", "year": year}),
+        (mon, {"type": "month", "year": year, "month": month_num}),
+        (day_num, None),  # trailing segment: current position, not a link
+    ]
     parts = []
-    for i, seg in enumerate(segs):
+    for i, (label, scope) in enumerate(segs):
         if i:
             parts.append('<span aria-hidden="true"> &gt; </span>')
-        parts.append(f'<span class="crumb-seg">{seg}</span>')
+        if scope is not None:
+            scope_json = json.dumps(scope, separators=(",", ":"))
+            parts.append(
+                '<button type="button" class="crumb-seg crumb-link" '
+                f"data-crumb-scope='{scope_json}'>{label}</button>"
+            )
+        else:
+            parts.append(f'<span class="crumb-seg crumb-current">{label}</span>')
     return '<nav class="post-crumb label" aria-label="Breadcrumb">' + "".join(parts) + "</nav>"
 
 
