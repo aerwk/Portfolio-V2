@@ -3,9 +3,10 @@
 production site -- from the design-loop source.
 
 Eric's "edge draft" redesign (01 Design/design-loop/src) is design source, not
-deployable output: every page inlines its wordmark lockup (2 SVGs, rest +
-hover state, with the hover behaviour driven by CSS/JS rather than baked-in
-video clips) as base64, plus a base64 OTF font on the home page, and its internal
+deployable output: every page inlines its wordmark lockup (3 SVGs -- rest,
+hover state, and the flashbang-mode hover state, with the hover behaviour
+driven by CSS/JS rather than baked-in video clips) as base64, plus a base64
+OTF font on the home page, and its internal
 links point at the LIVE site's real paths (/, /about/, /portfolio/, /blog/,
 /blog/posts/*.html). This script extracts every inlined asset to a real file,
 rewrites every internal link to be base-prefixed, and emits the result as a
@@ -270,12 +271,23 @@ def decode_data_uri(uri, expected_mime=None):
 
 
 def extract_lockup_assets(html):
-    """Return {asset_filename: raw_bytes} for the two embedded lockup SVGs,
+    """Return {asset_filename: raw_bytes} for the three embedded lockup SVGs,
     located by their markup role (not by position) so a reordering of the
-    source can't silently mis-map an asset."""
+    source can't silently mis-map an asset. logo-hover-fb.svg is the
+    flashbang-mode hover mark (2026-09-24): same drawing as logo-hover.svg
+    but with the violet fill (#5e18eb) swapped for the flashbang accent
+    #01bdff and every other fill swapped for its f() (invert+hue-rotate180)
+    equivalent -- see p4/subpage.css's flashbang block for f()'s definition.
+    The 'class="lk-hover-fb" src="' and 'class="lk-hover" src="' markers are
+    each other's full attribute string (not a bare substring -- the closing
+    quote lands right after "-fb" vs. right after "hover"), so html.find()
+    for either one always lands on its own <img>, in either search order."""
     out = {}
     out["logo-rest.svg"] = decode_data_uri(
         find_attr_data_uri(html, 'class="lk-rest" src="'), expected_mime="image/svg+xml"
+    )
+    out["logo-hover-fb.svg"] = decode_data_uri(
+        find_attr_data_uri(html, 'class="lk-hover-fb" src="'), expected_mime="image/svg+xml"
     )
     out["logo-hover.svg"] = decode_data_uri(
         find_attr_data_uri(html, 'class="lk-hover" src="'), expected_mime="image/svg+xml"
@@ -290,6 +302,7 @@ def replace_lockup_refs(html, base):
         return html.replace(marker + old, marker + f"{base}/assets/{filename}", 1)
 
     html = sub_attr(html, 'class="lk-rest" src="', "logo-rest.svg")
+    html = sub_attr(html, 'class="lk-hover-fb" src="', "logo-hover-fb.svg")
     html = sub_attr(html, 'class="lk-hover" src="', "logo-hover.svg")
     return html
 

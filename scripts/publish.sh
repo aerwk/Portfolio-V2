@@ -10,7 +10,7 @@
 #      blog/index.html, blog/posts/<date>.html (one per published post),
 #      the v3 assets under assets/ (instruments.js, hero.js, subpage.css,
 #      subpage.js, instruments.css, bigger-display.otf, logo-rest.svg,
-#      logo-hover.svg), and sitemap-ericli.xml.
+#      logo-hover.svg, logo-hover-fb.svg), and sitemap-ericli.xml.
 #   2. `git add`s exactly those output paths -- NOT `-A` / `-a`, so nothing
 #      else staged in the working tree (or left over from an unrelated
 #      change) gets swept into the commit by accident.
@@ -60,6 +60,7 @@ git add \
   assets/bigger-display.otf \
   assets/logo-rest.svg \
   assets/logo-hover.svg \
+  assets/logo-hover-fb.svg \
   sitemap-ericli.xml \
   scripts/v3-owned-assets.txt
 

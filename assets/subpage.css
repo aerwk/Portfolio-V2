@@ -66,27 +66,35 @@ html,body{
 body{ position:relative; height:100vh; }
 
 /* Flashbang mode (Eric's rename of "light mode"; ninja = "dark mode", the default):
-   same layout and content, every colour inverted while hues stay put -- see the
-   byte-identical comment + rule in p3/home.html's inline <style> for the full
-   rationale (filter on <html>, never <body>; the freeze-pane layout above means
-   html never scrolls and is never taller than the viewport at desktop widths, so
-   .corner/main.page's position:fixed still resolves to the same box either way;
-   the background override is a second, independent fix for the canvas/overscroll
-   backdrop, which a filter on html never touches). #ecede9 = invert(1)
-   hue-rotate(180deg) applied to --carbon's own #12130f by hand. */
+   REWRITTEN 2026-09-24 from a whole-page invert(1) hue-rotate(180deg) filter to real
+   colour tokens -- see the byte-identical comment + rule in p3/home.html's inline
+   <style> for the full rationale (f(c): invert then hue-rotate(180deg) by the CSS
+   Filter Effects matrix, computed by hand per token so every non-accent colour still
+   renders identically to the old filter's output; --violet is the one exception, set
+   straight to the accent #01bdff rather than f(#5e18eb)). */
 html[data-theme="flashbang"]{
-  filter: invert(1) hue-rotate(180deg);
+  --carbon:#ecede9;              /* f(#12130f) */
+  --bone:#241f1a;                /* f(#e4dfda) */
+  --bone-55: rgba(36,31,26,.55); /* f(rgba(228,223,218,.55)) */
+  --vein:#c4c4c0;                /* f(#3c3c38) */
+  --glow:#6655c1;                /* f(#a493ff) */
+  /* background: second, independent fix for the canvas/overscroll backdrop -- see
+     p3/home.html's comment; a token swap doesn't reach it either. #ecede9 = f(#12130f). */
   background:#ecede9;
 }
-/* Flashbang accent = blue #0473fc (Eric, 2026-09-24), not the inverted violet (which the
-   page filter turns into a pale pink #f1abff). The pill fill applies the SAME filter a
-   second time, which cancels the page's (invert+hue-rotate(180) is its own inverse), so
-   its background renders as exactly #0473fc with white text. Borders/text can't be
-   cancelled that way (a filter on .pill would also double-filter its backdrop blur), so
-   --violet is set to the in-gamut pre-image #1c9cff, which the page filter renders as
-   ~#0b8bee -- the nearest reachable colour, since #0473fc's exact pre-image needs blue >255. */
-html[data-theme="flashbang"]{ --violet:#1c9cff; }
-html[data-theme="flashbang"] .pill-c{ filter: invert(1) hue-rotate(180deg); background:#0473fc; }
+/* Flashbang accent = #01bdff (Eric, 2026-09-24). --violet now drives every accent
+   surface directly (pill fill/border, acc-trigger's expanded border, the current tree
+   leaf, focus borders) since there is no more page filter to fight -- .pill-c's
+   background:var(--violet) below renders as exactly #01bdff with no extra rule needed.
+   Only its text needs a manual override: ninja's white pill-fill text is f(#fff) =
+   #000 (near-black) in flashbang, for contrast on the now-light cyan fill. */
+html[data-theme="flashbang"]{ --violet:#01bdff; }
+html[data-theme="flashbang"] .pill-c{ color:#000; }
+/* .pill's translucent carbon-tinted backdrop -- f(rgba(18,19,15,.4)). */
+html[data-theme="flashbang"] .pill{ background:rgba(236,237,233,.4); }
+/* /about/ tool marquee: the logo SVGs ship fixed colours (no CSS tokens to override),
+   so they get the same per-image filter the old page-level filter used to give them. */
+html[data-theme="flashbang"] .marq img{ filter: invert(1) hue-rotate(180deg); }
 
 /* ---------- skip link ---------- */
 .skip-link{
@@ -161,25 +169,45 @@ html[data-theme="flashbang"] .pill-c{ filter: invert(1) hue-rotate(180deg); back
    shrink-to-fit driver and carries the lockup to --n5i-lockup-w (~300px at
    2504) — width stays 100% (never set height). */
 .n5i-lockup{ position:relative; display:block; width:100%; min-width:var(--n5i-lockup-w); aspect-ratio:1698/804; height:auto; padding-top:0; line-height:0; }
-.n5i-lockup .lk-rest,.n5i-lockup .lk-hover{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain}
-.n5i-lockup .lk-hover{opacity:0}
+/* .lk-hover-fb (Eric, 2026-09-24): the flashbang-mode hover mark -- same drawing as
+   .lk-hover but with the violet fill swapped for the flashbang accent #01bdff and every
+   other fill swapped for its f() (invert+hue-rotate180) equivalent. Positioned as a third
+   overlay here (theme-agnostic atoms); the flashbang override block above decides which
+   of .lk-hover / .lk-hover-fb is actually shown/animated (ninja keeps using .lk-hover;
+   flashbang swaps to .lk-hover-fb and hides .lk-hover entirely so it can never receive
+   the animation or fire animationend). */
+.n5i-lockup .lk-rest,.n5i-lockup .lk-hover,.n5i-lockup .lk-hover-fb{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain}
+.n5i-lockup .lk-hover,.n5i-lockup .lk-hover-fb{opacity:0}
 /* neon strike (Eric, 2026-09-24): mouseenter/focus adds .lk-neon, which runs the ~.8s tube-flicker
    keyframes below on the violet hover mark (rest hides underneath); JS swaps .lk-neon -> .lk-hov
-   on animationend, which just holds the violet mark lit, glow settled. mouseleave/blur strip both
-   classes synchronously — there is no exit animation, so a re-enter always restarts the strike clean. */
+   on animationend, which just holds the violet mark lit. mouseleave/blur strip both
+   classes synchronously — there is no exit animation, so a re-enter always restarts the strike clean.
+   No glow (Eric, 2026-09-24: "remove the glow from the logo animation entirely") -- only
+   opacity flickers now, timing unchanged. */
 .n5i-lockup.lk-armed.lk-neon .lk-rest,.n5i-lockup.lk-armed.lk-hov .lk-rest{opacity:0}
 .n5i-lockup.lk-armed.lk-hov .lk-hover{opacity:1}
 .n5i-lockup.lk-armed.lk-neon .lk-hover{animation:n5i-neon-strike .8s steps(1,end) forwards}
 @keyframes n5i-neon-strike{
-  0%{opacity:0;filter:drop-shadow(0 0 0 var(--violet,#5e18eb))}
-  8%{opacity:.9;filter:drop-shadow(0 0 6px var(--violet,#5e18eb))}
-  18%{opacity:.2;filter:drop-shadow(0 0 1px var(--violet,#5e18eb))}
-  32%{opacity:1;filter:drop-shadow(0 0 10px var(--violet,#5e18eb))}
-  46%{opacity:.5;filter:drop-shadow(0 0 2px var(--violet,#5e18eb))}
-  60%{opacity:1;filter:drop-shadow(0 0 14px var(--violet,#5e18eb))}
-  100%{opacity:1;filter:drop-shadow(0 0 4px var(--violet,#5e18eb))}
+  0%{opacity:0}
+  8%{opacity:.9}
+  18%{opacity:.2}
+  32%{opacity:1}
+  46%{opacity:.5}
+  60%{opacity:1}
+  100%{opacity:1}
 }
-@media (prefers-reduced-motion:reduce){.n5i-lockup .lk-hover{animation:none}.n5i-lockup .lk-rest{opacity:1!important}.n5i-lockup:hover .lk-hover,.n5i-lockup:focus-visible .lk-hover{opacity:1}.n5i-lockup:hover .lk-rest,.n5i-lockup:focus-visible .lk-rest{opacity:0!important}}
+@media (prefers-reduced-motion:reduce){.n5i-lockup .lk-hover,.n5i-lockup .lk-hover-fb{animation:none}.n5i-lockup .lk-rest{opacity:1!important}.n5i-lockup:hover .lk-hover,.n5i-lockup:focus-visible .lk-hover{opacity:1}.n5i-lockup:hover .lk-rest,.n5i-lockup:focus-visible .lk-rest{opacity:0!important}}
+/* Lockup, flashbang mode: see p3/home.html's byte-identical comment for the full
+   rationale (per-image filter for .lk-rest; .lk-hover force-hidden; .lk-hover-fb takes
+   over every role .lk-hover has). */
+html[data-theme="flashbang"] .lk-rest{ filter: invert(1) hue-rotate(180deg); }
+html[data-theme="flashbang"] .lk-hover{ display:none; }
+html[data-theme="flashbang"] .n5i-lockup.lk-armed.lk-hov .lk-hover-fb{ opacity:1; }
+html[data-theme="flashbang"] .n5i-lockup.lk-armed.lk-neon .lk-hover-fb{ animation:n5i-neon-strike .8s steps(1,end) forwards; }
+@media (prefers-reduced-motion:reduce){
+  html[data-theme="flashbang"] .n5i-lockup:hover .lk-hover-fb,
+  html[data-theme="flashbang"] .n5i-lockup:focus-visible .lk-hover-fb{ opacity:1; }
+}
 
 /* ---------- pill (ported from home.html, unchanged mechanics) ---------- */
 .pill{

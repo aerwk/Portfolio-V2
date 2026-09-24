@@ -88,35 +88,66 @@
   body{ position:relative; min-height:100vh; }
 
   /* Flashbang mode (Eric's rename of "light mode"; ninja = "dark mode", the default):
-     same layout and content, every colour inverted while hues stay put -- invert(1)
-     flips lightness, hue-rotate(180deg) rotates the hue wheel back to where it started
-     (so violet stays violet instead of landing on its complement). The filter goes on
-     <html>, never <body>: <body> already has position:relative (a containing block for
-     absolutely-positioned descendants), and every position:fixed element in this
-     codebase (none on home.html -- .corner here is position:absolute, already resolved
-     against body) would instead anchor to whichever ancestor first gets a filter/
-     transform/perspective, which breaks position:fixed against the viewport. Filtering
-     <html> itself is safe on this page for that same reason: html,body are exactly
-     100%/100vh with overflow:hidden above, so html never scrolls and is never taller
-     than the viewport.
-     background on html[data-theme="flashbang"] is a second, independent fix for a
-     different bug: the browser paints the page's "canvas" (the fill shown during
-     elastic overscroll bounce, or below a page shorter than the viewport) using the
-     raw background-color VALUE of the propagating element -- that paint is a UA-level
-     backdrop, not part of html's rendered box, so it is never touched by a filter
-     applied to html. Without this override that backdrop stays --carbon (near-black)
-     even in flashbang mode. #ecede9 is invert(1) hue-rotate(180deg) applied to
-     --carbon's own #12130f by hand (the matrices from the CSS Filter Effects spec),
-     so the extension matches what the filter produces for every on-screen pixel. */
+     REWRITTEN 2026-09-24 from a whole-page invert(1) hue-rotate(180deg) filter to real
+     colour tokens -- the filter approach could not reach the exact accent Eric wants
+     (#01bdff has no in-gamut pre-image under the filter: solving the matrix for it needs
+     a blue channel over 255). f(c) below means: convert c to [0,1] rgb, invert
+     (1-r, 1-g, 1-b), then apply the CSS Filter Effects hue-rotate(180deg) matrix
+       [[-0.574, 1.430, 0.144],
+        [ 0.426, 0.430, 0.144],
+        [ 0.426, 1.430,-0.856]]
+     and clamp to [0,1] -- exactly what the old filter produced per pixel, computed by
+     hand so every non-accent colour still renders identically to the old filter's
+     output. --violet is the one deliberate exception: set straight to the accent
+     #01bdff (Eric, 2026-09-24), not f(#5e18eb) (which would land on a pale pink,
+     #f1abff) -- see the accent note below. */
   html[data-theme="flashbang"]{
-    filter: invert(1) hue-rotate(180deg);
+    --carbon:#ecede9;              /* f(#12130f) */
+    --bone:#241f1a;                /* f(#e4dfda) */
+    --bone-55: rgba(36,31,26,.55); /* f(rgba(228,223,218,.55)) */
+    --vein:#c4c4c0;                /* f(#3c3c38) */
+    --glow:#6655c1;                /* f(#a493ff) -- not used on this page today, kept for parity with subpage.css's token set */
+    /* background on html[data-theme="flashbang"] is a second, independent fix for the
+       browser's page "canvas" (the fill shown during elastic overscroll bounce, or below
+       a page shorter than the viewport): that paint uses the raw background-color VALUE
+       of the propagating element, a UA-level backdrop outside html's rendered box, so a
+       plain --carbon token swap does not reach it either -- it needs its own explicit
+       override, same as it did under the old filter. #ecede9 = f(#12130f). */
     background:#ecede9;
   }
-  /* Flashbang accent = blue #0473fc (Eric, 2026-09-24) -- same rules and rationale as
-     p4/subpage.css: the pill fill re-applies the page filter, which cancels it, so it
-     renders exactly #0473fc; borders use the pre-image #1c9cff (renders ~#0b8bee). */
-  html[data-theme="flashbang"]{ --violet:#1c9cff; }
-  html[data-theme="flashbang"] .pill-c{ filter: invert(1) hue-rotate(180deg); background:#0473fc; }
+  /* Flashbang accent = #01bdff (Eric, 2026-09-24). --violet now drives every accent
+     surface directly -- pill fill/border, focus borders -- since there is no more page
+     filter to fight: .pill-c's background:var(--violet,#5e18eb) below renders as exactly
+     #01bdff with no extra rule needed. Only its text needs a manual override: ninja's
+     white pill-fill text is f(#fff) = #000 (near-black) in flashbang, for contrast on
+     the now-light cyan fill. */
+  html[data-theme="flashbang"]{ --violet:#01bdff; }
+  html[data-theme="flashbang"] .pill-c{ color:#000; }
+  /* .pill's translucent carbon-tinted backdrop -- f(rgba(18,19,15,.4)). */
+  html[data-theme="flashbang"] .pill{ background:rgba(236,237,233,.4); }
+  /* Hero canvas (hero.js draws WebGL directly to a <canvas>, reading no CSS tokens and
+     never listening for data-theme changes): the old page-level filter used to reach it
+     for free since every pixel painted under <html> was filtered, including the canvas'.
+     Filtering the canvas element itself reproduces that exact look -- CSS attribute
+     selectors are live, so this keeps updating the instant data-theme flips, no reload
+     and no JS change needed. Safe to filter directly (unlike filtering an ancestor):
+     canvas has no positioned descendants of its own to break. */
+  html[data-theme="flashbang"] canvas{ filter: invert(1) hue-rotate(180deg); }
+  /* Lockup, flashbang mode: .lk-rest keeps its inverted-greys look via the same
+     per-image filter the page used to apply wholesale. .lk-hover (violet mark, ninja
+     only) is replaced by .lk-hover-fb (same drawing, #01bdff + f()'d greys) -- display:
+     none, not just opacity, so .lk-hover can never receive the neon-strike animation or
+     fire animationend while flashbang is active (the shared listener in this page's
+     closing <script> is bound to the anchor and only cares that exactly one image
+     animates at a time). */
+  html[data-theme="flashbang"] .lk-rest{ filter: invert(1) hue-rotate(180deg); }
+  html[data-theme="flashbang"] .lk-hover{ display:none; }
+  html[data-theme="flashbang"] .n5i-lockup.lk-armed.lk-hov .lk-hover-fb{ opacity:1; }
+  html[data-theme="flashbang"] .n5i-lockup.lk-armed.lk-neon .lk-hover-fb{ animation:n5i-neon-strike .8s steps(1,end) forwards; }
+  @media (prefers-reduced-motion:reduce){
+    html[data-theme="flashbang"] .n5i-lockup:hover .lk-hover-fb,
+    html[data-theme="flashbang"] .n5i-lockup:focus-visible .lk-hover-fb{ opacity:1; }
+  }
 
   .stage{
     position:absolute; inset:0;
@@ -408,7 +439,7 @@
   </div>
 
   <div class="corner tl n5i-cluster" id="c-tl">
-    <a class="n5i-mark n5i-lockup" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/logo-rest.svg" alt="Eric Li"><img class="lk-hover" src="/assets/logo-hover.svg" alt="" aria-hidden="true"></a><script>(function(){var m=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;var a=document.currentScript.previousElementSibling;if(!m&&a&&a.classList.contains("n5i-lockup"))a.classList.add("lk-armed")})()</script>
+    <a class="n5i-mark n5i-lockup" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/logo-rest.svg" alt="Eric Li"><img class="lk-hover" src="/assets/logo-hover.svg" alt="" aria-hidden="true"><img class="lk-hover-fb" src="/assets/logo-hover-fb.svg" alt="" aria-hidden="true"></a><script>(function(){var m=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;var a=document.currentScript.previousElementSibling;if(!m&&a&&a.classList.contains("n5i-lockup"))a.classList.add("lk-armed")})()</script>
     <span class="role">DevOps &amp; Infrastructure</span>
   </div>
 

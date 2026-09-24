@@ -4,6 +4,7 @@ assets/bigger-display.otf
 assets/hero.js
 assets/instruments.css
 assets/instruments.js
+assets/logo-hover-fb.svg
 assets/logo-hover.svg
 assets/logo-rest.svg
 assets/subpage.css

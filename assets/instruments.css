@@ -63,25 +63,34 @@
    above ~1441px min-width takes over as the corner's shrink-to-fit driver and carries the
    lockup up to --n5i-lockup-w (~300px at 2504) — width stays 100% (never set height). */
 .n5i-lockup{position:relative;display:block;width:100%;min-width:var(--n5i-lockup-w, 147px);aspect-ratio:1698/804;height:auto;padding-top:0;line-height:0}
-.n5i-lockup .lk-rest,.n5i-lockup .lk-hover{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain}
-.n5i-lockup .lk-hover{opacity:0}
+/* .lk-hover-fb (Eric, 2026-09-24): the flashbang-mode hover mark -- same drawing as
+   .lk-hover but with the violet fill swapped for the flashbang accent #01bdff and every
+   other fill swapped for its f() (invert+hue-rotate180) equivalent. Positioned as a third
+   overlay here (theme-agnostic atoms); which one of .lk-hover / .lk-hover-fb is actually
+   shown/animated is decided by the flashbang override block in this page's own <style>
+   (ninja keeps using .lk-hover; flashbang swaps to .lk-hover-fb and hides .lk-hover
+   entirely so it can never receive the animation or fire animationend). */
+.n5i-lockup .lk-rest,.n5i-lockup .lk-hover,.n5i-lockup .lk-hover-fb{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain}
+.n5i-lockup .lk-hover,.n5i-lockup .lk-hover-fb{opacity:0}
 /* neon strike (Eric, 2026-09-24): mouseenter/focus adds .lk-neon, which runs the ~.8s tube-flicker
    keyframes below on the violet hover mark (rest hides underneath); JS swaps .lk-neon -> .lk-hov
-   on animationend, which just holds the violet mark lit, glow settled. mouseleave/blur strip both
-   classes synchronously — there is no exit animation, so a re-enter always restarts the strike clean. */
+   on animationend, which just holds the violet mark lit. mouseleave/blur strip both
+   classes synchronously — there is no exit animation, so a re-enter always restarts the strike clean.
+   No glow (Eric, 2026-09-24: "remove the glow from the logo animation entirely") -- only
+   opacity flickers now, timing unchanged. */
 .n5i-lockup.lk-armed.lk-neon .lk-rest,.n5i-lockup.lk-armed.lk-hov .lk-rest{opacity:0}
 .n5i-lockup.lk-armed.lk-hov .lk-hover{opacity:1}
 .n5i-lockup.lk-armed.lk-neon .lk-hover{animation:n5i-neon-strike .8s steps(1,end) forwards}
 @keyframes n5i-neon-strike{
-  0%{opacity:0;filter:drop-shadow(0 0 0 var(--violet,#5e18eb))}
-  8%{opacity:.9;filter:drop-shadow(0 0 6px var(--violet,#5e18eb))}
-  18%{opacity:.2;filter:drop-shadow(0 0 1px var(--violet,#5e18eb))}
-  32%{opacity:1;filter:drop-shadow(0 0 10px var(--violet,#5e18eb))}
-  46%{opacity:.5;filter:drop-shadow(0 0 2px var(--violet,#5e18eb))}
-  60%{opacity:1;filter:drop-shadow(0 0 14px var(--violet,#5e18eb))}
-  100%{opacity:1;filter:drop-shadow(0 0 4px var(--violet,#5e18eb))}
+  0%{opacity:0}
+  8%{opacity:.9}
+  18%{opacity:.2}
+  32%{opacity:1}
+  46%{opacity:.5}
+  60%{opacity:1}
+  100%{opacity:1}
 }
-@media (prefers-reduced-motion:reduce){.n5i-lockup .lk-hover{animation:none}.n5i-lockup .lk-rest{opacity:1!important}.n5i-lockup:hover .lk-hover,.n5i-lockup:focus-visible .lk-hover{opacity:1}.n5i-lockup:hover .lk-rest,.n5i-lockup:focus-visible .lk-rest{opacity:0!important}}
+@media (prefers-reduced-motion:reduce){.n5i-lockup .lk-hover,.n5i-lockup .lk-hover-fb{animation:none}.n5i-lockup .lk-rest{opacity:1!important}.n5i-lockup:hover .lk-hover,.n5i-lockup:focus-visible .lk-hover{opacity:1}.n5i-lockup:hover .lk-rest,.n5i-lockup:focus-visible .lk-rest{opacity:0!important}}
 
 
 /* ---------- odometer: the shared instrument primitive ---------- */
