@@ -12,8 +12,8 @@
      covers the no-JS case; this only overrides it when n5-theme reads "flashbang". Kept a
      byte-identical copy in every page's <head> (p3/home.html, p4/about.html,
      p4/projects.html, p4/blog.html, p4/post.html) rather than a shared external file, since
-     an external <script src> would itself block on a network round trip -- inline is the
-     only way to run this before paint. */
+     an external <script src> would itself block on a network round trip, so inline is the
+     only way to run this before paint. -->
 <script>
 (function(){
   'use strict';
