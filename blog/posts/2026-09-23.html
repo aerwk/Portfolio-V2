@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Travel Router Rebuild, a Real TV Signal, and a Wrong Netmask — N5HQ</title>
+<meta name="description" content="A travel router got rebuilt overnight into a Tailscale subnet router for a hotel client&#x27;s isolated IPTV network, and by afternoon a tuner was locked onto real Perth free-to-air channels. A two-hour outage chase that followed traced back to a netmask I had set wrong on my own laptop.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-09-23.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="A Travel Router Rebuild, a Real TV Signal, and a Wrong Netmask — N5HQ">
+<meta property="og:description" content="A travel router got rebuilt overnight into a Tailscale subnet router for a hotel client&#x27;s isolated IPTV network, and by afternoon a tuner was locked onto real Perth free-to-air channels. A two-hour outage chase that followed traced back to a netmask I had set wrong on my own laptop.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-09-23.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">A Travel Router Rebuild, a Real TV Signal, and a Wrong Netmask</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-09-23 · Wednesday · 11:20 PM</span>
+      <span class="chip">5 min read</span>
+      <span class="chip badge-ai">80% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>The day started just after midnight with a firmware update that put my GL.iNet Beryl 7 into a reset loop. It's a small travel router, already on my tailnet at <code>x.x.176.3</code> under the name gl-mt3600be, sitting on its old LAN gateway of <code>x.x.8.1</code> in repeater mode onto my own network. Once the reset loop cleared I spent the next couple of hours turning it into something else: a Tailscale subnet router for a hotel client's IPTV headend, which runs as its own isolated island with no cable into the hotel's actual network.</p>
+<p>The changes were small individually. LAN address changed, DHCP server turned off so the headend server stays the only one handing out addresses. AP Isolation got considered and rejected: it only stops wireless clients talking to each other. It leaves the wired LAN wide open, so it does nothing to protect the island. Hotspot SSIDs off on every band. Route approved in the Tailscale admin console. A daily 4am reboot scheduled instead of weekly. None of it was tested against anything real yet. That came the next afternoon, on site.</p>
+<h2>Racking a tuner, chasing cables with no obvious answer</h2>
+<p>I plugged the Beryl into the LAN port of the hotel's H3C switch, and immediately couldn't reach its own login page except over cellular data. The subnet mask on my Mac's USB ethernet adapter had drifted to 255.255.0.0, which meant my laptop treated two separate /24s on the isolated network as one and TCP connections to the server's management address quietly never completed, even while ping worked fine. That took a while to notice and longer to fix, because ping lying to you about the actual problem is exactly the kind of thing that wastes an afternoon.</p>
+<p>Once that was sorted, the physical work started. The tuner got racked, and there was a brief back-and-forth about where it should sit relative to the Omada switch and the server, before realising the server is actually the deeper unit of the two. I found a handful of splitters around the rack labelled TAP instead of the usual in/out, which I hadn't seen before and didn't have an answer for on the spot. Photos went out for identification of the aerial plant on the roof, and the tuner's admin login turned out to still be on its factory default, which goes on the list to change before handover.</p>
+<h2>The tuner locks onto real Perth channels</h2>
+<p>This was the actual milestone of the day: getting the tuner locked onto a real broadcast signal instead of the demo channels used on the bench the day before. Set to DVB-T at 7 MHz, it locked five multiplexes off the hotel's existing rooftop aerial, at 23.05 Mbps each, signal quality 99%, zero bit errors: 177.5 with 9 programs (the Seven Network), 184.5 with 15, 191.5 with 10, 219.5 with 9, and 226.5 with 16. Fifty-nine programs available, though only the first mux got wired through today.</p>
+<p>Wiring one mux through meant setting the tuner's multicast output, adding a protocol conversion entry on the server pointing at that multicast address with HLS as the output, starting distribution, and syncing the new programs into the package assigned to the set-top box. I was missing one frequency entry on the second tuner the first time through, which is why nothing showed up until that got added. After a reboot of the box, all nine Seven Network channels appeared in the list and played. That's the whole path working end to end: rooftop aerial into a tuner, tuner into the server, server out as HLS, set-top box tuning individual channels, on the client's actual signal.</p>
+<h2>Two hours chasing a fault that wasn't there</h2>
+<p>The other half of the day was less satisfying. The server's data address and its admin port on 8160 both looked dead, even after a reboot of the server itself, and I got as far as drafting a fault report to send to the vendor. Neither cause turned out to be the server. First, Tailscale had picked up the /24 the Beryl was advertising, so my own traffic to the server was going out over the hotel's guest wifi and back in over the tunnel, which is why ping still worked but showed inflated times and a lower TTL than it should have. Second, the netmask on my laptop's ethernet adapter had gone back to 255.255.0.0 again, silently collapsing the two subnets into one, so a TCP handshake could no longer complete even though an ICMP echo still could. I found the netmask myself, going through the interface settings line by line instead of assuming ping's success meant the link was fine.</p>
+<p>Along the way I also learned that a manual static route added with <code>route -n add -host ... -interface en6</code> on macOS points the link-layer address at the Mac's own adapter, which broke the connection further instead of fixing it, and that macOS doesn't have <code>timeout</code>, so <code>tcpdump -c N</code> is the substitute.</p>
+<p>Before wrapping up on site, I had the session note down everything that mattered for the runsheet: the working addresses, the add-a-channel steps, and the traps I'd just hit, all written into a new runsheet kept inside the client project instead of the general lab runsheets, since this is client work that travels with the engagement. Session saved, closed, and picked back up later that evening from home, where I tried to get back into the IPTV server over Tailscale again. My PC showed the router offline while my phone showed it online, which didn't get fully resolved before I stopped for the night; the router's own admin script for advertising routes was still being checked against its config when I left it. In between, I also asked for some agents to go pull higher-resolution photos of the hotel from its own public website, since the images on the client project so far are too small to use for anything. That didn't get finished either.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="iptv" href="/blog/?tag=iptv">IPTV</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-22.html">← Racking a Hotel Headend Without the Tuner, and a Nightly Job Stuck on a Three-Year Date</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

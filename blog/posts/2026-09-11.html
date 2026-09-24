@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Six Rebuilds to Get a Freeze-Pane Blog Working, Then a Go-Live Held for Three Answers — N5HQ</title>
+<meta name="description" content="The pane-swap preview from the night before got built for real after midnight: six regenerations, a reset on what &#x27;freeze pane&#x27; actually meant, and finally working breadcrumbs. Then the go-live got stopped by its own risk list.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-09-11.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Six Rebuilds to Get a Freeze-Pane Blog Working, Then a Go-Live Held for Three Answers — N5HQ">
+<meta property="og:description" content="The pane-swap preview from the night before got built for real after midnight: six regenerations, a reset on what &#x27;freeze pane&#x27; actually meant, and finally working breadcrumbs. Then the go-live got stopped by its own risk list.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-09-11.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Six Rebuilds to Get a Freeze-Pane Blog Working, Then a Go-Live Held for Three Answers</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Web</span>
+      <span class="chip">2026-09-11 · Friday · 9:10 PM</span>
+      <span class="chip">4 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>The pane-swap idea from the night before got built starting just after midnight, in the same session that had been planning it. The first push to <code>dev/v3</code> came back wrong: clicking the blog tree opened nothing, and the whole thing looked broken on contact.</p>
+<h2>Six rebuilds to get the pane right</h2>
+<p>The reset came down to what "freeze pane" actually meant. The explanation that finally landed: the header stays fixed like a spreadsheet freeze pane, everything under it is the explorer, and clicking a link in that explorer loads new content into the viewing pane without the header ever reloading. The pattern is one other sites use too: a fixed header and nav that never move, with everything below it swapped in place from whatever gets clicked.</p>
+<p>Six commits came out of getting there. The first regenerated <code>dev/v3</code> with pane-swap navigation. The second generated all 46 real post pages for the preview instead of the five-entry fixture it had been running on. The third made the swaps instant, cutting the transition from 580ms down to 15ms while leaving the initial page load untouched. The fourth built the actual freeze-pane layout: the document stops scrolling, and content scrolls inside a bounded pane with a 1px leading edge and pinned corners. The fifth removed that edge; the line resting under the middle pane's text didn't sit right. The sixth wired the blog breadcrumbs live: clicking "Blog" loads every post, clicking a year narrows to that year, clicking a month narrows further, all rendered into the pane with the URL never changing. That last piece was the one described since the "all posts" link turned out to just point at the blog landing page instead of a real listing.</p>
+<p>By the end it was workable but not finished, close enough to build on.</p>
+<h2>Two posts written to bring the blog current</h2>
+<p>With the pane working, the next job was catching the blog up. Two research agents ran in parallel to write the 9th and the 10th: the 9th had no vault journal at all and was reconstructed from git and session transcripts, and the 10th was written first-hand since it was the same session that had done the pane-swap planning the night before. Both went out through the staging-journals method. Pointing <code>build_blog.py</code> at the real journals directory instead would have overwritten 34 published posts' titles, since it still holds the "No work evidenced" stubs from the August sweep. <code>git diff</code> on the published posts showed only the two new files, plus one nav link update on the 8th. The blog went from 46 posts to 48, and the <code>dev/v3</code> preview regenerated to match.</p>
+<h2>A go-live stopped by its own risk list</h2>
+<p>With the pane working and the blog current, the next request was to take the whole <code>dev/v3</code> design live, replacing the current site at ericli.n5hq.me, with the existing site archived alongside the old v1 as a new v2. Before touching routing, four problems came back from a recon pass. Every <code>dev/v3</code> page carries a deliberate <code>noindex, nofollow</code> meta tag from the build, which would de-index the live site if promoted as is. <code>/dev/v3/assets/</code> and <code>/assets/</code> both exist and a naive merge could overwrite live assets. The live site has a <code>lab/</code> section, four <code>portfolio/</code> sub-pages, and a Contact route that <code>dev/v3</code> doesn't have equivalents for, all of them linked from the sitemap. And copying <code>dev/v3</code>'s <code>index.html</code> to the repo root, or rebuilding it with <code>--base=/</code>, would each break <code>www.n5hq.me</code> in a different way: a root <code>index.html</code> overrides the host-conditional routing this repo's own notes already warn about, and the base-path rebuild would turn every internal link into a protocol-relative <code>//assets/…</code> href.</p>
+<p>Three open questions came out of that: whether the five portfolio sub-pages get archived into <code>/v2/</code> or ported into the new design, whether the blog archives there too or stays live only at its real URLs, and what to do about <code>/v1</code> already being publicly fetchable today, including eight raw journal markdown files. I answered all three at the very end of the session: use the up-to-date <code>dev/v3</code> subpages, use <code>dev/v3</code>'s blog over v2's, and leave <code>/v1</code>'s exposure as is. Nothing was built from those answers that night. The migration itself is still ahead.</p>
+<h2>A dead backup job, unplugged for good</h2>
+<p>In the middle of the pane work, a separate and unrelated question came in: Proxmox VE had been emailing that the 1am vzdump job on pve01, pve02, and pve03 was failing every night, while a 2:30am job succeeded right after. The 1am job turned out to be the PBS trial job, which had been dead since August 27th and was already documented as such. It got disabled with <code>enabled 0</code> on the job, verified propagated to all three nodes through <code>/etc/pve</code>. The 2:30am CIFS job to the NAS was left untouched, so nightly backups keep running either way.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="web" href="/blog/?tag=web">Web</a><a class="tagchip" data-tag="design" href="/blog/?tag=design">Design</a><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="backup" href="/blog/?tag=backup">Backup</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-10.html">← No Root, No Decoder, No Problem: Reading a HEIC Photo and an 84-Page PDF on a Container With Nothing Installed</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-22.html">Racking a Hotel Headend Without the Tuner, and a Nightly Job Stuck on a Three-Year Date →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>
