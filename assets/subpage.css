@@ -78,6 +78,15 @@ html[data-theme="flashbang"]{
   filter: invert(1) hue-rotate(180deg);
   background:#ecede9;
 }
+/* Flashbang accent = blue #0473fc (Eric, 2026-09-24), not the inverted violet (which the
+   page filter turns into a pale pink #f1abff). The pill fill applies the SAME filter a
+   second time, which cancels the page's (invert+hue-rotate(180) is its own inverse), so
+   its background renders as exactly #0473fc with white text. Borders/text can't be
+   cancelled that way (a filter on .pill would also double-filter its backdrop blur), so
+   --violet is set to the in-gamut pre-image #1c9cff, which the page filter renders as
+   ~#0b8bee -- the nearest reachable colour, since #0473fc's exact pre-image needs blue >255. */
+html[data-theme="flashbang"]{ --violet:#1c9cff; }
+html[data-theme="flashbang"] .pill-c{ filter: invert(1) hue-rotate(180deg); background:#0473fc; }
 
 /* ---------- skip link ---------- */
 .skip-link{

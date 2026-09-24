@@ -112,6 +112,11 @@
     filter: invert(1) hue-rotate(180deg);
     background:#ecede9;
   }
+  /* Flashbang accent = blue #0473fc (Eric, 2026-09-24) -- same rules and rationale as
+     p4/subpage.css: the pill fill re-applies the page filter, which cancels it, so it
+     renders exactly #0473fc; borders use the pre-image #1c9cff (renders ~#0b8bee). */
+  html[data-theme="flashbang"]{ --violet:#1c9cff; }
+  html[data-theme="flashbang"] .pill-c{ filter: invert(1) hue-rotate(180deg); background:#0473fc; }
 
   .stage{
     position:absolute; inset:0;
