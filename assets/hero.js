@@ -176,15 +176,18 @@
     var LAVENDER = 0xa493ff;      // design-system derived glow colour (gap planes, edge accent, under-light)
     var LAVENDER_DEEP = 0x7a5cff; // the reflection tint (albedo mix): deeper than LAVENDER so it keeps its colour under the white key (Eric 2026-09-08: "no saturation at all")
 
-    // Eric 2026-09-24: flashbang-mode equivalents -- the same two lavenders with
-    // only the hue swapped to the site accent's (#01bdff, ~196deg), lightness and
-    // saturation kept. home.html inverts the whole canvas in flashbang
+    // Eric 2026-09-24: flashbang-mode equivalents -- the two lavenders re-hued to
+    // the site accent's (#01bdff, ~196deg) at full saturation, with each one's
+    // relative LUMINANCE matched to the lavender it replaces (the canvas filter's
+    // hue-rotate preserves luminance, so equal luminance = equal on-screen weight;
+    // a straight HSL hue swap came out a dull dark teal because cyan is far
+    // brighter than violet at the same HSL lightness). home.html inverts the whole canvas in flashbang
     // (invert(1) hue-rotate(180deg)), which roughly preserves hue, so these read
     // on screen the way the lavenders read in flashbang today, just blue. (Picking
     // colours by their post-filter value instead left the towers near-grey: the
     // lighting runs before the filter, so dark pre-filter tints wash out.)
-    var LAVENDER_FLASH = 0x93e3ff;      // hue-swapped LAVENDER (0xa493ff)
-    var LAVENDER_DEEP_FLASH = 0x5cd5ff; // hue-swapped LAVENDER_DEEP (0x7a5cff)
+    var LAVENDER_FLASH = 0x00adea;      // LAVENDER (0xa493ff) re-hued, luminance 0.36 kept
+    var LAVENDER_DEEP_FLASH = 0x0082af; // LAVENDER_DEEP (0x7a5cff) re-hued, luminance 0.19 kept
     var EDGE_COLOR = LAVENDER;
     var EDGE_INTENSITY = 0.3;     // edge accent
 
