@@ -132,7 +132,12 @@
      selectors are live, so this keeps updating the instant data-theme flips, no reload
      and no JS change needed. Safe to filter directly (unlike filtering an ancestor):
      canvas has no positioned descendants of its own to break. */
-  html[data-theme="flashbang"] canvas{ filter: invert(1) hue-rotate(180deg); }
+  /* Eric 2026-09-24: the towers' violet reads as the accent blue in flashbang. The
+     extra -51deg of hue rotation (129 = 180 - 51) turns the rendered violet (~247deg)
+     into #01bdff's hue (~196deg); greys are unchanged by any hue-rotate, so only the
+     violet shifts. Re-colouring the GL materials instead came out dull, because the
+     lighting runs before this filter. */
+  html[data-theme="flashbang"] canvas{ filter: invert(1) hue-rotate(129deg); }
   /* Lockup, flashbang mode: .lk-rest keeps its inverted-greys look via the same
      per-image filter the page used to apply wholesale. .lk-hover (violet mark, ninja
      only) is replaced by .lk-hover-fb (same drawing, #01bdff + f()'d greys) -- display:
