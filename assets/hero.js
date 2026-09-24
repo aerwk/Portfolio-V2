@@ -36,14 +36,22 @@
   var BLOOM_BRIGHT_FRAG = [
     'uniform sampler2D tDiffuse;',
     'uniform float threshold;',
+    // Eric 2026-09-24: was a hardcoded `texel.b - texel.g`. Flashbang's
+    // material colours are teal/cyan (see LAVENDER_FLASH/LAVENDER_DEEP_FLASH
+    // below), not violet, so "blue over green" alone no longer isolates
+    // them — uKey lets the theme switch pick the projection. Ninja keeps
+    // uKey=(0,-1,1), which is bit-for-bit the old b-g formula.
+    'uniform vec3 uKey;',
     'varying vec2 vUv;',
     'void main(){',
     '  vec4 texel = texture2D(tDiffuse, vUv);',
-    // key on violet-ness ONLY (blue over green). Bone is r>g>b, so bone
-    // faces never bloom no matter how bright the key light makes them;
-    // violet-lit bevels, the gaps and the emissive chamfers do. Values are
-    // linear (the scene RT is not tone-mapped or sRGB-encoded).
-    '  float violetness = max(0.0, texel.b - texel.g);',
+    // key on "accent-ness" via uKey (dot product against the raw, pre-
+    // filter linear pixel). Bone/dark are r>=g>=b-ish and always land
+    // negative under either theme's key (sign is scale-invariant), so they
+    // never bloom no matter how bright the key light makes them; the
+    // lavender/blue-family gaps and emissive chamfers do. Values are linear
+    // (the scene RT is not tone-mapped or sRGB-encoded).
+    '  float violetness = max(0.0, dot(texel.rgb, uKey));',
     '  float contrib = smoothstep(threshold, threshold + 0.15, violetness);',
     '  gl_FragColor = vec4(texel.rgb * contrib, 1.0);',
     '}'
@@ -133,6 +141,9 @@
 
     var columns = []; // { group, blades:[...], material, edgeMaterial, materialArray, chassisMesh, currentCount }
     var bladeMaterialArray = null; // ONE global material for every blade, in every column — never darkens
+    var globalBladeMats = null; // { material, edgeMaterial, sideMaterial } backing bladeMaterialArray — kept so
+                                 // applyThemeColors() can repaint it alongside each column's chassis materials
+    var themeObserver = null; // Eric 2026-09-24: MutationObserver on <html data-theme>, live ninja<->flashbang swap
     var blades = [];  // flat list of all blade records
     var colXs = [];
     var baseY = 0;
@@ -164,6 +175,22 @@
     // from a painted-on band.
     var LAVENDER = 0xa493ff;      // design-system derived glow colour (gap planes, edge accent, under-light)
     var LAVENDER_DEEP = 0x7a5cff; // the reflection tint (albedo mix): deeper than LAVENDER so it keeps its colour under the white key (Eric 2026-09-08: "no saturation at all")
+
+    // Eric 2026-09-24: flashbang-mode equivalents. home.html filters the
+    // whole canvas in flashbang (`invert(1) hue-rotate(180deg)`), so a
+    // pre-filter GL colour X shows on screen as f(X) = hueRotate180(invert(X)).
+    // These are the X values whose f(X) lands on the site accent's hue
+    // (#01bdff, ~195.6°) while keeping each original colour's own filtered
+    // saturation/lightness (found by brute-force nearest-CIELAB search
+    // through f). Ninja is untouched — these are only read in flashbang.
+    //   LAVENDER      (0xa493ff) -> f(V)=0x6655c1 -> target 0x55a5c1
+    //     -> X=0x287894 -> f(X)=0x55a5c1  (deltaE 0.008, effectively exact)
+    //   LAVENDER_DEEP (0x7a5cff) -> f(V)=0x9d7fff -> target 0x7fdeff
+    //     -> X=0x004c6b -> f(X)=0x83cfee  (deltaE 6.3 — gamut-limited: f(V)
+    //        was already clamped at B=1.0, so the ideal X needed R<0; this
+    //        is the closest in-gamut match)
+    var LAVENDER_FLASH = 0x287894;
+    var LAVENDER_DEEP_FLASH = 0x004c6b;
     var EDGE_COLOR = LAVENDER;
     var EDGE_INTENSITY = 0.3;     // edge accent
 
@@ -177,6 +204,12 @@
     var GLOW_LIGHT_DISTANCE = 22;     // falloff distance
     var GLOW_LIGHT_DECAY = 2;         // physically-based falloff
     var BLOOM_THRESHOLD = 0.3;        // violet-ness (b−g, linear) cutoff — high enough that only the pure lavender gap planes bloom, never tinted faces
+    // Eric 2026-09-24: flashbang's key colours are teal/cyan, not violet —
+    // dot(rgb, BLOOM_KEY_FLASH) has a much smaller dynamic range than the
+    // old b-g formula at the same colours, so it needs its own threshold.
+    // Bone/dark stay negative under this key too (see draw-time comment on
+    // BLOOM_BRIGHT_FRAG), so the "never bloom" invariant still holds.
+    var BLOOM_THRESHOLD_FLASH = 0.05;
     var BLOOM_STRENGTH = 0.45;        // R12: a soft halo on the lavender gap lines only, bone gloss must not bloom
     var BLOOM_RADIUS = 7;             // texel spread of the half-res gaussian blur
 
@@ -545,7 +578,7 @@
       // chassis darkens; every blade is bone + violet, in transit and on
       // landing, always — so blades now get ONE global material, shared
       // across every column, that updatePower() never touches.
-      var globalBladeMats = makeColumnMaterials(THREE);
+      globalBladeMats = makeColumnMaterials(THREE);
       bladeMaterialArray = [globalBladeMats.material, globalBladeMats.edgeMaterial, globalBladeMats.sideMaterial];
 
       var totalColsWidth = (COLS - 1) * (BLADE_W + COL_GAP);
@@ -697,7 +730,11 @@
       quadGeo = new THREE.PlaneGeometry(2, 2);
 
       brightMat = new THREE.ShaderMaterial({
-        uniforms: { tDiffuse: { value: null }, threshold: { value: BLOOM_THRESHOLD } },
+        uniforms: {
+          tDiffuse: { value: null },
+          threshold: { value: BLOOM_THRESHOLD },
+          uKey: { value: new THREE.Vector3(0, -1, 1) } // ninja default == old b-g formula; applyThemeColors() swaps it
+        },
         vertexShader: BLOOM_QUAD_VERT,
         fragmentShader: BLOOM_BRIGHT_FRAG,
         depthTest: false,
@@ -934,6 +971,58 @@
       var sum = 0;
       for (var i = 0; i < columns.length; i++){ sum += columns[i].powerMul; }
       glowLight.intensity = GLOW_LIGHT_INTENSITY * (sum / columns.length);
+    }
+
+    // Eric 2026-09-24: reads <html data-theme>. Defaults to ninja (matches
+    // home.html, which only ever sets 'ninja' or 'flashbang').
+    function currentTheme(){
+      return (document.documentElement.getAttribute('data-theme') === 'flashbang') ? 'flashbang' : 'ninja';
+    }
+
+    // Eric 2026-09-24: repaints every lavender-derived colour in place for
+    // the current theme — called once at mount() and again on every live
+    // data-theme toggle (see the MutationObserver in mount()). Ninja values
+    // are the original LAVENDER/LAVENDER_DEEP constants (byte-for-byte
+    // unchanged); flashbang swaps in LAVENDER_FLASH/LAVENDER_DEEP_FLASH (see
+    // the derivation notes by those constants) plus a matching bloom key.
+    function applyThemeColors(){
+      if (!THREE_REF) return;
+      var flash = currentTheme() === 'flashbang';
+      var edgeHex = flash ? LAVENDER_FLASH : LAVENDER;
+      var deepHex = flash ? LAVENDER_DEEP_FLASH : LAVENDER_DEEP;
+
+      function paintGapTint(mat){
+        if (mat && mat.userData.gapUniforms) mat.userData.gapUniforms.uGapTint.value.setHex(deepHex);
+      }
+      function paintMatSet(set){
+        if (!set) return;
+        paintGapTint(set.material);
+        if (set.edgeMaterial){
+          set.edgeMaterial.emissive.setHex(edgeHex);
+          paintGapTint(set.edgeMaterial);
+        }
+        paintGapTint(set.sideMaterial);
+      }
+
+      paintMatSet(globalBladeMats); // blades (never darken, so no colRec of their own)
+      columns.forEach(function(colRec){ paintMatSet(colRec); }); // chassis, per column
+
+      if (gapGlowMat) gapGlowMat.color.setHex(edgeHex);
+      if (glowLight) glowLight.color.setHex(edgeHex);
+
+      // The bright-pass keys on the raw (pre-CSS-filter) GL pixel colour —
+      // flashbang's X colours are teal/cyan rather than violet, so they
+      // need their own key vector + threshold to still cross it. See the
+      // comment on BLOOM_BRIGHT_FRAG / BLOOM_THRESHOLD_FLASH.
+      if (brightMat){
+        if (flash){
+          brightMat.uniforms.uKey.value.set(-1, 0.5, 0.5);
+          brightMat.uniforms.threshold.value = BLOOM_THRESHOLD_FLASH;
+        } else {
+          brightMat.uniforms.uKey.value.set(0, -1, 1);
+          brightMat.uniforms.threshold.value = BLOOM_THRESHOLD;
+        }
+      }
     }
 
     function computeBladeTransformAt(rec, ms){
@@ -1531,7 +1620,19 @@
 
       buildScene(THREE, w, h);
       buildBloomPipeline(THREE);
+      applyThemeColors(); // set the initial ninja/flashbang palette before the first draw()
       resize();
+
+      // Eric 2026-09-24: home.html toggles data-theme live (no remount), so
+      // watch it and repaint in place — covers the rAF loop, the reduced-
+      // motion single-draw path below, and any state where livePaused/raf
+      // has stopped ticking (draw() forces the new colours on screen
+      // immediately instead of waiting for the next natural frame).
+      themeObserver = new (window.MutationObserver || window.WebKitMutationObserver)(function(){
+        applyThemeColors();
+        draw();
+      });
+      themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
       mm = window.matchMedia('(prefers-reduced-motion: reduce)');
       reduced = mm.matches;
@@ -1618,6 +1719,7 @@
       if (failoverTimerId) clearTimeout(failoverTimerId);
       window.removeEventListener('resize', onResize);
       if (bandObserver){ bandObserver.disconnect(); bandObserver = null; }
+      if (themeObserver){ themeObserver.disconnect(); themeObserver = null; }
       clearTimeout(resizeTimer);
       window.removeEventListener('pointermove', onPointerMove);
       document.removeEventListener('visibilitychange', onVisibilityChange);
@@ -1636,7 +1738,7 @@
       }
       if (canvas && canvas.parentNode) canvas.parentNode.removeChild(canvas);
       scene = null; camera = null; renderer = null; canvas = null; container = null;
-      blades = []; columns = []; glowLight = null;
+      blades = []; columns = []; glowLight = null; globalBladeMats = null;
     }
 
     return {
