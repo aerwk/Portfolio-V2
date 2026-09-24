@@ -60,7 +60,8 @@ git add \
   assets/bigger-display.otf \
   assets/logo-rest.svg \
   assets/logo-hover.svg \
-  sitemap-ericli.xml
+  sitemap-ericli.xml \
+  scripts/v3-owned-assets.txt
 
 echo "==> Done. Review with:  git status --short  &&  git diff --cached --stat"
 echo "    This script never commits or pushes -- do that by hand after review."
