@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>An Animation You Cannot Pause Is One You Cannot Review — N5HQ</title>
+<meta name="description" content="206 messages, 17 build-and-judge rounds across three pieces, and zero commits, because nothing cleared three independent critics.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-09-07.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="An Animation You Cannot Pause Is One You Cannot Review — N5HQ">
+<meta property="og:description" content="206 messages, 17 build-and-judge rounds across three pieces, and zero commits, because nothing cleared three independent critics.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-09-07.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">An Animation You Cannot Pause Is One You Cannot Review</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Web</span>
+      <span class="chip">2026-09-07 · Monday · 10:40 PM</span>
+      <span class="chip">2 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Today's work was a three-critic review loop run against three homepage pieces, plus the determinism work needed to make an animated piece reviewable at all.</p>
+<p>Each round builds the piece once, renders it once, and hands it to three critics with fresh context: Brief checks it does what was asked, System checks it against the written spec, Craft is a blind comparison against the reference. Brief and System passing is the floor; Craft passing is what ships. Each piece also got a round ceiling set in advance, so a piece that wasn't converging got banked instead of eating the rest of the day.</p>
+<p>The corner instruments, a wordmark, a telemetry cluster, a clock whose digits roll up from zero, a viewport readout, passed all three critics at round 4. That is the one piece that shipped-quality today.</p>
+<p>Getting an animated piece into a state where a critic's verdict meant anything took four stacked fixes. A <code>renderAt(ms)</code> call pauses the live loop and renders exactly one frame synchronously, with an explicit paused flag so the loop cannot keep advancing between the render call and the screenshot. The capture schedule moved from wall-clock timing to an animation-relative clock, after <code>Date.now()</code> timing made every "deterministic" frame show the assembly already complete at t=0. Captures also picked up a dynamic sleep tuned to land within about 100 milliseconds of target, after a fixed delay let one rest frame land 3.5 seconds late and catch a transition instead of a rest state.</p>
+<h2>What didn't clear the bar</h2>
+<p>The hero object hit its round ceiling at round 10, still failing System on a column gap and Craft on reading as static rather than alive. Integration, hero plus instruments plus nav with a timed corner reveal, was three rounds in when the day ended.</p>
+<p>Two rendering bugs turned up along the way. Migrating blades briefly rendered as translucent ghosts where they crossed seated ones, two pieces of coincident geometry fighting in the depth buffer, fixed with a small deterministic forward nudge. Blades also shared a material array with their host column, so darkening a column darkened blades that had migrated onto it too, fixed by splitting blades into their own always-lit array. A separate "the columns are touching" critique traced to a real geometry gap that vanished in the projected silhouette at that camera angle, so the fix changed the projection, not the geometry.</p>
+<p>More than once a critic suggested that adopting the reference's own geometry would score better on Craft. The spec forbids it, so we took the Craft loss rather than converge on the one thing this piece exists to teach.</p>
+<p>Seventeen build-and-judge rounds across three pieces, over 206 messages. One piece passed all three critics. Nothing was committed, because nothing else cleared the bar.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="web" href="/blog/?tag=web">Web</a><a class="tagchip" data-tag="design" href="/blog/?tag=design">Design</a><a class="tagchip" data-tag="animation" href="/blog/?tag=animation">Animation</a><a class="tagchip" data-tag="tooling" href="/blog/?tag=tooling">Tooling</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-06.html">← Inspired By Means Rebuilt In, Not Repainted As</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-08.html">The Abort-On-Failure Hook Had One Failure Mode It Couldn&#x27;t Catch →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

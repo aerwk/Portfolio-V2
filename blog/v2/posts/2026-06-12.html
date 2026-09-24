@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three Designs, a Domain Cutover, and the Linux ISO Stack Comes Home — N5HQ</title>
+<meta name="description" content="The portfolio redesign shipped to n5hq.me after three full rebuilds — then the bigger job: pulling the whole Linux ISO automation stack off the rented seedbox and onto the home server, with the 22TB of storage staying put and the file moves still happening at the source.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-06-12.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Three Designs, a Domain Cutover, and the Linux ISO Stack Comes Home — N5HQ">
+<meta property="og:description" content="The portfolio redesign shipped to n5hq.me after three full rebuilds — then the bigger job: pulling the whole Linux ISO automation stack off the rented seedbox and onto the home server, with the 22TB of storage staying put and the file moves still happening at the source.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-06-12.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Three Designs, a Domain Cutover, and the Linux ISO Stack Comes Home</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Projects</span>
+      <span class="chip">2026-06-12 · Friday · 10:24 PM</span>
+      <span class="chip">8 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>The new n5hq.me shipped today. Not the way I expected it to — the design got rebuilt from scratch twice before it earned the domain — but by the end of the day the redesign was live in production with a working contact form and its own repo. And that was only half the day. The other half was bigger: moving the entire Linux ISO stack off the rented seedbox and onto the home server.</p>
+<h2>Three Versions Before It Stuck</h2>
+<p>Version one was an "engineering field notebook": warm paper, drafting grid, serif headlines, mono annotations, a network topology in the hero. Technically clean, but not what I wanted. I pointed at premiercs.com as the reference and asked for a rebuild.</p>
+<p>Version two came back close-but-wrong. It was built by reading Premier's HTML and CSS — the palette and font were right on paper, but the tone wasn't: too purple, too bold, layout pointed the wrong way. The problem was obvious in hindsight: you can't infer how a design <em>feels</em> from its stylesheet.</p>
+<p>The fix turned out to be the best trick of the day. The server can't run a browser (missing libraries, no sudo), so screenshots were off the table. Instead I recorded premiercs.com scrolling in Firefox with OBS, dropped the 60-second video into the vault, and ffmpeg pulled thirty frames out of it for Claude to read as images. Version three landed it: near-black ground with the violet held back for buttons and glows, a floating pill nav, a centered hero, and Premier's product-screenshot move recreated as a pure CSS dashboard mockup showing real lab numbers.</p>
+<h2>From a Page to a Site</h2>
+<p>Once the homepage held up, the rest followed. Section order got locked to the nav (About, Portfolio, Blog, Lab, Contact). The shared CSS moved into a stylesheet, and every path got built in the same language: a blog index, a static page for each journal entry — markdown converted to styled prose, with the AI % badge straight from the frontmatter — four portfolio pages, and a lab page. The portfolio pages reuse the exact card markup from the homepage, extracted by script, so the two can never drift apart. An HTML parser pass over all twelve pages caught one stray closing div, and a link crawl confirmed every internal path resolves.</p>
+<h2>The Cutover</h2>
+<p>The site got its own repo: <code>aerwk/Portfolio-V2</code>, site files only. The old repo taught the lesson here — vault notes and session logs ended up public last time, so this one gitignores all of it, and every push gets a scan for emails, tokens, and credentials first. Vercel imported the repo, the domains moved across, and within minutes www.n5hq.me was serving the new site with security headers on every response. The apex redirects to www. The Vercel CLI is now authenticated on the server too, so deploy checks no longer need the dashboard.</p>
+<h2>Finishing Touches</h2>
+<p>The contact form went from a dead placeholder to a working FormSubmit integration — honeypot for bots, a no-JavaScript fallback, and the old site's status messages carried over. Then the tech-stack marquee got real brand logos: fourteen from Simple Icons, with Loki and Prowlarr tracked down separately and recoloured to match the grey of the text. All sixteen are self-hosted, scanned, and verified live.</p>
+<h2>Reaching Home From Anywhere</h2>
+<p>The other thread of the day started with a smaller annoyance: I couldn't reach the home server when I was off the network. Tailscale was installed and the server was online, but nothing connected from outside. The cause was mundane — the laptop and phone weren't staying on the tailnet, and half my bookmarks pointed at the LAN address, which only works at home. Once the devices were actually connected and pointed at the Tailscale name instead of <code>x.x.0.5</code>, a phone on mobile data and the laptop on a different network both reached the server directly in about 50ms — no relay, straight through. Turning on connect-on-demand on the phone and login-at-boot on the laptop means it stays that way.</p>
+<h2>The Seedbox Goes on a Diet</h2>
+<p>The main job. I rent a seedbox — a slice of a fast server with a 22TB disk and upload speed that embarrasses Australian internet. It runs Plex plus the full request-and-download stack: Radarr and Sonarr for the library, Prowlarr for indexers, Overseerr for requests, the download manager for the transfers themselves, and a Discord bot so other people can ask for things. The trouble is that all of that automation competes with Plex for the slot's CPU and memory. The plan: keep the seedbox doing only what it's uniquely good at — storage, seeding, and streaming — and move every "brain" app home, running as Docker containers on the home server, pointing back at the seedbox.</p>
+<h2>The One Hard Problem</h2>
+<p>There's exactly one hard part. Normally those apps sit right next to the files, so importing a finished download into the library is an instant hardlink — the file seeds and shows up in the library at the same time, using the disk once. Move the apps home and leave the 22TB remote, and every import would want to drag the file down over the slow link and push it back up. The fix is to mount the seedbox's disk over sshfs at the exact same paths the apps expect, so they think they're working locally — but the actual move and hardlink run on the seedbox itself. I proved it before trusting it: made a hardlink through the mount, then checked the file on the seedbox directly. Same inode, link count two, not a single byte across the wire. That one number retired the whole project's risk.</p>
+<h2>Moving Without Losing Anything</h2>
+<p>The apps' databases weren't sitting on the part of the seedbox I could reach, so the move went through each app's own backup export, restored into the fresh local copies. Because the mounted paths matched exactly, the restored databases recognised every existing ISO with nothing to re-import — hundreds of distros, every quality profile and indexer, kept. The seedbox's security tripped a few times along the way and banned the home server for connecting too fast; routing everything over a single shared SSH connection stopped that. By the end the local stack was driving the remote downloader, the Discord bot was back online wired through the request manager, and the people who use it kept their accounts and history.</p>
+<h2>Proof, End to End</h2>
+<p>The convincing moment was a real request. Someone asked the Discord bot for an ISO; it went to the request manager, to Radarr, to the downloader on the seedbox, which pulled the image down on the fast link — then the local Radarr hardlinked it into the library at the source and Plex put it on the shelf. Every decision made at home, every byte staying on the seedbox. The bot also needed a Terms and Privacy page before it could be verified, so I built a small two-page site and put it on Vercel — which fit neatly next to the morning's other Vercel work.</p>
+<h2>The Stats Tool That Had Quietly Died</h2>
+<p>One surprise along the way: the usage-stats tool had stopped recording three weeks ago and nobody had noticed. Its link to Plex was pinned to an internal address that changed when a container restarted, and it had been blind ever since. I moved its history — sixteen thousand entries — into the local copy and pointed that one at a stable address, so it's both caught up and won't drift again. The three-week gap is gone for good, but everything before it is preserved.</p>
+<h2>Open to the World, Carefully</h2>
+<p>Last piece: getting at these apps from outside the house. They went onto subdomains of n5hq.me — radarr, sonarr, tautulli, overseerr — through the same Cloudflare tunnel that already carries Home Assistant and the photos. No ports opened, no home address exposed, TLS handled at the edge, each app still behind its own login. Before turning it on I checked that every app actually enforces that login, because an exposed admin tool with the door open is worse than not exposing it at all. A small systemd service keeps the seedbox mount alive across reboots, so none of this quietly falls over the next time the server restarts.</p>
+<h2>What's Next</h2>
+<ul>
+<li class="task-open">Send a test message through the contact form and confirm it lands</li>
+<li class="task-open">Visual pass on the live site at mobile widths</li>
+<li class="task-open">Decide what happens to the old n5hq-test-website repo and Vercel project</li>
+<li class="task-open">Decide whether to retire the now-redundant stats tool still sitting on the seedbox</li>
+<li class="task-open">Remove the leftover indexer-proxy from the seedbox in a later session</li>
+<li class="task-open">Revoke the temporary Cloudflare and Vercel deploy tokens</li>
+</ul>
+<p>Two lessons from one day. The design one: describing a look in words produced two rejected versions; thirty frames pulled from a screen recording produced the right one in a single pass — when the thing doing the work can't see, give it eyes. The infrastructure one came down to a single number. The whole migration rode on whether a hardlink would run at the far end instead of dragging gigabytes across the world, and the honest move was to test that first, before building anything on top of it. The file came back with a link count of two, and the rest was just plumbing.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="website" href="/blog/?tag=website">Website</a><a class="tagchip" data-tag="design" href="/blog/?tag=design">Design</a><a class="tagchip" data-tag="deployment" href="/blog/?tag=deployment">Deployment</a><a class="tagchip" data-tag="vercel" href="/blog/?tag=vercel">Vercel</a><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="plex" href="/blog/?tag=plex">Plex</a><a class="tagchip" data-tag="docker" href="/blog/?tag=docker">Docker</a><a class="tagchip" data-tag="tailscale" href="/blog/?tag=tailscale">Tailscale</a><a class="tagchip" data-tag="cloudflare" href="/blog/?tag=cloudflare">Cloudflare</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-11.html">← Storage Fixes, Vault Cleanup, and the Reboot That Bit Back</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-13.html">Sharper Words, Smaller Cards: A Copy Pass on the Portfolio →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sharper Words, Smaller Cards: A Copy Pass on the Portfolio — N5HQ</title>
+<meta name="description" content="Went back to the portfolio that shipped yesterday and fixed the part I&#x27;d skimmed: the writing. Stripped the filler out of the copy, rewrote it to talk to an employer, shrank the project cards down to a title and a Details button, and made the dead buttons actually work — all kept local for review, nothing pushed yet.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-06-13.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Sharper Words, Smaller Cards: A Copy Pass on the Portfolio — N5HQ">
+<meta property="og:description" content="Went back to the portfolio that shipped yesterday and fixed the part I&#x27;d skimmed: the writing. Stripped the filler out of the copy, rewrote it to talk to an employer, shrank the project cards down to a title and a Details button, and made the dead buttons actually work — all kept local for review, nothing pushed yet.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-06-13.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Sharper Words, Smaller Cards: A Copy Pass on the Portfolio</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Projects</span>
+      <span class="chip">2026-06-13 · Saturday · 2:35 AM</span>
+      <span class="chip">4 min read</span>
+      <span class="chip badge-ai">90% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>The site shipped yesterday, but the words on it were the part I'd rushed. Today was about going back over the copy with the same care the design got, simplifying the project cards, and fixing a couple of buttons that looked clickable but did nothing. None of it is live yet — it's all sitting on the local server on port 3002 for me to review before any of it touches the real domain.</p>
+<h2>The Copy Was Failing My Own Rules</h2>
+<p>The clearest problem was the About paragraph. It opened with "a passionate full-stack developer and network enthusiast with deep expertise in infrastructure, automation, and building scalable solutions." Every one of those phrases is on my own banned list — the vague, inflated language that says nothing a hiring manager can check. I'd written a rule against exactly this and then walked straight into it.</p>
+<p>Before rewriting anything I had a research agent go and read the best IT, infrastructure, and SRE portfolios it could find and pull out what actually works: lead with what you build, replace adjectives with artifacts, replace claims with numbers, and never use a sentence that would fit on anyone else's site. It came back with a tight playbook, and the throughline matched my writing rules almost word for word.</p>
+<h2>Writing It for an Employer, Keeping It True</h2>
+<p>The rewrite rule I held to was simple: sharper, but never inventing anything I can't back up. No fake uptime figures, no metrics I don't have. The About now leads with the real homelab — five isolated VLANs, twenty-odd containers, monitoring running around the clock, all built from scratch — and ends on the honest version of where I am: moving into tech by 2027, and happier to prove it with systems that run than with a title I don't hold yet. The stat captions lost their "innovative solutions crafted" padding. The portfolio heading went from "building solutions that matter" to "work that ships and runs."</p>
+<p>The contact section did the most useful single change. It used to be a fragment of buzzwords; now it says plainly that I'm open to roles and projects in networking, infrastructure, and full-stack work, and that I usually reply within a day. That one line does more for a recruiter than the rest of the page combined.</p>
+<p>I also stopped pretending to be only one thing. The site branded me "Full Stack Developer," but the strongest evidence on it is all infrastructure. I settled on a hybrid — "Full-Stack &amp; Infrastructure" — across the title, the hero, and the footer, so the dev projects and the network direction both stay in view.</p>
+<h2>The Buttons That Did Nothing</h2>
+<p>Under the portfolio heading sat three pills — Completed, In Progress, Upcoming — that looked like controls but were inert text. They now jump to the matching group further down the page, landing cleanly below the floating nav. And the hero had a "Lab" button next to "Projects" that I never liked; it's gone for now, and I'll decide what belongs there later.</p>
+<h2>Shrinking the Cards</h2>
+<p>The project cards were doing too much. Each one dumped a paragraph, a full spec breakdown, and a row of tags all at once, so the section was a wall of text. The fix was to collapse it: every card now shows just a title, one sentence, and a small "Details" button. Press it and the tags and the full breakdown unfold underneath. It's built on the browser's own expandable element, so it works with a keyboard and needs no JavaScript.</p>
+<p>Getting the button to look right took a few passes, and most of the trouble was a detail I should have known. The browser draws its own triangle marker on these expandable elements, and my first attempt only blanked it instead of removing it, so a stray arrow kept sitting off to the left. Once that was properly gone the button centred itself, and I shrank it down to a small pill with the text in the same purple the rest of the site uses, a little arrow underneath pointing down that flips up when the card opens. Small thing, but it's the difference between looking deliberate and looking unfinished.</p>
+<h2>What's Next</h2>
+<ul>
+<li class="task-open">Review the whole copy pass and the new cards on the local server before deciding to push</li>
+<li class="task-open">Decide whether the portfolio subpages should get the same simplified cards or stay as the detailed view</li>
+<li class="task-open">Work out what replaces the removed "Lab" button in the hero</li>
+<li class="task-open">Push to n5hq.me once I'm happy with it</li>
+</ul>
+<p>The lesson is one I keep relearning: it's easy to get the design polished and leave the words as an afterthought, but on a portfolio the words are doing the actual selling. A rule is only worth something if you check your own work against it, and I'd shipped a paragraph that broke mine. Fixing it cost an afternoon. Leaving it would have cost the first impression.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="website" href="/blog/?tag=website">Website</a><a class="tagchip" data-tag="portfolio" href="/blog/?tag=portfolio">Portfolio</a><a class="tagchip" data-tag="copywriting" href="/blog/?tag=copywriting">Copywriting</a><a class="tagchip" data-tag="design" href="/blog/?tag=design">Design</a><a class="tagchip" data-tag="ux" href="/blog/?tag=ux">UX</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-12.html">← Three Designs, a Domain Cutover, and the Linux ISO Stack Comes Home</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-20.html">The Copy Goes Live, and the Lab Page Turns Personal →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

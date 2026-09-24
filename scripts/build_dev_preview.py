@@ -1,29 +1,43 @@
 #!/usr/bin/env python3
-"""Generate the /dev/v3 deployable preview from the design-loop source.
+"""Generate the /dev/v3 deployable preview -- or, with --prod, the real
+production site -- from the design-loop source.
 
 Eric's "edge draft" redesign (01 Design/design-loop/src) is design source, not
 deployable output: every page inlines its wordmark lockup (2 PNGs + 4 video
 clips) as base64, plus a base64 OTF font on the home page, and its internal
 links point at the LIVE site's real paths (/, /about/, /portfolio/, /blog/,
-/blog/posts/*.html). This script extracts every inlined asset to a real file
-under dev/v3/assets/ (written once, referenced by every page), rewrites every
-internal link to be --base-prefixed so the preview never escapes itself, and
-emits the result as a tracked directory ready to serve at n5hq.me/dev/v3.
+/blog/posts/*.html). This script extracts every inlined asset to a real file,
+rewrites every internal link to be base-prefixed, and emits the result as a
+tracked, deployable tree.
 
 Usage:
-    python3 scripts/build_dev_preview.py                # emit at /dev/v3 (default)
-    python3 scripts/build_dev_preview.py --base=/dev/v4  # emit at a different prefix
+    python3 scripts/build_dev_preview.py                # preview at /dev/v3 (default)
+    python3 scripts/build_dev_preview.py --base=/dev/v4  # preview at a different prefix
+    python3 scripts/build_dev_preview.py --prod          # PRODUCTION build: writes the
+                                                           # real site at the repo root
+                                                           # (home/index.html, about/,
+                                                           # portfolio/, blog/, blog/posts/,
+                                                           # assets/, sitemap-ericli.xml)
 
-Idempotent: re-running with the same --base overwrites dev/v3/ with byte-identical
+Idempotent: re-running with the same mode overwrites its output with byte-identical
 output (no timestamps, no random ordering). No third-party deps.
 
-Source -> output map (URL, not filename, drives the target directory — projects.html's
-own internal links call it "/portfolio/", matching the live site's convention):
+Preview source -> output map (base-prefixed, under dev/v3/ or --base):
     p3/home.html      -> {base}/index.html
     p4/about.html     -> {base}/about/index.html
     p4/projects.html  -> {base}/portfolio/index.html
     p4/blog.html      -> {base}/blog/index.html
-    p4/post.html      -> {base}/blog/posts/2026-08-22.html   (the one real post page)
+    (every published post -> {base}/blog/posts/<date>.html, see generate_post_pages)
+
+Prod source -> output map (base="", written at the repo root -- this IS the live
+site that Vercel's existing rewrites (`/` -> `/home/index.html`, `/about` ->
+`/about/index.html`, `/portfolio` -> `/portfolio/index.html`, `/blog` ->
+`/blog/index.html`) already expect):
+    p3/home.html      -> REPO/home/index.html       (never REPO/index.html)
+    p4/about.html     -> REPO/about/index.html
+    p4/projects.html  -> REPO/portfolio/index.html
+    p4/blog.html      -> REPO/blog/index.html
+    (every published post -> REPO/blog/posts/<date>.html)
 """
 import hashlib
 import json
@@ -36,43 +50,75 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(REPO, "01 Design", "design-loop", "src")
 P3 = os.path.join(SRC, "p3")
 P4 = os.path.join(SRC, "p4")
-BLOG_POSTS_DIR = os.path.join(REPO, "blog", "posts")
+# Historical source of truth for published post bodies is the v2 published
+# HTML, now moved out of the served tree to blog/v2/posts/ (2026-09-24
+# cutover) -- see the note on generate_post_pages()/extract_published_post().
+BLOG_POSTS_DIR = os.path.join(REPO, "blog", "v2", "posts")
 POST_SKELETON_PATH = os.path.join(P4, "post.html")
 
 DEFAULT_BASE = "/dev/v3"
 
-# (source file, output path relative to the base dir)
-PAGES = [
-    (os.path.join(P3, "home.html"), "index.html"),
-    (os.path.join(P4, "about.html"), "about/index.html"),
-    (os.path.join(P4, "projects.html"), "portfolio/index.html"),
-    (os.path.join(P4, "blog.html"), "blog/index.html"),
-    # post.html retired from PAGES (PHASE 5, 2026-09-11): every published post
-    # now gets its own generated page -- see generate_post_pages() below.
-    # post.html is still read (POST_SKELETON_PATH) as the shared skeleton for
-    # those pages, but is no longer written verbatim itself: doing so would
-    # collide with the generated blog/posts/2026-08-22.html.
-]
+# theme-color / og:image used only in --prod mode.
+PROD_THEME_COLOR = "#12130f"  # v3's --carbon token (p3/home.html, p4/subpage.css :root)
+OG_IMAGE_PATH = os.path.join(REPO, "assets", "og.jpg")
+OG_IMAGE_URL = "https://ericli.n5hq.me/assets/og.jpg"
+SITE_ORIGIN = "https://ericli.n5hq.me"
 
-STATIC_ASSETS = [
-    (os.path.join(P3, "instruments.js"), "assets/instruments.js"),
-    (os.path.join(P3, "hero.js"), "assets/hero.js"),
-    (os.path.join(P4, "subpage.css"), "assets/subpage.css"),
-    (os.path.join(P4, "subpage.js"), "assets/subpage.js"),
-]
 
-# The /about/ tooling marquee references the site's real logo set by absolute
-# path (/assets/logos/*.svg); base_prefix_internal_links() rewrites that to
-# {base}/assets/logos/*.svg for every emitted page, so those files must exist
-# under dev/v3/assets/logos/ too, not just at the site root. Pulled in as a
-# glob (not hardcoded names) so a logo added or removed at the site root is
-# reflected here without touching this script again.
+def get_pages(prod):
+    """(source file, output path relative to the base dir) for the 4 static
+    pages. In --prod mode the home page MUST land at home/index.html --
+    never REPO/index.html, which would collide with the host-routing rewrite
+    (see CLAUDE.md: 'never recreate a root index.html')."""
+    if prod:
+        return [
+            (os.path.join(P3, "home.html"), "home/index.html"),
+            (os.path.join(P4, "about.html"), "about/index.html"),
+            (os.path.join(P4, "projects.html"), "portfolio/index.html"),
+            (os.path.join(P4, "blog.html"), "blog/index.html"),
+        ]
+    return [
+        (os.path.join(P3, "home.html"), "index.html"),
+        (os.path.join(P4, "about.html"), "about/index.html"),
+        (os.path.join(P4, "projects.html"), "portfolio/index.html"),
+        (os.path.join(P4, "blog.html"), "blog/index.html"),
+        # post.html retired from PAGES (PHASE 5, 2026-09-11): every published
+        # post gets its own generated page -- see generate_post_pages().
+        # post.html is still read (POST_SKELETON_PATH) as the shared
+        # skeleton, but never written verbatim itself.
+    ]
+
+
 LOGOS_DIR = os.path.join(REPO, "assets", "logos")
-STATIC_ASSETS += [
-    (os.path.join(LOGOS_DIR, name), f"assets/logos/{name}")
-    for name in sorted(os.listdir(LOGOS_DIR))
-    if name.endswith(".svg")
-]
+
+
+def get_static_assets(prod):
+    """(source file, output path relative to the base dir) for plain JS/CSS
+    assets. In --prod mode the logo set is deliberately excluded: base=""
+    means every page's /assets/logos/*.svg reference already resolves
+    straight to the real root assets/logos/ directory (which is newer than
+    anything here and already includes protonpass.svg), so copying them
+    would be redundant self-writes, not new files."""
+    assets = [
+        (os.path.join(P3, "instruments.js"), "assets/instruments.js"),
+        (os.path.join(P3, "hero.js"), "assets/hero.js"),
+        (os.path.join(P4, "subpage.css"), "assets/subpage.css"),
+        (os.path.join(P4, "subpage.js"), "assets/subpage.js"),
+    ]
+    if not prod:
+        # The /about/ tooling marquee references the site's real logo set by
+        # absolute path (/assets/logos/*.svg); base_prefix_internal_links()
+        # rewrites that to {base}/assets/logos/*.svg for every emitted page
+        # in preview mode, so those files must exist under dev/v3/assets/
+        # too, not just at the site root. Glob (not hardcoded names) so a
+        # logo added or removed at the site root is reflected automatically.
+        assets += [
+            (os.path.join(LOGOS_DIR, name), f"assets/logos/{name}")
+            for name in sorted(os.listdir(LOGOS_DIR))
+            if name.endswith(".svg")
+        ]
+    return assets
+
 
 # instruments.css is not a straight copy: its @font-face carries the base64 OTF,
 # which gets extracted like the other embedded assets (see extract_font()).
@@ -97,7 +143,11 @@ GENERATED_COMMENT = (
 )
 
 
-def get_base():
+def get_args():
+    """Returns (base, prod). --prod forces base="" and ignores --base."""
+    prod = "--prod" in sys.argv[1:]
+    if prod:
+        return "", True
     base = DEFAULT_BASE
     for i, arg in enumerate(sys.argv[1:]):
         if arg.startswith("--base="):
@@ -105,7 +155,7 @@ def get_base():
         elif arg == "--base" and i + 2 < len(sys.argv):
             base = sys.argv[i + 2]
     base = "/" + base.strip("/")
-    return base
+    return base, False
 
 
 def read(path):
@@ -127,6 +177,34 @@ def write_binary(path, data):
 
 def sha(data):
     return hashlib.sha256(data if isinstance(data, bytes) else data.encode()).hexdigest()
+
+
+# A path written once by *this* run of the script; used by write_binary_checked()
+# so the safety check below can't flag our own idempotent re-writes within a
+# single build.
+_WRITTEN_THIS_RUN = set()
+
+
+def write_binary_checked(path, data):
+    """Like write_binary(), but refuses to silently clobber a pre-existing
+    file this run did not itself produce, if its content would change.
+    Used only for STATIC_ASSETS / extracted lockup+font assets in --prod
+    mode, where the output directory is the live repo root and a name
+    collision with a real v2 asset would be a real bug, not a rebuild."""
+    if os.path.exists(path) and path not in _WRITTEN_THIS_RUN:
+        with open(path, "rb") as f:
+            existing = f.read()
+        if existing != data:
+            raise SystemExit(
+                "refusing to overwrite a pre-existing file with different "
+                f"content (looks like a real v2 asset, not our own output): {path}"
+            )
+    write_binary(path, data)
+    _WRITTEN_THIS_RUN.add(path)
+
+
+def write_checked(path, content):
+    write_binary_checked(path, content.encode("utf-8"))
 
 
 # ---------------------------------------------------------------------------
@@ -251,16 +329,66 @@ def rewrite_local_refs(html, base):
     return html
 
 
-def inject_head_meta(html):
-    return html.replace(
-        "</title>", "</title>\n<meta name=\"robots\" content=\"noindex, nofollow\">", 1
-    )
+TITLE_RE = re.compile(r'<title>(.*?)</title>', re.S)
+THEME_COLOR_META_RE = re.compile(r'<meta name="theme-color"[^>]*>\n?')
+
+
+def canonical_path_for(rel, prod):
+    """The site-relative canonical path (e.g. "/about/") for an output's
+    rel path (e.g. "about/index.html" in --prod mode)."""
+    if not prod:
+        return None
+    if rel == "home/index.html":
+        return "/"
+    if rel.endswith("/index.html"):
+        return "/" + rel[: -len("index.html")]
+    return "/" + rel
+
+
+def inject_head_meta(html, prod=False, canonical_path=None):
+    """Non-prod (preview): add noindex, as before.
+
+    Prod: strip any pre-existing <meta name="theme-color"> (about/projects/
+    blog/post already carry one from the design source; home.html doesn't --
+    this makes every emitted page carry exactly one, uniformly), then inject
+    canonical, og:url, og:title (= the page's own <title>), og:type
+    ("article" for posts, "website" otherwise), og:image (if assets/og.jpg
+    exists), twitter:card, the favicon link, and theme-color -- matching the
+    tag shapes already shipped on the live v2 posts (blog/v2/posts/*.html)."""
+    if not prod:
+        return html.replace(
+            "</title>", "</title>\n<meta name=\"robots\" content=\"noindex, nofollow\">", 1
+        )
+
+    title_m = TITLE_RE.search(html)
+    if not title_m:
+        raise SystemExit("inject_head_meta: no <title> found")
+    title_text = title_m.group(1)
+
+    page_type = "article" if canonical_path.startswith("/blog/posts/") else "website"
+    canonical_url = f"{SITE_ORIGIN}{canonical_path}"
+
+    lines = [
+        f'<link rel="canonical" href="{canonical_url}">',
+        f'<meta property="og:url" content="{canonical_url}">',
+        f'<meta property="og:title" content="{title_text}">',
+        f'<meta property="og:type" content="{page_type}">',
+    ]
+    if os.path.exists(OG_IMAGE_PATH):
+        lines.append(f'<meta property="og:image" content="{OG_IMAGE_URL}">')
+    lines.append('<meta name="twitter:card" content="summary_large_image">')
+    lines.append('<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">')
+    lines.append(f'<meta name="theme-color" content="{PROD_THEME_COLOR}">')
+
+    html = THEME_COLOR_META_RE.sub("", html)
+    block = "\n" + "\n".join(lines)
+    return html.replace("</title>", "</title>" + block, 1)
 
 
 def inject_base_script(html, base):
     """Set window.__N5_BASE before subpage.js runs, so its base-aware regexes
     (see p4/subpage.js) match/build URLs under this prefix. Harmless on pages
-    that don't load subpage.js."""
+    that don't load subpage.js, and harmless in --prod mode (base="")."""
     marker = f'<script src="{base}/assets/subpage.js"></script>'
     if marker not in html:
         return html
@@ -279,13 +407,13 @@ def add_generated_comment(html):
 
 
 # ---------------------------------------------------------------------------
-# Post pages (PHASE 5, 2026-09-11): real bodies for every published post,
-# routed at dev/v3/blog/posts/<date>.html, plus a regenerated blog.html
-# fixture so the archive tree/listing carries all 46 posts instead of a
-# frozen 34.
+# Post pages: real bodies for every published post, routed at
+# {base}/blog/posts/<date>.html (or, in --prod mode, blog/posts/<date>.html
+# at the repo root), plus a regenerated blog.html fixture so the archive
+# tree/listing carries every published post.
 #
 # The ONLY faithful source for post bodies is the published HTML in
-# blog/posts/*.html -- div.prose's innerHTML is taken verbatim. Do not
+# blog/v2/posts/*.html -- div.prose's innerHTML is taken verbatim. Do not
 # route this through the vault journals or scripts/reconstruct_journals.py:
 # that path flattens <h2>/<strong> to plain text (see pane-swap-plan.md,
 # "PHASE 5" / "Body extraction -- the trap").
@@ -326,7 +454,7 @@ def list_published_post_dates():
 
 
 def extract_published_post(date):
-    """Read blog/posts/<date>.html and pull out everything a v3 post page
+    """Read blog/v2/posts/<date>.html and pull out everything a v3 post page
     needs, straight from the published markup -- title, chips, and
     div.prose's innerHTML verbatim (see module docstring above)."""
     path = os.path.join(BLOG_POSTS_DIR, f"{date}.html")
@@ -604,8 +732,8 @@ def landing_template_html(post):
 def update_blog_html(posts):
     """Sync the SOURCE p4/blog.html fixture (its #blog-list-view a.post-row
     rows, the #n5-blog-posts JSON, and the landing post-tpl <template>) from
-    blog/posts/ -- computed, not hand-maintained, so it cannot go stale
-    again (PHASE 5, tasks 4 and B3)."""
+    blog/v2/posts/ -- computed, not hand-maintained, so it cannot go stale
+    again (PHASE 5, tasks 4 and B3). Runs in both preview and --prod mode."""
     path = os.path.join(P4, "blog.html")
     html = read(path)
 
@@ -640,10 +768,10 @@ def update_blog_html(posts):
     return path
 
 
-def generate_post_pages(posts, base, out_dir):
-    """Emit dev/v3/blog/posts/<date>.html for every published post, each
-    put through the SAME 6-step post-processing pipeline as every other
-    page (build():324-329 order)."""
+def generate_post_pages(posts, base, out_dir, prod):
+    """Emit blog/posts/<date>.html for every published post (under out_dir,
+    which is dev/v3/ in preview mode or the repo root in --prod mode), each
+    put through the SAME post-processing pipeline as every other page."""
     skeleton = read(POST_SKELETON_PATH)
     report = []
     for idx, post in enumerate(posts):
@@ -655,14 +783,14 @@ def generate_post_pages(posts, base, out_dir):
         # generated page and to post.html by construction.
         extract_lockup_assets(raw)
 
+        rel = f"blog/posts/{post['date']}.html"
         html = base_prefix_internal_links(raw, base)
         html = replace_lockup_refs(html, base)
         html = rewrite_local_refs(html, base)
-        html = inject_head_meta(html)
+        html = inject_head_meta(html, prod, f"/blog/posts/{post['date']}.html" if prod else None)
         html = inject_base_script(html, base)
         html = add_generated_comment(html)
 
-        rel = f"blog/posts/{post['date']}.html"
         out_path = os.path.join(out_dir, rel)
         write(out_path, html)
         report.append((rel, len(html.encode("utf-8"))))
@@ -673,13 +801,18 @@ def generate_post_pages(posts, base, out_dir):
 # Build
 # ---------------------------------------------------------------------------
 
-def build(base):
-    out_dir = os.path.join(REPO, base.lstrip("/"))
+def build(base, prod):
+    out_dir = REPO if prod else os.path.join(REPO, base.lstrip("/"))
+    pages = get_pages(prod)
+    static_assets = get_static_assets(prod)
     written = []
 
-    # 0) Load every published post (blog/posts/*.html, newest first) and sync
-    #    the SOURCE p4/blog.html fixture from it -- BEFORE that file is read
-    #    below as a PAGES entry, so the regenerated {base}/blog/index.html
+    write_asset = write_binary_checked if prod else write_binary
+    write_text_asset = write_checked if prod else write
+
+    # 0) Load every published post (blog/v2/posts/*.html, newest first) and
+    #    sync the SOURCE p4/blog.html fixture from it -- BEFORE that file is
+    #    read below as a `pages` entry, so the regenerated {base}/blog/index.html
     #    output carries the up-to-date row list and JSON in the same run.
     posts = load_all_posts()
     if not posts:
@@ -689,30 +822,30 @@ def build(base):
     # 1) Extract the six lockup assets + font from the canonical source (home.html
     #    for the lockup, instruments.css for the font), then verify every page's
     #    embedded copies are byte-identical before swapping them for URLs.
-    canonical_html = read(PAGES[0][0])
+    canonical_html = read(pages[0][0])
     canonical_assets = extract_lockup_assets(canonical_html)
     for name, data in canonical_assets.items():
-        write_binary(os.path.join(out_dir, "assets", name), data)
+        write_asset(os.path.join(out_dir, "assets", name), data)
         written.append((f"assets/{name}", len(data)))
 
     css_text = read(INSTRUMENTS_CSS)
     font_bytes = extract_font(css_text)
-    write_binary(os.path.join(out_dir, "assets", "bigger-display.otf"), font_bytes)
+    write_asset(os.path.join(out_dir, "assets", "bigger-display.otf"), font_bytes)
     written.append(("assets/bigger-display.otf", len(font_bytes)))
 
     processed_css = replace_font_ref(css_text, base)
-    write(os.path.join(out_dir, "assets", "instruments.css"), processed_css)
+    write_text_asset(os.path.join(out_dir, "assets", "instruments.css"), processed_css)
     written.append(("assets/instruments.css", len(processed_css)))
 
     # 2) Copy the plain JS/CSS assets verbatim.
-    for src_path, rel in STATIC_ASSETS:
+    for src_path, rel in static_assets:
         content = read(src_path)
-        write(os.path.join(out_dir, rel), content)
+        write_text_asset(os.path.join(out_dir, rel), content)
         written.append((rel, len(content)))
 
     # 3) Process each page.
     page_report = []
-    for src_path, rel in PAGES:
+    for src_path, rel in pages:
         raw = read(src_path)
         before = len(raw.encode("utf-8"))
 
@@ -732,7 +865,7 @@ def build(base):
         html = base_prefix_internal_links(raw, base)
         html = replace_lockup_refs(html, base)
         html = rewrite_local_refs(html, base)
-        html = inject_head_meta(html)
+        html = inject_head_meta(html, prod, canonical_path_for(rel, prod))
         html = inject_base_script(html, base)
         html = add_generated_comment(html)
 
@@ -742,17 +875,21 @@ def build(base):
         page_report.append((rel, before, after))
         written.append((rel, after))
 
-    # 4) Generate every published post's own page (PHASE 5) -- same 6-step
-    #    post-processing pipeline, applied inside generate_post_pages().
-    post_page_report = generate_post_pages(posts, base, out_dir)
+    # 4) Generate every published post's own page -- same post-processing
+    #    pipeline, applied inside generate_post_pages().
+    post_page_report = generate_post_pages(posts, base, out_dir, prod)
     written.extend(post_page_report)
 
-    return out_dir, page_report, written, post_page_report
+    return out_dir, page_report, written, post_page_report, posts
 
 
 def assert_no_unprefixed_links(out_dir, base):
     """Scan every emitted file for an internal href/src that escaped the base
-    prefix. Fails loudly (raises) rather than reporting a soft warning."""
+    prefix. Fails loudly (raises) rather than reporting a soft warning.
+    Works for base="" (--prod mode) too: every internal href/src the regex
+    matches already starts with "/", which trivially satisfies the "starts
+    with base + '/'" check when base is empty -- i.e. this becomes a no-op
+    guard in prod (there is no prefix to escape), rather than crashing."""
     offenders = []
     for root, _, files in os.walk(out_dir):
         for fname in files:
@@ -772,13 +909,89 @@ def assert_no_unprefixed_links(out_dir, base):
     return True
 
 
+def assert_prod_invariants(written):
+    """Hard-fail assertions for a --prod build. `written` is the (rel, size)
+    list from build(), i.e. only files THIS run emitted -- deliberately not
+    a whole-repo scan, so dev/v3/'s own internal "/dev/v3" references (if
+    that directory still exists) don't false-positive this check."""
+    root_index = os.path.join(REPO, "index.html")
+    if os.path.exists(root_index):
+        raise SystemExit(
+            f"PROD INVARIANT VIOLATED: {root_index} exists -- a root index.html "
+            "silently kills per-host routing (Vercel serves the filesystem before "
+            "rewrites). Never recreate it."
+        )
+
+    # Scoped to FUNCTIONAL /dev/v3 routing (a live href/src/url()/base
+    # assignment that would actually resolve under the retired preview
+    # prefix), not a raw substring match. A raw substring match also flags
+    # two published posts (2026-09-08, 2026-09-11) whose PROSE narrates the
+    # /dev/v3 preview build as a historical topic, and a documentation
+    # comment in assets/subpage.js describing the shared base-path
+    # mechanism generically -- neither is a routing bug, and rewriting
+    # published post prose to scrub a true historical fact would violate
+    # the "all copy comes from the live site" / don't-touch-journal-content
+    # rules elsewhere in this repo's CLAUDE.md.
+    DEVV3_LINK_RE = re.compile(r'(?:href|src)="/dev/v3|url\(/dev/v3|__N5_BASE\s*=\s*[\'"]\s*/dev/v3')
+    devv3_offenders = []
+    noindex_offenders = []
+    for rel, _ in written:
+        path = os.path.join(REPO, rel)
+        if rel.endswith((".html", ".htm", ".css", ".js")):
+            try:
+                text = read(path)
+            except UnicodeDecodeError:
+                continue
+            if DEVV3_LINK_RE.search(text):
+                devv3_offenders.append(rel)
+            # Same scoping rationale as DEVV3_LINK_RE above: the actual
+            # <meta name="robots" content="noindex...> tag inject_head_meta()
+            # emits in preview mode, not the bare word -- 2026-09-08 and
+            # 2026-09-11's published prose both discuss noindex as a topic
+            # (in <code> spans) while writing about the preview build.
+            if rel.endswith((".html", ".htm")) and '<meta name="robots" content="noindex' in text:
+                noindex_offenders.append(rel)
+
+    if devv3_offenders:
+        raise SystemExit(
+            "PROD INVARIANT VIOLATED: '/dev/v3' found in emitted file(s):\n  "
+            + "\n  ".join(devv3_offenders)
+        )
+    if noindex_offenders:
+        raise SystemExit(
+            "PROD INVARIANT VIOLATED: 'noindex' found in emitted HTML file(s):\n  "
+            + "\n  ".join(noindex_offenders)
+        )
+    return True
+
+
+def write_sitemap_ericli(posts):
+    """--prod only: regenerate sitemap-ericli.xml from scratch -- /, /about/,
+    /portfolio/, /blog/, and every published post (oldest-first, matching
+    the existing file's convention), dropping the retired v2 portfolio
+    subpages (completed/homelab/disclaude-sesh/in-progress/upcoming), which
+    308-redirect to /portfolio/ now and should not also self-list."""
+    urls = ["/", "/about/", "/portfolio/", "/blog/"]
+    urls += [f"/blog/posts/{p['date']}.html" for p in sorted(posts, key=lambda p: p["date"])]
+    lines = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ]
+    lines += [f"  <url><loc>{SITE_ORIGIN}{u}</loc></url>" for u in urls]
+    lines.append("</urlset>")
+    path = os.path.join(REPO, "sitemap-ericli.xml")
+    write(path, "\n".join(lines) + "\n")
+    return path, len(urls)
+
+
 def main():
-    base = get_base()
-    out_dir, page_report, written, post_page_report = build(base)
+    base, prod = get_args()
+    out_dir, page_report, written, post_page_report, posts = build(base, prod)
     ok = assert_no_unprefixed_links(out_dir, base)
 
-    print(f"base path: {base}")
-    print(f"output dir: {os.path.relpath(out_dir, REPO)}")
+    print(f"mode: {'PROD' if prod else 'preview'}")
+    print(f"base path: {base!r}")
+    print(f"output dir: {os.path.relpath(out_dir, REPO) or '.'}")
     print()
     print("pages (before -> after extraction, bytes):")
     total_before = total_after = 0
@@ -788,7 +1001,7 @@ def main():
         print(f"  {rel:32s} {before:>8,} -> {after:>8,}  ({before - after:+,})")
     print(f"  {'TOTAL':32s} {total_before:>8,} -> {total_after:>8,}  ({total_before - total_after:+,})")
     print()
-    print(f"post pages generated (PHASE 5): {len(post_page_report)} files")
+    print(f"post pages generated: {len(post_page_report)} files")
     post_total = sum(sz for _, sz in post_page_report)
     print(f"  total bytes: {post_total:,}")
     print()
@@ -799,8 +1012,14 @@ def main():
         for r, _, fs in os.walk(out_dir)
         for f in fs
     )
-    print(f"total dev/v3/ size on disk: {dir_size:,} bytes")
+    print(f"total output dir size on disk: {dir_size:,} bytes")
     print(f"no-unprefixed-internal-links assertion: {'PASS' if ok else 'FAIL'}")
+
+    if prod:
+        prod_ok = assert_prod_invariants(written)
+        print(f"prod invariants (no root index.html / no /dev/v3 / no noindex): {'PASS' if prod_ok else 'FAIL'}")
+        sitemap_path, n_urls = write_sitemap_ericli(posts)
+        print(f"sitemap: {os.path.relpath(sitemap_path, REPO)} ({n_urls} urls)")
 
 
 if __name__ == "__main__":

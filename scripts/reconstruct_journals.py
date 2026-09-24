@@ -24,7 +24,7 @@ alongside, and point the generator at that.
 
 Then confirm the blast radius before trusting it:
 
-    git diff blog/posts/ | grep -E '^[+-]' | grep -v '^[+-][+-]' \
+    git diff blog/v2/posts/ | grep -E '^[+-]' | grep -v '^[+-][+-]' \
         | grep -v 'postfoot\|btn-ghost'
 
 That should print nothing. Anything else means a published post's metadata moved.
@@ -57,7 +57,9 @@ import re
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-POSTS = os.path.join(REPO, "blog", "posts")
+# v3 cutover (2026-09-24): the v2 published posts this script reconstructs
+# journals FROM moved to blog/v2/posts/ -- blog/posts/ is v3 output now.
+POSTS = os.path.join(REPO, "blog", "v2", "posts")
 
 # stripped before the body is flattened to text, so read_time() matches the
 # figure already baked into the post

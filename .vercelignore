@@ -12,3 +12,13 @@ archive/
 # markdown at /blog/versions/<date>.original.md. Tracked in git on purpose —
 # excluded from the deploy, not from version control.
 blog/versions/
+
+# v2 ericli site, retired by the v3 cutover (2026-09-24). The v2 blog posts
+# used to be served at blog/posts/ -- they moved to blog/v2/posts/ so v3's
+# build could take over blog/posts/ (and blog/index.html) for the new pages.
+# blog/v2/posts/ is still read as the SOURCE OF TRUTH for every post body
+# (scripts/build_dev_preview.py extracts div.prose from it verbatim; see
+# CLAUDE.md's stub-journal warning for why journals can't be used instead).
+# Kept in git, excluded from the deploy -- Vercel would otherwise serve the
+# retired v2 pages at /blog/v2/posts/<date>.html alongside the v3 ones.
+blog/v2/

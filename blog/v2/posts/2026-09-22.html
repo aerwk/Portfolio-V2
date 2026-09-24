@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Racking a Hotel Headend Without the Tuner, and a Nightly Job Stuck on a Three-Year Date — N5HQ</title>
+<meta name="description" content="A hotel client&#x27;s server, switch, and set-top boxes went into a test rack today, but the tuner stayed home, so the afternoon ran on a laptop standing in for a broadcast signal. In between, a nightly Discord alert traced back to one metadata field disagreeing with another by three years.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-09-22.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Racking a Hotel Headend Without the Tuner, and a Nightly Job Stuck on a Three-Year Date — N5HQ">
+<meta property="og:description" content="A hotel client&#x27;s server, switch, and set-top boxes went into a test rack today, but the tuner stayed home, so the afternoon ran on a laptop standing in for a broadcast signal. In between, a nightly Discord alert traced back to one metadata field disagreeing with another by three years.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-09-22.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Racking a Hotel Headend Without the Tuner, and a Nightly Job Stuck on a Three-Year Date</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-09-22 · Tuesday · 11:42 PM</span>
+      <span class="chip">5 min read</span>
+      <span class="chip badge-ai">60% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Two separate threads ran through today: a full afternoon and evening getting a hotel client's IPTV gear into a test rack, and a shorter fix for a Discord alert that had been firing every night on the same item.</p>
+<h2>Photos first, then a rundown for eight rooms</h2>
+<p>The morning started at the desk, going through seven photos of the delivered equipment from the previous evening's unboxing. The headend server's fascia reads "FBE80x," a family badge; the specific model listed on the invoice doesn't appear anywhere on it, so which exact unit shipped is still unconfirmed. The tuner carries no branding beyond a generic "Tuner to IP Gateway" label, and only 16 of its 24 RF input positions are populated, matching the "16-way" spec on paper. The 24-port switch settled a question that had been open since the invoice first arrived: it's a real, documented H3C S5130V2. The UPS turned out to be mains-fed, with an external battery bank wired on screw terminals, which means it needs an electrician to install rather than someone simply plugging it in.</p>
+<p>Told the site visit was happening that day, aiming for an eight-room test, I got a rundown built and filed as a runsheet before leaving: bring one server and the switch, feed the tuner's output straight into that server, then physically move eight patch leads at the hotel's rack to hand one wing of rooms to the test network. The one rule that mattered was that the test switch never gets a cable into the hotel's own network. A stray lead would leak the multicast feed, and a DHCP server on the wrong switch would start handing out addresses to hotel devices.</p>
+<h2>A nightly Discord alert traced to a three-year gap</h2>
+<p>Away from the hotel job, a message had been landing on Discord at the same time every night: a collection-handling job in the Linux ISO library's cleanup automation had failed, check the logs. The logs showed one item behind twelve of those failures, out of fourteen distinct items that had ever failed at all, and it was still failing every night. The item was correctly matched, all three of its external IDs present and valid, but one metadata service cross-checks the recorded release year against a second provider and only tolerates about a year of drift. This item's two sources disagreed by three years, so every ID got discarded and the nightly cleanup job choked on it the same way each time.</p>
+<p>The fix was a one-field correction to the recorded year, locked so a future metadata refresh wouldn't undo it. That also removed the only thing standing between the item and a scheduled deletion the next morning, since the collection it sat in deletes anything past its retention window, and this one was already well past. Whether to keep the item or let the deletion run was left open.</p>
+<h2>On site, without the tuner</h2>
+<p>Getting back onto the Mac at the hotel first meant linking it to the vault's drop folder over Tailscale, so anything captured on site could land there directly instead of staying stuck on the laptop. The build plan called for the switch on top, a gap, then the tuner slot, then one server, with the second left boxed, but the tuner itself never made it into the car. Today's actual build ran server, switch, and set-top boxes only, with the Mac later standing in for the tuner's feed to test multicast.</p>
+<p>A loose power supply turned up in the server's carton, model FSP250-50FCC, a 250 W Flex ATX unit rated for Australian mains. It looks like a spare for the server's own internal supply, and it also gives an upper bound on that server's power draw for when the UPS gets sized properly.</p>
+<p>Powering on took longer than expected. The switch and server came up, and the set-top boxes went onto two of the switch's ports. The monitor connected to the server showed a brief Ubuntu boot line, then went black and stayed black for well over an hour while other rack work continued around it. The cause turned out to be the monitor cable not fully seated. Once reseated, a login screen appeared, asking for credentials that turned up separately soon after.</p>
+<p>Finding the server's own management pages took a run of tcpdump on the Mac's ethernet adapter to catch a DHCP exchange, which showed the gear was on a subnet the Mac couldn't reach yet. Logging into the server directly listed three addresses on a second, still-unreachable subnet: a copy of the vendor's own user manual, hosted on the server itself, and two admin consoles, one for hotel information and one for channel management. Plugging a second network port into the switch made that subnet reachable, and all three pages loaded. The manual downloaded as a PDF and got filed into the project, so the build now has the vendor's real documentation on hand instead of only the sales deck.</p>
+<p>The room-side test hit its own wall. The television in the test room turned out to be a Samsung DB48D, model LH48DBDPLGC/XY, apparently locked to hospitality mode, so the set-top box's video never reached a screen that could confirm it. Screenshots captured directly off each box over adb were used instead, covering channel changes and a side-by-side check of two boxes.</p>
+<h2>Home again, setting up for tomorrow</h2>
+<p>Back home in the evening, the last task was getting a GL.iNet Beryl 7 travel router ready to give remote access into the isolated test network, since tomorrow's visit means working from the hotel again without carrying a laptop the whole time. It's set up for now as a repeater pulling internet from home wifi, with its own LAN on <code>x.x.8.1</code>; the plan is to point the same repeater mode at the hotel's own network on site tomorrow. The tuner and the second server are still in their boxes, and the room-side signal path is still unconfirmed.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="iptv" href="/blog/?tag=iptv">IPTV</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-11.html">← Six Rebuilds to Get a Freeze-Pane Blog Working, Then a Go-Live Held for Three Answers</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-23.html">A Travel Router Rebuild, a Real TV Signal, and a Wrong Netmask →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

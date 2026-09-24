@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Building Momentum: Homelab Services + Website Launch — N5HQ</title>
+<meta name="description" content="Deployed the monitoring stack (Prometheus, Grafana, Loki), made Immich publicly accessible, and completed the N5HQ website with portfolio and contact sections.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-06-08.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Building Momentum: Homelab Services + Website Launch — N5HQ">
+<meta property="og:description" content="Deployed the monitoring stack (Prometheus, Grafana, Loki), made Immich publicly accessible, and completed the N5HQ website with portfolio and contact sections.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-06-08.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Building Momentum: Homelab Services + Website Launch</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Projects</span>
+      <span class="chip">2026-06-08 · Sunday · 2:17 AM</span>
+      <span class="chip">3 min read</span>
+      <span class="chip badge-ai">80% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Energy sitting at 6/10, mood a flat <em>meh</em> — not the conditions you'd associate with what turned out to be one of the more productive days in recent memory. Between waking up and the end of the night, a full observability stack came online, two services became publicly accessible behind Cloudflare tunnels, and a portfolio website went from a blank folder to live on Vercel. Six sessions. One day.</p>
+<h2>The Monitoring Stack</h2>
+<p>Started with the homelab. The goal was proper observability — something that would tell me what's actually happening on the OptiPlex rather than just assuming everything's fine. Spun up Prometheus, Grafana, Loki, Promtail, Node Exporter, cAdvisor, and UnPoller as a full Docker stack, then built a custom Homelab Overview dashboard through the Grafana Python API. Panels for WAN uptime, device count, container count, CPU, memory, disk, network throughput, and PoE power draw. It went live at <strong>status.n5hq.me</strong>.</p>
+<p>Not everything was clean. The dashboard imports were a mess — wrong metric prefixes, corrupted variables — and needed patch scripts to sort out. cAdvisor on cgroup v2 doesn't emit container name labels, so Docker containers show up as hash paths instead of readable names. The WAN uptime panel also has a query bug: the failover interface returns -1 when inactive and drags the average down. Workarounds in place but the clean fixes are queued for next session.</p>
+<h2>Immich Goes Public</h2>
+<p>While the monitoring stack was still fresh, got Immich publicly accessible at <strong>photo.n5hq.me</strong> through the existing Cloudflare Zero Trust tunnel — added a second hostname to the same cloudflared instance that was already routing Home Assistant. No Docker changes needed, just configuration. Satisfying because of how simple it was.</p>
+<h2>Website: Zero to Live in a Day</h2>
+<p>The rest of the day was six sessions of website work.</p>
+<p>Session one built the initial landing page: a single <code>index.html</code> with a Navy/Teal/Beige colour palette, Poppins display paired with Inter body, responsive mobile-first, and deployed to GitHub and Vercel before the session closed. Sessions three through six expanded it into a full portfolio system — About Me with career goal and stat cards, expandable portfolio tiles, dedicated project pages for in-progress and upcoming work, a full HomeLab showcase page with all the infrastructure detail, and a Contact form routing to FormSubmit.co.</p>
+<p>Session four built the blog publishing system from the ground up. A Node script scans the Obsidian vault journals, extracts frontmatter, copies the markdown files to <code>blog/posts/</code>, and generates a <code>posts.json</code> manifest. The blog index and reader are live on the site. This journal entry was the first post published. Session five was almost entirely bug fixes — the reader was fetching wrong file paths, the sidebar was showing duplicate entries, and the blog index was broken from calling undefined functions. All fixed, but it took a full session. Session six added the <code>claude_pct</code> frontmatter field, which controls the AI disclosure badge shown on each post. Honest, and genuinely interesting context for anyone reading.</p>
+<h2>What's Next</h2>
+<ul>
+<li class="task-done">Fix WAN uptime panel query (<code>wan_networkgroup="WAN"</code> filter)</li>
+<li class="task-open">Decide on Cloudflare Access for Immich (photos are sensitive)</li>
+<li class="task-done">Update Cloudflare DNS — point n5hq.me root + www to Vercel CNAME</li>
+<li class="task-done">Verify domain shows valid in Vercel after DNS update</li>
+<li class="task-done">Replace website placeholder copy with real bio and project descriptions</li>
+<li class="task-done">Add real project screenshots to portfolio tiles</li>
+</ul>
+<p>A 6/10 energy day that produced more than most high-energy days. Monitoring stack live, two services behind proper tunnels, full portfolio site from nothing to deployed — all in one go. It's easy to take for granted in the moment because you're just moving from one task to the next, but stepping back it's a lot. The blog being wired directly to the Obsidian vault is the detail I'm most pleased about. Zero friction between writing and publishing is worth more than it sounds.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a><a class="tagchip" data-tag="website" href="/blog/?tag=website">Website</a><a class="tagchip" data-tag="deployment" href="/blog/?tag=deployment">Deployment</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-07.html">← Home Assistant Goes Public</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-09.html">Automating the Blog &amp; Cleaning Up the Portfolio →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Network Fixes, Tailscale, and a NIC Upgrade — N5HQ</title>
+<meta name="description" content="Diagnosed the Aqara doorbell and Canon printer issues via UniFi MCP, got Tailscale running across all devices, installed Claude CLI on the MacBook, and swapped the server NIC to 2.5GbE.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-06-10.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Network Fixes, Tailscale, and a NIC Upgrade — N5HQ">
+<meta property="og:description" content="Diagnosed the Aqara doorbell and Canon printer issues via UniFi MCP, got Tailscale running across all devices, installed Claude CLI on the MacBook, and swapped the server NIC to 2.5GbE.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-06-10.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Network Fixes, Tailscale, and a NIC Upgrade</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-06-10 · Wednesday · 2:17 AM</span>
+      <span class="chip">4 min read</span>
+      <span class="chip badge-ai">60% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>More happened today than the energy levels would suggest. Went into it wanting to knock out some network issues that had been sitting on the list, ended up also getting Tailscale properly sorted across all devices and swapping the server NIC while things were already open.</p>
+<h2>UniFi Troubleshooting — Aqara Doorbell</h2>
+<p>The Aqara G410 doorbell at <code>x.x.10.9</code> (Camera Network, VLAN 80) hadn't been viewable in the Aqara App or HomeKit since setup. Ran a proper diagnosis through the UniFi MCP tools in the terminal. The mDNS repeater was already enabled across the relevant VLANs — that wasn't the issue. Traffic inspection showed the camera was reaching Aqara's P2P relay servers via UDP, but only tiny 76-byte signalling packets — no video stream establishing.</p>
+<p>Found the real problem: the "Allow IoT to Apple TV" firewall rule only covered IoT Network (VLAN 70), not Camera Network (VLAN 80). The doorbell had no path to the Apple TV HomeKit hub at <code>x.x.1.112</code>. The camera was generating zero traffic toward the Apple TV, which confirmed the HomeKit pairing session was stale or broken. Added Camera Network as a source to the firewall rule.</p>
+<p>The firewall is now correct but the HomeKit pairing itself still needs to be re-established — the camera won't automatically reconnect. Fix: remove the doorbell accessory in the Home app and re-add it with the HomeKit code on the device.</p>
+<h2>UniFi Troubleshooting — Canon Printer</h2>
+<p>The Canon G4610 had been offline since June 9. Found it connected to the IoT SSID (VLAN 70) but with a virtual network override already in place forcing it onto VLAN 30 (Home Network) — that's the correct setup for a 2.4 GHz-only device that can't connect to the main SSIDs.</p>
+<p>The fixed IP was set to <code>x.x.0.99</code> — wrong subnet entirely (Management Network range, not Home Network). Also no firewall rule existed for the PC to initiate connections to the printer, and zero historical traffic confirmed print jobs had never been completing.</p>
+<p>Fixed the IP to <code>x.x.1.5</code> (Home Network, below the DHCP pool), enabled the fixed assignment, and created a new "PC to Printer" firewall rule allowing the PC MAC to reach <code>x.x.1.5</code>. Printer came back online, 1.3 MB of TCP print data confirmed flowing through. Network is good. The remaining issue is on the driver side — the correct driver is Canon G4600 Series, and the printer port on the PC needs updating to <code>x.x.1.5</code>.</p>
+<h2>Tailscale Setup and Cleanup</h2>
+<p>Tailscale was technically installed but in a messy state — three separate installs found on the server: a snap version (1.92.5), a Docker container, and an apt package. Cleaned it up: removed the snap (it was holding the <code>tailscale0</code> interface), removed the Docker container (the host install covers all containers), kept the apt install running as a proper systemd service.</p>
+<p>Tailnet is now clean — OptiPlex (<code>n5ubuntu</code>, <code>x.x.149.70</code>) and MacBook Pro (<code>erics-macbook-pro</code>, <code>x.x.153.21</code>) both confirmed online. The Samba share on the server is accessible from the MacBook via <code>smb://x.x.149.70/shared</code> through Tailscale when off the local network.</p>
+<h2>Claude CLI on MacBook</h2>
+<p>Installed Claude CLI on the MacBook via Homebrew and npm. Node v26.3.0, npm 11.16.0, binary at <code>/opt/homebrew/bin/claude</code>. Claudian plugin path set to match. One unresolved issue: Claudian showing a session ID error on first use — likely a stale session in the plugin state, needs clearing or re-auth.</p>
+<h2>NIC Upgrade to 2.5GbE</h2>
+<p>Swapped the OptiPlex from the onboard 1GbE NIC (<code>eno1</code>) to a 2.5GbE USB-C adapter (<code>enx74****5c7c</code>). IP held at <code>x.x.0.5</code> via UniFi fixed DHCP reservation. The old NIC stays configured in Netplan but unused — available for future use if needed (Proxmox management network, etc.). The 1GbE ceiling would've become a real bottleneck the moment a NAS or Kubernetes cluster enters the picture. Better removed now.</p>
+<h2>What's Next</h2>
+<ul>
+<li class="task-open">Re-establish HomeKit pairing for Aqara doorbell (remove + re-add in Home app)</li>
+<li class="task-open">Install Canon G4600 Series driver on PC, update printer port to <code>x.x.1.5</code></li>
+<li class="task-open">Fix Claudian session ID error on MacBook</li>
+<li class="task-open">Fix WAN uptime panel in Grafana (<code>wan_networkgroup="WAN"</code> filter)</li>
+<li class="task-open">Cloudflare Access in front of Immich</li>
+</ul>
+<p>A lot of ground covered for a low-energy day. The UniFi MCP tooling made the network diagnosis much faster than it would've been manually — being able to inspect traffic flows and firewall hits directly from the terminal is genuinely useful. The printer issue was satisfying to close out, even with the driver side still pending.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="unifi" href="/blog/?tag=unifi">UniFi</a><a class="tagchip" data-tag="tailscale" href="/blog/?tag=tailscale">Tailscale</a><a class="tagchip" data-tag="hardware" href="/blog/?tag=hardware">Hardware</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-09.html">← Automating the Blog &amp; Cleaning Up the Portfolio</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-06-11.html">Storage Fixes, Vault Cleanup, and the Reboot That Bit Back →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://ericli.n5hq.me/</loc></url>
+  <url><loc>https://ericli.n5hq.me/about/</loc></url>
+  <url><loc>https://ericli.n5hq.me/portfolio/</loc></url>
   <url><loc>https://ericli.n5hq.me/blog/</loc></url>
-  <url><loc>https://ericli.n5hq.me/portfolio/completed/</loc></url>
-  <url><loc>https://ericli.n5hq.me/portfolio/homelab/</loc></url>
-  <url><loc>https://ericli.n5hq.me/portfolio/disclaude-sesh/</loc></url>
-  <url><loc>https://ericli.n5hq.me/portfolio/in-progress/</loc></url>
-  <url><loc>https://ericli.n5hq.me/portfolio/upcoming/</loc></url>
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-06-07.html</loc></url>
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-06-08.html</loc></url>
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-06-09.html</loc></url>
@@ -17,12 +14,12 @@
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-06-20.html</loc></url>
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-06-21.html</loc></url>
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-06-28.html</loc></url>
-  <url><loc>https://ericli.n5hq.me/blog/posts/2026-07-01.html</loc></url>
-  <url><loc>https://ericli.n5hq.me/blog/posts/2026-07-02.html</loc></url>
-  <url><loc>https://ericli.n5hq.me/blog/posts/2026-07-13.html</loc></url>
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-06-29.html</loc></url>
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-06-30.html</loc></url>
+  <url><loc>https://ericli.n5hq.me/blog/posts/2026-07-01.html</loc></url>
+  <url><loc>https://ericli.n5hq.me/blog/posts/2026-07-02.html</loc></url>
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-07-12.html</loc></url>
+  <url><loc>https://ericli.n5hq.me/blog/posts/2026-07-13.html</loc></url>
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-07-14.html</loc></url>
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-07-16.html</loc></url>
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-07-24.html</loc></url>
@@ -40,8 +37,8 @@
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-08-11.html</loc></url>
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-08-12.html</loc></url>
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-08-13.html</loc></url>
-  <url><loc>https://ericli.n5hq.me/blog/posts/2026-08-22.html</loc></url>
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-08-21.html</loc></url>
+  <url><loc>https://ericli.n5hq.me/blog/posts/2026-08-22.html</loc></url>
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-08-23.html</loc></url>
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-08-24.html</loc></url>
   <url><loc>https://ericli.n5hq.me/blog/posts/2026-08-25.html</loc></url>

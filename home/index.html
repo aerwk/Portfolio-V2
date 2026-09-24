@@ -1,820 +1,582 @@
 <!doctype html>
+<!-- GENERATED FILE. Produced by scripts/build_dev_preview.py from the design
+     source in `01 Design/design-loop/src` (gitignored). Do not hand-edit this
+     file directly -- edit the source and re-run the generator instead. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>N5HQ — DevOps &amp; Infrastructure</title>
-<meta name="description" content="Full-stack development, network architecture, and infrastructure engineering. Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
 <link rel="canonical" href="https://ericli.n5hq.me/">
-<meta name="theme-color" content="#060507">
-<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="N5HQ">
-<meta property="og:title" content="N5HQ — DevOps &amp; Infrastructure">
-<meta property="og:description" content="Full-stack development, network architecture, and infrastructure engineering. Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
 <meta property="og:url" content="https://ericli.n5hq.me/">
+<meta property="og:title" content="N5HQ — DevOps &amp; Infrastructure">
+<meta property="og:type" content="website">
 <meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta name="theme-color" content="#12130f">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css?v=d28">
-<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=JetBrains+Mono:wght@400&family=Doto:wght@400&family=Jersey+10&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/instruments.css">
+<style>
+  :root{
+    --carbon:#12130f;
+    --bone:#e4dfda;
+    --bone-55: rgba(228,223,218,.55);
+    --vein:#3c3c38;
+    --glow:#a493ff;
+    --violet:#5e18eb; /* brand violet, sampled from the logo; hover fill + rim only */
+    --n5i-mono:'JetBrains Mono','IBM Plex Mono',ui-monospace,Menlo,monospace;
+    --n5i-sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --n5i-display:'Doto','Jersey 10',system-ui,monospace;
+
+    /* ---------- fluid edge-draft scaling (2026-09-08/09, insets re-anchored 2026-09-09) ----------
+       Byte-identical copy of the block in p4/subpage.css's :root — see
+       design-system.md "Fluid scaling" for the derivation and the drift-
+       risk note (two copies, since this page is self-contained and does
+       not load subpage.css).
+       --n5i-lockup-w / --n5i-u stay anchored at 1440x900 (today, must stay
+       byte-identical — the ramp term `100vw - 1440px` is exactly 0 at
+       that width regardless of slope rounding) up to 2504px wide (Eric's
+       spec: lockup ~300px, everything else 1.35x); below 1440 both floor
+       at their 1440 value (147px / 1px), unchanged by the insets below.
+       --n5i-inset-x / --n5i-inset-y are anchored differently (Eric,
+       2026-09-09: "keep the border parameters in place at all sizes, the
+       threshold for the no borders is when width < 768"): the ramp term
+       is `100vw - 768px`, floored at 768 (16px / 12px, matching the phone
+       breakpoint below) and still ceilinged at 2504 (100px / 60px) — so
+       the inset never collapses back to a flat 12px between 768 and 1440
+       the way it used to. Slopes are rounded so the raw calc() value at
+       2504 slightly OVERSHOOTS 100/60, which is what makes clamp()'s
+       upper bound (not the arithmetic) land the value bit-exact at 2504;
+       see design-system.md for the full derivation.
+       --n5i-u is a LENGTH (1px..1.35px) so `calc(N * var(--n5i-u))`
+       type-checks as number*length=length; hairlines are NOT scaled. */
+    --n5i-inset-x: clamp(16px, calc(16px + (100vw - 768px) * 0.048388), 100px);
+    --n5i-inset-y: clamp(12px, calc(12px + (100vw - 768px) * 0.027650), 60px);
+    --n5i-lockup-w: clamp(147px, calc(147px + (100vw - 1440px) * 0.143797), 300px);
+    --n5i-u: clamp(1px, calc(1px + (100vw - 1440px) * 0.000329), 1.35px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{
+    width:100%;height:100%;
+    background:var(--carbon);
+    color:var(--bone);
+    font:400 calc(16 * var(--n5i-u))/1.25 var(--n5i-sans);
+    -webkit-font-smoothing:antialiased;
+    overflow:hidden;
+  }
+  body{ position:relative; min-height:100vh; }
+
+  .stage{
+    position:absolute; inset:0;
+    pointer-events:none;
+    z-index:1;
+  }
+
+  .corner{
+    position:absolute;
+    z-index:2;
+    padding:var(--n5i-inset-y) var(--n5i-inset-x);
+    /* load choreography: readable at rest (opacity .15, not 0) as a static
+       fallback before JS runs; the actual settle to full is driven by the
+       Web Animations API below (transform+opacity only, 500ms ease-out,
+       staggered), which is deterministic and scrubbable for screenshot
+       tooling — a CSS transition can't be paused/seeked from outside. */
+    opacity:.15;
+    transform:translateY(10px);
+  }
+
+  .tl{ top:0; left:0; }
+  .tr{ top:0; right:0; }
+  /* max-width caps the BORDER box, and .corner's inset padding grew from 12px a
+     side at 1440 to 100px at 2504 — so a flat measure here would be eaten by the
+     padding and the cluster would get NARROWER as the page got wider. Reserve
+     the padding explicitly so the CONTENT measure is what scales.
+     Basis 587.5->480 (2026-09-09, Eric: "'enthusiast' is sticking out too
+     much... keep everything at 3 lines, if not 4 is fine"). Must stay
+     byte-identical to .n5i-clocksentence's own basis in instruments.css —
+     see that rule for the full derivation (with real webfonts loaded,
+     587.5 let "enthusiast" end line 1 at every desktop width, visibly
+     longer than the two lines below it; 480 forces the wrap back to
+     "Infrastructure", costing a 4th line, which Eric explicitly allowed).
+     A flat measure here is dangerous at narrow desktop widths, though: .bl
+     is bottom-left and .br (the nav) is bottom-right, and near 768 the two
+     would collide. So this is self-limiting — min() of the desired width
+     and whatever the viewport can actually spare once .br's own box is
+     reserved. .br's rendered width is 2*inset-x (its own padding) plus its
+     nav column, and the nav column is a CONSTANT 88.234375px measured with
+     Playwright (`.br nav` resets --n5i-u:1px, so unlike everything else
+     here it does NOT scale with viewport) — see design-system.md "Fluid
+     scaling". 112.234375px below = that 88.234375px nav column + a flat
+     24px breathing gap between the two corners. */
+  .bl{ bottom:0; left:0; max-width:min(
+    calc(480 * var(--n5i-u, 1px) + 2 * var(--n5i-inset-x, 12px)),
+    calc(100vw - 2 * var(--n5i-inset-x, 12px) - 112.234375px)
+  ); }
+  .br{ bottom:0; right:0; }
+
+  .role{
+    font:400 calc(12 * var(--n5i-u))/1.25 var(--n5i-mono);
+    letter-spacing:-0.05em;
+    text-transform:uppercase;
+    color:var(--bone-55);
+    margin-top:calc(4 * var(--n5i-u));
+  }
+
+  /* Pill hover = the reference's (yinger.dev) shipped mechanics, read from
+     its CSS, minus the rest rim (dropped on Eric's instruction 2026-09-07):
+     at rest a 1px TRANSPARENT border on a 40% Carbon fill with
+     an 8px backdrop blur; on hover the border fades in to full
+     Bone over .5s, while a Bone-filled copy of the label (.pill-c) slides up
+     from below (translateY 120% -> 0, .25s quint-out) as a curtain carrying
+     the inverted label. Hover-out: curtain slides back down, border snaps
+     (0s) back to transparent. padding 3px 11px, not 4px 12px, so the 1px
+     border keeps the pill box the same size and the corner's 27px pitch. */
+  .pill{
+    position:relative;
+    overflow:hidden;
+    display:inline-block;
+    padding:calc(3 * var(--n5i-u)) calc(11 * var(--n5i-u));
+    border-radius:9999px;
+    font:400 calc(12 * var(--n5i-u))/1.25 var(--n5i-mono);
+    letter-spacing:-0.05em;
+    text-transform:uppercase;
+    text-decoration:none;
+    color:var(--bone);
+    background:rgba(18,19,15,.4);
+    -webkit-backdrop-filter:blur(8px);
+    backdrop-filter:blur(8px);
+    border:1px solid transparent;
+    cursor:pointer;
+    transition:border-color 0s;
+  }
+  .pill-l{ position:relative; display:inline-block; }
+  .pill-c{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--violet,#5e18eb);
+    color:#fff; /* white, like the logo's own lettering */
+    border-radius:9999px;
+    transform:translateY(120%);
+    transition:transform .25s cubic-bezier(0,.55,.45,1);
+  }
+  .pill:focus-visible{ outline:2px solid var(--bone); outline-offset:2px; }
+  .pill:focus-visible{ border-color:var(--violet,#5e18eb); transition:border-color .5s cubic-bezier(.4,0,.2,1); }
+  .pill:focus-visible .pill-c{ transform:none; }
+  @media (hover:hover){
+    .pill:hover{ border-color:var(--violet,#5e18eb); transition:border-color .5s cubic-bezier(.4,0,.2,1); }
+    .pill:hover .pill-c{ transform:none; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .pill, .pill-c{ transition:none; }
+  }
+
+  /* Eric, 2026-09-09: the nav links do not scale — they were the right size at the
+     1440 reference and grow out of proportion on a large screen. Resetting the scale
+     unit for the nav's subtree reverts every value inside it (pill padding and type,
+     the 23px icon discs, the divider, the gaps) to its reference size in one place,
+     while the corner's own inset still holds it 100px off the edge. Pills used
+     elsewhere — accordion triggers, the contact mailto, About's closing link — are
+     content rather than chrome and keep scaling. */
+  .br nav{ --n5i-u:1px;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:calc(4 * var(--n5i-u));
+  }
+
+  /* separates the four page pills from the Login pill below it, matching
+     the same "Vein" divider token used for list-item dividers elsewhere.
+     Height is a 1px hairline, deliberately not scaled. */
+  .n5i-nav-rule{
+    width:calc(28 * var(--n5i-u));
+    height:1px;
+    background:var(--vein);
+    /* measured off Eric's reference at 1440: 21px under the icons, 23px above
+       the LOGIN cap line, right edge 14px in from the text edge (the pills'
+       12px padding puts their text 12px inside the box, so 25px here) — all
+       now scaled by --n5i-u along with everything else in this corner */
+    margin:calc(12 * var(--n5i-u)) calc(25 * var(--n5i-u)) calc(12 * var(--n5i-u)) 0;
+  }
+
+  .n5i-socials{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    /* each icon is a 23px disc pill (4px of disc around the 15px glyph);
+       gap/margins are the reference's 12px / 2px 10px minus that 4px, so
+       the glyphs sit exactly where alignment04.png put them and the rule +
+       Login below do not move — all scaled by --n5i-u together */
+    gap:calc(4 * var(--n5i-u));
+    margin:calc(-2 * var(--n5i-u)) calc(6 * var(--n5i-u)) 0 0;
+  }
+  .pill.ico{
+    padding:0;
+    width:calc(23 * var(--n5i-u));
+    height:calc(23 * var(--n5i-u));
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+  }
+  .pill.ico .pill-l{ display:inline-flex; opacity:.7; }
+  .pill.ico .pill-c{ border-radius:50%; }
+  .pill.ico:hover .pill-l, .pill.ico:focus-visible .pill-l{ opacity:1; }
+
+  @media (prefers-reduced-motion: reduce){
+    .corner{
+      opacity:1;
+      transform:none;
+      transition:none;
+    }
+  }
+
+  /* Below 768px (Eric, 2026-09-08; breakpoint moved 700->768 on 2026-09-09):
+     the hero stage stays the WHOLE viewport behind transparent header and
+     clock blocks — no in-flow stage box to clip blades — and the clock +
+     links are pushed to the bottom so the page fits 390x844 without
+     scrolling. Flow order: wordmark -> (hero behind) -> clock/About ->
+     links. hero.js lifts the object into the band between the header and
+     the clock block (PORTRAIT_LIFT_FRAC) — its own `isSmall` threshold
+     (w <= 767) must stay in lockstep with this media query. */
+  @media (max-width: 767px){
+    html,body{ overflow:auto; height:auto; }
+    body{
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+      min-height:100dvh;
+    }
+    /* relative, not static, so the corners' z-index:2 still stacks them
+       above the absolute stage — text is never painted over by a blade */
+    .corner{ position:relative; }
+    .stage{
+      position:absolute;
+      inset:0;
+      overflow:visible;
+      pointer-events:none;
+    }
+    .tl{ order:1; }
+    .tr{ order:2; }
+    /* .bl/.n5i-clocksentence's desktop max-width is a self-limiting min()
+       that reserves horizontal room for .br sitting BESIDE it (same row,
+       bottom of the viewport) — see design-system.md "Clock readout". Below
+       this breakpoint .br is stacked BELOW .bl in flow (order:5 vs 4), not
+       beside it, so that reservation is meaningless here and, worse, still
+       applies: at 390px wide it collapsed the cluster to ~246px/~214px
+       (sentence), wrapping the ~130-char sentence to 9-10 lines and
+       squeezing hero.js's phone band. Caught by Playwright at 390, not by
+       inspection. Explicitly uncapped on phones — same as before this
+       measure existed. */
+    .bl{ order:4; margin-top:auto; max-width:none; }
+    .n5i-clocksentence{ max-width:none; } /* same reasoning as .bl above; this rule is same-specificity as instruments.css's but wins on cascade order (inline <style> loads after the linked stylesheet) */
+    /* instruments.css positions .n5i-readouts absolute, top:0, left:272u —
+       tuned to sit above "Infrastructure" on line 1 of the DESKTOP wrap.
+       Below 768px .n5i-clocksentence is uncapped (line above) so line 1 is
+       just "DevOps &" (see design-system.md / the 2026-09-09 measurements)
+       — "Infrastructure" wraps to its own line at the left margin, nowhere
+       near x=272u, so the desktop anchor points at empty space beside the
+       clock instead of at any word.
+       First attempt re-anchored to the PARAGRAPH's own bottom edge
+       (top:100%) — wrong: .n5i-clocksentence is still position:relative
+       here, so its own auto height (driven only by its in-flow text) is
+       what "100%" measures against, and an absolutely positioned child
+       never grows that height back to include itself. The result was 5px
+       of readouts hanging past .corner.bl's own (also auto-height) bottom
+       edge, into the gap above .br's nav — confirmed by measuring
+       blRect.bottom - readoutsRect.bottom = -5 at 390px. Anchoring to the
+       PARAGRAPH can't work at all on this breakpoint: whatever the
+       paragraph's real height turns out to be (it varies: 5 lines here,
+       could be more with a narrower phone), the readouts are outside it
+       by construction.
+       Fix: fall through to .corner.bl itself as the containing block
+       instead (position:static here undoes .n5i-clocksentence's own
+       position:relative; .corner already has position:relative one rule
+       up) and pin bottom/right to its PADDING edge — inset-y/inset-x get
+       us from that edge back to the same coordinate space every other
+       in-flow child (tz-label included) is drawn in, so this sits beside
+       tz-label, inside the box, however tall the paragraph ends up. */
+    .n5i-clocksentence{ position:static; }
+    .n5i-readouts{ top:auto; left:auto; right:var(--n5i-inset-x, 12px); bottom:var(--n5i-inset-y, 12px); }
+    .br{ order:5; }
+    /* Links: all five pills on ONE centred row (About Projects Blog EMAIL
+       Login — tighter 8px pill padding so they fit 366px), the divider rule
+       dropped, the icon row centred underneath. */
+    .br nav{
+      flex-direction:row;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:center;
+      gap:4px;
+    }
+    /* five pills must fit one 366px row even with a wider fallback font or
+       a large system font: tighter padding + gap, labels never wrap */
+    .br nav > .pill:not(.ico){ padding:3px 6px; flex:0 1 auto; min-width:0; }
+    .br nav > .pill .pill-l{ white-space:nowrap; }
+    .br nav{ gap:2px; }
+    .n5i-nav-rule{ display:none; }
+    .n5i-socials{
+      order:10;
+      flex-basis:100%;
+      justify-content:center;
+      gap:4px;
+      margin:8px 0 0;
+    }
+  }
+
+  .role{ white-space:nowrap; }
+  @media (max-width: 767px){ .tl{ align-self:flex-start; } }
+</style>
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
 
-<div class="scene-bg" id="scene-bg" aria-hidden="true">
-  <i class="stars s1"></i>
-  <i class="stars s2"></i>
-  <i class="nebula"></i>
-  <i class="about-orb"><b class="orb-globe"><u class="orb-map"></u><u class="orb-clouds"></u><u class="orb-shade"></u></b></i>
-  <canvas class="orb-net" id="orb-net"></canvas>
-  <svg class="about-rack" viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="6" y="6" width="188" height="268" rx="12" stroke="#cfcbdb" stroke-opacity=".55" stroke-width="2" fill="#0b0a10" fill-opacity=".9"/>
-    <rect x="18" y="18" width="164" height="244" rx="6" stroke="#cfcbdb" stroke-opacity=".18" stroke-width="1"/>
-    <g>
-      <rect x="26" y="26" width="148" height="30" rx="4" stroke="#cfcbdb" stroke-opacity=".45" fill="#ffffff" fill-opacity=".03"/>
-      <circle class="led" cx="40" cy="41" r="3" fill="#e9e6f2"/>
-      <circle class="led" cx="52" cy="41" r="3" fill="#b9b3cc" style="animation-delay:-1.3s"/>
-      <path d="M70 35h92M70 41h92M70 47h92" stroke="#cfcbdb" stroke-opacity=".16"/>
-    </g>
-    <g>
-      <rect x="26" y="66" width="148" height="30" rx="4" stroke="#cfcbdb" stroke-opacity=".45" fill="#ffffff" fill-opacity=".03"/>
-      <circle class="led" cx="40" cy="81" r="3" fill="#e9e6f2" style="animation-delay:-.7s"/>
-      <rect x="66" y="74" width="14" height="14" rx="2" stroke="#cfcbdb" stroke-opacity=".35"/>
-      <rect x="86" y="74" width="14" height="14" rx="2" stroke="#cfcbdb" stroke-opacity=".35"/>
-      <rect x="106" y="74" width="14" height="14" rx="2" stroke="#cfcbdb" stroke-opacity=".35"/>
-      <rect x="126" y="74" width="14" height="14" rx="2" stroke="#cfcbdb" stroke-opacity=".35"/>
-      <rect x="146" y="74" width="14" height="14" rx="2" stroke="#cfcbdb" stroke-opacity=".35"/>
-    </g>
-    <g>
-      <rect x="26" y="106" width="148" height="30" rx="4" stroke="#cfcbdb" stroke-opacity=".45" fill="#ffffff" fill-opacity=".03"/>
-      <circle class="led" cx="40" cy="121" r="3" fill="#e9e6f2" style="animation-delay:-2.1s"/>
-      <circle class="led" cx="52" cy="121" r="3" fill="#b9b3cc" style="animation-delay:-.4s"/>
-      <path d="M70 115h92M70 121h92M70 127h92" stroke="#cfcbdb" stroke-opacity=".16"/>
-    </g>
-    <g>
-      <rect x="26" y="146" width="148" height="30" rx="4" stroke="#cfcbdb" stroke-opacity=".45" fill="#ffffff" fill-opacity=".03"/>
-      <circle class="led" cx="40" cy="161" r="3" fill="#e9e6f2" style="animation-delay:-1.8s"/>
-      <path d="M70 155h92M70 161h92M70 167h92" stroke="#cfcbdb" stroke-opacity=".16"/>
-    </g>
-    <g>
-      <rect x="26" y="186" width="148" height="30" rx="4" stroke="#cfcbdb" stroke-opacity=".45" fill="#ffffff" fill-opacity=".03"/>
-      <circle class="led" cx="40" cy="201" r="3" fill="#e9e6f2" style="animation-delay:-.9s"/>
-      <circle class="led" cx="52" cy="201" r="3" fill="#b9b3cc" style="animation-delay:-2.4s"/>
-      <rect x="66" y="194" width="14" height="14" rx="2" stroke="#cfcbdb" stroke-opacity=".35"/>
-      <rect x="86" y="194" width="14" height="14" rx="2" stroke="#cfcbdb" stroke-opacity=".35"/>
-      <rect x="106" y="194" width="14" height="14" rx="2" stroke="#cfcbdb" stroke-opacity=".35"/>
-      <rect x="126" y="194" width="14" height="14" rx="2" stroke="#cfcbdb" stroke-opacity=".35"/>
-    </g>
-    <g>
-      <rect x="26" y="226" width="148" height="30" rx="4" stroke="#cfcbdb" stroke-opacity=".45" fill="#ffffff" fill-opacity=".03"/>
-      <circle class="led" cx="40" cy="241" r="3" fill="#e9e6f2" style="animation-delay:-1.5s"/>
-      <path d="M70 235h92M70 241h92M70 247h92" stroke="#cfcbdb" stroke-opacity=".16"/>
-    </g>
-  </svg>
-</div>
+  <div class="stage" id="hero-stage"></div>
 
-<header class="nav" aria-label="Primary">
-  <div class="nav-in">
-    <a class="brand" href="#top" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
-    <nav aria-label="Sections" style="display:contents">
-      <ul class="nav-links">
-        <li><a href="#about">About</a></li>
-        <li><a href="#portfolio">Portfolio</a></li>
-        <li><a href="#blog">Blog</a></li>
-      </ul>
+  <div class="corner tl n5i-cluster" id="c-tl">
+    <a class="n5i-mark n5i-lockup" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/logo-rest.png" alt="Eric Li"><img class="lk-hover" src="/assets/logo-hover.png" alt="" aria-hidden="true"><canvas class="lk-canvas" aria-hidden="true"></canvas><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/logo-entry.webm" type="video/webm"><source src="/assets/logo-entry.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverout" muted playsinline preload="auto"><source src="/assets/logo-exit.webm" type="video/webm"><source src="/assets/logo-exit.mp4" type="video/mp4"></video></a><script>(function(){var m=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;var a=document.currentScript.previousElementSibling;if(!m&&a&&a.classList.contains("n5i-lockup"))a.classList.add("lk-armed")})()</script>
+    <span class="role">DevOps &amp; Infrastructure</span>
+  </div>
+
+  <div class="corner bl n5i-cluster" id="c-bl">
+    <span class="n5i-label n5i-dim">Local time (GMT+8:00)</span>
+    <p class="n5i-clocksentence"><span class="n5i-clock-inline" data-n5i="clock">12:00 AM</span><!-- n5i-readouts moved in-flow-adjacent here (2026-09-09) purely so it can use this <p> as its position:absolute containing block — see instruments.css .n5i-readouts/.n5i-clocksentence. A <span>, not a <div>: a <p> can only hold phrasing content, and a block child here would silently auto-close the paragraph mid-sentence, orphaning everything after it outside the styled <p>. aria-hidden because it now sits mid-sentence in DOM order, same reasoning as .n5i-ap-stack above. --><span class="n5i-readouts" aria-hidden="true">
+      <span class="n5i-dim-readout" data-n5i="dim"></span>
+      <span class="n5i-dim-readout n5i-fps-readout" data-n5i="fps"></span>
+    </span> DevOps &amp; Infrastructure enthusiast who designs, deploys, and maintains real infrastructure. <span class="n5i-dim">Open to roles and projects.</span></p>
+    <span class="n5i-label n5i-dim n5i-tz-label">Perth, WA → Australia</span>
+  </div>
+
+  <div class="corner br" id="c-br">
+    <nav aria-label="Links">
+      <a class="pill" href="/about/"><span class="pill-l">About ↗</span><span class="pill-c" aria-hidden="true">About ↗</span></a>
+      <a class="pill" href="/portfolio/"><span class="pill-l">Projects ↗</span><span class="pill-c" aria-hidden="true">Projects ↗</span></a>
+      <a class="pill" href="/blog/"><span class="pill-l">Blog ↗</span><span class="pill-c" aria-hidden="true">Blog ↗</span></a>
+      <a class="pill" href="mailto:helloworld@n5hq.me"><span class="pill-l">EMAIL ↗</span><span class="pill-c" aria-hidden="true">EMAIL ↗</span></a>
+      <div class="n5i-socials" aria-label="Social links">
+        <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="GitHub"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span></a>
+        <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="LinkedIn"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span></a>
+        <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="Instagram"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span></a>
+      </div>
+      <span class="n5i-nav-rule" aria-hidden="true"></span>
+      <a class="pill" href="https://portal.n5hq.me"><span class="pill-l">Login →</span><span class="pill-c" aria-hidden="true">Login →</span></a>
     </nav>
-    <a class="btn btn-violet nav-cta" href="#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
-    <details class="mnav">
-      <summary aria-label="Menu">
-        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-      </summary>
-      <nav class="mnav-panel" aria-label="Menu">
-        <a href="#about">About</a>
-        <a href="#portfolio">Portfolio</a>
-        <a href="#blog">Blog</a>
-        <a href="#contact">Contact</a>
-      </nav>
-    </details>
-  </div>
-</header>
-
-<main id="main">
-<!-- ================= HERO ================= -->
-<section class="hero" id="top" aria-label="Introduction">
-  <div class="stage" id="stage">
-    <canvas class="constellation" id="constellation" aria-hidden="true"></canvas>
-    <div class="hero-in">
-      <h1 class="hero-display rv on rv-d1"><span class="solid">DevOps</span><br><span class="line">&amp;&nbsp;Infrastructure</span></h1>
-      <p class="hero-sub rv on rv-d2">Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
-      <div class="hero-cta rv on rv-d3">
-        <a class="btn btn-ghost" href="#portfolio">Projects <span class="arr" aria-hidden="true">↗</span></a>
-        <a class="btn btn-violet" href="#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
-      </div>
-    </div>
   </div>
 
-  <!-- dashboard mockup -->
-  <div class="mock rv on rv-d3" aria-hidden="true">
-    <div class="mock-frame">
-      <div class="mock-bar">
-        <span class="mock-dots"><i></i><i></i><i></i></span>
-        <span class="mock-url">status.n5hq.me</span>
-        <span style="width:2.6rem"></span>
-      </div>
-      <div class="mock-body">
-        <div class="mock-side">
-          <span class="s-title">Lab</span>
-          <span class="s-item on"><i></i>Status</span>
-          <span class="s-item"><i></i>Photos</span>
-          <span class="s-item off"><i></i>Containers</span>
-          <span class="s-title" style="margin-top:.6rem">Network</span>
-          <span class="s-item"><i></i>Management</span>
-          <span class="s-item"><i></i>Home</span>
-          <span class="s-item"><i></i>Guest</span>
-          <span class="s-item"><i></i>IoT</span>
-          <span class="s-item"><i></i>Cameras</span>
-        </div>
-        <div class="mock-main">
-          <div class="mock-stats">
-            <div class="mtile" data-stat="stacks"><b>5</b><span>Stacks</span></div>
-            <div class="mtile" data-stat="containers"><b>21</b><span>Containers</span></div>
-            <div class="mtile" data-stat="images"><b>61</b><span>Images</span></div>
-            <div class="mtile" data-stat="volumes"><b>5</b><span>Volumes</span></div>
-            <div class="mtile" data-stat="networks"><b>10</b><span>Networks</span></div>
-          </div>
-          <div class="mock-chart">
-            <div class="c-head"><span>System health &amp; uptime</span><span class="c-live">Live</span></div>
-            <svg viewBox="0 0 720 150" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="af" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stop-color="oklch(56% 0.235 290)" stop-opacity=".5"/>
-                  <stop offset="1" stop-color="oklch(56% 0.235 290)" stop-opacity="0"/>
-                </linearGradient>
-              </defs>
-              <line class="grid-l" x1="0" y1="38" x2="720" y2="38"/>
-              <line class="grid-l" x1="0" y1="76" x2="720" y2="76"/>
-              <line class="grid-l" x1="0" y1="114" x2="720" y2="114"/>
-              <path class="area-fill" d="M0,96 C60,88 90,62 150,66 C210,70 240,98 300,90 C360,82 390,40 450,46 C510,52 540,84 600,72 C660,60 690,34 720,30 L720,150 L0,150 Z"/>
-              <path class="area-line" d="M0,96 C60,88 90,62 150,66 C210,70 240,98 300,90 C360,82 390,40 450,46 C510,52 540,84 600,72 C660,60 690,34 720,30"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= LIGHT INTERLUDE: statement + stack marquee ================= -->
-<section class="band-lite" aria-label="Technology stack">
-  <div class="wrap">
-    <p class="statement rv">From web applications to network infrastructure — networks deployed across homes and small businesses up to <span class="vio">1,000&nbsp;m²</span>.</p>
-  </div>
-  <div class="marq rv" aria-hidden="true">
-    <div class="marq-track">
-      <span><img src="/assets/logos/docker.svg" alt="" width="20" height="20" loading="lazy">Docker</span><span><img src="/assets/logos/unifi.svg" alt="" width="20" height="20" loading="lazy">UniFi</span><span><img src="/assets/logos/linux.svg" alt="" width="20" height="20" loading="lazy">Linux</span><span><img src="/assets/logos/prometheus.svg" alt="" width="20" height="20" loading="lazy">Prometheus</span><span><img src="/assets/logos/grafana.svg" alt="" width="20" height="20" loading="lazy">Grafana</span><span><img src="/assets/logos/portainer.svg" alt="" width="20" height="20" loading="lazy">Portainer</span><span><img src="/assets/logos/immich.svg" alt="" width="20" height="20" loading="lazy">Immich</span><span><img src="/assets/logos/homeassistant.svg" alt="" width="20" height="20" loading="lazy">Home Assistant</span><span><img src="/assets/logos/postgresql.svg" alt="" width="20" height="20" loading="lazy">PostgreSQL</span><span><img src="/assets/logos/loki.svg" alt="" width="20" height="20" loading="lazy">Loki</span><span><img src="/assets/logos/tailscale.svg" alt="" width="20" height="20" loading="lazy">Tailscale</span><span><img src="/assets/logos/protonpass.svg" alt="" width="20" height="20" loading="lazy">Proton Pass</span><span><img src="/assets/logos/radarr.svg" alt="" width="20" height="20" loading="lazy">Radarr</span><span><img src="/assets/logos/sonarr.svg" alt="" width="20" height="20" loading="lazy">Sonarr</span><span><img src="/assets/logos/prowlarr.svg" alt="" width="20" height="20" loading="lazy">Prowlarr</span><span><img src="/assets/logos/proxmox.svg" alt="" width="20" height="20" loading="lazy">Proxmox</span><span><img src="/assets/logos/forgejo.svg" alt="" width="20" height="20" loading="lazy">Forgejo</span><span><img src="/assets/logos/n8n.svg" alt="" width="20" height="20" loading="lazy">n8n</span><span><img src="/assets/logos/uptimekuma.svg" alt="" width="20" height="20" loading="lazy">Uptime Kuma</span><span><img src="/assets/logos/cloudflare.svg" alt="" width="20" height="20" loading="lazy">Cloudflare</span><span><img src="/assets/logos/proxmoxbackup.svg" alt="" width="20" height="20" loading="lazy">Proxmox Backup</span><span><img src="/assets/logos/overseerr.svg" alt="" width="20" height="20" loading="lazy">Overseerr</span><span><img src="/assets/logos/tautulli.svg" alt="" width="20" height="20" loading="lazy">Tautulli</span><span><img src="/assets/logos/bazarr.svg" alt="" width="20" height="20" loading="lazy">Bazarr</span><span><img src="/assets/logos/redis.svg" alt="" width="20" height="20" loading="lazy">Redis</span><span><img src="/assets/logos/stirlingpdf.svg" alt="" width="20" height="20" loading="lazy">Stirling-PDF</span>
-      <span><img src="/assets/logos/docker.svg" alt="" width="20" height="20" loading="lazy">Docker</span><span><img src="/assets/logos/unifi.svg" alt="" width="20" height="20" loading="lazy">UniFi</span><span><img src="/assets/logos/linux.svg" alt="" width="20" height="20" loading="lazy">Linux</span><span><img src="/assets/logos/prometheus.svg" alt="" width="20" height="20" loading="lazy">Prometheus</span><span><img src="/assets/logos/grafana.svg" alt="" width="20" height="20" loading="lazy">Grafana</span><span><img src="/assets/logos/portainer.svg" alt="" width="20" height="20" loading="lazy">Portainer</span><span><img src="/assets/logos/immich.svg" alt="" width="20" height="20" loading="lazy">Immich</span><span><img src="/assets/logos/homeassistant.svg" alt="" width="20" height="20" loading="lazy">Home Assistant</span><span><img src="/assets/logos/postgresql.svg" alt="" width="20" height="20" loading="lazy">PostgreSQL</span><span><img src="/assets/logos/loki.svg" alt="" width="20" height="20" loading="lazy">Loki</span><span><img src="/assets/logos/tailscale.svg" alt="" width="20" height="20" loading="lazy">Tailscale</span><span><img src="/assets/logos/protonpass.svg" alt="" width="20" height="20" loading="lazy">Proton Pass</span><span><img src="/assets/logos/radarr.svg" alt="" width="20" height="20" loading="lazy">Radarr</span><span><img src="/assets/logos/sonarr.svg" alt="" width="20" height="20" loading="lazy">Sonarr</span><span><img src="/assets/logos/prowlarr.svg" alt="" width="20" height="20" loading="lazy">Prowlarr</span><span><img src="/assets/logos/proxmox.svg" alt="" width="20" height="20" loading="lazy">Proxmox</span><span><img src="/assets/logos/forgejo.svg" alt="" width="20" height="20" loading="lazy">Forgejo</span><span><img src="/assets/logos/n8n.svg" alt="" width="20" height="20" loading="lazy">n8n</span><span><img src="/assets/logos/uptimekuma.svg" alt="" width="20" height="20" loading="lazy">Uptime Kuma</span><span><img src="/assets/logos/cloudflare.svg" alt="" width="20" height="20" loading="lazy">Cloudflare</span><span><img src="/assets/logos/proxmoxbackup.svg" alt="" width="20" height="20" loading="lazy">Proxmox Backup</span><span><img src="/assets/logos/overseerr.svg" alt="" width="20" height="20" loading="lazy">Overseerr</span><span><img src="/assets/logos/tautulli.svg" alt="" width="20" height="20" loading="lazy">Tautulli</span><span><img src="/assets/logos/bazarr.svg" alt="" width="20" height="20" loading="lazy">Bazarr</span><span><img src="/assets/logos/redis.svg" alt="" width="20" height="20" loading="lazy">Redis</span><span><img src="/assets/logos/stirlingpdf.svg" alt="" width="20" height="20" loading="lazy">Stirling-PDF</span>
-    </div>
-  </div>
-</section>
-
-<!-- ================= ABOUT / TRUSTED ================= -->
-<section class="band about" id="about" aria-labelledby="about-t">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <span class="chip">About Me</span>
-      <h2 id="about-t">Eric Li</h2>
-    </div>
-    <div class="about-in">
-      <p class="about-copy rv">I design, deploy, and maintain real infrastructure. My homelab runs five isolated VLANs, 33 containerised services on a three-node Proxmox VE cluster with 2-of-3 quorum, and a full monitoring stack 24/7, with guests spread across all three nodes so one machine failing is not an outage — every piece built and documented from scratch. I'm moving into tech full-time by <span class="vio">2027</span>, focused on <span class="vio">networking and data science</span>, and I'd rather prove it with systems that run than a job title I don't hold yet.</p>
-      <div class="about-side">
-        <div class="astat rv"><b id="stat-projects">12</b><span><span class="t">Projects</span><p>Portfolio builds plus four production networks deployed</p></span></div>
-        <div class="astat rv rv-d1"><b>4</b><span><span class="t">Certifications</span><p>Industry credentials, in progress</p></span></div>
-        <div class="astat rv rv-d2"><b>3</b><span><span class="t">Years Hands-On</span><p>Self-directed, building and breaking real systems</p></span></div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- ================= PORTFOLIO ================= -->
-<section class="band" id="portfolio" aria-labelledby="folio-t">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <span class="chip">Portfolio Showcase</span>
-      <h2 id="folio-t">Work that <span class="vio">ships and runs.</span></h2>
-      <p class="sub">Real projects across web, mobile, and network infrastructure — each one solving an actual problem, not following a tutorial.</p>
-      <div class="pilltabs">
-        <a class="ptab ptab-green" href="#grp-completed">Completed</a>
-        <a class="ptab ptab-amber" href="#grp-in-progress">In Progress</a>
-        <a class="ptab ptab-violet" href="#grp-upcoming">Upcoming</a>
-      </div>
-    </div>
-
-    <!-- completed -->
-    <div class="grouplbl rv" id="grp-completed">
-      <a class="ptab ptab-green" href="/portfolio/completed/" style="text-decoration:none">Completed</a>
-      <p>Shipped projects that are live and running — battle-tested in the real world.</p>
-    </div>
-    <div class="cards cards-2 alt">
-      <article class="pcard rv">
-        <span class="num">01</span>
-        <h3>HomeLab <span class="suptag">Maintained</span></h3>
-        <p class="desc">Production-grade self-hosted infrastructure running 24/7 — networking, compute, storage, monitoring, smart home, and a full Linux ISO stack, all built from scratch.</p>
-        <details class="more">
-          <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
-          <div class="tags">
-            <span class="tag">UniFi</span><span class="tag">Docker</span><span class="tag">Linux</span><span class="tag">Grafana</span><span class="tag">Home Assistant</span><span class="tag">VLANs</span><span class="tag">Proxmox</span>
-          </div>
-          <dl class="facts">
-            <div class="frow"><dt>Networking</dt><dd>UniFi Cloud Gateway Fiber with five isolated VLANs, inter-VLAN firewall policies, split-horizon DNS and DHCP from the gateway, and 50+ connected clients across bonded 2.5GbE links</dd></div>
-            <div class="frow"><dt>Containers &amp; Services</dt><dd>33 containerised services on a three-node Proxmox VE cluster of Dell OptiPlex nodes — Immich, Grafana, Prometheus, Loki, Forgejo, n8n and more, managed via Portainer</dd></div>
-            <div class="frow"><dt>Observability</dt><dd>Prometheus metrics, Grafana dashboards, and Loki log aggregation — custom overview dashboard built via the Grafana API</dd></div>
-            <div class="frow"><dt>Virtualisation &amp; Redundancy</dt><dd>A three-node Proxmox VE cluster with 2-of-3 quorum — the main server, Home Assistant, and LXC guests for monitoring, ingress and staging spread across all three nodes, so one machine failing is not an outage</dd></div>
-            <div class="frow"><dt>Automated Ops</dt><dd>Nightly update pipeline that reads changelogs, judges risk, and requests approval over Discord; restore-verified backups; self-hosted Forgejo mirroring to GitHub</dd></div>
-            <div class="frow"><dt>Smart Home</dt><dd>Matter and Thread over Matter for local device control, HomeKit, Philips Hue, and Meross unified through Home Assistant</dd></div>
-          </dl>
-          <a class="feature-link" href="/portfolio/homelab/">View full details →</a>
-        </details>
-      </article>
-      <article class="pcard rv rv-d1">
-        <span class="num">02</span>
-        <h3>Disclaude Sesh <span class="suptag">Maintained</span></h3>
-        <p class="desc">An open-source Discord bridge for running Claude Code on a headless server — start, drive, and supervise AI sessions from a phone, published with full docs and versioned releases.</p>
-        <details class="more">
-          <summary><span class="btnrow"><span class="more-btn">Details</span><a class="ghchip" href="https://github.com/aerwk/disclaude-sesh" target="_blank" rel="noopener noreferrer">GitHub <span class="arr" aria-hidden="true">↗</span></a></span><span class="chev" aria-hidden="true">▾</span></summary>
-          <div class="tags">
-            <span class="tag">GitHub</span><span class="tag">Open Source</span><span class="tag">Discord</span><span class="tag">TypeScript</span><span class="tag">Bun</span><span class="tag">systemd</span><span class="tag">Claude Code</span>
-          </div>
-          <dl class="facts">
-            <div class="frow"><dt>The gap</dt><dd>Claude Code's remote interfaces can only attach to a session that's already running — on a headless server there's no native way to start one remotely. This closes that gap from Discord</dd></div>
-            <div class="frow"><dt>Architecture</dt><dd>Two bots with deliberately split jobs: the official channel plugin carries conversation and tool-approval buttons; a minimal supervisor maps four commands to systemd — no shell passthrough, zero inbound ports</dd></div>
-            <div class="frow"><dt>Resilience</dt><dd>systemd user units and linger survive reboots, tmux survives dropped connections, a restart loop survives crashes — proven with an unattended reboot test before release</dd></div>
-            <div class="frow"><dt>Shipped</dt><dd>MIT-licensed with semver releases, a full manual install tutorial plus an AI-assisted install path, and an auto-repatcher that keeps an optional plugin patch alive across updates</dd></div>
-          </dl>
-          <a class="feature-link" href="/portfolio/disclaude-sesh/">View full details →</a>
-        </details>
-      </article>
-      <article class="pcard rv">
-        <span class="num">03</span>
-        <h3>Stream Deck Usage Meter <span class="suptag">Maintained</span></h3>
-        <p class="desc">A fork of an open-source Stream Deck plugin that reports live Claude usage limits and local token and cost totals — extended with dial support, a vendored dependency, and a release gate.</p>
-        <details class="more">
-          <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">&#9662;</span></summary>
-          <div class="tags">
-            <span class="tag">TypeScript</span><span class="tag">Node.js</span><span class="tag">Stream Deck SDK</span><span class="tag">CI</span>
-          </div>
-          <dl class="facts">
-            <div class="frow"><dt>Dial support</dt><dd>Stream Deck+ encoders, which the original does not handle — rotate cycles the metric, push forces a refresh, a touch tap advances one metric, and the choice persists per dial</dd></div>
-            <div class="frow"><dt>Supply chain</dt><dd>The settings panel loaded a component library from a third-party domain at runtime, with no integrity check, into a view showing account details. That library is now vendored and audited in-tree</dd></div>
-            <div class="frow"><dt>Upstream bug</dt><dd>The original's per-key profile feature could not work: an optional chain referenced a property that does not exist in the pinned SDK version, so it silently returned instead of sending, and the dropdown never received its options</dd></div>
-            <div class="frow"><dt>Release gate</dt><dd>Typecheck, tests, a reproducible-bundle check and manifest validation run before any push — each one proven able to fail before being trusted to pass</dd></div>
-          </dl>
-        </details>
-      </article>
-      <article class="pcard rv rv-d1">
-        <span class="num">04</span>
-        <h3>FileIt <span class="suptag">Maintained</span></h3>
-        <p class="desc">A Windows tool that keeps the Downloads folder sorted on its own — files land, get classified by type, and move to where they belong without being touched.</p>
-        <details class="more">
-          <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">&#9662;</span></summary>
-          <div class="tags">
-            <span class="tag">Python</span><span class="tag">Windows</span><span class="tag">Automation</span>
-          </div>
-          <dl class="facts">
-            <div class="frow"><dt>Shipped</dt><dd>v1.1.0 released and frozen, with the next revision in progress alongside it rather than on top of it</dd></div>
-            <div class="frow"><dt>Release scheme</dt><dd>One folder per version, released versions immutable — so a shipped build cannot be edited by accident while the next one is being worked on</dd></div>
-            <div class="frow"><dt>Install</dt><dd>A single generated installer script with everything embedded, rebuilt from source by a build step so the distributed file is never hand-edited</dd></div>
-          </dl>
-        </details>
-      </article>
-    </div>
-
-    <!-- in progress -->
-    <div class="grouplbl rv" id="grp-in-progress">
-      <a class="ptab ptab-amber" href="/portfolio/in-progress/" style="text-decoration:none">In Progress</a>
-      <p>Active projects currently being developed and refined.</p>
-    </div>
-    <div class="cards cards-2">
-      <article class="pcard rv">
-        <span class="num">05</span>
-        <h3>Family Home Dashboard</h3>
-        <p class="desc">A wall-mounted touchscreen that keeps the household in sync — shared calendar, live weather, and event countdowns at a glance.</p>
-        <details class="more">
-          <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
-          <div class="tags">
-            <span class="tag">Raspberry Pi 5</span><span class="tag">Docker</span><span class="tag">Home Assistant</span><span class="tag">Touchscreen</span><span class="tag">Calendar Sync</span><span class="tag">Weather API</span>
-          </div>
-          <dl class="facts">
-            <div class="frow"><dt>Hardware</dt><dd>Raspberry Pi 5 running the dashboard as a containerised service, with a touchscreen display for interaction</dd></div>
-            <div class="frow"><dt>Architecture</dt><dd>Containerised deployment allows Home Assistant to run alongside the dashboard on the same device — enabling smart device control directly from the screen</dd></div>
-            <div class="frow"><dt>Integrations</dt><dd>Custom calendar sync keeping shared family events up to date; weather API for live local forecast data</dd></div>
-          </dl>
-        </details>
-      </article>
-      <article class="pcard rv rv-d1">
-        <span class="num">06</span>
-        <h3>Caddy Rating App</h3>
-        <p class="desc">A mobile app for submitting and tracking caddy ratings, with 5-star submissions syncing live to a provider dashboard.</p>
-        <details class="more">
-          <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
-          <div class="tags">
-            <span class="tag">React Native</span><span class="tag">Expo</span><span class="tag">TypeScript</span><span class="tag">Firebase</span><span class="tag">Firestore</span><span class="tag">Cloud Functions</span><span class="tag">Mobile</span>
-          </div>
-          <dl class="facts">
-            <div class="frow"><dt>Frontend</dt><dd>React Native with Expo SDK 51, TypeScript, and Expo Router — tab-based navigation between a Rating screen and a Provider Dashboard</dd></div>
-            <div class="frow"><dt>Backend</dt><dd>Firebase Firestore for real-time data storage, Cloud Functions v2 for server-side logic, and EAS Build for deployment</dd></div>
-            <div class="frow"><dt>Real-Time Sync</dt><dd>Ratings submitted by clients appear instantly on the provider dashboard — no refresh required, synchronised live across all connected devices</dd></div>
-          </dl>
-        </details>
-      </article>
-      <article class="pcard rv rv-d1">
-        <span class="num">07</span>
-        <h3>Hotel IPTV System — 100+ Rooms</h3>
-        <p class="desc">In-progress overhaul of a hotel's network and TV across 100+ rooms — the headend is racked, and the first broadcast channels are already playing end to end on a test set-top box.</p>
-        <details class="more">
-          <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
-          <div class="tags">
-            <span class="tag">IPTV</span><span class="tag">VLANs</span><span class="tag">Firewall</span><span class="tag">Network Design</span><span class="tag">Docker</span><span class="tag">Automation</span><span class="tag">100+ Rooms</span>
-          </div>
-          <dl class="facts">
-            <div class="frow"><dt>Network Redesign</dt><dd>Reconfiguring the existing network to a clean VLAN and firewall architecture — a healthier, more maintainable topology across the property</dd></div>
-            <div class="frow"><dt>IPTV Headend</dt><dd>The headend server, switch, and set-top boxes are racked and powered on-site; the tuner is locked onto real broadcast channels and playing end to end on a test box, with the full 100+ room rollout still ahead</dd></div>
-            <div class="frow"><dt>Automated Recovery</dt><dd>Containerised services continuously monitor network health, troubleshoot issues automatically, and restore connectivity without manual intervention</dd></div>
-          </dl>
-        </details>
-      </article>
-    </div>
-
-    <!-- upcoming -->
-    <div class="grouplbl rv" id="grp-upcoming">
-      <a class="ptab ptab-violet" href="/portfolio/upcoming/" style="text-decoration:none">Upcoming</a>
-      <p>Projects that are scoped, planned, and queued up — real work coming down the line.</p>
-    </div>
-    <div class="cards cards-2 alt">
-      <article class="pcard rv">
-        <span class="num">08</span>
-        <h3>Multi-Site Network Unification</h3>
-        <p class="desc">Three separate sites joined into one network so remote devices feel local, with a unified camera network and consistent cross-site access.</p>
-        <details class="more">
-          <summary><span class="more-btn">Details</span><span class="chev" aria-hidden="true">▾</span></summary>
-          <div class="tags">
-            <span class="tag">Multi-Site</span><span class="tag">Network Design</span><span class="tag">Site-to-Site</span><span class="tag">Surveillance</span><span class="tag">VLANs</span><span class="tag">Routing</span>
-          </div>
-          <dl class="facts">
-            <div class="frow"><dt>Site Unification</dt><dd>Three separate physical locations operating as a single logical network — transparent "local" access to devices regardless of site</dd></div>
-            <div class="frow"><dt>Camera Network</dt><dd>A unified surveillance camera network spanning all three sites, accessible and manageable from a single interface</dd></div>
-            <div class="frow"><dt>Cross-Site Access</dt><dd>Users on any site can reach printers, servers, and devices on any other site without VPN friction — same network, different locations</dd></div>
-          </dl>
-        </details>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ================= JOURNAL ================= -->
-<section class="band" id="blog" aria-labelledby="blog-t">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <span class="chip">Blog</span>
-      <h2 id="blog-t">Notes from <span class="vio">the journey.</span></h2>
-      <p class="sub">Infrastructure, learning, and building in public.</p>
-    </div>
-    <ul class="posts">
-      <li><a class="postcard rv" href="/blog/posts/2026-09-23.html">
-        <span class="postmeta"><span class="cat">Homelab</span><span>2026-09-23</span></span>
-        <h3>A Travel Router Rebuild, a Real TV Signal, and a Wrong Netmask</h3>
-        <p>A travel router got rebuilt overnight into a Tailscale subnet router for a hotel client&#x27;s isolated IPTV network, and by afternoon a tuner was locked onto real Perth free-to-air channels. A two-hour outage chase that followed traced back to a netmask I had set wrong on my own laptop.</p>
-      </a></li>
-      <li><a class="postcard rv-d1" href="/blog/posts/2026-09-22.html">
-        <span class="postmeta"><span class="cat">Homelab</span><span>2026-09-22</span></span>
-        <h3>Racking a Hotel Headend Without the Tuner, and a Nightly Job Stuck on a Three-Year Date</h3>
-        <p>A hotel client&#x27;s server, switch, and set-top boxes went into a test rack today, but the tuner stayed home, so the afternoon ran on a laptop standing in for a broadcast signal. In between, a nightly Discord alert traced back to one metadata field disagreeing with another by three years.</p>
-      </a></li>
-      <li><a class="postcard rv-d1" href="/blog/posts/2026-09-11.html">
-        <span class="postmeta"><span class="cat">Web</span><span>2026-09-11</span></span>
-        <h3>Six Rebuilds to Get a Freeze-Pane Blog Working, Then a Go-Live Held for Three Answers</h3>
-        <p>The pane-swap preview from the night before got built for real after midnight: six regenerations, a reset on what &#x27;freeze pane&#x27; actually meant, and finally working breadcrumbs. Then the go-live got stopped by its own risk list.</p>
-      </a></li>
-      <li><a class="postcard rv-d2" href="/blog/posts/2026-09-10.html">
-        <span class="postmeta"><span class="cat">Homelab</span><span>2026-09-10</span></span>
-        <h3>No Root, No Decoder, No Problem: Reading a HEIC Photo and an 84-Page PDF on a Container With Nothing Installed</h3>
-        <p>A new client engagement arrived as an iPhone photo set and a vendor PDF, and this container could read neither: no HEIC decoder, no PDF renderer, no root to install one. Two dependency-free tools fixed that.</p>
-      </a></li>
-      <li><a class="postcard rv" href="/blog/posts/2026-09-09.html">
-        <span class="postmeta"><span class="cat">Web</span><span>2026-09-09</span></span>
-        <h3>A Day With No Journal, Reconstructed From Git and a Backfill That Fixes the Same Problem</h3>
-        <p>Twenty-four commits, four unrelated threads, and no journal entry at all for the day itself: written back from git and transcripts, which is exactly the failure mode the day&#x27;s own backfill was fixing.</p>
-      </a></li>
-      <li class="rv rv-d2"><span class="postcard postcard-cta">
-        <h3>Blog</h3>
-        <a class="btn btn-violet" href="/blog/">Read All Posts <span class="arr" aria-hidden="true">↗</span></a>
-      </span></li>
-    </ul>
-  </div>
-</section>
-
-<!-- ================= CONTACT (light CTA band) ================= -->
-<section class="band cta" id="contact" aria-labelledby="contact-t">
-  <div class="wrap">
-    <div class="rv">
-      <span class="chip">Connect With Me</span>
-      <h2 id="contact-t">Let's talk.</h2>
-      <p class="sub">Open to roles and projects in networking, infrastructure, and full-stack development. I usually reply within a day.</p>
-    </div>
-    <form class="formcard rv rv-d1" id="contact-form" action="https://formsubmit.co/2930fda2cec976e5d2abcb9207390c30" method="post">
-      <input type="hidden" name="_subject" value="New message via ericli.n5hq.me">
-      <input type="hidden" name="_next" value="https://ericli.n5hq.me/#contact">
-      <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-200vw;height:1px;width:1px;overflow:hidden">
-      <div class="field">
-        <label for="f-name">Your Name</label>
-        <input id="f-name" name="name" type="text" autocomplete="name" required>
-      </div>
-      <div class="field">
-        <label for="f-email">Your Email</label>
-        <input id="f-email" name="email" type="email" autocomplete="email" required>
-      </div>
-      <div class="field">
-        <label for="f-msg">Your Message</label>
-        <textarea id="f-msg" name="message" required></textarea>
-      </div>
-      <button class="btn btn-violet" type="submit">Send Message <span class="arr" aria-hidden="true">↗</span></button>
-      <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
-    </form>
-  </div>
-</section>
-</main>
-
-<!-- ================= FOOTER ================= -->
-<footer class="footer">
-  <div class="wrap">
-    <div class="foot-card">
-      <div class="foot-top">
-        <div class="foot-brand">
-          <a class="brand brand-foot" href="#top" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
-          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
-        <div class="foot-socials" aria-label="Social links">
-          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
-          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
-          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
-        </div>
-        </div>
-      </div>
-      <div class="foot-bottom">
-        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
-        <nav class="foot-links" aria-label="Footer">
-          <a href="#about">About</a>
-          <a href="#portfolio">Portfolio</a>
-          <a href="#blog">Blog</a>
-          <a href="#contact">Contact</a>
-        </nav>
-        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
-      </div>
-    </div>
-  </div>
-</footer>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.158.0/three.min.js"></script>
+<script src="/assets/instruments.js"></script>
+<script src="/assets/hero.js"></script>
 <script>
-(() => {
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const els = document.querySelectorAll('.rv:not(.on)');
-  if (reduce || !('IntersectionObserver' in window)) {
-    els.forEach(el => el.classList.add('on'));
-    return;
-  }
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); }
-    });
-  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
-  els.forEach(el => io.observe(el));
-})();
+(function(){
+  'use strict';
 
-(() => {
-  const links = [...document.querySelectorAll('.nav-links a[href^="#"]')];
-  if (!links.length || !('IntersectionObserver' in window)) return;
-  const map = new Map();
-  links.forEach(a => {
-    const sec = document.querySelector(a.hash);
-    if (sec) map.set(sec, a);
-  });
-  const spy = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      links.forEach(a => a.removeAttribute('aria-current'));
-      map.get(e.target)?.setAttribute('aria-current', 'true');
-    });
-  }, { rootMargin: '-35% 0px -55% 0px' });
-  map.forEach((a, sec) => spy.observe(sec));
-})();
+  var REDUCED = false;
+  try { REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+  catch (e) { REDUCED = false; }
 
-(() => {
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const cv = document.getElementById('constellation');
-  if (!cv) return;
-  const ctx = cv.getContext('2d');
-  // real services as constellation nodes — center is the lab itself
-  const NODES = [
-    {x:.50,y:.50,r:5,label:'N5HQ',hub:true},
-    {x:.16,y:.30,r:3,label:'UniFi'},   {x:.30,y:.16,r:3,label:'Docker'},
-    {x:.52,y:.12,r:3,label:'Grafana'}, {x:.72,y:.18,r:3,label:'Immich'},
-    {x:.86,y:.34,r:3,label:'Home Assistant'},
-    {x:.88,y:.62,r:3,label:'Prometheus'}, {x:.74,y:.82,r:3,label:'Loki'},
-    {x:.50,y:.88,r:3,label:'Uptime Kuma'}, {x:.26,y:.82,r:3,label:'Tailscale'},
-    {x:.12,y:.62,r:3,label:'Proxmox'}
-  ];
-  const EDGES = NODES.slice(1).map((_,i)=>[0,i+1]).concat([[1,2],[3,4],[5,6],[7,8],[9,10]]);
-  let W,H,DPR,t0=performance.now();
-  const fit = () => {
-    DPR = Math.min(devicePixelRatio||1,2);
-    W = cv.clientWidth; H = cv.clientHeight;
-    cv.width = W*DPR; cv.height = H*DPR;
-    ctx.setTransform(DPR,0,0,DPR,0,0);
-  };
-  fit(); addEventListener('resize', fit);
-  const P = n => ({x:n.x*W, y:n.y*H});
-  const draw = now => {
-    const t = (now-t0)/1000;
-    ctx.clearRect(0,0,W,H);
-    ctx.font = '10px ui-monospace,Menlo,monospace';
-    EDGES.forEach(([a,b],i) => {
-      const A=P(NODES[a]), B=P(NODES[b]);
-      ctx.strokeStyle='rgba(255,255,255,.06)'; ctx.lineWidth=1;
-      ctx.beginPath(); ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y); ctx.stroke();
-      const ph=(t*.14+i*.19)%1;                       // pulse traveling the edge
-      const px=A.x+(B.x-A.x)*ph, py=A.y+(B.y-A.y)*ph;
-      ctx.fillStyle='rgba(154,120,255,.7)';
-      ctx.beginPath(); ctx.arc(px,py,1.4,0,7); ctx.fill();
-    });
-    NODES.forEach((n,i) => {
-      const p=P(n), bob=reduce?0:Math.sin(t*.7+i*1.7)*2;
-      const g=ctx.createRadialGradient(p.x,p.y+bob,0,p.x,p.y+bob,n.r*4.5);
-      g.addColorStop(0,n.hub?'rgba(154,120,255,.85)':'rgba(120,220,160,.55)');
-      g.addColorStop(1,'transparent');
-      ctx.fillStyle=g;
-      ctx.beginPath(); ctx.arc(p.x,p.y+bob,n.r*4.5,0,7); ctx.fill();
-      ctx.fillStyle=n.hub?'#cbbdf2':'#9fe8bc';
-      ctx.beginPath(); ctx.arc(p.x,p.y+bob,n.r,0,7); ctx.fill();
-      ctx.fillStyle='rgba(139,137,150,.75)';
-      ctx.textAlign = p.x>W*.66?'right':(p.x<W*.33?'left':'center');
-      ctx.fillText(n.label, p.x, p.y+bob-n.r-7);
-    });
-    if (!reduce && !document.hidden) requestAnimationFrame(draw);
-  };
-  requestAnimationFrame(draw);
-  document.addEventListener('visibilitychange', () => { if(!document.hidden && !reduce){ t0=performance.now()-2000; requestAnimationFrame(draw);} });
-})();
+  /* the top-right telemetry corner is gone from ericli.n5hq.me (it's a
+     homelab-specific instrument reserved for a future n5hq.me page) — three
+     corners now, staggered evenly over the same 0-360ms span. */
+  var corners = [
+    { el: document.getElementById('c-tl'), delay: 0 },
+    { el: document.getElementById('c-bl'), delay: 180 },
+    { el: document.getElementById('c-br'), delay: 360 }
+  ].filter(function (c) { return !!c.el; });
 
-(() => {
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const stage = document.getElementById('stage');
-  if (stage && matchMedia('(pointer:fine)').matches) {
-    let raf=0;
-    addEventListener('pointermove', e => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        stage.style.setProperty('--drift-x',(e.clientX/innerWidth).toFixed(3));
-        stage.style.setProperty('--drift-y',(e.clientY/innerHeight).toFixed(3));
-        raf=0;
-      });
-    }, {passive:true});
-  }
-  if (matchMedia('(pointer:fine)').matches) {
-    document.querySelectorAll('.pcard,.postcard,.comp,.svc').forEach(card => {
-      card.addEventListener('pointermove', e => {
-        const r = card.getBoundingClientRect();
-        card.style.setProperty('--mx', ((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
-        card.style.setProperty('--my', ((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
-      }, {passive:true});
-    });
-  }
-})();
+  /* One Web Animations API Animation per corner (transform+opacity only,
+     500ms ease-out, staggered per corner) rather than a CSS transition —
+     WAAPI gives shot tooling a deterministic, scrubbable timeline
+     (__n5RevealAt(ms) / __n5RevealPlay()), which a CSS transition can't
+     offer: a headless screenshot's own round-trip latency can land after
+     a transition has already finished, making it impossible to capture
+     mid-reveal. */
+  var revealAnims = [];
 
-(() => { // live Projects stat: portfolio cards on this page + networks deployed
-  const NETWORKS_DEPLOYED = 4;
-  const b = document.getElementById('stat-projects');
-  const cards = document.querySelectorAll('#portfolio article.pcard').length;
-  if (b && cards) b.textContent = cards + NETWORKS_DEPLOYED;
-})();
-
-(() => {
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const nums = document.querySelectorAll('.astat b');
-  if (!nums.length || reduce || !('IntersectionObserver' in window)) return;
-  const io = new IntersectionObserver(es => es.forEach(e => {
-    if (!e.isIntersecting) return;
-    io.unobserve(e.target);
-    const end = parseInt(e.target.textContent,10); if (isNaN(end)) return;
-    const t0 = performance.now();
-    const tick = now => {
-      const k = Math.min((now-t0)/1200,1), v = Math.round(end*(1-Math.pow(2,-10*k)));
-      e.target.textContent = k<1 ? v : end;
-      if (k<1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  }), {threshold:.6});
-  nums.forEach(n => io.observe(n));
-})();
-
-(() => {
-  const m = document.querySelector('.mnav');
-  if (!m) return;
-  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
-  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
-})();
-
-(() => { // external chip inside a <summary>: follow the link without toggling the card
-  document.querySelectorAll('summary .ghchip').forEach(a =>
-    a.addEventListener('click', e => e.stopPropagation()));
-})();
-
-(() => {
-  const form = document.getElementById('contact-form');
-  if (!form) return;
-  const msg = document.getElementById('form-msg');
-  const btn = form.querySelector('button[type="submit"]');
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    btn.disabled = true;
-    btn.firstChild.textContent = 'Sending... ';
-    msg.textContent = '';
-    msg.className = 'form-msg';
-    try {
-      const endpoint = form.action.replace('https://formsubmit.co/', 'https://formsubmit.co/ajax/');
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        body: new FormData(form),
-        headers: { 'Accept': 'application/json' }
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || data.success !== 'true') throw new Error(data.message || res.status);
-      msg.textContent = "Message sent successfully! I'll get back to you soon.";
-      msg.classList.add('ok');
-      form.reset();
-    } catch {
-      msg.textContent = 'Failed to send message. Please try again in a moment.';
-      msg.classList.add('err');
-    } finally {
-      btn.disabled = false;
-      btn.firstChild.textContent = 'Send Message ';
-    }
-  });
-})();
-</script>
-
-<script>
-(() => {
-  const bg = document.getElementById('scene-bg');
-  const about = document.getElementById('about');
-  if (!bg || !about) return;
-  const rack = bg.querySelector('.about-rack');
-  const orb = bg.querySelector('.about-orb');
-  const globe = bg.querySelector('.orb-globe');
-  const mapEl = bg.querySelector('.orb-map');
-  const net = document.getElementById('orb-net');
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
-  let p = 0, angle = -7, lockY = null, raf = 0;
-
-  const update = () => {
-    raf = 0;
-    const r = about.getBoundingClientRect();
-    const vh = innerHeight;
-    const start = vh;                        /* about top touches viewport bottom */
-    const end = (vh - r.height) / 2;         /* about vertically centred */
-    p = clamp((start - r.top) / Math.max(1, start - end), 0, 1);
-    bg.style.opacity = p.toFixed(3);
-    if (reduce) {
-      rack.style.transform = 'translateY(-58%) rotate(-7deg)';
-      orb.style.transform = 'translateY(-50%)';
+  function revealCorners(){
+    if (REDUCED) {
+      var k;
+      for (k = 0; k < corners.length; k++) {
+        corners[k].el.style.opacity = '1';
+        corners[k].el.style.transform = 'none';
+      }
       return;
     }
-    if (p >= 1) { if (lockY === null) lockY = scrollY; } else { lockY = null; }
-    const spin = lockY === null ? 0 : (scrollY - lockY) * 0.05;
-    angle = -720 * (1 - p) + spin - 7;
-    rack.style.transform =
-      'translateY(-58%) translateX(' + (-92 * (1 - p)).toFixed(2) + 'vw) ' +
-      'rotate(' + angle.toFixed(2) + 'deg)';
-    orb.style.transform = 'translateY(-50%) scale(' + (0.05 + 0.95 * p).toFixed(3) + ')';
-  };
-  const kick = () => { if (!raf) raf = requestAnimationFrame(update); };
-  addEventListener('scroll', kick, { passive: true });
-  addEventListener('resize', kick, { passive: true });
-  update();
+    var i;
+    for (i = 0; i < corners.length; i++) {
+      var c = corners[i];
+      var anim = c.el.animate(
+        [
+          { opacity: .15, transform: 'translateY(10px)' },
+          { opacity: 1, transform: 'none' }
+        ],
+        { duration: 500, delay: c.delay, easing: 'ease-out', fill: 'both' }
+      );
+      revealAnims.push(anim);
+    }
+  }
 
-  /* ---- capital-city lights + rack patch cables ---- */
-  if (reduce || !net) return;
-  const CITIES = [
-    ['Washington', 38.9, -77.0], ['Ottawa', 45.4, -75.7], ['Mexico City', 19.4, -99.1],
-    ['Brasilia', -15.8, -47.9], ['Buenos Aires', -34.6, -58.4], ['London', 51.5, -0.1],
-    ['Paris', 48.9, 2.4], ['Madrid', 40.4, -3.7], ['Berlin', 52.5, 13.4], ['Rome', 41.9, 12.5],
-    ['Cairo', 30.0, 31.2], ['Moscow', 55.8, 37.6], ['Riyadh', 24.7, 46.7], ['New Delhi', 28.6, 77.2],
-    ['Beijing', 39.9, 116.4], ['Seoul', 37.6, 127.0], ['Tokyo', 35.7, 139.7], ['Bangkok', 13.8, 100.5],
-    ['Jakarta', -6.2, 106.8], ['Canberra', -35.3, 149.1], ['Pretoria', -25.7, 28.2], ['Abuja', 9.1, 7.5]
-  ].map(([name, lat, lon], i) => ({ name, lat, lon, ph: i * 1.37 }));
-  /* the 9 port squares in the rack's 200x280 viewBox (5 on unit 2, 4 on unit 5) */
-  const PORTS = [[73,81],[93,81],[113,81],[133,81],[153,81],[73,201],[93,201],[113,201],[133,201]];
-  const ports = new Array(9).fill(null);
-  const ctx = net.getContext('2d');
-  let dpr = 1;
-  const size = () => {
-    dpr = Math.min(2, devicePixelRatio || 1);
-    net.width = Math.round(innerWidth * dpr); net.height = Math.round(innerHeight * dpr);
-    net.style.width = innerWidth + 'px'; net.style.height = innerHeight + 'px';
-  };
-  addEventListener('resize', size, { passive: true });
-  size();
-  const qp = (A, C, B, t) => {
-    const u = 1 - t;
-    return [u*u*A[0] + 2*u*t*C[0] + t*t*B[0], u*u*A[1] + 2*u*t*C[1] + t*t*B[1]];
-  };
-  let last = performance.now();
-  const frame = (now) => {
-    requestAnimationFrame(frame);
-    const dt = Math.min(0.05, (now - last) / 1000); last = now;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, innerWidth, innerHeight);
-    if (p < 0.4) return;
-    const g = globe.getBoundingClientRect();
-    if (g.width < 40) return;
-    const gw = g.width, gh = g.height, gcx = g.left + gw/2, gcy = g.top + gh/2, R = gw/2;
-    const tileW = gw * 2;
-    const scale = globe.offsetWidth ? gw / globe.offsetWidth : 1;
-    const tx = new DOMMatrixReadOnly(getComputedStyle(mapEl).transform).m41 * scale;
-    const pos = CITIES.map(c => {
-      let x = ((c.lon + 180) / 360 * tileW + tx) % tileW;
-      if (x < 0) x += tileW;
-      const sx = g.left + x, sy = g.top + (90 - c.lat) / 180 * gh;
-      const inside = x < gw && Math.hypot(sx - gcx, sy - gcy) < R * 0.965;
-      return { c, sx, sy, x, inside };
-    });
-    /* sparkle: city lights switching on */
-    for (const pt of pos) {
-      if (!pt.inside) continue;
-      const tw = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(now / 540 + pt.c.ph * 2.1));
-      const r = 1.1 + 1.1 * tw;
-      const grad = ctx.createRadialGradient(pt.sx, pt.sy, 0, pt.sx, pt.sy, r * 4);
-      grad.addColorStop(0, 'rgba(238,232,252,' + (0.85 * tw).toFixed(3) + ')');
-      grad.addColorStop(0.35, 'rgba(203,184,240,' + (0.4 * tw).toFixed(3) + ')');
-      grad.addColorStop(1, 'rgba(203,184,240,0)');
-      ctx.fillStyle = grad;
-      ctx.beginPath(); ctx.arc(pt.sx, pt.sy, r * 4, 0, 7); ctx.fill();
-    }
-    if (p < 0.999 || innerWidth < 900) return; /* cables only once locked & rack visible */
-    /* rack port positions under current rotation */
-    const rb = rack.getBoundingClientRect();
-    const rcx = rb.left + rb.width/2, rcy = rb.top + rb.height/2;
-    const s = (parseFloat(getComputedStyle(rack).width) || 0) / 200;
-    const a = angle * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a);
-    const portXY = PORTS.map(([px, py]) => {
-      const lx = (px - 100) * s, ly = (py - 140) * s;
-      return [rcx + lx*ca - ly*sa, rcy + lx*sa + ly*ca];
-    });
-    const byCity = new Set(ports.filter(Boolean).map(o => o.city));
-    for (let i = 0; i < 9; i++) {
-      const o = ports[i];
-      if (!o) continue;
-      const pt = pos.find(q => q.c === o.city);
-      const gone = !pt || !pt.inside || pt.x < gw * 0.18; /* nearing the left limb */
-      if (o.state !== 'ret' && gone) o.state = 'ret';
-      if (o.state === 'ext') { o.t = Math.min(1, o.t + dt / 0.9); if (o.t >= 1) o.state = 'hold'; }
-      else if (o.state === 'ret') { o.t -= dt / 0.7; if (o.t <= 0) { ports[i] = null; byCity.delete(o.city); continue; } }
-      if (pt && pt.inside) o.lastQ = [pt.sx, pt.sy];
-      const P = portXY[i], Q = o.lastQ;
-      const dx = Q[0]-P[0], dy = Q[1]-P[1], len = Math.hypot(dx, dy) || 1;
-      const C = [(P[0]+Q[0])/2 - dy/len * len*0.10, (P[1]+Q[1])/2 + dx/len * len*0.10 + len*0.05];
-      ctx.strokeStyle = 'rgba(203,184,240,0.5)';
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(P[0], P[1]);
-      const STEPS = 24;
-      for (let k = 1; k <= STEPS; k++) {
-        const [qx, qy] = qp(P, C, Q, (k / STEPS) * o.t);
-        ctx.lineTo(qx, qy);
-      }
-      ctx.stroke();
-      const [ex, ey] = qp(P, C, Q, o.t);
-      ctx.fillStyle = 'rgba(238,232,252,0.9)';
-      ctx.beginPath(); ctx.arc(ex, ey, 1.6, 0, 7); ctx.fill();
-    }
-    /* patch newly-risen cities into free ports (rightmost = newest first) */
-    const cand = pos.filter(q => q.inside && !byCity.has(q.c) && q.x > gw*0.3 && q.x < gw*0.97)
-                    .sort((a, b) => b.x - a.x);
-    for (let i = 0; i < 9; i++) {
-      if (ports[i]) continue;
-      const q = cand.shift();
-      if (!q) break;
-      ports[i] = { city: q.c, state: 'ext', t: 0, lastQ: [q.sx, q.sy] };
-      byCity.add(q.c);
+  window.__n5RevealAt = function(ms){
+    var i;
+    for (i = 0; i < revealAnims.length; i++) {
+      revealAnims[i].pause();
+      revealAnims[i].currentTime = ms;
     }
   };
-  requestAnimationFrame(frame);
+  window.__n5RevealPlay = function(){
+    var i;
+    for (i = 0; i < revealAnims.length; i++) revealAnims[i].play();
+  };
+
+  /* Run the SAME fonts.ready + double-rAF barrier instruments.js uses
+     internally, then, inside that one callback: mount the hero (arming
+     its own internal fonts.ready + double-rAF gate for the assembly clock
+     — at most two more frames, which is fine), mount the instruments, and
+     fire the corner reveal — all three choreography tracks start from the
+     same tick instead of racing three independent fonts.ready listeners. */
+  function whenReady(cb){
+    function afterPaint(){
+      requestAnimationFrame(function(){ requestAnimationFrame(cb); });
+    }
+    if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
+      document.fonts.ready.then(afterPaint, afterPaint);
+    } else {
+      afterPaint();
+    }
+  }
+
+  var stage = document.getElementById('hero-stage');
+
+  whenReady(function(){
+    if (window.N5Hero) {
+      window.N5Hero.mount(stage);
+      window.N5Hero.onState(function(nodesUp){
+        if (window.N5Instruments) window.N5Instruments.setClusterState(nodesUp);
+      });
+    } else {
+      console.error('N5Hero failed to load');
+    }
+
+    revealCorners();
+
+    if (window.N5Instruments) {
+      window.N5Instruments.mount(document);
+      window.N5Instruments.setClusterState(3);
+    }
+
+    window.__n5ReadyAt = performance.now();
+    window.__n5PageReady = true;
+  });
 })();
 </script>
-<script src="/assets/brandmotion.js" defer></script>
 </body>
 </html>
+
+<script>
+(function(){
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.n5i-lockup').forEach(function(brand){
+    var canvas = brand.querySelector('.lk-canvas');
+    var clips = {};
+    brand.querySelectorAll('.lk-clip').forEach(function(v){ clips[v.dataset.role] = v; });
+    var ctx = canvas && canvas.getContext && canvas.getContext('2d', { willReadFrequently: true });
+    /* reduced motion: CSS swaps the two stills on :hover, no video */
+    if (reduced || !ctx || !clips.hoverin || !clips.hoverout) { brand.classList.remove('lk-armed'); return; }
+    /* states: rest -> entering -> hover -> exiting -> rest. `wanted` is where the pointer
+       says we should be; whenever a clip settles somewhere else, the opposite clip runs. */
+    var state = 'rest', wanted = 'rest', current = null, loopId = 0, guard = 0, drawn = false;
+    var stopLoop = function(){
+      if (current && current.cancelVideoFrameCallback && loopId) current.cancelVideoFrameCallback(loopId);
+      else if (loopId) cancelAnimationFrame(loopId);
+      loopId = 0;
+    };
+    var fail = function(){
+      stopLoop(); clearTimeout(guard); current = null; state = 'rest';
+      brand.classList.remove('lk-armed'); brand.classList.remove('lk-play'); brand.classList.remove('lk-hov');
+    };
+    /* Frames are exported on black: key black to alpha by luminance, then retone so every
+       frame carries the site's own colours whatever the encoder or decoder did to the export
+       (Eric, 2026-09-08: the clip violet did not match the pill violet; ERIC must match the
+       role label, LI must match the mark). Regions are spatial, measured on the still:
+       mark x<.517; row 2 y>.49; the C ends at x=.764. Violet -> the brand token. Mark + LI ->
+       the mark grey. ERIC -> Bone at .55 while the letters are grey (rest), white when the
+       clip lights them; the C has no state of its own in the export, so it follows the E. */
+    var MARK_R = 0.517, ROW2_TOP = 0.49, C_R = 0.764;
+    var TOKEN = [94, 24, 235], BONE = [228, 223, 218], MARK = [184, 184, 184];
+    var key = function(v){
+      var W = canvas.width, H = canvas.height;
+      try { ctx.drawImage(v, 0, 0, W, H); } catch(e){ return false; }
+      var img = ctx.getImageData(0, 0, W, H), d = img.data;
+      var ei = (Math.round(0.2 * (H - 1)) * W + Math.round(0.585 * (W - 1))) * 4;
+      var em = Math.max(d[ei], d[ei+1], d[ei+2]) / 233;
+      var lit = (em - 0.56) / 0.44; if (lit < 0) lit = 0; if (lit > 1) lit = 1;
+      var xMark = MARK_R * W, yRow2 = ROW2_TOP * H, xC = C_R * W;
+      for (var y = 0, i = 0; y < H; y++) for (var x = 0; x < W; x++, i += 4) {
+        var r = d[i], g = d[i+1], b = d[i+2], m = r > g ? (r > b ? r : b) : (g > b ? g : b);
+        if (m <= 6) { d[i] = d[i+1] = d[i+2] = d[i+3] = 0; continue; }
+        var a = m / 233; if (a > 1) a = 1;
+        r /= a; g /= a; b /= a;
+        if (b > r + 40 && b > g + 60 && b > 120) {
+          /* the export's violet keys to ~.92, not 1 — treat it as opaque ink so the on-screen colour is the token itself */
+          var cv = a / 0.9; if (cv > 1) cv = 1;
+          d[i] = TOKEN[0]; d[i+1] = TOKEN[1]; d[i+2] = TOKEN[2]; d[i+3] = cv * 255; continue;
+        }
+        if (x < xMark || (y > yRow2 && x > xC)) {
+          var c = a / 0.75; if (c > 1) c = 1;
+          d[i] = MARK[0]; d[i+1] = MARK[1]; d[i+2] = MARK[2]; d[i+3] = c * 255; continue;
+        }
+        var cov = a / 0.56; if (cov > 1) cov = 1;
+        var w = (y > yRow2) ? lit : (a - 0.56) / 0.44; if (w < 0) w = 0; if (w > 1) w = 1;
+        d[i] = BONE[0] + (255 - BONE[0]) * w; d[i+1] = BONE[1] + (255 - BONE[1]) * w; d[i+2] = BONE[2] + (255 - BONE[2]) * w;
+        d[i+3] = cov * (0.55 + 0.45 * w) * 255;
+      }
+      ctx.putImageData(img, 0, 0);
+      return true;
+    };
+    var settle = function(v){
+      var to = (v === clips.hoverin) ? 'hover' : 'rest';
+      stopLoop(); clearTimeout(guard); key(v);
+      if (to === 'hover') brand.classList.add('lk-hov'); else brand.classList.remove('lk-hov');
+      brand.classList.remove('lk-play'); /* canvas fades out over the settled still (CSS .3s) */
+      state = to; current = null;
+      if (wanted !== state) run(wanted === 'hover' ? 'hoverin' : 'hoverout');
+    };
+    var loop = function(){
+      var v = current; if (!v) return;
+      var ok = v.readyState >= 2 && key(v);
+      if (ok && !drawn) {
+        /* only once a real frame is on the canvas: show it, and drop the hover still under
+           an exit clip (its first frame is the same violet, so nothing flashes) */
+        drawn = true; brand.classList.add('lk-play');
+        if (v === clips.hoverout) brand.classList.remove('lk-hov');
+      }
+      if (v.ended || v.paused) return;
+      loopId = v.requestVideoFrameCallback ? v.requestVideoFrameCallback(loop) : requestAnimationFrame(loop);
+    };
+    var run = function(name){
+      var v = clips[name]; if (!v) return;
+      state = (name === 'hoverin') ? 'entering' : 'exiting';
+      stopLoop(); clearTimeout(guard);
+      var r = brand.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(1, Math.round(r.width * dpr)); canvas.height = Math.max(1, Math.round(r.height * dpr));
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      current = v; drawn = false;
+      try { v.currentTime = 0; } catch(e){}
+      var done = function(){ v.removeEventListener('ended', done); v.removeEventListener('error', onErr); if (current === v) settle(v); };
+      var onErr = function(){ v.removeEventListener('ended', done); v.removeEventListener('error', onErr); fail(); };
+      v.addEventListener('ended', done); v.addEventListener('error', onErr);
+      guard = setTimeout(function(){ if (v.currentTime < 0.05) onErr(); }, 1500);
+      var p = v.play();
+      if (p && p.catch) p.catch(onErr);
+      loop();
+    };
+    var over = function(){ wanted = 'hover'; if (state === 'rest') run('hoverin'); };
+    var out = function(){ wanted = 'rest'; if (state === 'hover') run('hoverout'); };
+    brand.addEventListener('mouseenter', over); brand.addEventListener('mouseleave', out);
+    brand.addEventListener('focus', over); brand.addEventListener('blur', out);
+  });
+})();
+</script>
