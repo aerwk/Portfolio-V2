@@ -176,21 +176,15 @@
     var LAVENDER = 0xa493ff;      // design-system derived glow colour (gap planes, edge accent, under-light)
     var LAVENDER_DEEP = 0x7a5cff; // the reflection tint (albedo mix): deeper than LAVENDER so it keeps its colour under the white key (Eric 2026-09-08: "no saturation at all")
 
-    // Eric 2026-09-24: flashbang-mode equivalents. home.html filters the
-    // whole canvas in flashbang (`invert(1) hue-rotate(180deg)`), so a
-    // pre-filter GL colour X shows on screen as f(X) = hueRotate180(invert(X)).
-    // These are the X values whose f(X) lands on the site accent's hue
-    // (#01bdff, ~195.6°) while keeping each original colour's own filtered
-    // saturation/lightness (found by brute-force nearest-CIELAB search
-    // through f). Ninja is untouched — these are only read in flashbang.
-    //   LAVENDER      (0xa493ff) -> f(V)=0x6655c1 -> target 0x55a5c1
-    //     -> X=0x287894 -> f(X)=0x55a5c1  (deltaE 0.008, effectively exact)
-    //   LAVENDER_DEEP (0x7a5cff) -> f(V)=0x9d7fff -> target 0x7fdeff
-    //     -> X=0x004c6b -> f(X)=0x83cfee  (deltaE 6.3 — gamut-limited: f(V)
-    //        was already clamped at B=1.0, so the ideal X needed R<0; this
-    //        is the closest in-gamut match)
-    var LAVENDER_FLASH = 0x287894;
-    var LAVENDER_DEEP_FLASH = 0x004c6b;
+    // Eric 2026-09-24: flashbang-mode equivalents -- the same two lavenders with
+    // only the hue swapped to the site accent's (#01bdff, ~196deg), lightness and
+    // saturation kept. home.html inverts the whole canvas in flashbang
+    // (invert(1) hue-rotate(180deg)), which roughly preserves hue, so these read
+    // on screen the way the lavenders read in flashbang today, just blue. (Picking
+    // colours by their post-filter value instead left the towers near-grey: the
+    // lighting runs before the filter, so dark pre-filter tints wash out.)
+    var LAVENDER_FLASH = 0x93e3ff;      // hue-swapped LAVENDER (0xa493ff)
+    var LAVENDER_DEEP_FLASH = 0x5cd5ff; // hue-swapped LAVENDER_DEEP (0x7a5cff)
     var EDGE_COLOR = LAVENDER;
     var EDGE_INTENSITY = 0.3;     // edge accent
 
@@ -204,12 +198,10 @@
     var GLOW_LIGHT_DISTANCE = 22;     // falloff distance
     var GLOW_LIGHT_DECAY = 2;         // physically-based falloff
     var BLOOM_THRESHOLD = 0.3;        // violet-ness (b−g, linear) cutoff — high enough that only the pure lavender gap planes bloom, never tinted faces
-    // Eric 2026-09-24: flashbang's key colours are teal/cyan, not violet —
-    // dot(rgb, BLOOM_KEY_FLASH) has a much smaller dynamic range than the
-    // old b-g formula at the same colours, so it needs its own threshold.
-    // Bone/dark stay negative under this key too (see draw-time comment on
-    // BLOOM_BRIGHT_FRAG), so the "never bloom" invariant still holds.
-    var BLOOM_THRESHOLD_FLASH = 0.05;
+    // Eric 2026-09-24: flashbang's key colours are cyan, so "accent-ness" is b-r
+    // instead of b-g (uKey (-1,0,1)); same magnitude as the violet b-g at the
+    // same S/L, so the same cutoff applies. Bone/greys stay <=0 under this key.
+    var BLOOM_THRESHOLD_FLASH = BLOOM_THRESHOLD;
     var BLOOM_STRENGTH = 0.45;        // R12: a soft halo on the lavender gap lines only, bone gloss must not bloom
     var BLOOM_RADIUS = 7;             // texel spread of the half-res gaussian blur
 
@@ -1016,7 +1008,7 @@
       // comment on BLOOM_BRIGHT_FRAG / BLOOM_THRESHOLD_FLASH.
       if (brightMat){
         if (flash){
-          brightMat.uniforms.uKey.value.set(-1, 0.5, 0.5);
+          brightMat.uniforms.uKey.value.set(-1, 0, 1);
           brightMat.uniforms.threshold.value = BLOOM_THRESHOLD_FLASH;
         } else {
           brightMat.uniforms.uKey.value.set(0, -1, 1);
