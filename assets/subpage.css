@@ -65,6 +65,20 @@ html,body{
 }
 body{ position:relative; height:100vh; }
 
+/* Flashbang mode (Eric's rename of "light mode"; ninja = "dark mode", the default):
+   same layout and content, every colour inverted while hues stay put -- see the
+   byte-identical comment + rule in p3/home.html's inline <style> for the full
+   rationale (filter on <html>, never <body>; the freeze-pane layout above means
+   html never scrolls and is never taller than the viewport at desktop widths, so
+   .corner/main.page's position:fixed still resolves to the same box either way;
+   the background override is a second, independent fix for the canvas/overscroll
+   backdrop, which a filter on html never touches). #ecede9 = invert(1)
+   hue-rotate(180deg) applied to --carbon's own #12130f by hand. */
+html[data-theme="flashbang"]{
+  filter: invert(1) hue-rotate(180deg);
+  background:#ecede9;
+}
+
 /* ---------- skip link ---------- */
 .skip-link{
   position:absolute;
@@ -91,6 +105,18 @@ body{ position:relative; height:100vh; }
 }
 .tl{ top:0; left:0; }
 .tr{ top:0; right:0; }
+/* The theme toggle sits above the About/Projects/Blog/Login nav column, inside the
+   same corner (Eric's brief: "gains a row on top" -- the pill column's own layout
+   must not shift). align-items:flex-end right-aligns the button with the nav's own
+   right-hugged pills without touching .tr nav's internal layout at all; nav's
+   shrink-to-fit width was already driven by its own content, so adding this flex
+   context to its parent doesn't change it. */
+.corner.tr{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:calc(12 * var(--n5i-u));
+}
 
 .role{
   font:400 calc(12 * var(--n5i-u))/1.25 var(--n5i-mono);
@@ -99,6 +125,7 @@ body{ position:relative; height:100vh; }
   color:var(--bone-55);
   margin-top:calc(4 * var(--n5i-u));
   white-space:nowrap;
+  text-align:center; /* centred under the lockup (Eric, 2026-09-24) — the lockup outgrows the label above 1440 */
 }
 
 /* ---------- instruments.css atoms the corner needs (ported, not linked) ---------- */
@@ -241,6 +268,16 @@ body{ position:relative; height:100vh; }
 .pill.ico .pill-l{ display:inline-flex; opacity:.7; }
 .pill.ico .pill-c{ border-radius:50%; }
 .pill.ico:hover .pill-l, .pill.ico:focus-visible .pill-l{ opacity:1; }
+
+/* Theme toggle: a .pill.ico like the social icons, so it gets the same 23px disc /
+   hover-curtain treatment for free. --n5i-u:1px resets the scale unit the same way
+   .tr nav does, so the disc stays a fixed 23px instead of growing with the viewport.
+   Both icon SVGs ship in the markup (sun -> click to switch to flashbang, moon ->
+   click to switch to ninja); only one pill-l/pill-c pair is ever visible, switched
+   purely by the html[data-theme] selector below -- no innerHTML swap in JS. */
+.theme-toggle{ --n5i-u:1px; }
+html[data-theme="flashbang"] .theme-toggle .tt-sun{ display:none; }
+html:not([data-theme="flashbang"]) .theme-toggle .tt-moon{ display:none; }
 
 /* pill-lg — the one text pill on /contact/: 16px Inter, not uppercase */
 .pill-lg{
@@ -506,6 +543,12 @@ main.page .post-title-h{
      the TOP of the page") — same phone treatment as before, just moved:
      pills on one centred row, icons centred on the row beneath. */
   .tr{ order:2; align-self:center; }
+  /* Desktop right-aligns the toggle over the pill column (align-items:flex-end on
+     .corner.tr, above); here the whole corner is itself centred as a block
+     (align-self:center, existing rule above), so right-aligning inside it would
+     read as randomly offset from the now-centred pill row beneath. Centre the
+     toggle over it instead. */
+  .corner.tr{ align-items:center; }
   main.page{
     order:3;
     margin:0;

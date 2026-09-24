@@ -213,6 +213,42 @@ window.__n5Subpage = (function(){
 
   var treeNav = document.querySelector('[data-blog-tree]');
 
+  /* Theme toggle (ninja = dark, default; flashbang = light, invert(1) hue-rotate(180deg)
+     on <html>, set in the inline <head> script + the CSS rule near the top of
+     subpage.css). #theme-toggle lives in .corner.tr, outside <main>, so — same as
+     treeNav above — it's queried/bound exactly once here at module-eval time and
+     survives every pane swap untouched; re-binding it per init() would double-attach
+     the click listener on the second swap. */
+  (function initThemeToggle(){
+    var THEME_KEY = 'n5-theme';
+    var btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    function currentTheme(){
+      return document.documentElement.getAttribute('data-theme') === 'flashbang' ? 'flashbang' : 'ninja';
+    }
+    function syncThemeColorMeta(theme){
+      try {
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', theme === 'flashbang' ? '#ecede9' : '#12130f');
+      } catch (e) {}
+    }
+    function syncButton(theme){
+      var isFlashbang = theme === 'flashbang';
+      btn.setAttribute('aria-pressed', isFlashbang ? 'true' : 'false');
+      btn.setAttribute('aria-label', isFlashbang ? 'Switch to ninja mode' : 'Switch to flashbang mode');
+    }
+    var theme = currentTheme();
+    syncButton(theme);
+    syncThemeColorMeta(theme);
+    btn.addEventListener('click', function(){
+      var next = currentTheme() === 'flashbang' ? 'ninja' : 'flashbang';
+      document.documentElement.setAttribute('data-theme', next);
+      try { window.localStorage.setItem(THEME_KEY, next); } catch (e) {}
+      syncButton(next);
+      syncThemeColorMeta(next);
+    });
+  })();
+
   /* Reset on every init()/destroy() cycle — see the plan's state table. */
   var POSTS = {};
   var currentLeaf = null;

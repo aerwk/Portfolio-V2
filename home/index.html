@@ -2,10 +2,28 @@
 <!-- GENERATED FILE. Produced by scripts/build_dev_preview.py from the design
      source in `01 Design/design-loop/src` (gitignored). Do not hand-edit this
      file directly -- edit the source and re-run the generator instead. -->
-<html lang="en">
+<html lang="en" data-theme="ninja">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Theme sync (ninja/flashbang, formerly "dark"/"light"): runs before first paint so a
+     visitor who saved flashbang never sees a flash of ninja. Ninja is the default
+     regardless of OS prefers-color-scheme -- the static data-theme="ninja" above already
+     covers the no-JS case; this only overrides it when n5-theme reads "flashbang". Kept a
+     byte-identical copy in every page's <head> (p3/home.html, p4/about.html,
+     p4/projects.html, p4/blog.html, p4/post.html) rather than a shared external file, since
+     an external <script src> would itself block on a network round trip -- inline is the
+     only way to run this before paint. */
+<script>
+(function(){
+  'use strict';
+  var theme = 'ninja';
+  try {
+    if (window.localStorage.getItem('n5-theme') === 'flashbang') theme = 'flashbang';
+  } catch (e) {}
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+</script>
 <title>N5HQ — DevOps &amp; Infrastructure</title>
 <link rel="canonical" href="https://ericli.n5hq.me/">
 <meta property="og:url" content="https://ericli.n5hq.me/">
@@ -69,6 +87,32 @@
   }
   body{ position:relative; min-height:100vh; }
 
+  /* Flashbang mode (Eric's rename of "light mode"; ninja = "dark mode", the default):
+     same layout and content, every colour inverted while hues stay put -- invert(1)
+     flips lightness, hue-rotate(180deg) rotates the hue wheel back to where it started
+     (so violet stays violet instead of landing on its complement). The filter goes on
+     <html>, never <body>: <body> already has position:relative (a containing block for
+     absolutely-positioned descendants), and every position:fixed element in this
+     codebase (none on home.html -- .corner here is position:absolute, already resolved
+     against body) would instead anchor to whichever ancestor first gets a filter/
+     transform/perspective, which breaks position:fixed against the viewport. Filtering
+     <html> itself is safe on this page for that same reason: html,body are exactly
+     100%/100vh with overflow:hidden above, so html never scrolls and is never taller
+     than the viewport.
+     background on html[data-theme="flashbang"] is a second, independent fix for a
+     different bug: the browser paints the page's "canvas" (the fill shown during
+     elastic overscroll bounce, or below a page shorter than the viewport) using the
+     raw background-color VALUE of the propagating element -- that paint is a UA-level
+     backdrop, not part of html's rendered box, so it is never touched by a filter
+     applied to html. Without this override that backdrop stays --carbon (near-black)
+     even in flashbang mode. #ecede9 is invert(1) hue-rotate(180deg) applied to
+     --carbon's own #12130f by hand (the matrices from the CSS Filter Effects spec),
+     so the extension matches what the filter produces for every on-screen pixel. */
+  html[data-theme="flashbang"]{
+    filter: invert(1) hue-rotate(180deg);
+    background:#ecede9;
+  }
+
   .stage{
     position:absolute; inset:0;
     pointer-events:none;
@@ -123,6 +167,7 @@
     text-transform:uppercase;
     color:var(--bone-55);
     margin-top:calc(4 * var(--n5i-u));
+    text-align:center; /* centred under the lockup (Eric, 2026-09-24) — the lockup outgrows the label above 1440 */
   }
 
   /* Pill hover = the reference's (yinger.dev) shipped mechanics, read from
@@ -227,6 +272,17 @@
   .pill.ico .pill-l{ display:inline-flex; opacity:.7; }
   .pill.ico .pill-c{ border-radius:50%; }
   .pill.ico:hover .pill-l, .pill.ico:focus-visible .pill-l{ opacity:1; }
+
+  /* Theme toggle: a .pill.ico like the social icons above, so it gets the same 23px
+     disc / hover-curtain treatment for free. --n5i-u:1px resets the scale unit the
+     same way .br nav does for the social row, so the disc stays a fixed 23px instead
+     of growing with the viewport past 1440px. Both icon SVGs (sun -> click to switch
+     to flashbang, moon -> click to switch to ninja) ship in the markup; only one
+     pill-l/pill-c pair is ever visible, switched purely by the html[data-theme]
+     selector below -- no innerHTML swap in JS. */
+  .theme-toggle{ --n5i-u:1px; }
+  html[data-theme="flashbang"] .theme-toggle .tt-sun{ display:none; }
+  html:not([data-theme="flashbang"]) .theme-toggle .tt-moon{ display:none; }
 
   @media (prefers-reduced-motion: reduce){
     .corner{
@@ -337,6 +393,15 @@
 
   <div class="stage" id="hero-stage"></div>
 
+  <div class="corner tr" id="c-theme">
+    <button type="button" class="pill ico theme-toggle" id="theme-toggle" aria-pressed="false" aria-label="Switch to flashbang mode">
+      <span class="pill-l tt-sun"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
+      <span class="pill-c tt-sun" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
+      <span class="pill-l tt-moon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+      <span class="pill-c tt-moon" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+    </button>
+  </div>
+
   <div class="corner tl n5i-cluster" id="c-tl">
     <a class="n5i-mark n5i-lockup" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/logo-rest.svg" alt="Eric Li"><img class="lk-hover" src="/assets/logo-hover.svg" alt="" aria-hidden="true"></a><script>(function(){var m=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;var a=document.currentScript.previousElementSibling;if(!m&&a&&a.classList.contains("n5i-lockup"))a.classList.add("lk-armed")})()</script>
     <span class="role">DevOps &amp; Infrastructure</span>
@@ -380,12 +445,50 @@
 
   /* the top-right telemetry corner is gone from ericli.n5hq.me (it's a
      homelab-specific instrument reserved for a future n5hq.me page) — three
-     corners now, staggered evenly over the same 0-360ms span. */
+     corners now, staggered evenly over the same 0-360ms span. c-theme (the
+     theme toggle) is a fourth, paired at the same 0ms delay as c-tl since
+     both sit in the header row and read as one group appearing together. */
   var corners = [
     { el: document.getElementById('c-tl'), delay: 0 },
+    { el: document.getElementById('c-theme'), delay: 0 },
     { el: document.getElementById('c-bl'), delay: 180 },
     { el: document.getElementById('c-br'), delay: 360 }
   ].filter(function (c) { return !!c.el; });
+
+  /* Theme toggle (ninja = dark, default; flashbang = light, invert(1) hue-rotate(180deg)
+     on <html>, set in the inline <head> script + the CSS rule near the top of this
+     page's <style>). Wired here, independent of the corner reveal choreography above,
+     so it's interactive as soon as the script runs rather than waiting on
+     fonts.ready. */
+  (function initThemeToggle(){
+    var THEME_KEY = 'n5-theme';
+    var btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    function currentTheme(){
+      return document.documentElement.getAttribute('data-theme') === 'flashbang' ? 'flashbang' : 'ninja';
+    }
+    function syncThemeColorMeta(theme){
+      try {
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', theme === 'flashbang' ? '#ecede9' : '#12130f');
+      } catch (e) {}
+    }
+    function syncButton(theme){
+      var isFlashbang = theme === 'flashbang';
+      btn.setAttribute('aria-pressed', isFlashbang ? 'true' : 'false');
+      btn.setAttribute('aria-label', isFlashbang ? 'Switch to ninja mode' : 'Switch to flashbang mode');
+    }
+    var theme = currentTheme();
+    syncButton(theme);
+    syncThemeColorMeta(theme);
+    btn.addEventListener('click', function(){
+      var next = currentTheme() === 'flashbang' ? 'ninja' : 'flashbang';
+      document.documentElement.setAttribute('data-theme', next);
+      try { window.localStorage.setItem(THEME_KEY, next); } catch (e) {}
+      syncButton(next);
+      syncThemeColorMeta(next);
+    });
+  })();
 
   /* One Web Animations API Animation per corner (transform+opacity only,
      500ms ease-out, staggered per corner) rather than a CSS transition —
