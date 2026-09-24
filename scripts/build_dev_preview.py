@@ -3,8 +3,9 @@
 production site -- from the design-loop source.
 
 Eric's "edge draft" redesign (01 Design/design-loop/src) is design source, not
-deployable output: every page inlines its wordmark lockup (2 PNGs + 4 video
-clips) as base64, plus a base64 OTF font on the home page, and its internal
+deployable output: every page inlines its wordmark lockup (2 SVGs, rest +
+hover state, with the hover behaviour driven by CSS/JS rather than baked-in
+video clips) as base64, plus a base64 OTF font on the home page, and its internal
 links point at the LIVE site's real paths (/, /about/, /portfolio/, /blog/,
 /blog/posts/*.html). This script extracts every inlined asset to a real file,
 rewrites every internal link to be base-prefixed, and emits the result as a
@@ -224,43 +225,32 @@ def find_attr_data_uri(html, marker):
     return m.group(0)
 
 
-def find_video_sources(html, role):
-    """Return [(mime, data_uri), ...] for the <source> tags inside the
-    <video ... data-role="{role}" ...>...</video> element, in document order."""
-    vstart = html.find(f'data-role="{role}"')
-    if vstart == -1:
-        raise SystemExit(f"video with data-role={role!r} not found")
-    vend = html.find("</video>", vstart)
-    if vend == -1:
-        raise SystemExit(f"unterminated <video data-role={role!r}>")
-    chunk = html[vstart:vend]
-    sources = []
-    for m in re.finditer(r'<source src="(data:[^"]+)" type="video/(webm|mp4)">', chunk):
-        sources.append((m.group(2), m.group(1)))
-    if len(sources) != 2:
-        raise SystemExit(f"expected 2 <source> tags for data-role={role!r}, found {len(sources)}")
-    return sources
-
-
-def decode_data_uri(uri):
+def decode_data_uri(uri, expected_mime=None):
+    """Decode a data: URI's payload. If expected_mime is given, fail loudly
+    (rather than silently writing the wrong extension) when the URI's declared
+    MIME type doesn't match."""
+    header, b64 = uri.split(",", 1)
+    if expected_mime is not None:
+        mime = header[len("data:"):].split(";", 1)[0]
+        if mime != expected_mime:
+            raise SystemExit(
+                f"expected a {expected_mime!r} data: URI, got {mime!r}: {header!r}"
+            )
     import base64
-    b64 = uri.split(",", 1)[1]
     return base64.b64decode(b64)
 
 
 def extract_lockup_assets(html):
-    """Return {asset_filename: raw_bytes} for the six embedded lockup assets,
+    """Return {asset_filename: raw_bytes} for the two embedded lockup SVGs,
     located by their markup role (not by position) so a reordering of the
     source can't silently mis-map an asset."""
     out = {}
-    out["logo-rest.png"] = decode_data_uri(find_attr_data_uri(html, 'class="lk-rest" src="'))
-    out["logo-hover.png"] = decode_data_uri(find_attr_data_uri(html, 'class="lk-hover" src="'))
-    hoverin = find_video_sources(html, "hoverin")
-    hoverout = find_video_sources(html, "hoverout")
-    for mime, uri in hoverin:
-        out[f"logo-entry.{mime}"] = decode_data_uri(uri)
-    for mime, uri in hoverout:
-        out[f"logo-exit.{mime}"] = decode_data_uri(uri)
+    out["logo-rest.svg"] = decode_data_uri(
+        find_attr_data_uri(html, 'class="lk-rest" src="'), expected_mime="image/svg+xml"
+    )
+    out["logo-hover.svg"] = decode_data_uri(
+        find_attr_data_uri(html, 'class="lk-hover" src="'), expected_mime="image/svg+xml"
+    )
     return out
 
 
@@ -270,23 +260,8 @@ def replace_lockup_refs(html, base):
         old = find_attr_data_uri(html, marker)
         return html.replace(marker + old, marker + f"{base}/assets/{filename}", 1)
 
-    html = sub_attr(html, 'class="lk-rest" src="', "logo-rest.png")
-    html = sub_attr(html, 'class="lk-hover" src="', "logo-hover.png")
-
-    for role, names in (
-        ("hoverin", ("logo-entry.webm", "logo-entry.mp4")),
-        ("hoverout", ("logo-exit.webm", "logo-exit.mp4")),
-    ):
-        vstart = html.find(f'data-role="{role}"')
-        vend = html.find("</video>", vstart)
-        chunk = html[vstart:vend]
-        new_chunk = chunk
-        srcs = list(re.finditer(r'<source src="(data:[^"]+)" type="video/(webm|mp4)">', chunk))
-        # replace in reverse so earlier offsets stay valid
-        for m, name in zip(reversed(srcs), reversed(names)):
-            s, e = m.span(1)
-            new_chunk = new_chunk[:s] + f"{base}/assets/{name}" + new_chunk[e:]
-        html = html[:vstart] + new_chunk + html[vend:]
+    html = sub_attr(html, 'class="lk-rest" src="', "logo-rest.svg")
+    html = sub_attr(html, 'class="lk-hover" src="', "logo-hover.svg")
     return html
 
 
@@ -819,7 +794,7 @@ def build(base, prod):
         raise SystemExit(f"no published posts found in {BLOG_POSTS_DIR}")
     update_blog_html(posts)
 
-    # 1) Extract the six lockup assets + font from the canonical source (home.html
+    # 1) Extract the two lockup SVGs + font from the canonical source (home.html
     #    for the lockup, instruments.css for the font), then verify every page's
     #    embedded copies are byte-identical before swapping them for URLs.
     canonical_html = read(pages[0][0])

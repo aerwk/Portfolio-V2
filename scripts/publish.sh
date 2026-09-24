@@ -9,8 +9,8 @@
 #      home/index.html, about/index.html, portfolio/index.html,
 #      blog/index.html, blog/posts/<date>.html (one per published post),
 #      the v3 assets under assets/ (instruments.js, hero.js, subpage.css,
-#      subpage.js, instruments.css, bigger-display.otf, logo-*.png/mp4/webm),
-#      and sitemap-ericli.xml.
+#      subpage.js, instruments.css, bigger-display.otf, logo-rest.svg,
+#      logo-hover.svg), and sitemap-ericli.xml.
 #   2. `git add`s exactly those output paths -- NOT `-A` / `-a`, so nothing
 #      else staged in the working tree (or left over from an unrelated
 #      change) gets swept into the commit by accident.
@@ -58,12 +58,8 @@ git add \
   assets/subpage.js \
   assets/instruments.css \
   assets/bigger-display.otf \
-  assets/logo-rest.png \
-  assets/logo-hover.png \
-  assets/logo-entry.webm \
-  assets/logo-entry.mp4 \
-  assets/logo-exit.webm \
-  assets/logo-exit.mp4 \
+  assets/logo-rest.svg \
+  assets/logo-hover.svg \
   sitemap-ericli.xml
 
 echo "==> Done. Review with:  git status --short  &&  git diff --cached --stat"
