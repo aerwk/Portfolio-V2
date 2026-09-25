@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Route That Vanished Every Reboot — N5HQ</title>
+<meta name="description" content="The morning went into rebuilding the public site: a new SVG logo, a light/dark toggle called flashbang and ninja, and a fleet of agents publishing three missing journals. The evening went into a hotel client&#x27;s network, where a Tailscale route that kept vanishing on reboot finally got root-caused, the switch&#x27;s SSH lockout got fixed, and all five DVB-T muxes went live at once.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-09-24.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="A Route That Vanished Every Reboot — N5HQ">
+<meta property="og:description" content="The morning went into rebuilding the public site: a new SVG logo, a light/dark toggle called flashbang and ninja, and a fleet of agents publishing three missing journals. The evening went into a hotel client&#x27;s network, where a Tailscale route that kept vanishing on reboot finally got root-caused, the switch&#x27;s SSH lockout got fixed, and all five DVB-T muxes went live at once.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-09-24.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">A Route That Vanished Every Reboot</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-09-24 · Thursday · 11:30 PM</span>
+      <span class="chip">4 min read</span>
+      <span class="chip badge-ai">75% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Two unrelated pushes filled the day: rebuilding the public site before breakfast, and closing out a run of blocking issues on a hotel client's IPTV network that evening, on site.</p>
+<h2>The site gets a new front door</h2>
+<p>The v3 redesign became the live site this morning, replacing the old static wordmark with a new SVG logo that carries three states: a static mark, a neon hover animation, and the settled hover look once that animation finishes. A light/dark toggle went in alongside it, named flashbang for the inverted palette and ninja for the current dark one. That took a few rounds to get right: the first accent colour came out an unintended pink, got swapped for a blue, then brightened twice before it read correctly against the page, with the glow stripped off the logo animation at the same time. The hero towers on the home page needed the same blue-over-purple swap before it shipped. A new "archived" project group went in for retired work (the Caddy rating app, DisClaude sesh, and FileIt), and the IPTV project itself moved from Upcoming to In Progress, three days after the client engagement started.</p>
+<p>Alongside the redesign, a run of agents cleared the backlog on the blog itself. The humanizer skill got installed from its GitHub repo to strip AI writing tells out of published posts, then went to work: three missing journal entries (the 11th, 22nd, and 23rd) went through one Sonnet agent per entry to draft from the source material, a revising agent to edit each one, and a final pass to confirm no credentials had leaked into any of them, bringing the blog to 51 posts. Blog titles across the whole site got cut to six words or fewer in the same pass, and a raw Tailscale IP and interface name that had been sitting in an old archived post got censored. A container count and a projects stat that had drifted from reality got refreshed to match, and Proton Pass joined the homepage tool marquee.</p>
+<h2>Fixing a network that kept undoing its own fixes</h2>
+<p>On site that evening, the outstanding blockers on the hotel client's IPTV build came off the list one by one. The H3C switch had been accepting SSH logins and then dropping the session immediately; tracing it from the console found <code>line vty 0 63</code> had no <code>authentication-mode</code> set, so it was falling back to Comware's default password mode with no password configured. Setting <code>authentication-mode scheme</code> and saving fixed it, and the fix was retested end to end from home that same evening, over the full remote chain: this laptop to a lab host, to the GL.iNet travel router, to the switch itself.</p>
+<p>The travel router had a separate, longer-running fault. Every reboot, including its own scheduled one, silently dropped one of the two Tailscale routes it was supposed to advertise, breaking remote access to the admin interface until it got manually re-added. The cause was the router's own <code>gl_tailscale</code> script, which rebuilds its route list from the LAN interface config on every interface event, not just boot, with no option to keep an extra route in that list. A one-line patch ahead of the route-building check fixed it, verified after a deliberate reboot brought both routes back without anyone touching it. The reboot schedule itself got changed from daily to weekly while this was being worked through.</p>
+<p>With the switch and the router both behaving, IGMP snooping went on and got saved, and a live multicast join confirmed it was working. A third set-top box joined the bench setup, and all five DVB-T muxes got imported and synced to the client package in one evening, not just the first one from two days before: the whole channel lineup playing on the boxes at once, on the client's actual rooftop signal. The one thing that didn't work was sound on the HD channels, which carry Dolby audio the boxes can't decode; a WhatsApp message and a list of technical questions went to the vendor about it, drafted but not yet sent. Photos went out of the fibre trace at the main rack, which settled which of the two core switches feeds which part of the building. A written decision landed that the IPTV network won't stay permanently isolated: it will eventually join the hotel's own network, which added a new set of questions for whoever manages that side.</p>
+<p>The one thing planned for the evening that didn't happen was the pilot isolation test on a second building's rooms, which needed those rooms empty and the hotel was fully booked. Photos of that building's rack still got taken before calling it a night, ahead of trying again the next day.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="iptv" href="/blog/?tag=iptv">IPTV</a><a class="tagchip" data-tag="web-dev" href="/blog/?tag=web-dev">Web Dev</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-23.html">← A Wrong Netmask, Two Lost Hours</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>
