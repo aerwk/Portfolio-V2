@@ -122,8 +122,10 @@ def meta_html(fm, readtime):
         f'<span class="chip">{esc_attr(fm.get("category", "Journal"))}</span>',
         f'<span class="chip">{when_str(fm)}</span>',
         f'<span class="chip">{readtime} min read</span>',
-        f'<span class="chip badge-ai">{esc_attr(fm.get("claude_pct", "0"))}% AI</span>',
     ]
+    # The AI badge is optional: only posts whose frontmatter carries claude_pct get one.
+    if fm.get("claude_pct"):
+        parts.append(f'<span class="chip badge-ai">{esc_attr(fm["claude_pct"])}% AI</span>')
     author = fm.get("author", DEFAULT_AUTHOR)
     if author:
         parts.append(f'<span class="chip chip-author">{esc_attr(author)}</span>')

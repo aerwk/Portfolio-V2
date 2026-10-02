@@ -486,9 +486,13 @@ def extract_published_post(date):
     if not meta_m:
         raise SystemExit(f"{path}: could not find the .meta chip block")
     chips = [unescape_entities(c.strip()) for c in CHIP_RE.findall(meta_m.group(1))]
-    if len(chips) != 5:
-        raise SystemExit(f"{path}: expected 5 chips (category/date/read/ai/author), found {len(chips)}: {chips!r}")
-    category, date_chip, read_chip, ai_chip, author_chip = chips
+    if len(chips) == 4:  # AI badge is optional -- posts without claude_pct omit it
+        category, date_chip, read_chip, author_chip = chips
+        ai_chip = ""
+    elif len(chips) == 5:
+        category, date_chip, read_chip, ai_chip, author_chip = chips
+    else:
+        raise SystemExit(f"{path}: expected 4-5 chips (category/date/read/[ai]/author), found {len(chips)}: {chips!r}")
 
     date_parts = [p.strip() for p in date_chip.split("·")]
     if len(date_parts) != 3:
@@ -573,7 +577,7 @@ def post_chips_html(post):
         post["category"], post["date_str"], post["day_str"], post["time_str"],
         post["read_chip"], post["ai_chip"], post["author_chip"],
     ]
-    joined = " · ".join(html_text_escape(f) for f in fields)
+    joined = " · ".join(html_text_escape(f) for f in fields if f)
     return f'<p class="post-chips label">{joined}</p>'
 
 

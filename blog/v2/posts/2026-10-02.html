@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapping the Hotel Network Read-Only — N5HQ</title>
+<meta name="description" content="The hotel&#x27;s network contractor answered my questions with nothing technical, so I phoned them and came away with read-only access to the network. I spent the rest of the day mapping it from the controller, on site in the evening, and from home into a full topology map. A download queue clogged with fake releases got a sweeper, and nine journal posts I&#x27;d fallen behind on went live.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-10-02.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Mapping the Hotel Network Read-Only — N5HQ">
+<meta property="og:description" content="The hotel&#x27;s network contractor answered my questions with nothing technical, so I phoned them and came away with read-only access to the network. I spent the rest of the day mapping it from the controller, on site in the evening, and from home into a full topology map. A download queue clogged with fake releases got a sweeper, and nine journal posts I&#x27;d fallen behind on went live.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-10-02.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Mapping the Hotel Network Read-Only</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-10-02 · Friday · 11:15 PM</span>
+      <span class="chip">6 min read</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Most of today went on the hotel IPTV job. It started with chasing a contractor for answers and ended at home with the evening's captures turned into a topology map. A download queue full of fakes and a batch of journal posts fitted in around it.</p>
+<h2>Catching the blog up</h2>
+<p>Just after midnight I caught up on the journals I'd missed for 28 September to 1 October. Going back over them turned up a wrong power-brick wattage in an older post, which now says 180 W everywhere.</p>
+<p>In the afternoon I published them. Nine posts from 16 September to 1 October went through a staging folder so the titles of older live posts couldn't be overwritten, then got committed, pushed and checked live. All nine returned 200. The blog had been stuck on 24 September and now has 61 posts.</p>
+<h2>Asking the contractor, then picking up the phone</h2>
+<p>The hotel's outside network contractor replied to my questions with no technical content at all. Their account manager only wanted to know whether they should answer questions or come on site, and either way it would be billed. I started on a written reply, then rang them instead.</p>
+<p>The person I spoke to wasn't technical. Mapping the network would be billable, the contractor doesn't have access to all the equipment, and the hotel's existing TV network is already in use. I asked for read-only access so I could map it and confirm it all myself.</p>
+<p>Read-only access to the hotel's Wi-Fi and switch controller came through at 16:32, and I went through it without changing anything. The existing TV network reaches the room ports and runs its own DHCP, which clashes with the IPTV plan. Each room has one Ethernet port behind the wall-mounted TV. Firewall and core switch logins arrived at 17:01, and I set myself a rule straight away: the core switch logins are admin-level, so read-only commands only and nothing gets changed. I wrote up a handoff for the site session and drove over.</p>
+<h2>A queue full of fake releases</h2>
+<p>Before that, late in the afternoon, I looked at why Sonarr wasn't grabbing point releases properly, even when I picked them by hand. The queue was clogged with fakes: normal-looking names with Windows executables or .zipx archives inside instead of the image. Sonarr can't import them, so they sat there forever, and Sonarr then turned down real releases because the queue already met the cutoff.</p>
+<p>I'd seen the same problem on 21 September and never cleared it. It had grown from 17 fakes to 31 in a 33-item queue. I cleared the queue. Every fake came from the same three indexers, and I deprioritised them rather than switch them off. Priority only breaks ties, though, so a fake that's the only match can still get grabbed.</p>
+<p>So I added a queue sweeper that runs every 30 minutes across Sonarr and Radarr. It flags executable payloads, removes them from the torrent client and the seedbox, blocklists the release and kicks off a re-search. If it finds more than 25 fakes in one run it does nothing and errors out. I checked the tests by deliberately breaking the matching to prove they could fail. The first real run caught another fake that had been grabbed after my clear-out. Nothing monitors the sweeper yet.</p>
+<p>I also filled out another rolling release from a smaller mirror. Three more point releases imported, which makes 17 of 40. About ten more exist but fall just under the size minimum, and the first eleven aren't on any indexer at all.</p>
+<h2>On site</h2>
+<p>I got there at 17:38 and plugged the Mac in through a USB Ethernet adapter, on its own macOS network location. The first core switch's web interface let me in. SSH didn't, and that turned out to be me mistyping my login.</p>
+<p>The second core took about half an hour. The Mac kept sending traffic out over Wi-Fi instead of the cable, and the return path was asymmetric. Moving to a port on the management network fixed it. After that I logged into the firewall read-only.</p>
+<p>I had two things wrong going in: which device was acting as multicast querier for the TV network, and my assumption that nothing on that network used multicast at all. The real numbers said otherwise. There's plenty of spare bandwidth, with core-to-core around 3% and the building uplinks between 0 and 10%. One core port is a ready-made spare uplink. The querier sits in the wrong building, so a lot of TV traffic crosses the network for nothing, and fixing that is a firm requirement for the new VLAN.</p>
+<p>I decided the IPTV system gets its own VLAN so the changes can go in stages. I'd also thought about connecting my remote-access travel router to the hotel core, then shelved it until I've done more research, because I don't want to make a mistake on someone else's network. I put a small TP-Link LS105G unmanaged switch behind the travel router instead and reconfigured the router around it. Every piece of the IPTV equipment is now reachable remotely, and I got my first successful SSH login to the second TV switch. One login looked like it had hung, but the Terminal tab was just stuck in raw mode after <code>screen</code>.</p>
+<p>Before leaving I documented everything in as much detail as I could, since I wouldn't be back the next day. At 21:28 I logged out of everything and headed home.</p>
+<h2>The topology map</h2>
+<p>From home at 21:41 I went through the controller once more: 8 switches, 48 access points and about 280 clients. Then I built a topology map of the whole hotel from the day's captures, which came to 92 devices and 100 links.</p>
+<p>A second pass checked 36 facts against the raw captures and found 4 wrong and 3 unsupported, and all seven got fixed. Only 9 of the 100 rooms can be tied to a switch port so far, so the offline click-through HTML page has a room-to-port recorder to fill in on site. There are three versions: the offline page, an internal map and a client copy. The client versions use the real device names instead of my internal nicknames. A spot check caught a few names joined with slashes that had slipped through, and those got fixed too.</p>
+<h2>Still open</h2>
+<p>At the hotel, room-to-port mapping sits at 9 of 100, and moving the querier and building the new VLAN still need a staged plan. The queue sweeper has no monitor, so if it stops I won't find out. And at 5am the automated update review flagged a Proxmox kernel update on one node as "ask" instead of applying it, so that one is waiting on me.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="iptv" href="/blog/?tag=iptv">IPTV</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a><a class="tagchip" data-tag="blog" href="/blog/?tag=blog">Blog</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-01.html">← Every Session Starts Cold</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>
