@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Manual That Invented Itself — N5HQ</title>
+<meta name="description" content="A live trace of the hotel&#x27;s main equipment rack showed where Hermus&#x27;s copper uplink lands and turned up a run of in-room TV wiring nobody had traced. An earlier transcription of the IPTV vendor&#x27;s manual contained an installation step that doesn&#x27;t exist, so I re-checked the whole document section by section against the vendor&#x27;s live site. The vendor also answered two rounds of WhatsApp questions on Dolby audio, SSH access, backups, and multicast.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-09-25.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="The Manual That Invented Itself — N5HQ">
+<meta property="og:description" content="A live trace of the hotel&#x27;s main equipment rack showed where Hermus&#x27;s copper uplink lands and turned up a run of in-room TV wiring nobody had traced. An earlier transcription of the IPTV vendor&#x27;s manual contained an installation step that doesn&#x27;t exist, so I re-checked the whole document section by section against the vendor&#x27;s live site. The vendor also answered two rounds of WhatsApp questions on Dolby audio, SSH access, backups, and multicast.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-09-25.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">The Manual That Invented Itself</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-09-25 · Friday · 11:48 PM</span>
+      <span class="chip">6 min read</span>
+      <span class="chip badge-ai">78% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>The morning started with the Elgato Stream Deck's official MCP server, which only runs locally on Windows or macOS through the Stream Deck app. My first plan was to run Claude directly on the PC. That's backwards for how I work: my Claude workspace is the server container I connect to from anywhere, so the design became a reverse SSH tunnel from the PC into the server. Nothing's built yet. Separately, reaching the hotel's IPTV admin pages from home over Tailscale worked once the connection stopped routing through a DERP relay and went direct after a <code>tailscale ping</code>. It was slow at first but never broken.</p>
+<h2>Hermus's rack was never fibre</h2>
+<p>Photos of Hermus's rack, taken the night before, got analysed and produced a wrong picture: a fibre run into an isolated 8-room building, a media converter, a candidate SFP purchase. On site, all of that fell apart. There's no fibre into that rack. The uplink is a brown copper Ethernet cable, landing at roughly port 22 on a confirmed UniFi Enterprise switch and running maybe 30 to 40 metres back to the main rack by my own estimate, well inside copper Ethernet's 100-metre limit. The Hermus outdoor ports feed outdoor Wi-Fi APs and don't make a second building link. I cancelled the SFP purchase, dropped the fibre-based layout, and settled on a direct copper run. Every doc that had the fibre story got corrected in place, with the wrong inference left visible and marked.</p>
+<p>The other end of that copper cable got settled the same day, during a live trace of the hotel's main equipment rack. It took about half an hour and covered the rack itself and the links running out to the two smaller ones. Most of its local switch feeds Wi-Fi access points around the building, one port per AP, with only a couple of ports doing anything else. Behind it are several patch panels, each covering a different slice of the hotel. Some are patched straight through to one of the two core switches, some are cross-connected panel to panel, and one bank looks like phone lines rather than data, though that's still a guess.</p>
+<p>One full panel answered a question that had been open since the site survey began. It's Strymon's in-room TV wiring, home-run all the way back to the main rack instead of ending in Strymon's own rack as I'd assumed, and it lands on a core switch there. Hermus's uplink resolved the same way: the patch-panel port labelled for Hermus lands on one of the two core switches, which says where that brown copper cable from Hermus's rack goes. It's a label match only, not yet confirmed with a toner or a link light, so it's still a lead. The two core switches are joined by a single link, and the building's firewall connects to both, more to one than the other. The hotel switch in the third rack is still untraced until I photograph its ports. Later that night the whole trace went into a spreadsheet with a cable schedule, a sheet per switch and patch panel, the rack elevation, and a tab of open questions for the next visit.</p>
+<h2>A login that wasn't a login</h2>
+<p>I'd found that the SSH path already used for the IPTV switch, through the on-site travel router, also reaches the headend server's web admin and its SSH port from the lab. I created a login in the password manager and scoped a narrow permission to a single wrapper script for it. The SSH attempt got refused anyway. The account existed only in the web admin, and a web-app login isn't a Linux login, which also explains why earlier guesses never worked. The vendor made the same point later in writing when they refused shell access outright: it's for their own developers.</p>
+<p>By evening the Dolby audio problem on the HD channels was sorted anyway, through the settings PIN and HDMI passthrough. Three bench set-top boxes also got baselined over adb, with time zone and locale confirmed to survive a reboot.</p>
+<h2>Two rounds with the vendor</h2>
+<p>The vendor answered the questions I'd sent the night before. The HD channels lose sound because the set-top box chip can't decode Dolby AC-3, and fixing it server-side needs an extra AC3-to-AAC converter box. No setting does it. The other answer was worse: the STB settings PIN is the same across their entire fleet and can't be changed from the server. That's a guest-tampering risk worth raising before handover.</p>
+<p>A second round went out the same day. On HDMI passthrough they said to try the box settings, since they're on a Chinese holiday. SSH came back refused. For backups they offered to annotate screenshots, until I found the admin UI already has a backup button that downloads a config file straight to the PC. Delivery mode was the sharper answer: the system runs all-HLS or all-UDP with no mix, so testing multicast on site means switching the whole system over, not one channel. I decided to hold the invoice's support and warranty terms in reserve instead of raising them now, as leverage if things stall later. Along the way I learned that multicast is UDP or RTP sent to a group address, while HLS, RTMP, and SRT are different delivery methods entirely.</p>
+<h2>The manual had a step nobody wrote</h2>
+<p>The main event of the afternoon was catching a mistake in our own documentation, and the vendor had nothing to do with it. Claude cited the vendor manual as saying installers log in to the server's OS as part of a setup procedure. I checked the actual manual and it says nothing of the kind. Our transcription of that section had invented a nine-step procedure that isn't in the source anywhere.</p>
+<p>That triggered a full re-verification. Every section of the manual was pulled fresh from the vendor's live content API and checked line by line against what we'd written down. A few smaller inventions turned up in the same pass, including video durations that had been read off a PDF player and never confirmed in the source. All of it got fixed. The pass also produced a project-scoped skill that makes the verified manual the first thing checked for any IPTV procedure question, with a hard rule attached: cite a section number, or say the answer isn't documented.</p>
+<p>The vendor messages had gone out without a humanizer pass, so I added a vault-wide rule that anything written for someone other than me runs through that skill first.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="iptv" href="/blog/?tag=iptv">IPTV</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-24.html">← A Route That Vanished Every Reboot</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-26.html">The Bond That Didn&#x27;t Come Back Up →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

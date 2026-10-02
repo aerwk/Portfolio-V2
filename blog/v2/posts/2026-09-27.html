@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moving the Floor While Standing on It — N5HQ</title>
+<meta name="description" content="The whole Proxmox cluster moved from LVM-thin to ZFS, one node at a time, with new addresses. Before it started, a RAM upgrade turned into an HA mess and a live migration filled a thin pool under the container Claude runs in. The hotel client&#x27;s locations also got codenames everywhere, and a sub-agent&#x27;s &#x27;zero remaining&#x27; turned out to be about forty.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-09-27.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Moving the Floor While Standing on It — N5HQ">
+<meta property="og:description" content="The whole Proxmox cluster moved from LVM-thin to ZFS, one node at a time, with new addresses. Before it started, a RAM upgrade turned into an HA mess and a live migration filled a thin pool under the container Claude runs in. The hotel client&#x27;s locations also got codenames everywhere, and a sub-agent&#x27;s &#x27;zero remaining&#x27; turned out to be about forty.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-09-27.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Moving the Floor While Standing on It</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-09-27 · Sunday · 10:07 PM</span>
+      <span class="chip">6 min read</span>
+      <span class="chip badge-ai">75% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>The plan for today was to move the whole four-node Proxmox cluster off LVM-thin storage and onto ZFS, one node at a time, renumbering the nodes into <code>x.x.0.51</code> to <code>.54</code> as they went. It got done, after two incidents and after the hotel codename work from the night before was carried out just after midnight.</p>
+<h2>Codenames everywhere, and a count that was wrong</h2>
+<p>Every real location name for the hotel client got replaced across the vault, NetBox, the skills, memory and the scripts in <code>~/bin</code>, so none of it needs redacting later. A rollback snapshot of the NetBox database came first. Then folders and files got renamed, four sub-agents and Claude's own pass reworked the prose, and NetBox's site, tenant, buildings, wireless network and access points got relabelled through the API. Two <code>~/bin</code> commits went out at 00:28 and 01:20, and the SSH alias for the on-site travel router got renamed with them.</p>
+<p>The NetBox sub-agent reported object counts unchanged across 50 endpoints and zero old names left. Claude ran its own scan and found about forty. A regex that matched one name with or without a space but missed the hyphenated form explained part of the gap. The rest came from a second sub-agent that had been told to apply a rename through a message relayed from the lead session. Its permission classifier read that as instruction poisoning and blocked it. Claude's first run of the follow-up fix script was denied as a change to a shared resource, and it went through once I said "fix those". A connectivity test that afternoon confirmed the renamed router alias still works.</p>
+<p>Also after midnight: the verified copy of the cabling standard from yesterday got finished as a skill, and I asked what had pulled my whole network into NetBox. The answer was a sync script, a few hundred lines of Python that reads UniFi's API for switches, APs and VLANs and Proxmox's API for every node and guest, then writes it all into NetBox with a scoped token and credentials fetched from the password manager at run time. It runs dry by default and needs a separate flag to write, and another to mark vanished objects offline instead of deleting them. I asked the same question again at 19:28 and got the same answer.</p>
+<h2>Two incidents before the rebuild started</h2>
+<p>At 03:57 pve01 went down for a RAM upgrade. <code>datacenter.cfg</code> still had <code>shutdown_policy=migrate</code> from the HA setup in August, so the HA manager tried to move Home Assistant and the LLM proxy to pve03. It moved their configs but not their disks, because neither guest lives on shared storage any more, and both landed in an error state. Home Assistant was down until I got in from PowerShell around 04:15, moved the configs back by hand and started the guests on pve01 directly. HA had been built around guests living on the NAS, which stopped being true when the NAS got unreliable. All it was giving me now was fencing risk, so once things were stable I had every HA resource removed. Guests start in place with <code>onboot=1</code>, the way they used to.</p>
+<p>Then at 06:17, picking the day's project back up, a live migration of n5ubuntu from pve03 to pve01 with <code>--with-local-disks</code> filled pve01's thin pool. The mirror writes the full 150G virtual disk, not the space actually used, and pve01 had about 109G free. The pool hit 100% around 06:25, and one of the things on it was CT 109, the container this Claude workspace runs in. Its root filesystem went read-only mid-write, and Home Assistant paused on an I/O error. A stop, an <code>fsck</code> and a start brought the container back clean a few minutes later, but anything written in the minutes before was lost. A handoff note written on pve01 itself while the container was read-only is what the next session started from at 06:34.</p>
+<h2>Rebuilding the cluster node by node</h2>
+<p>pve02 went first: evacuated, pulled from the cluster around 08:36, wiped, reinstalled on a single ZFS disk and rejoined at <code>x.x.0.52</code>. Its RTL8125 2.5G card came out and went into pve04. pve03 got re-addressed to <code>.53</code>, rebuilt, and had its guests moved off. pve04 got reinstalled at <code>.54</code> on a striped ZFS pair and joined as the fourth node.</p>
+<p>pve04 was the awkward one. It's running on a 90 W power brick when its factory supply is 180 W, so under load the supply asserts PROCHOT and the CPU clamps itself. The fix is two systemd services, one capping the RAPL power limits to what the brick can deliver and one clearing the BD PROCHOT bit so the CPU ignores the brick's signal. The first reboot test failed: an ordering cycle between the two units made systemd delete one of the jobs, the power limits reverted to the firmware's 65/145 W, and the CPU sat at 200 MHz. After fixing the unit ordering, a second real reboot at about 12:05 came up correct. It stays capped until the proper brick arrives.</p>
+<p>Guests moved all day. n5monitor and n5ubuntu went live from pve03 to pve02 around 11:00, and PBS went to pve01. At 11:11 pi02, the Raspberry Pi, got set up as a corosync QDevice, which gave the four nodes a fifth, tie-breaking vote.</p>
+<h2>Emptying pve01, and the node that forgot its vote</h2>
+<p>By early afternoon pve01 was down to the one guest that couldn't move casually, this container, since stopping it ends the session. Before that move, at 14:53, the NAS went off. Immich and PBS were stopped first and the NAS-backed storages detached from every node, so nothing would hang looking for a share that wasn't there.</p>
+<p>pve01's own rebuild ran from a session on my PC, not from the container on the box being wiped. At 15:36 I was back on pve01, on ZFS at <code>.51</code> and rejoined. The rebuild had dropped the QDevice out of the corosync config, so the cluster counted four votes instead of five, and re-adding it stalled because pi02 refused SSH from pve01's freshly generated key. That's still open.</p>
+<h2>Set-top boxes and where the cable map lives</h2>
+<p>In the late afternoon I pulled screenshots off the three bench set-top boxes over adb. They were reachable but asleep, and a sleeping box screenshots as a black frame. Waking one takes a remote keypress over the same link, and since that can also wake the TV over HDMI-CEC, Claude checked first before sending it. All three showed live channels once woken, so the tuner-to-box path works end to end on the bench. The same session ran the numbers on scaling one stream per box to all hundred rooms: unicast grows with every room watching and multicast doesn't, and a hundred rooms of HD unicast gets close to what a single delivery link can carry.</p>
+<p>A research pass on where the hotel's cable map should live came back recommending NetBox as the master record, with the spreadsheet generated from it for handover. I haven't answered that yet. NetBox got ahead of the decision anyway: by evening the hotel's three racks were loaded from an elevation sheet, one of them as a full 42U, with two rack-visualisation plugins installed.</p>
+<p>The last check of the night, at 22:05, found all four nodes up and quorate, every ZFS pool healthy and barely used, and no failed units. The portal, n8n and the LLM proxy were still stopped and not set to start on boot, and the QDevice isn't voting. Those are tomorrow's jobs.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="storage" href="/blog/?tag=storage">Storage</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="netbox" href="/blog/?tag=netbox">Netbox</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-26.html">← The Bond That Didn&#x27;t Come Back Up</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-28.html">Reading Labels in Someone Else&#x27;s Racks →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

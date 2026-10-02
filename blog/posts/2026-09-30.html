@@ -1,0 +1,210 @@
+<!doctype html>
+<!-- GENERATED FILE. Produced by scripts/build_dev_preview.py from the design
+     source in `01 Design/design-loop/src` (gitignored). Do not hand-edit this
+     file directly -- edit the source and re-run the generator instead. -->
+<html lang="en" data-theme="ninja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Theme sync (ninja/flashbang, formerly "dark"/"light"): runs before first paint so a
+     visitor who saved flashbang never sees a flash of ninja. Ninja is the default
+     regardless of OS prefers-color-scheme -- the static data-theme="ninja" above already
+     covers the no-JS case; this only overrides it when n5-theme reads "flashbang". Kept a
+     byte-identical copy in every page's <head> (p3/home.html, p4/about.html,
+     p4/projects.html, p4/blog.html, p4/post.html) rather than a shared external file, since
+     an external <script src> would itself block on a network round trip, so inline is the
+     only way to run this before paint. -->
+<script>
+(function(){
+  'use strict';
+  var theme = 'ninja';
+  try {
+    if (window.localStorage.getItem('n5-theme') === 'flashbang') theme = 'flashbang';
+  } catch (e) {}
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+</script>
+<title>Fencing That Didn't Fence — Eric Li</title>
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-09-30.html">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-09-30.html">
+<meta property="og:title" content="Fencing That Didn't Fence — Eric Li">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta name="theme-color" content="#12130f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/subpage.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="corner tl n5i-cluster" id="c-tl">
+    <a class="n5i-mark n5i-lockup" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/logo-rest.svg" alt="Eric Li"><img class="lk-hover" src="/assets/logo-hover.svg" alt="" aria-hidden="true"><img class="lk-hover-fb" src="/assets/logo-hover-fb.svg" alt="" aria-hidden="true"></a><script>(function(){var m=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;var a=document.currentScript.previousElementSibling;if(!m&&a&&a.classList.contains("n5i-lockup"))a.classList.add("lk-armed")})()</script>
+
+<span class="role">DevOps &amp; Infrastructure</span>
+
+  <nav class="blog-tree" data-blog-tree aria-label="Blog archive"></nav></div>
+
+
+<div class="corner tr" id="c-tr">
+  <button type="button" class="pill ico theme-toggle" id="theme-toggle" aria-pressed="false" aria-label="Switch to flashbang mode">
+    <span class="pill-l tt-sun"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
+    <span class="pill-c tt-sun" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
+    <span class="pill-l tt-moon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+    <span class="pill-c tt-moon" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+  </button>
+  <nav aria-label="Links">
+    <a class="pill" href="/about/"><span class="pill-l">About ↗</span><span class="pill-c" aria-hidden="true">About ↗</span></a>
+    <a class="pill" href="/portfolio/"><span class="pill-l">Projects ↗</span><span class="pill-c" aria-hidden="true">Projects ↗</span></a>
+    <a class="pill" href="/blog/" aria-current="page"><span class="pill-l">Blog ↗</span><span class="pill-c" aria-hidden="true">Blog ↗</span></a>
+    <a class="pill" href="mailto:helloworld@n5hq.me"><span class="pill-l">EMAIL ↗</span><span class="pill-c" aria-hidden="true">EMAIL ↗</span></a>
+    <div class="n5i-socials" aria-label="Social links">
+      <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="GitHub"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span></a>
+      <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="LinkedIn"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span></a>
+      <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="Instagram"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span></a>
+    </div>
+    <span class="n5i-nav-rule" aria-hidden="true"></span>
+    <a class="pill" href="https://portal.n5hq.me"><span class="pill-l">Login →</span><span class="pill-c" aria-hidden="true">Login →</span></a>
+  </nav>
+</div>
+
+<main class="page" id="main">
+  <div id="blog-list-view" hidden>
+  <p class="label">Blog</p>
+  <h1 class="page-title">Tech Journey Journal</h1>
+  <p class="lede">What changed, what prompted it, what broke, and what I learned getting it working again. Written as I go, so the record shows the route — where I started, where I am, and where I'm going.</p>
+
+  <section>
+    <p class="label">All posts</p>
+    <div class="post-list">
+      <a class="post-row" href="/blog/posts/2026-10-01.html"><span class="post-meta">Homelab · 2026-10-01</span><span class="post-title">Every Session Starts Cold</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-30.html"><span class="post-meta">Homelab · 2026-09-30</span><span class="post-title">Fencing That Didn't Fence</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-29.html"><span class="post-meta">Homelab · 2026-09-29</span><span class="post-title">The Cluster After the Rebuild</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-28.html"><span class="post-meta">Homelab · 2026-09-28</span><span class="post-title">Reading Labels in Someone Else's Racks</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-27.html"><span class="post-meta">Homelab · 2026-09-27</span><span class="post-title">Moving the Floor While Standing on It</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-26.html"><span class="post-meta">Homelab · 2026-09-26</span><span class="post-title">The Bond That Didn't Come Back Up</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-25.html"><span class="post-meta">Homelab · 2026-09-25</span><span class="post-title">The Manual That Invented Itself</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-24.html"><span class="post-meta">Homelab · 2026-09-24</span><span class="post-title">A Route That Vanished Every Reboot</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-23.html"><span class="post-meta">Homelab · 2026-09-23</span><span class="post-title">A Wrong Netmask, Two Lost Hours</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-22.html"><span class="post-meta">Homelab · 2026-09-22</span><span class="post-title">Racking the Headend, Minus the Tuner</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-21.html"><span class="post-meta">Homelab · 2026-09-21</span><span class="post-title">Green Dashboards, Two Real Faults</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-16.html"><span class="post-meta">Web · 2026-09-16</span><span class="post-title">Zero Sites in an Empty Category</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-11.html"><span class="post-meta">Web · 2026-09-11</span><span class="post-title">Six Rebuilds to Freeze the Pane</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-10.html"><span class="post-meta">Homelab · 2026-09-10</span><span class="post-title">Planning a Hotel IPTV Replacement From Rack Photos</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-09.html"><span class="post-meta">Web · 2026-09-09</span><span class="post-title">Reconstructing a Day From Git History</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-08.html"><span class="post-meta">Web · 2026-09-08</span><span class="post-title">The Hook's One Blind Spot</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-07.html"><span class="post-meta">Web · 2026-09-07</span><span class="post-title">Seventeen Rounds, Zero Commits</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-06.html"><span class="post-meta">Web · 2026-09-06</span><span class="post-title">A Retint Becomes a Full Rebuild</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-05.html"><span class="post-meta">Homelab · 2026-09-05</span><span class="post-title">The Reboot That Only Worked Once</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-04.html"><span class="post-meta">Homelab · 2026-09-04</span><span class="post-title">82 Percent Free, 99.9 Percent Full</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-28.html"><span class="post-meta">Homelab · 2026-08-28</span><span class="post-title">A Switch Line Misread as Connected</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-27.html"><span class="post-meta">Homelab · 2026-08-27</span><span class="post-title">The Validator Checked the Wrong Path</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-26.html"><span class="post-meta">Homelab · 2026-08-26</span><span class="post-title">A Restart That Reported False Success</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-25.html"><span class="post-meta">Homelab · 2026-08-25</span><span class="post-title">The Safe Idiom That Leaked Tokens</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-24.html"><span class="post-meta">Homelab · 2026-08-24</span><span class="post-title">A 403 Traced Three Files Deep</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-23.html"><span class="post-meta">Homelab · 2026-08-23</span><span class="post-title">A Rule That Saw One User</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-22.html"><span class="post-meta">Homelab · 2026-08-22</span><span class="post-title">Every Baseline Measured the Wrong Thing</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-21.html"><span class="post-meta">Homelab · 2026-08-21</span><span class="post-title">The Hardlink That Never Linked</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-13.html"><span class="post-meta">Web · 2026-08-13</span><span class="post-title">A Regex Quietly Broke the Homepage</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-12.html"><span class="post-meta">Homelab · 2026-08-12</span><span class="post-title">Four Quiet Failures That Looked Fine</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-11.html"><span class="post-meta">Homelab · 2026-08-11</span><span class="post-title">The Redundancy That Shared a Flaw</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-10.html"><span class="post-meta">Homelab · 2026-08-10</span><span class="post-title">Three Nodes, and a Hung NIC</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-09.html"><span class="post-meta">Homelab · 2026-08-09</span><span class="post-title">Three False All Clears Before Breakfast</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-08.html"><span class="post-meta">Homelab · 2026-08-08</span><span class="post-title">Four Green Checks Over Broken Things</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-07.html"><span class="post-meta">Homelab · 2026-08-07</span><span class="post-title">The Repo That Shipped Only Half</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-31.html"><span class="post-meta">Homelab · 2026-07-31</span><span class="post-title">A Model Cannot Report on Itself</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-30.html"><span class="post-meta">Homelab · 2026-07-30</span><span class="post-title">The Backup That Was Still Open</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-29.html"><span class="post-meta">Projects · 2026-07-29</span><span class="post-title">A Downloads Sorter, Bugs and All</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-28.html"><span class="post-meta">Homelab · 2026-07-28</span><span class="post-title">A Second Server, an Open Door</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-27.html"><span class="post-meta">Homelab · 2026-07-27</span><span class="post-title">A Disabled SSID Locked the Channel</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-26.html"><span class="post-meta">Homelab · 2026-07-26</span><span class="post-title">One Outage, Two Different Diagnoses</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-25.html"><span class="post-meta">Projects · 2026-07-25</span><span class="post-title">Twenty-Three Cents to Read One Photo</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-24.html"><span class="post-meta">Homelab · 2026-07-24</span><span class="post-title">From Container Updates to Git Forge</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-16.html"><span class="post-meta">Homelab · 2026-07-16</span><span class="post-title">The Dongle That Would Not Receive</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-14.html"><span class="post-meta">Projects · 2026-07-14</span><span class="post-title">Discord In, Linux ISOs Out</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-13.html"><span class="post-meta">Projects · 2026-07-13</span><span class="post-title">Screenshots Let AI Ship the Redesign</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-12.html"><span class="post-meta">Homelab · 2026-07-12</span><span class="post-title">Two Rooms Learn to Turn Off</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-02.html"><span class="post-meta">Homelab · 2026-07-02</span><span class="post-title">One Button Rebuilds the Smart Home</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-01.html"><span class="post-meta">Homelab · 2026-07-01</span><span class="post-title">Uptime Kuma Catches a NAS Crash</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-30.html"><span class="post-meta">Homelab · 2026-06-30</span><span class="post-title">The Flash Drive That Wasn't Fake</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-29.html"><span class="post-meta">Homelab · 2026-06-29</span><span class="post-title">The Cleanup That Ate My Rollback</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-28.html"><span class="post-meta">Homelab · 2026-06-28</span><span class="post-title">Immich Move, and a Drive Scare</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-21.html"><span class="post-meta">Projects · 2026-06-21</span><span class="post-title">A Logo I Built, Then Reverted</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-20.html"><span class="post-meta">Projects · 2026-06-20</span><span class="post-title">The Copy Ships, Lab Turns Personal</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-13.html"><span class="post-meta">Projects · 2026-06-13</span><span class="post-title">A Copy Pass on the Portfolio</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-12.html"><span class="post-meta">Projects · 2026-06-12</span><span class="post-title">The Domain Cutover and Seedbox Migration</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-11.html"><span class="post-meta">Homelab · 2026-06-11</span><span class="post-title">The Reboot That Bit Back</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-10.html"><span class="post-meta">Homelab · 2026-06-10</span><span class="post-title">Network Fixes and a NIC Upgrade</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-09.html"><span class="post-meta">Projects · 2026-06-09</span><span class="post-title">Automating the Blog and Portfolio Cleanup</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-08.html"><span class="post-meta">Projects · 2026-06-08</span><span class="post-title">Monitoring Stack and Website Launch</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-07.html"><span class="post-meta">Homelab · 2026-06-07</span><span class="post-title">Home Assistant Goes Public</span></a>
+    </div>
+  </section>
+  </div>
+
+  <nav class="post-crumb label" aria-label="Breadcrumb"><button type="button" class="crumb-seg crumb-link" data-crumb-scope='{"type":"root"}'>BLOG</button><span aria-hidden="true"> &gt; </span><button type="button" class="crumb-seg crumb-link" data-crumb-scope='{"type":"year","year":"2026"}'>2026</button><span aria-hidden="true"> &gt; </span><button type="button" class="crumb-seg crumb-link" data-crumb-scope='{"type":"month","year":"2026","month":"09"}'>SEP</button><span aria-hidden="true"> &gt; </span><span class="crumb-seg crumb-current">30</span></nav>
+  <h1 class="post-title-h">Fencing That Didn't Fence</h1>
+  <p class="post-chips label">Homelab · 2026-09-30 · Wednesday · 11:27 PM · 13 min read · 75% AI · Eric Li</p>
+
+  <nav class="post-prevnext" aria-label="Post navigation"><span class="pn-prev"><a class="pill" href="/blog/posts/2026-09-29.html" title="The Cluster After the Rebuild"><span class="pill-l">‹ Previous</span><span class="pill-c" aria-hidden="true">‹ Previous</span></a></span><span class="pn-next"><a class="pill" href="/blog/posts/2026-10-01.html" title="Every Session Starts Cold"><span class="pill-l">Next ›</span><span class="pill-c" aria-hidden="true">Next ›</span></a></span></nav>
+
+  <article class="prose">
+<p>I started the day at midnight, still working from the night before, and finished at 23:27. Most of it was one project: making the four-node Proxmox cluster recover from a failed node without me. It got further than I expected, then hit a failure I hadn't planned for. The hotel client's IPTV system also gave me an afternoon of its own.</p>
+<h2>Balancing the cluster and getting the fifth vote back</h2>
+<p>The first job was moving Home Assistant onto pve03. The web UI refused with "HA resource is not allowed on the selected target node", because a strict HA rule only lets a guest run on its highest-priority node. I changed the rule's priorities so pve03 and pve02 are equal, and the move went through at 00:07: 24 seconds, with 63 ms of downtime. Replication reversed direction on its own. That left every node carrying between half and two thirds of its RAM in guests, so any single node can fail and its guests still fit on the others.</p>
+<p>I asked Claude what would improve HA. The answer started with the QDevice on pi02, which had been missing since the ZFS rebuild. It needed pve01's new root key on pi02, which only I could add because the sudo there needs my password. I did that at 00:16, Claude ran the setup, and at 00:18 the cluster was back to five votes. It can lose any two nodes now and keep quorum.</p>
+<p>The rest of the list became a written procedure with five parts: Discord alerts, a panic-to-reboot sysctl, replication plus HA for the guests that matter, the hardware watchdog on every node, and a deliberate crash test. By 01:17 the replication and HA part was in place across nine services.</p>
+<h2>Hardware watchdogs, and three ways to boot the wrong one</h2>
+<p>Proxmox uses a software watchdog by default. If a kernel freezes hard, the software watchdog freezes with it, so the node never resets and HA never moves its guests. The chipset has a real watchdog, <code>iTCO_wdt</code>, and the plan was to switch each node over using maintenance mode, one at a time, pve04 first.</p>
+<p>It failed three separate ways. pve04 and pve03 both came back on the software watchdog because the config line never made it onto the node. Claude's best explanation was that I ran the append from a shell where the node variable pointed somewhere else. On pve01 the line did get appended, but the file had no trailing newline, so it landed on the end of a commented-out line and was commented out too. Claude explained that at 01:37, but the auto-mode classifier blocked it from fixing the file over SSH, so I ran the fix myself. The procedure now appends with <code>printf</code> and checks for the active line before it allows a reboot. By 01:42 all four nodes showed <code>iTCO_wdt</code> loaded and <code>softdog</code> gone.</p>
+<p>Two smaller things came out of the same stretch. Proxmox HA priorities work the opposite way to how they read: a higher number is the preferred node. I had set Claude's own container's rule backwards, and Claude caught it from the docs. And I asked why failback was off on the containers. Containers can't live-migrate, so every HA move is a stop and start, and failback would turn one outage into two.</p>
+<h2>Moving Claude off a container</h2>
+<p>Each time pve01 needed a reboot, maintenance mode restarted the container Claude runs in, and the session died with it. At 02:02 I asked whether it could become a VM, so planned moves would be live. Claude said yes: 20 GB disk, no bind mounts, nothing unusual in the config, and the SSH host keys can be copied across so nothing warns about changed fingerprints. I asked for a written procedure I could run entirely by myself. An agent produced a 651-line one, with a rollback for every phase, and it had never been rehearsed. The session running on my PC reviewed it and Claude revised it six times, and at 04:46 I had Claude allow the VM's temporary hardware address through the management gate in UniFi.</p>
+<p>The cutover itself ran from the PC session, so it isn't in the record I'm working from. By 05:00 the VM was running next to the old container, and at the end of the day the cluster showed it live, replicated and under HA.</p>
+<h2>The crash test that worked, and the fencing test that didn't</h2>
+<p>At 01:54 I crashed pve04's kernel on purpose. It panicked and rebooted itself in about 30 seconds. That proved panic-to-reboot works, but pve04 was back before HA had any reason to fence it, so the containers restarted in place and nothing failed over. Claude said so plainly: half of what the test was for hadn't been tested.</p>
+<p>The real test needed pve04 to stay unreachable while powered. The plan was to disable its gateway port in UniFi. The controller accepted the write and then quietly reverted it to forwarding, which is exactly the behaviour I already knew about. We switched to a firewall rule on pve04 that drops corosync traffic, loaded early at boot so it would survive a reset. T0 was 02:54:17.</p>
+<p>HA did its part. It marked pve04 unknown at +10 seconds, started fencing at +60, and took the node's lock at 02:56:27, then recovered the three containers onto pve02. pve04 never reset. Its uptime kept counting. For about two minutes the same three containers ran in two places with the same addresses. Claude's request to stop the originals was blocked by the classifier, so I ran the <code>lxc-stop</code> myself at about 02:58, after Claude's first version of the command failed because it combined two flags that don't go together.</p>
+<p>The likely cause is a Dell BIOS watchdog setting that was disabled on all four nodes. I enabled it on pve04 and rebooted, but the shutdown hung on the HA service because the node still had no quorum, and I had to kill it by hand. When replication then reversed direction it destroyed the forensic snapshot of NetBox's container I had taken, so any writes on that copy are gone; none were expected at that hour. It's filed as BACKLOG #149 for the 1st or 2nd. Until it's done, HA failover after a network partition is not safe to rely on. Planned moves through maintenance mode are fine.</p>
+<p>Right after the test, at 03:18, I had Claude rebalance the guests the way I'd described earlier. The small mostly-idle ones went to pve02, and n8n, Forgejo and NetBox were meant to go to pve04, with the HA rules and the nightly backup time changed to match. The backup moved to 02:35 because it had collided with replication and left an orphaned snapshot behind. By late evening n8n and Forgejo were back on pve02. Claude's reading was that the VM cutover had rewritten the rules. I decided to leave them there and had Claude fix the rule names instead.</p>
+<h2>Working through the audit</h2>
+<p>From 03:30 to about 04:30 I used the same session to work the cluster audit list. Claude ran agents in parallel for most of it and I ran whatever the classifier blocked. Done in that stretch:</p>
+<p>The cluster-state script had been silently producing an empty guests table since 01:00. Re-adding the QDevice put its status flags where the script expected a node name, and every lookup after that failed without an error. Claude fixed it to read the right column. The backup job got its exclude path and Kuma hook, with a fourth monitor for pve04. The retired PBS trial was shut down and its storage and job removed: its datastore sat on the corrupted NAS pool and had no valid backup since the end of August, so the whole thing was closed rather than repaired. SMART tests, autotrim, ARC sizes, unattended security updates and NIC power settings were applied across the nodes. Stale known-hosts entries and leftover network config files were cleared.</p>
+<p>Some things did not close. The gateway doesn't answer NTP, so Claude set up a chrony peer mesh over the corosync network instead, but its orphan mode never kicked in under a simulated WAN loss, so that one is marked partial. A wake-on-LAN test needs a node powered off and woken, so it was shelved. The multicast traffic on the nodes turned out to be the gateway's mDNS reflector and nothing to worry about.</p>
+<p>I also had Claude strike out every completed item in the audit file. It did the titles only, then I asked for the whole item including sub-bullets and evidence, then asked for its own notes to be italic and bracketed so I could tell them from the original text. Twenty-five items ended up struck. Then I told Claude to push, and 23 runsheet commits went to Forgejo.</p>
+<h2>The hotel's set-top boxes, twice</h2>
+<p>At 13:14 I asked whether Claude could log into the switch or the tuner and find out why the set-top boxes had no signal. It checked read-only through the travel router that gives it a way in. The boxes were asking for channels and receiving nothing. The travel router had rebooted around 12:36 and the switch about 50 minutes before Claude saw it, which looked like another power cut at the rack. I declined to let Claude fetch the switch password on its first request, then changed my mind and told it the right command to use.</p>
+<p>The tuner was sending fine. The server was receiving the stream but transmitting nothing: its channel gateway page showed every entry ticked and a distribution count of zero. At 13:36 I did what I suspected, Stop All and then Distribute, and all three boxes had video within a minute. The same fault came back at least twice more that afternoon, each time the server restarted its services.</p>
+<p>At least one of those was my doing. I wanted the boxes to have internet through the travel router, so at about 15:26 I changed the default gateway and DNS on the server's DHCP page and its network management page. The server stopped answering everything except ARP for about 20 minutes, and one set-top box came back online with working internet but no menus because it couldn't reach the server. Nothing was wrong with the box. The admin pages stalled three times in total. At 16:04 I plugged a cable into the server's spare management port and it worked almost immediately. Claude's guess is that the new default route went out through that unplugged port. That one is for the vendor.</p>
+<p>The travel router had its own fault: a Wi-Fi reload at about 15:16 rebuilt its bridge and dropped two of its extra addresses, which cut off remote access to the admin pages and the tuner. Claude first tried the obvious fix of moving them onto the main LAN interface, then stopped before applying it because the Tailscale helper script reads that field as a single address and would have broken remote access. It pointed the two interfaces at the logical interface instead, and I approved. Claude also turned the travel router into the network's time server.</p>
+<p>A streaming test on one box showed about 3 Mb/s through the travel router and no multicast leaking onto its port. At 16:13 I had to remind it that I was at the hotel and not at home, after it spent a minute measuring my home network.</p>
+<p>I also asked about using my two spare switches for HA. It would give almost nothing here: every device in the headend has a single cable, and a stack wouldn't have prevented a power cut. A cold spare with the same config loaded would. I asked what port the hotel's cable should go to, and noted that the answer depends on whether they hand over the VLAN tagged or untagged. Claude pointed out that the UPS is delivered but still needs an electrician.</p>
+<h2>Evening: the hour list, a self-inflicted reboot, and SSH</h2>
+<p>At 21:35 I asked Claude to go through the audit and list everything doable in an hour. About 20 items needed no decision from me. It also noticed that the audit overlay had marked the hardware watchdog as complete when the fence test had just proved otherwise, and corrected that. I had Claude check last night's and today's sessions for anything already finished, and then check the live cluster read-only. The checks found that nothing on the list had been done by the PC session, only the VM conversion.</p>
+<p>I approved the hour list at 22:12. Two agents took it. One of the changes was a BIOS write to set Fastboot to Minimal. On pve02 that reset the node instantly, unclean, at 22:38. Everything came back by itself in about two minutes, including the tunnel connector, n8n, Forgejo and the portal. The same write on the other three nodes did nothing visible. The runsheet and the Dell BIOS skill now say to treat any BIOS write on pve02 as a reboot and evacuate it first. In the same batch, the PVE mail sender setting was skipped because my domain's DMARC policy would have had Proton quarantine the mail.</p>
+<p>At 22:54 the shared SSH key file went from 13 entries to 6, with every path tested before and after, and I sent over the Mac's public key before the SSH hardening. The agent turned off password login on all four nodes, one at a time, after each node's change tested every access path. From the Mac, a hostname check over SSH printed the node name straight away. From the PC it failed with "Permission denied" the first time, which Claude expected: before tonight it could have fallen back to a password, and now it can't. With the right key named, it worked at 23:26, and I added it to my SSH config.</p>
+<p>One of the cleanup agents broke its read-only instructions and restarted pve01's standby network link at 22:57, which dropped it for about two seconds. The active link stayed up and nothing noticed.</p>
+<h2>Open</h2>
+<ul>
+<li>Fencing: BACKLOG #149 for the 1st or 2nd. Raw reset test on pve04, then the BIOS watchdog setting on pve01 to pve03 or a return to the software watchdog, then the fence test again. Before touching pve01, <code>/save-session</code> and live-migrate Claude's VM away first.</li>
+<li>Backups: after 02:35 tomorrow, check the four backup monitors in Kuma went UP. If they did, the new job settings work.</li>
+<li>Audit leftovers: one network setting stays on until a test migration proves Proxmox works without it. The wake-on-LAN test and the chrony outage test are still outstanding.</li>
+<li>Hotel IPTV: channel distribution doesn't survive a server restart, so every power cut will need a manual Stop All and Distribute until the vendor has an answer. The new gateway setting and the spare management port are on the list of questions for them.</li>
+</ul>
+  </article>
+
+  <section>
+    <div class="social-row">
+      <a class="pill" href="/blog/" data-crumb-scope='{"type":"root"}'><span class="pill-l">All posts ↗</span><span class="pill-c" aria-hidden="true">All posts ↗</span></a>
+    </div>
+  </section>
+</main>
+
+<script>window.__N5_BASE='';</script>
+<script src="/assets/subpage.js"></script>
+</body>
+</html>

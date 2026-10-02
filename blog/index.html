@@ -99,9 +99,18 @@
   <section>
     <p class="label">All posts</p>
     <div class="post-list">
+      <a class="post-row" href="/blog/posts/2026-10-01.html"><span class="post-meta">Homelab · 2026-10-01</span><span class="post-title">Every Session Starts Cold</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-30.html"><span class="post-meta">Homelab · 2026-09-30</span><span class="post-title">Fencing That Didn't Fence</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-29.html"><span class="post-meta">Homelab · 2026-09-29</span><span class="post-title">The Cluster After the Rebuild</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-28.html"><span class="post-meta">Homelab · 2026-09-28</span><span class="post-title">Reading Labels in Someone Else's Racks</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-27.html"><span class="post-meta">Homelab · 2026-09-27</span><span class="post-title">Moving the Floor While Standing on It</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-26.html"><span class="post-meta">Homelab · 2026-09-26</span><span class="post-title">The Bond That Didn't Come Back Up</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-25.html"><span class="post-meta">Homelab · 2026-09-25</span><span class="post-title">The Manual That Invented Itself</span></a>
       <a class="post-row" href="/blog/posts/2026-09-24.html"><span class="post-meta">Homelab · 2026-09-24</span><span class="post-title">A Route That Vanished Every Reboot</span></a>
       <a class="post-row" href="/blog/posts/2026-09-23.html"><span class="post-meta">Homelab · 2026-09-23</span><span class="post-title">A Wrong Netmask, Two Lost Hours</span></a>
       <a class="post-row" href="/blog/posts/2026-09-22.html"><span class="post-meta">Homelab · 2026-09-22</span><span class="post-title">Racking the Headend, Minus the Tuner</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-21.html"><span class="post-meta">Homelab · 2026-09-21</span><span class="post-title">Green Dashboards, Two Real Faults</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-16.html"><span class="post-meta">Web · 2026-09-16</span><span class="post-title">Zero Sites in an Empty Category</span></a>
       <a class="post-row" href="/blog/posts/2026-09-11.html"><span class="post-meta">Web · 2026-09-11</span><span class="post-title">Six Rebuilds to Freeze the Pane</span></a>
       <a class="post-row" href="/blog/posts/2026-09-10.html"><span class="post-meta">Homelab · 2026-09-10</span><span class="post-title">Planning a Hotel IPTV Replacement From Rack Photos</span></a>
       <a class="post-row" href="/blog/posts/2026-09-09.html"><span class="post-meta">Web · 2026-09-09</span><span class="post-title">Reconstructing a Day From Git History</span></a>
@@ -245,24 +254,73 @@
     <div class="post-list" data-listing-rows></div>
   </div>
 
-  <template id="post-tpl-2026-09-24">
-  <h1>A Route That Vanished Every Reboot</h1>
-  <p class="post-chips label">Homelab · 2026-09-24 · Thursday · 11:30 PM · 4 min read · 75% AI · Eric Li</p>
+  <template id="post-tpl-2026-10-01">
+  <h1>Every Session Starts Cold</h1>
+  <p class="post-chips label">Homelab · 2026-10-01 · Thursday · 11:54 PM · 5 min read · 78% AI · Eric Li</p>
 
   <article class="prose">
-<p>Two unrelated pushes filled the day: rebuilding the public site before breakfast, and closing out a run of blocking issues on a hotel client's IPTV network that evening, on site.</p>
-<h2>The site gets a new front door</h2>
-<p>The v3 redesign became the live site this morning, replacing the old static wordmark with a new SVG logo that carries three states: a static mark, a neon hover animation, and the settled hover look once that animation finishes. A light/dark toggle went in alongside it, named flashbang for the inverted palette and ninja for the current dark one. That took a few rounds to get right: the first accent colour came out an unintended pink, got swapped for a blue, then brightened twice before it read correctly against the page, with the glow stripped off the logo animation at the same time. The hero towers on the home page needed the same blue-over-purple swap before it shipped. A new "archived" project group went in for retired work (the Caddy rating app, DisClaude sesh, and FileIt), and the IPTV project itself moved from Upcoming to In Progress, three days after the client engagement started.</p>
-<p>Alongside the redesign, a run of agents cleared the backlog on the blog itself. The humanizer skill got installed from its GitHub repo to strip AI writing tells out of published posts, then went to work: three missing journal entries (the 11th, 22nd, and 23rd) went through one Sonnet agent per entry to draft from the source material, a revising agent to edit each one, and a final pass to confirm no credentials had leaked into any of them, bringing the blog to 51 posts. Blog titles across the whole site got cut to six words or fewer in the same pass, and a raw Tailscale IP and interface name that had been sitting in an old archived post got censored. A container count and a projects stat that had drifted from reality got refreshed to match, and Proton Pass joined the homepage tool marquee.</p>
-<h2>Fixing a network that kept undoing its own fixes</h2>
-<p>On site that evening, the outstanding blockers on the hotel client's IPTV build came off the list one by one. The H3C switch had been accepting SSH logins and then dropping the session immediately; tracing it from the console found <code>line vty 0 63</code> had no <code>authentication-mode</code> set, so it was falling back to Comware's default password mode with no password configured. Setting <code>authentication-mode scheme</code> and saving fixed it, and the fix was retested end to end from home that same evening, over the full remote chain: this laptop to a lab host, to the GL.iNet travel router, to the switch itself.</p>
-<p>The travel router had a separate, longer-running fault. Every reboot, including its own scheduled one, silently dropped one of the two Tailscale routes it was supposed to advertise, breaking remote access to the admin interface until it got manually re-added. The cause was the router's own <code>gl_tailscale</code> script, which rebuilds its route list from the LAN interface config on every interface event, not just boot, with no option to keep an extra route in that list. A one-line patch ahead of the route-building check fixed it, verified after a deliberate reboot brought both routes back without anyone touching it. The reboot schedule itself got changed from daily to weekly while this was being worked through.</p>
-<p>With the switch and the router both behaving, IGMP snooping went on and got saved, and a live multicast join confirmed it was working. A third set-top box joined the bench setup, and all five DVB-T muxes got imported and synced to the client package in one evening, not just the first one from two days before: the whole channel lineup playing on the boxes at once, on the client's actual rooftop signal. The one thing that didn't work was sound on the HD channels, which carry Dolby audio the boxes can't decode; a WhatsApp message and a list of technical questions went to the vendor about it, drafted but not yet sent. Photos went out of the fibre trace at the main rack, which settled which of the two core switches feeds which part of the building. A written decision landed that the IPTV network won't stay permanently isolated: it will eventually join the hotel's own network, which added a new set of questions for whoever manages that side.</p>
-<p>The one thing planned for the evening that didn't happen was the pilot isolation test on a second building's rooms, which needed those rooms empty and the hotel was fully booked. Photos of that building's rack still got taken before calling it a night, ahead of trying again the next day.</p>
+<p>I finished the secrets migration from the night before and set up a real DNS resolver for the house. The evening went on client site work, where I had to call Claude out for forgetting a project it had been living in for a week.</p>
+<h2>Getting secrets off the backup path</h2>
+<p>The day started before five in the morning, picking up where the previous session had left off: getting every exposed secret off the one disk that lands in the nightly backup of the VM Claude runs on. An inventory from overnight had turned up SSH keys, login sessions for a handful of command-line tools, and a couple of dead credentials nobody remembered deleting. I generated four new SSH keys through the password manager on my Mac instead of moving the old ones across, because the old keys had already sat in weeks of NAS backups and moving them would leave those copies exposed. Claude installed the new public keys one host at a time, tested each with a fresh connection, and only removed the old ones once the new ones were proven.</p>
+<p>Partway through, one of the Proxmox nodes reset itself. I'd been in the server rack checking which smart plug fed which device, for power monitoring I want to add later, and knocked one slightly loose. It did no harm, but it left a key swap half done when the node dropped, and a stopped container turned up that shared a name with the VM Claude actually runs on, a leftover from this week's server migration. I'd started it by accident, confused by the shared name, so I had it renamed.</p>
+<p>With the key swap done I asked for a full network retest between all four Proxmox nodes and my own PC, since two of the nodes have been running on USB network adapters instead of onboard ports for weeks. Every link held close to full 2.5 gigabit speed in both directions, including the one pair of nodes that used to run slower in one direction than the other. Whatever caused that difference is gone.</p>
+<h2>A blank SSD for Linux</h2>
+<p>Mid-morning I formatted a blank 2 TB Samsung T7 Shield portable SSD from a Claude Code session on my Windows PC. I picked exFAT over ext4 or NTFS so the drive reads and writes on Linux, Windows and macOS. The first attempt failed because the shell wasn't elevated, and it changed nothing. The retry through an elevated prompt worked and left one GPT partition labelled T7.</p>
+<h2>A DNS resolver for the house</h2>
+<p>The bigger job was replacing the router's built-in DNS with something I control. I'd read a while back that one self-hosted DNS server had pulled ahead of the usual ad-blocking pick, mostly because it handles more than one instance without a separate sync tool, and the current release notes still said so. It went on a Raspberry Pi that also holds a tie-breaking vote in the Proxmox cluster, so I had to be careful with disk writes and avoid anything that could interfere with the cluster.</p>
+<p>Before any device got pointed at it, a network review caught a gap in the plan: three of my networks are firewalled off from the one the Pi sits on, so switching their DNS over without an extra rule would have made every lookup time out before falling back to the slow path. That got fixed first. By early afternoon I'd proven it worked, first from my own PC, then from my phone on the home network. The phone mattered because it wasn't on an admin allow-list, so it showed that the new firewall rule did something.</p>
+<p>I also moved the Pi itself off an access point and onto a port on the gateway, so the device holding the cluster's fifth vote no longer depends on a Wi-Fi access point staying up. That went cleanly. Around midday I rebooted two of the four nodes by accident while working near the rack. One of the photo app's containers went down briefly because it lost a race with a storage mount coming back online, and a battery-backed lighting hub dropped offline for good measure. Neither had anything to do with the DNS work.</p>
+<h2>Client work, and a session that had gone cold</h2>
+<p>Separately, I spent part of the morning pulling apart an old backup file from a client's equipment, to understand how the system is built instead of trusting what its web interface claims. It turned up a few things to raise with the vendor before handover, but those are for them, not for here.</p>
+<p>The evening was a long site visit, installing and configuring a second piece of equipment for that same client's project. It did not go smoothly. Early on, Claude gave advice as if it remembered a change from an earlier visit without checking, and at one point assumed something had been cabled wrong when it hadn't. I pushed back twice, and the second time got the real answer: Claude doesn't carry memory between sessions. Each one starts cold and is only as good as what it reads before it starts advising, and this one hadn't read enough. There's a new note now to load the project's own files before advising on it, instead of after I correct it.</p>
+<p>We got the equipment working by the end of the night.</p>
+<p>By midnight the open items were small: a couple of loose ends on the client side, and a setting on a travel router worth tightening later.</p>
   </article>
   </template>
 <script type="application/json" id="n5-blog-posts">
 {
+  "2026-10-01": {
+    "category": "Homelab",
+    "date": "2026-10-01 · 11:54 PM",
+    "title": "Every Session Starts Cold",
+    "summary": "Early morning work moved every exposed secret off the one disk that lands in the nightly backup, replacing SSH keys that had sat in weeks of backups with new ones. A Raspberry Pi holding a tie-breaking vote in the Proxmox cluster became the house's DNS resolver after a network review caught a firewall gap the plan had missed. A long evening of client site work ended with Claude admitting it had lost a week of context and was advising as if from scratch."
+  },
+  "2026-09-30": {
+    "category": "Homelab",
+    "date": "2026-09-30 · 11:27 PM",
+    "title": "Fencing That Didn't Fence",
+    "summary": "Hardware watchdogs went onto all four Proxmox nodes. The crash test passed, but the fencing test showed a node that would not reset itself. Claude's own container also became a live-migratable VM, a long audit list got worked through, SSH password login was switched off, and the hotel client's set-top boxes lost their signal twice."
+  },
+  "2026-09-29": {
+    "category": "Homelab",
+    "date": "2026-09-29 · 11:59 PM",
+    "title": "The Cluster After the Rebuild",
+    "summary": "Two days after the ZFS reinstall, a health check found what the rebuild had broken: monitoring, update jobs and a missing tie-breaker vote. Around that came a handheld that took an hour to get SSH onto, a day on site at the hotel where the IPTV system went multicast by accident, a new power brick for pve04 and a cluster audit with about sixty findings."
+  },
+  "2026-09-28": {
+    "category": "Homelab",
+    "date": "2026-09-28 · 11:52 PM",
+    "title": "Reading Labels in Someone Else's Racks",
+    "summary": "A day on site at the hotel client: a UPS nameplate with a fuse that caps it far below its label, a tuner that was never reachable remotely, and a multicast plan whose first draft would have stranded my own bench. After that, every Dell box I could find got looked up, mine and the hotel's."
+  },
+  "2026-09-27": {
+    "category": "Homelab",
+    "date": "2026-09-27 · 10:07 PM",
+    "title": "Moving the Floor While Standing on It",
+    "summary": "The whole Proxmox cluster moved from LVM-thin to ZFS, one node at a time, with new addresses. Before it started, a RAM upgrade turned into an HA mess and a live migration filled a thin pool under the container Claude runs in. The hotel client's locations also got codenames everywhere, and a sub-agent's 'zero remaining' turned out to be about forty."
+  },
+  "2026-09-26": {
+    "category": "Homelab",
+    "date": "2026-09-26 · 11:58 PM",
+    "title": "The Bond That Didn't Come Back Up",
+    "summary": "A cluster-wide package upgrade took one node off the LAN for 23 minutes when its network bond didn't reform after the reboot. The rest of the day went to turning a cabling standard into a verified reference, building NetBox out into a home-rack inventory and a hotel-client import, and picking new codenames for that client."
+  },
+  "2026-09-25": {
+    "category": "Homelab",
+    "date": "2026-09-25 · 11:48 PM",
+    "title": "The Manual That Invented Itself",
+    "summary": "A live trace of the hotel's main equipment rack showed where Hermus's copper uplink lands and turned up a run of in-room TV wiring nobody had traced. An earlier transcription of the IPTV vendor's manual contained an installation step that doesn't exist, so I re-checked the whole document section by section against the vendor's live site. The vendor also answered two rounds of WhatsApp questions on Dolby audio, SSH access, backups, and multicast."
+  },
   "2026-09-24": {
     "category": "Homelab",
     "date": "2026-09-24 · 11:30 PM",
@@ -280,6 +338,18 @@
     "date": "2026-09-22 · 11:42 PM",
     "title": "Racking the Headend, Minus the Tuner",
     "summary": "A hotel client's server, switch, and set-top boxes went into a test rack today, but the tuner stayed home, so the afternoon ran on a laptop standing in for a broadcast signal. In between, a nightly Discord alert traced back to one metadata field disagreeing with another by three years."
+  },
+  "2026-09-21": {
+    "category": "Homelab",
+    "date": "2026-09-21 · 11:33 PM",
+    "title": "Green Dashboards, Two Real Faults",
+    "summary": "A lot of the Linux ISO pipeline had disconnected again, and every monitor said it was fine. Two separate faults sat underneath the green dashboards. Both got fixed and tested with a real download, and the evening went on to why the monitoring built for this case still missed them."
+  },
+  "2026-09-16": {
+    "category": "Web",
+    "date": "2026-09-16 · 4:52 PM",
+    "title": "Zero Sites in an Empty Category",
+    "summary": "I went looking for devops and fullstack developer portfolios on a curated design showcase site and found its Portfolio category holds nothing. The whole index is 427 company and product pages, and none of them is a person's site."
   },
   "2026-09-11": {
     "category": "Web",

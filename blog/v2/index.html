@@ -66,13 +66,55 @@
   <div class="wrap">
     <div class="tagstate" id="tagstate" hidden>Showing posts tagged <span class="tagchip is-active" id="tagstate-name"></span><a class="tagclear" href="/blog/">× clear</a></div>
     <ul class="posts">
-      <li class="postcard rv" data-tags="homelab client-work networking iptv web-dev">
+      <li class="postcard rv" data-tags="homelab security dns proxmox client-work">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-01 · 11:54 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-10-01.html">Every Session Starts Cold</a></h3>
+        <p>Early morning work moved every exposed secret off the one disk that lands in the nightly backup, replacing SSH keys that had sat in weeks of backups with new ones. A Raspberry Pi holding a tie-breaking vote in the Proxmox cluster became the house&#x27;s DNS resolver after a network review caught a firewall gap the plan had missed. A long evening of client site work ended with Claude admitting it had lost a week of context and was advising as if from scratch.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a><a class="tagchip" data-tag="dns" href="/blog/?tag=dns">DNS</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a></div>
+      </li>
+      <li class="postcard rv-d1" data-tags="homelab proxmox high-availability security client-work iptv">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-09-30 · 11:27 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-09-30.html">Fencing That Didn&#x27;t Fence</a></h3>
+        <p>Hardware watchdogs went onto all four Proxmox nodes. The crash test passed, but the fencing test showed a node that would not reset itself. Claude&#x27;s own container also became a live-migratable VM, a long audit list got worked through, SSH password login was switched off, and the hotel client&#x27;s set-top boxes lost their signal twice.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="high-availability" href="/blog/?tag=high-availability">High Availability</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="iptv" href="/blog/?tag=iptv">IPTV</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab proxmox client-work networking security">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-09-29 · 11:59 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-09-29.html">The Cluster After the Rebuild</a></h3>
+        <p>Two days after the ZFS reinstall, a health check found what the rebuild had broken: monitoring, update jobs and a missing tie-breaker vote. Around that came a handheld that took an hour to get SSH onto, a day on site at the hotel where the IPTV system went multicast by accident, a new power brick for pve04 and a cluster audit with about sixty findings.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab client-work networking hardware">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-09-28 · 11:52 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-09-28.html">Reading Labels in Someone Else&#x27;s Racks</a></h3>
+        <p>A day on site at the hotel client: a UPS nameplate with a fuse that caps it far below its label, a tuner that was never reachable remotely, and a multicast plan whose first draft would have stranded my own bench. After that, every Dell box I could find got looked up, mine and the hotel&#x27;s.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="hardware" href="/blog/?tag=hardware">Hardware</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab proxmox storage client-work netbox">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-09-27 · 10:07 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-09-27.html">Moving the Floor While Standing on It</a></h3>
+        <p>The whole Proxmox cluster moved from LVM-thin to ZFS, one node at a time, with new addresses. Before it started, a RAM upgrade turned into an HA mess and a live migration filled a thin pool under the container Claude runs in. The hotel client&#x27;s locations also got codenames everywhere, and a sub-agent&#x27;s &#x27;zero remaining&#x27; turned out to be about forty.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="storage" href="/blog/?tag=storage">Storage</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="netbox" href="/blog/?tag=netbox">Netbox</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab client-work networking proxmox netbox">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-09-26 · 11:58 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-09-26.html">The Bond That Didn&#x27;t Come Back Up</a></h3>
+        <p>A cluster-wide package upgrade took one node off the LAN for 23 minutes when its network bond didn&#x27;t reform after the reboot. The rest of the day went to turning a cabling standard into a verified reference, building NetBox out into a home-rack inventory and a hotel-client import, and picking new codenames for that client.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="netbox" href="/blog/?tag=netbox">Netbox</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab client-work networking iptv">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-09-25 · 11:48 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-09-25.html">The Manual That Invented Itself</a></h3>
+        <p>A live trace of the hotel&#x27;s main equipment rack showed where Hermus&#x27;s copper uplink lands and turned up a run of in-room TV wiring nobody had traced. An earlier transcription of the IPTV vendor&#x27;s manual contained an installation step that doesn&#x27;t exist, so I re-checked the whole document section by section against the vendor&#x27;s live site. The vendor also answered two rounds of WhatsApp questions on Dolby audio, SSH access, backups, and multicast.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="iptv" href="/blog/?tag=iptv">IPTV</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab client-work networking iptv web-dev">
         <span class="postmeta"><span class="cat">Homelab</span><span>2026-09-24 · 11:30 PM</span></span>
         <h3><a class="stretch" href="/blog/posts/2026-09-24.html">A Route That Vanished Every Reboot</a></h3>
         <p>The morning went into rebuilding the public site: a new SVG logo, a light/dark toggle called flashbang and ninja, and a fleet of agents publishing three missing journals. The evening went into a hotel client&#x27;s network, where a Tailscale route that kept vanishing on reboot finally got root-caused, the switch&#x27;s SSH lockout got fixed, and all five DVB-T muxes went live at once.</p>
         <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="iptv" href="/blog/?tag=iptv">IPTV</a><a class="tagchip" data-tag="web-dev" href="/blog/?tag=web-dev">Web Dev</a></div>
       </li>
-      <li class="postcard rv-d1" data-tags="homelab client-work networking iptv">
+      <li class="postcard rv-d2" data-tags="homelab client-work networking iptv">
         <span class="postmeta"><span class="cat">Homelab</span><span>2026-09-23 · 11:20 PM</span></span>
         <h3><a class="stretch" href="/blog/posts/2026-09-23.html">A Wrong Netmask, Two Lost Hours</a></h3>
         <p>A travel router got rebuilt overnight into a Tailscale subnet router for a hotel client&#x27;s isolated IPTV network, and by afternoon a tuner was locked onto real Perth free-to-air channels. A two-hour outage chase that followed traced back to a netmask I had set wrong on my own laptop.</p>
@@ -83,6 +125,18 @@
         <h3><a class="stretch" href="/blog/posts/2026-09-22.html">Racking the Headend, Minus the Tuner</a></h3>
         <p>A hotel client&#x27;s server, switch, and set-top boxes went into a test rack today, but the tuner stayed home, so the afternoon ran on a laptop standing in for a broadcast signal. In between, a nightly Discord alert traced back to one metadata field disagreeing with another by three years.</p>
         <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="iptv" href="/blog/?tag=iptv">IPTV</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab monitoring reliability automation">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-09-21 · 11:33 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-09-21.html">Green Dashboards, Two Real Faults</a></h3>
+        <p>A lot of the Linux ISO pipeline had disconnected again, and every monitor said it was fine. Two separate faults sat underneath the green dashboards. Both got fixed and tested with a real download, and the evening went on to why the monitoring built for this case still missed them.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="monitoring" href="/blog/?tag=monitoring">Monitoring</a><a class="tagchip" data-tag="reliability" href="/blog/?tag=reliability">Reliability</a><a class="tagchip" data-tag="automation" href="/blog/?tag=automation">Automation</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="web research portfolio">
+        <span class="postmeta"><span class="cat">Web</span><span>2026-09-16 · 4:52 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-09-16.html">Zero Sites in an Empty Category</a></h3>
+        <p>I went looking for devops and fullstack developer portfolios on a curated design showcase site and found its Portfolio category holds nothing. The whole index is 427 company and product pages, and none of them is a person&#x27;s site.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="web" href="/blog/?tag=web">Web</a><a class="tagchip" data-tag="research" href="/blog/?tag=research">Research</a><a class="tagchip" data-tag="portfolio" href="/blog/?tag=portfolio">Portfolio</a></div>
       </li>
       <li class="postcard rv-d2" data-tags="web design homelab backup">
         <span class="postmeta"><span class="cat">Web</span><span>2026-09-11 · 9:10 PM</span></span>

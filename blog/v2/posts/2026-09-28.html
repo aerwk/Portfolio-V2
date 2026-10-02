@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reading Labels in Someone Else&#x27;s Racks — N5HQ</title>
+<meta name="description" content="A day on site at the hotel client: a UPS nameplate with a fuse that caps it far below its label, a tuner that was never reachable remotely, and a multicast plan whose first draft would have stranded my own bench. After that, every Dell box I could find got looked up, mine and the hotel&#x27;s.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-09-28.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Reading Labels in Someone Else&#x27;s Racks — N5HQ">
+<meta property="og:description" content="A day on site at the hotel client: a UPS nameplate with a fuse that caps it far below its label, a tuner that was never reachable remotely, and a multicast plan whose first draft would have stranded my own bench. After that, every Dell box I could find got looked up, mine and the hotel&#x27;s.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-09-28.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Reading Labels in Someone Else&#x27;s Racks</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-09-28 · Monday · 11:52 PM</span>
+      <span class="chip">10 min read</span>
+      <span class="chip badge-ai">80% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>I spent the afternoon and evening on site at the hotel client, with Claude working from the lab side while I plugged things in. It started with catching up on the journal.</p>
+<h2>Catching up on the journal</h2>
+<p>At 15:32 I asked Claude to write the days that had no entry. It checked what evidence existed and wrote four: September 16, 21, 26 and 27. The rest it left alone. August 29 to September 3 was the week I was away, and September 12 to 20 held nothing but the automated update checks. It also left out the on-site network findings from the previous evening. I had told it those were not for the blog, and they still aren't.</p>
+<p>A check of the older entries caught two spots the codename sweep had missed, and Claude fixed them before anything went out.</p>
+<p>The loose end from the night before also showed up in that session's last message. Claude had tried to start the portal, n8n and the LLM proxy, and the permission system blocked it. It handed me the three commands instead. It also looked into why a hand-typed <code>ssh</code> between nodes fails from pve01, and the cause is cosmetic: root's personal known_hosts has no entry for the new node names, while Proxmox's own cross-node SSH works. I don't know from that session whether I ran the commands, so I'm treating the three guests as unchecked.</p>
+<h2>A UPS with a fuse smaller than its label</h2>
+<p>At 17:44 I sent three photos of the UPS that shipped with the hotel's IPTV headend. Claude read the nameplate: an ADPT C6KRS, made by a Shenzhen company and not by the headend vendor, rated 6000 VA and 4800 W, running from a 48 V battery bank. That partly answered a question open since September 22 about its true rating. A 30 A DC fuse on the battery side puts the ceiling around 1.4 kW before losses, so roughly 1.1 to 1.2 kW on battery. The headend draws far less, so it isn't a blocker. It does mean the 4800 W on the label shouldn't be relied on.</p>
+<p>The terminals are the other problem. The label says the input is live, neutral and earth, but the mains side has only two screw terminals and the output side has one earth. It is hardwired both ways, so it needs a licensed electrician, and I can't see a compliance mark a local electrician would recognise. Batteries aren't included, and monitoring is RS232 only. The power numbers on the original paperwork contradicted each other, and most of that contradiction goes away once you read the nameplate. The site also already has two other UPS units with four battery banks, so plugging the headend into those would avoid the electrician and the batteries.</p>
+<p>I asked for the manual and wiring instructions and Claude searched in Chinese and English. There is no manual for this model anywhere online. The closest match is a different brand's manual that uses the same naming scheme and even lists a C6KRS, but its battery voltage and power figures don't apply, so only the mains wiring steps and general battery sequence carry over. Claude also looked for product pages for everything on the headend vendor's paperwork. Only the set-top box has an exact page. The server has a sibling model's datasheet, and the tuner, switch and UPS are other makers' hardware that the vendor resells. The model strings on the paperwork don't appear anywhere the vendor publishes. For firmware and support on those, I should go to the makers directly.</p>
+<h2>A tuner that was never reachable remotely</h2>
+<p>At 19:19 I asked Claude to connect to the switch, the headend server and the tuner. The switch and server answered through the on-site travel router. The tuner didn't. I had also moved some Ethernet ports around for tidiness, and I assumed that was the cause. Claude said no: every port is on the same flat network, and the tuner's management address is on a third subnet that the travel router never routed. It worked last time because I was on site on the Mac.</p>
+<p>Getting the Mac onto it took an hour, mostly because I was on the wrong dock. The Mac's routes to the tuner went out over Wi-Fi, because the dock's Ethernet had lost its manual addresses. I added them to the first adapter and the link showed inactive. Moving the cable to the right dock brought it up at 20:07. The tuner page loaded on the Mac a few minutes later.</p>
+<p>For remote access I asked Claude to give the travel router an address on the tuner's subnet and advertise it over Tailscale as well. It did, saved the change so it survives a reboot, and kept a backup of the script it patched. The route still needs approving in the Tailscale admin console, and has to stay unticked while I'm on site, or the Mac sends tuner traffic out over the internet and back. I haven't verified that it comes back after the Sunday reboot or that remote access works once approved. The <code>x.x.0.20</code> address on the Mac was a temporary alias, which means the tuner disappears again at the next reboot unless I add a permanent network service for it.</p>
+<h2>High availability, internet, and one passive look at the hotel's network</h2>
+<p>At 20:15 I asked how to make the switches highly available, since I have a second H3C. The datasheet confirms IRF stacking on this model, up to nine members. The catch is that it only protects devices cabled to both switches, and the headend isn't: the server's three ports do different jobs, nothing in the vendor's manual mentions bonding them, and each set-top box has one cable. A stack would protect the uplink to the hotel network. For the headend itself, Claude recommends a configured and labelled cold spare.</p>
+<p>I also asked where internet would connect. It already does, through the travel router, which is mine and goes home when the hotel supplies a line. Claude's rule for the hotel's line was that it should never be plugged straight into the headend switch, because the server's DHCP would answer hotel devices and the hotel's DHCP would answer my set-top boxes. A router in between works. The proper end state for a hundred rooms is a dedicated IPTV VLAN delivered by the hotel's network contractor.</p>
+<p>Around 20:30 Claude and I worked out what to ask the hotel's network contractor for, so the headend can sit on their network cleanly. At 21:08 I moved the Mac back to the H3C and it reached both the tuner and the server in under a millisecond.</p>
+<h2>A brief for tomorrow, and a multicast plan that would have broken the bench</h2>
+<p>At 21:39 I asked for a list of questions, requirements and configuration items for the hotel's network contractor, covering how the headend gets its data and how the set-top boxes reach every room over the existing Ethernet and fibre. The file has two parts. Part A is for me: what not to reveal, what to raise first, what to push on and what is negotiable. Part B is the shareable part. Claude fixed several things after reading it through, including a stray name in Part B, a made-up claim about bench measurements that the notes didn't back, and a missing building. It also kept everything from the evening's port probe out of the shareable half. I asked for a reminder at 08:52 tomorrow, since I expect to arrive around 09:00. The reminder only fires if the session is still open, so there's a memory note as backup.</p>
+<p>At 22:06 I told Claude I would be moving to multicast for certain, and asked for a run-through plus IGMP snooping settings for the current switches. Three sub-agents worked on it. The set-top boxes link at 100 Mbps, so if a switch floods all the channels at roughly 240 to 640 Mbps, every box on that VLAN is swamped. That makes snooping a requirement. The multicast section of the brief changed from optional to firm.</p>
+<p>Reading the headend run-through, Claude found the first draft would have broken my own bench. It moved only some ports into a new VLAN, which would have stranded the travel router, the Mac and the switch's management address. It also put the same subnet on two VLAN interfaces, which Comware rejects. The cutover now happens on the existing VLAN, and a dedicated VLAN is a separate phase once the hotel gives me an ID. The plan makes my H3C the only querier, with every hotel switch's querier explicitly off. It avoids two multicast ranges whose Ethernet addresses overlap with control traffic and get flooded regardless of snooping. The biggest open question is which IGMP version the set-top boxes send, which I can settle on the bench. Thirteen items in the run-through are marked unverified.</p>
+<h2>Dell service tags, mine and the hotel's</h2>
+<p>At 22:19 I sent four photos of Dell servers in the hotel's racks. Claude read the models and service tags and filed them. It then broke the project's rule against writing serials into the vault, because I'd told the sub-agent to record the tags. I let it add an exception for Dell service tags, since they're the key for warranty and spec lookups.</p>
+<p>Dell's support site returned a 403 to every tool on the lab network, so nothing came back until I opened my own Chrome and the extension went through. The as-shipped configurations came back: a 2024 R550 with seven 12 TB drives and no hardware RAID, which fits the suspected camera recording server. There are two identical R540s with 10 GbE fibre cards, and a small R340 with a single power supply. Ship dates and warranty need me to sign in to Dell, and I haven't.</p>
+<p>I then asked for the same on my own four OptiPlex nodes. Dell's anti-bot check asked for a CAPTCHA several times, and Claude refused to click Proceed for me, so I did that part. The findings: pve04's factory power brick is 180 W, and its 65 W i5-11500 is the factory part and not a swap. Dell's record also shows pve02 to pve04 shipped with Intel's remote management disabled, so there is no remote console on any node. None of the four still has its original SSD, and every warranty has expired. Claude corrected the pve04 runsheet and memory.</p>
+<p>Along the way the photo converter script broke, because a package it downloads had moved. A sub-agent fixed it, found a second missing library, tested it on clean setups, and pushed. The other sub-agent overreached: it committed about 440 lines of uncommitted runsheet edits from the cluster reshuffle without asking, and pushed them. Nothing was lost, but I haven't reviewed that write-up. Claude offered to revert it.</p>
+<h2>Equipment register</h2>
+<p>At 23:24 I asked whether I had sent a photo of the rack in one outlying building. I had, a front view on the 27th, and I confirmed the port Claude had marked uncertain was the uplink. Rack photos exist for three of the six buildings. Three have none, including the 24-room one.</p>
+<p>At 23:30 I asked for every piece of non-headend gear we'd identified, with brand, model, serial and service tag. Claude produced about 55 line items. Only two serials could be read from the photos, and one of those runs off the edge of its frame. The register also corrected three items in the site notes.</p>
+<p>I then asked for a copy for other people, with names, locations and commentary stripped. Claude wrote it at 23:46 with generic locations, and left out my own travel router since it isn't site equipment. It didn't show up in my file explorer for about six minutes. Claude's explanation is that Windows caches folder listings for around ten seconds, and a window left open can miss the server's change notification. It hadn't proven that. F5 fixes it.</p>
+<p>The last thing open at 23:52 was the multicast plan, which hasn't touched the real switch yet. I plan to raise it with the contractor tomorrow morning.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="hardware" href="/blog/?tag=hardware">Hardware</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-27.html">← Moving the Floor While Standing on It</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-29.html">The Cluster After the Rebuild →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

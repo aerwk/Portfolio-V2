@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Cluster After the Rebuild — N5HQ</title>
+<meta name="description" content="Two days after the ZFS reinstall, a health check found what the rebuild had broken: monitoring, update jobs and a missing tie-breaker vote. Around that came a handheld that took an hour to get SSH onto, a day on site at the hotel where the IPTV system went multicast by accident, a new power brick for pve04 and a cluster audit with about sixty findings.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-09-29.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="The Cluster After the Rebuild — N5HQ">
+<meta property="og:description" content="Two days after the ZFS reinstall, a health check found what the rebuild had broken: monitoring, update jobs and a missing tie-breaker vote. Around that came a handheld that took an hour to get SSH onto, a day on site at the hotel where the IPTV system went multicast by accident, a new power brick for pve04 and a cluster audit with about sixty findings.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-09-29.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">The Cluster After the Rebuild</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-09-29 · Tuesday · 11:59 PM</span>
+      <span class="chip">11 min read</span>
+      <span class="chip badge-ai">75% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>I started the day asking whether the cluster was actually working after the ZFS rebuild, and it ended with an audit that found about sixty things I could do better. In between I spent a day on site at the hotel, replaced the power brick on pve04 and lost an hour to a handheld that would not accept SSH.</p>
+<h2>What the reinstall had broken</h2>
+<p>At 00:39 I asked Claude to compare the cluster with how it was before the reinstall. Three read-only agents went out: one on live cluster and network state, one on storage and guests, one on the pre-reinstall notes. By 00:50 the verdict was that the cluster was healthy. All four nodes were quorate, every ZFS pool was healthy, and the 02:30 backup had covered every guest. The notes were out of date. They still described pve01 and pve03 as LVM-thin, pve01 still had its old address, and the QDevice was recorded as set up when it had dropped out of the corosync config during pve03's reinstall.</p>
+<p>Five guests would not start after a reboot because they were set to <code>onboot: 0</code>. pve02 had 23.5 GiB of RAM assigned on a 23 GiB machine. Four guests still kept their disks on NAS storage. About 120 GB of orphaned disks from old forensic copies were sitting on the NAS. I answered the list item by item: start everything on boot, get the disks onto local ZFS, delete the orphans, and note that pve02's single-leg bond was deliberate, because I had given its switch port to pve04.</p>
+<p>Between 01:16 and 01:24 Claude did the moves. Netbox, iperf3 and the portal went to pve04, the NAS-backed disks went to local ZFS, and Home Assistant got replication to pve03 every five minutes (the first sync took 54 seconds), with HA switched back on for that one VM under a strict pve02/pve03 rule. The side effect is that pve02 now has its fencing watchdog armed and will reboot itself if it loses the cluster.</p>
+<p>The notes sweep found things that were actually broken. The reinstall had wiped node-exporter from all four nodes, so Prometheus was scraping dead addresses. n5ubuntu's SSH config still sent pve01 to its old address, which would have failed the 04:00 update job. The script that generates the cluster-state file had three nodes hardcoded and never listed pve04. At 01:54 I told Claude to fix all of it. By 02:14 all 56 Prometheus targets were up, Kuma monitors pointed at the new addresses with pve04 added, and the cluster-state file listed four nodes.</p>
+<p>Two parts of that pass were untidy. The NetBox agent skipped the usual database backup before its sync, which Claude only reported afterwards, and the nearest earlier dump was from 09-27. And at 03:49 Claude corrected something it had told me earlier. It had said the update automation covers pve01 to pve03 by design, and that was wrong. Only pve01 is ever patched automatically. pve02 and pve03 sit in a check-only pipeline that nothing runs on a schedule, and pve04 had two Proxmox core updates waiting that an earlier health check missed because of stale package lists. I had pve04 added to that pipeline, and Claude flagged that real automatic updates for the other three need a design first: only one node down at a time, and never both nodes that carry a Cloudflare tunnel connector.</p>
+<p>At 03:03 I asked whether staging worked, and if so to remove its stand-in rollback container. It passed every check, so the clone got destroyed. That removed staging's quick rollback, and I said no to taking a new snapshot, so recovery is now a restore from the two vzdump copies Claude kept on the NAS.</p>
+<p>pi02 stayed on hold. Claude found it on the Flex Mini in the theatre, but the QDevice re-add needs root SSH into it from pve01's new key, and I did not have the right password. Claude wrote up an SD-card reset, and I parked it.</p>
+<h2>A handheld and an hour of typing</h2>
+<p>Between the cluster work I kept asking for specs on second-hand mini PCs I was vetting from listings, and at 04:11 I asked for the exact specs of my MSI Claw. It has no SSH, so Claude proposed turning on OpenSSH from the Claw itself. It took until 05:10. The first script on a network share did nothing. I typed the commands into Command Prompt, which does not know PowerShell commands, then into a terminal that was not elevated. The service ran after that but port 22 stayed closed from the tailnet, and the actual blocker was Tailscale's own "Allow incoming connections" setting on the Claw. Once that was ticked, a one-line script served over Tailscale added Claude's key. The spec came back live from the machine: Core Ultra 7 258V, 32GB, a 2TB drive, and a battery at 79.8 Wh against an 80 Wh rating.</p>
+<h2>The gateway's memory and the corosync ring</h2>
+<p>At 05:56 I asked whether I could run a UniFi OS Server instead of the cloud gateway's built-in controller, because the gateway has been going into a limited state. The answer was no, it always runs its own controller. Claude's investigation of unpoller history put RAM at 86% of 3 GB with CPU at 31%, and it concluded that Protect was not running on the gateway. I told it Protect was running on the gateway, and it was. The Network API just does not show the recording side. With that corrected, the most likely culprit is Protect competing with the controller for 3 GB, and the first fix to price is a dedicated recorder. I still need to open Protect's storage screen to see how it records.</p>
+<p>At 06:39 I asked about the camera VLAN overlap Claude kept raising. The old corosync ring on the isolated Flex Mini used the same address range as the cameras. Claude's suggestion was to renumber the ring instead of the cameras, and after a <code>/save-session</code> it did the whole change by 06:46. The ring now lives on <code>x.x.254.51</code> to <code>.54</code>, all 6 of 6 peer links stayed connected, nothing rebooted, and Home Assistant was set to ignored in HA while the change ran. The docs say address changes apply live. They do not: each node's running link kept the old addresses until corosync was restarted on it, one node at a time. That lesson went into the runsheets, along with a drift check that fails if the ring ever leaves the new range.</p>
+<h2>A security audit before the meeting</h2>
+<p>At 07:00 I pasted in a security audit prompt for small businesses, with every bracket still empty, and Claude pointed that out. It then pointed the same checklist at my own lab, with four read-only evidence collectors covering perimeter, identity, patching and backups. The overall rating was high, and the risk sits inside the lab more than at the perimeter. I am not going into specifics on a public page while those are open. Two smaller points: the evidence collection printed some secrets into local session transcripts, so rotating them is on me, and the firewall review found the basic VLAN structure sound but a handful of rules wider than they should be.</p>
+<h2>On site at the hotel</h2>
+<p>I was at the hotel from the late morning. The IPTV web pages stopped loading almost immediately, and it took nearly an hour of Mac network commands before I found that the dock's Ethernet adapter had dropped off entirely. Later the same Mac problem returned whenever I swapped adapters, because the new adapter's DHCP lease named the IPTV server as the way to the internet and macOS preferred the wire. A fixed address with no router fixed it, and so did quitting the browser fully after the swap.</p>
+<p>The bigger problem was that live TV stopped. The set-top box was fine, the switch was ruled out, and the server was not producing the streams. The tuner had lost all its settings. The switch logs showed the server and tuner ports flapping together about 46 minutes earlier, which fits a power cut to the rack. I rebuilt the tuner and the gateway's conversion entries from the runsheet. At one point I deleted every Protocol Conversion entry and the channels did not come back until Claude walked me through re-adding all five.</p>
+<p>The surprise came at 12:35. I had left the outputs on UDP, so the system had already moved from unicast HLS to multicast, and the switch's group table confirmed it: each box held its own channel group on its own port, and the tuner feed reached the server on the new address. A tcpdump on my Mac's port during channel changes showed only short bursts, so nothing was flooding. The server's monitor later showed 5% CPU, 35% memory and about 96 Mb/s out with no errors or drops. I also found a Save config button on the tuner. The settings from the week before had probably been applied but never saved, which would explain the wipe. I pressed it several times and the tuner now survives a power cycle.</p>
+<p>Other smaller jobs: I moved the DHCP pool to start at .21 and gave the switch a fixed address. The first attempt over SSH dropped the session, and the switch's five-minute commit safety net rolled it back by itself. The second attempt over the console worked. I took Claude's draft of the email to the hotel's network team, which went out at 14:06, and I corrected it after Claude had asked for internet access limited to updates, which would have blocked streaming apps. They said the change window could be a while, hopefully within the week. Claude also pulled TV versions of the streaming apps for the boxes and installed five of them on one bench box, but they did not appear on the menu until I published them through the admin app store. By 20:42 every admin page, the gateway and the tuner had been recorded into the project, and I still have open questions about the hotel's TVs, which are a hotel-lock model that may limit which inputs guests can use.</p>
+<h2>The new brick, and an audit that criticised everything</h2>
+<p>At 21:24 I had Claude shut pve04 down for the new 180 W brick. Claude's safety check then blocked the command that removes the old 90 W workarounds, so I pasted it myself, and a leading space made the first attempt arrive as chat. Once Claude ran it, pve04 rebooted on stock settings. A twelve-thread sysbench went from 5,605 to 8,730 events per second, with the clock at 4.2 GHz instead of 2.7 and no throttling, and a single thread went up 69%. Peak temperature went from 48 to 80 °C. I also learned none of the four nodes has IPMI. pve04 has Intel AMT, but it is not set up, so I had the stray <code>openipmi</code> service disabled.</p>
+<p>At 22:05 I asked Claude to criticise the cluster as hard as it could. Six specialists audited in parallel, read-only, and the report came back with about sixty findings. The worst of them is access hygiene. I told Claude to make the first fixes. It set pve01 and pve03's BIOS to continue past boot warnings and disabled the PBS and NAS storages, unmounting the NAS on all four nodes. I created a named account for myself and one for Claude with a read-only token and a limited-operations token. Claude could not grant itself the permissions, so I ran that step. Once they worked, Claude moved the API wrapper and the NetBox sync onto the read-only one. I still have to delete the old root token. I also asked what realms, pools and SDN are, and Claude's explanation of custom CPU models only clicked once it did an ELI5.</p>
+<p>That turned into more work. At 23:34 Claude wrote a procedure to give five VMs the same CPU type, which stops <code>host</code> from blocking migration onto pve04. I ran it, and by 23:53 all five were on the new type with services healthy. n5ubuntu even gained AVX2. Midway, the PBS VM's SSH host key failed because n5claude held a stale key, which Claude verified through the guest agent before replacing it. Then I live-migrated PBS to pve04 with 61 ms of downtime and cut its RAM to 4 GiB. The last thing at 23:51 was a question I have not answered yet: whether n5ubuntu's 21 containers can be split so it runs only the media stack.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-28.html">← Reading Labels in Someone Else&#x27;s Racks</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-30.html">Fencing That Didn&#x27;t Fence →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

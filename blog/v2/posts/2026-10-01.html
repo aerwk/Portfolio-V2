@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Every Session Starts Cold — N5HQ</title>
+<meta name="description" content="Early morning work moved every exposed secret off the one disk that lands in the nightly backup, replacing SSH keys that had sat in weeks of backups with new ones. A Raspberry Pi holding a tie-breaking vote in the Proxmox cluster became the house&#x27;s DNS resolver after a network review caught a firewall gap the plan had missed. A long evening of client site work ended with Claude admitting it had lost a week of context and was advising as if from scratch.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-10-01.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Every Session Starts Cold — N5HQ">
+<meta property="og:description" content="Early morning work moved every exposed secret off the one disk that lands in the nightly backup, replacing SSH keys that had sat in weeks of backups with new ones. A Raspberry Pi holding a tie-breaking vote in the Proxmox cluster became the house&#x27;s DNS resolver after a network review caught a firewall gap the plan had missed. A long evening of client site work ended with Claude admitting it had lost a week of context and was advising as if from scratch.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-10-01.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Every Session Starts Cold</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-10-01 · Thursday · 11:54 PM</span>
+      <span class="chip">5 min read</span>
+      <span class="chip badge-ai">78% AI</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>I finished the secrets migration from the night before and set up a real DNS resolver for the house. The evening went on client site work, where I had to call Claude out for forgetting a project it had been living in for a week.</p>
+<h2>Getting secrets off the backup path</h2>
+<p>The day started before five in the morning, picking up where the previous session had left off: getting every exposed secret off the one disk that lands in the nightly backup of the VM Claude runs on. An inventory from overnight had turned up SSH keys, login sessions for a handful of command-line tools, and a couple of dead credentials nobody remembered deleting. I generated four new SSH keys through the password manager on my Mac instead of moving the old ones across, because the old keys had already sat in weeks of NAS backups and moving them would leave those copies exposed. Claude installed the new public keys one host at a time, tested each with a fresh connection, and only removed the old ones once the new ones were proven.</p>
+<p>Partway through, one of the Proxmox nodes reset itself. I'd been in the server rack checking which smart plug fed which device, for power monitoring I want to add later, and knocked one slightly loose. It did no harm, but it left a key swap half done when the node dropped, and a stopped container turned up that shared a name with the VM Claude actually runs on, a leftover from this week's server migration. I'd started it by accident, confused by the shared name, so I had it renamed.</p>
+<p>With the key swap done I asked for a full network retest between all four Proxmox nodes and my own PC, since two of the nodes have been running on USB network adapters instead of onboard ports for weeks. Every link held close to full 2.5 gigabit speed in both directions, including the one pair of nodes that used to run slower in one direction than the other. Whatever caused that difference is gone.</p>
+<h2>A blank SSD for Linux</h2>
+<p>Mid-morning I formatted a blank 2 TB Samsung T7 Shield portable SSD from a Claude Code session on my Windows PC. I picked exFAT over ext4 or NTFS so the drive reads and writes on Linux, Windows and macOS. The first attempt failed because the shell wasn't elevated, and it changed nothing. The retry through an elevated prompt worked and left one GPT partition labelled T7.</p>
+<h2>A DNS resolver for the house</h2>
+<p>The bigger job was replacing the router's built-in DNS with something I control. I'd read a while back that one self-hosted DNS server had pulled ahead of the usual ad-blocking pick, mostly because it handles more than one instance without a separate sync tool, and the current release notes still said so. It went on a Raspberry Pi that also holds a tie-breaking vote in the Proxmox cluster, so I had to be careful with disk writes and avoid anything that could interfere with the cluster.</p>
+<p>Before any device got pointed at it, a network review caught a gap in the plan: three of my networks are firewalled off from the one the Pi sits on, so switching their DNS over without an extra rule would have made every lookup time out before falling back to the slow path. That got fixed first. By early afternoon I'd proven it worked, first from my own PC, then from my phone on the home network. The phone mattered because it wasn't on an admin allow-list, so it showed that the new firewall rule did something.</p>
+<p>I also moved the Pi itself off an access point and onto a port on the gateway, so the device holding the cluster's fifth vote no longer depends on a Wi-Fi access point staying up. That went cleanly. Around midday I rebooted two of the four nodes by accident while working near the rack. One of the photo app's containers went down briefly because it lost a race with a storage mount coming back online, and a battery-backed lighting hub dropped offline for good measure. Neither had anything to do with the DNS work.</p>
+<h2>Client work, and a session that had gone cold</h2>
+<p>Separately, I spent part of the morning pulling apart an old backup file from a client's equipment, to understand how the system is built instead of trusting what its web interface claims. It turned up a few things to raise with the vendor before handover, but those are for them, not for here.</p>
+<p>The evening was a long site visit, installing and configuring a second piece of equipment for that same client's project. It did not go smoothly. Early on, Claude gave advice as if it remembered a change from an earlier visit without checking, and at one point assumed something had been cabled wrong when it hadn't. I pushed back twice, and the second time got the real answer: Claude doesn't carry memory between sessions. Each one starts cold and is only as good as what it reads before it starts advising, and this one hadn't read enough. There's a new note now to load the project's own files before advising on it, instead of after I correct it.</p>
+<p>We got the equipment working by the end of the night.</p>
+<p>By midnight the open items were small: a couple of loose ends on the client side, and a setting on a travel router worth tightening later.</p>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="security" href="/blog/?tag=security">Security</a><a class="tagchip" data-tag="dns" href="/blog/?tag=dns">DNS</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-09-30.html">← Fencing That Didn&#x27;t Fence</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>
