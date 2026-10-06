@@ -143,6 +143,14 @@ html[data-theme="flashbang"] .marq img{ filter: invert(1) hue-rotate(180deg); }
   margin-top:calc(4 * var(--n5i-u));
   white-space:nowrap;
   text-align:center; /* centred under the lockup (Eric, 2026-09-24) — the lockup outgrows the label above 1440 */
+  /* 2026-10-07: label is now "DevOps & Network Architecture" (~186px at 12u), wider than the
+     147px lockup below ~1440. The corner shrink-wraps to its widest child and the lockup is
+     width:100%, so the longer label silently scaled the logo up ~27% (measured 186 vs 147).
+     width:0 + min-width:100% takes the label out of the corner's width calculation: the logo
+     keeps its size, the label centres when it fits and overhangs to the right when it doesn't
+     (same fix as home/index.html, 5d4cad9). */
+  width:0;
+  min-width:100%;
 }
 
 /* ---------- instruments.css atoms the corner needs (ported, not linked) ---------- */
@@ -794,7 +802,11 @@ main.page .post-title-h{
 @media (min-width:768px){
   .tl{
     max-height:100vh;
-    overflow:hidden;
+    /* overflow-y:clip (not hidden) so the x axis stays visible: below ~1000px the
+       "DevOps & Network Architecture" role label (width:0 fix above) overhangs the
+       147px corner and `hidden` would have cut its last letters off (2026-10-07). */
+    overflow-x:visible;
+    overflow-y:clip;
   }
   .blog-tree{
     flex:1 1 auto;
