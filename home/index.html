@@ -179,6 +179,9 @@
      side at 1440 to 100px at 2504 — so a flat measure here would be eaten by the
      padding and the cluster would get NARROWER as the page got wider. Reserve
      the padding explicitly so the CONTENT measure is what scales.
+     2026-10-07: basis now 590 for the "Network Architecture" tagline (3 lines;
+     see .n5i-clocksentence in instruments.css) — the 480 history below
+     describes the old "Infrastructure" wording.
      Basis 587.5->480 (2026-09-09, Eric: "'enthusiast' is sticking out too
      much... keep everything at 3 lines, if not 4 is fine"). Must stay
      byte-identical to .n5i-clocksentence's own basis in instruments.css —
@@ -197,7 +200,7 @@
      scaling". 112.234375px below = that 88.234375px nav column + a flat
      24px breathing gap between the two corners. */
   .bl{ bottom:0; left:0; max-width:min(
-    calc(480 * var(--n5i-u, 1px) + 2 * var(--n5i-inset-x, 12px)),
+    calc(590 * var(--n5i-u, 1px) + 2 * var(--n5i-inset-x, 12px)),
     calc(100vw - 2 * var(--n5i-inset-x, 12px) - 112.234375px)
   ); }
   .br{ bottom:0; right:0; }
@@ -372,8 +375,8 @@
        measure existed. */
     .bl{ order:4; margin-top:auto; max-width:none; }
     .n5i-clocksentence{ max-width:none; } /* same reasoning as .bl above; this rule is same-specificity as instruments.css's but wins on cascade order (inline <style> loads after the linked stylesheet) */
-    /* instruments.css positions .n5i-readouts absolute, top:0, left:272u —
-       tuned to sit above "Infrastructure" on line 1 of the DESKTOP wrap.
+    /* instruments.css positions .n5i-readouts absolute, top:0, left:379u
+       (was 272u until 2026-10-07) — tuned to sit above "Architecture" on line 1 of the DESKTOP wrap.
        Below 768px .n5i-clocksentence is uncapped (line above) so line 1 is
        just "DevOps &" (see design-system.md / the 2026-09-09 measurements)
        — "Infrastructure" wraps to its own line at the left margin, nowhere
@@ -453,7 +456,7 @@
     <p class="n5i-clocksentence"><span class="n5i-clock-inline" data-n5i="clock">12:00 AM</span><!-- n5i-readouts moved in-flow-adjacent here (2026-09-09) purely so it can use this <p> as its position:absolute containing block — see instruments.css .n5i-readouts/.n5i-clocksentence. A <span>, not a <div>: a <p> can only hold phrasing content, and a block child here would silently auto-close the paragraph mid-sentence, orphaning everything after it outside the styled <p>. aria-hidden because it now sits mid-sentence in DOM order, same reasoning as .n5i-ap-stack above. --><span class="n5i-readouts" aria-hidden="true">
       <span class="n5i-dim-readout" data-n5i="dim"></span>
       <span class="n5i-dim-readout n5i-fps-readout" data-n5i="fps"></span>
-    </span> DevOps &amp; Infrastructure enthusiast who designs, deploys, and maintains real infrastructure. <span class="n5i-dim">Open to roles and projects.</span></p>
+    </span> DevOps &amp; Network Architecture enthusiast who designs, deploys, and maintains real infrastructure. <span class="n5i-dim">Open to roles and projects.</span></p>
     <span class="n5i-label n5i-dim n5i-tz-label">Perth, WA → Australia</span>
   </div>
 
