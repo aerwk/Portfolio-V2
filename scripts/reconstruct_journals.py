@@ -119,7 +119,7 @@ def parse_post(raw, date):
         "excerpt": html.unescape(exc.group(1)) if exc else title,
         "category": category,
         "tags": tags,
-        "claude_pct": ai.group(1) if ai else "50",
+        "claude_pct": ai.group(1) if ai else None,
         "prose": prose,
     }
 
@@ -141,7 +141,8 @@ def main():
                 f'excerpt: "{quote_safe(fm["excerpt"])}"\n'
                 f'category: "{quote_safe(fm["category"])}"\ntags:\n'
                 + "".join(f"  - {t}\n" for t in fm["tags"])
-                + f'claude_pct: {fm["claude_pct"]}\n---\n\n# {date}\n\n{fm["prose"]}\n'
+                + (f'claude_pct: {fm["claude_pct"]}\n' if fm["claude_pct"] else "")
+                + f'---\n\n# {date}\n\n{fm["prose"]}\n'
             )
         n += 1
     print(f"reconstructed {n} journals from published HTML -> {out}")
