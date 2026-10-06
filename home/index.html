@@ -24,10 +24,10 @@
   document.documentElement.setAttribute('data-theme', theme);
 })();
 </script>
-<title>N5HQ — DevOps &amp; Infrastructure</title>
+<title>N5HQ — DevOps &amp; Network Architecture</title>
 <link rel="canonical" href="https://ericli.n5hq.me/">
 <meta property="og:url" content="https://ericli.n5hq.me/">
-<meta property="og:title" content="N5HQ — DevOps &amp; Infrastructure">
+<meta property="og:title" content="N5HQ — DevOps &amp; Network Architecture">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -429,7 +429,14 @@
     }
   }
 
-  .role{ white-space:nowrap; }
+  /* 2026-10-07: label is now "DevOps & Network Architecture" (~186px at 12u),
+     wider than the 147px lockup below ~1440. The cluster shrink-wraps to its
+     widest child and the lockup is width:100%, so the longer label silently
+     scaled the logo up ~27% at 768-1440 (measured). width:0 + min-width:100%
+     takes the label out of the cluster's width calculation: the logo keeps
+     its size, the label centres when it fits and overhangs to the right
+     (text-align:center falls back to start) when it doesn't. */
+  .role{ white-space:nowrap; width:0; min-width:100%; }
   @media (max-width: 767px){ .tl{ align-self:flex-start; } }
 </style>
 </head>
@@ -448,7 +455,7 @@
 
   <div class="corner tl n5i-cluster" id="c-tl">
     <a class="n5i-mark n5i-lockup" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/logo-rest.svg" alt="Eric Li"><img class="lk-hover" src="/assets/logo-hover.svg" alt="" aria-hidden="true"><img class="lk-hover-fb" src="/assets/logo-hover-fb.svg" alt="" aria-hidden="true"></a><script>(function(){var m=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;var a=document.currentScript.previousElementSibling;if(!m&&a&&a.classList.contains("n5i-lockup"))a.classList.add("lk-armed")})()</script>
-    <span class="role">DevOps &amp; Infrastructure</span>
+    <span class="role">DevOps &amp; Network Architecture</span>
   </div>
 
   <div class="corner bl n5i-cluster" id="c-bl">
