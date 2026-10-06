@@ -99,6 +99,10 @@
   <section>
     <p class="label">All posts</p>
     <div class="post-list">
+      <a class="post-row" href="/blog/posts/2026-10-06.html"><span class="post-meta">Homelab · 2026-10-06</span><span class="post-title">CCNA Gaps and a Rack Teardown Plan</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-05.html"><span class="post-meta">Homelab · 2026-10-05</span><span class="post-title">Rack Cabling and Hardening the IPTV Switches Remotely</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-04.html"><span class="post-meta">Homelab · 2026-10-04</span><span class="post-title">Clearing pve04 and Building a Talos Cluster</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-03.html"><span class="post-meta">Homelab · 2026-10-03</span><span class="post-title">Hotel Documents, Set-Top Boxes and a New Homepage</span></a>
       <a class="post-row" href="/blog/posts/2026-10-02.html"><span class="post-meta">Homelab · 2026-10-02</span><span class="post-title">Mapping the Hotel Network Read-Only</span></a>
       <a class="post-row" href="/blog/posts/2026-10-01.html"><span class="post-meta">Homelab · 2026-10-01</span><span class="post-title">Every Session Starts Cold</span></a>
       <a class="post-row" href="/blog/posts/2026-09-30.html"><span class="post-meta">Homelab · 2026-09-30</span><span class="post-title">Fencing That Didn't Fence</span></a>
@@ -255,39 +259,56 @@
     <div class="post-list" data-listing-rows></div>
   </div>
 
-  <template id="post-tpl-2026-10-02">
-  <h1>Mapping the Hotel Network Read-Only</h1>
-  <p class="post-chips label">Homelab · 2026-10-02 · Friday · 11:15 PM · 6 min read · Eric Li</p>
+  <template id="post-tpl-2026-10-06">
+  <h1>CCNA Gaps and a Rack Teardown Plan</h1>
+  <p class="post-chips label">Homelab · 2026-10-06 · Tuesday · 11:40 PM · 2 min read · Eric Li</p>
 
   <article class="prose">
-<p>Most of today went on the hotel IPTV job. It started with chasing a contractor for answers and ended at home with the evening's captures turned into a topology map. A download queue full of fakes and a batch of journal posts fitted in around it.</p>
-<h2>Catching the blog up</h2>
-<p>Just after midnight I caught up on the journals I'd missed for 28 September to 1 October. Going back over them turned up a wrong power-brick wattage in an older post, which now says 180 W everywhere.</p>
-<p>In the afternoon I published them. Nine posts from 16 September to 1 October went through a staging folder so the titles of older live posts couldn't be overwritten, then got committed, pushed and checked live. All nine returned 200. The blog had been stuck on 24 September and now has 61 posts.</p>
-<h2>Asking the contractor, then picking up the phone</h2>
-<p>The hotel's outside network contractor replied to my questions with no technical content at all. Their account manager only wanted to know whether they should answer questions or come on site, and either way it would be billed. I started on a written reply, then rang them instead.</p>
-<p>The person I spoke to wasn't technical. Mapping the network would be billable, the contractor doesn't have access to all the equipment, and the hotel's existing TV network is already in use. I asked for read-only access so I could map it and confirm it all myself.</p>
-<p>Read-only access to the hotel's Wi-Fi and switch controller came through at 16:32, and I went through it without changing anything. The existing TV network reaches the room ports and runs its own DHCP, which clashes with the IPTV plan. Each room has one Ethernet port behind the wall-mounted TV. Firewall and core switch logins arrived at 17:01, and I set myself a rule straight away: the core switch logins are admin-level, so read-only commands only and nothing gets changed. I wrote up a handoff for the site session and drove over.</p>
-<h2>A queue full of fake releases</h2>
-<p>Before that, late in the afternoon, I looked at why Sonarr wasn't grabbing point releases properly, even when I picked them by hand. The queue was clogged with fakes: normal-looking names with Windows executables or .zipx archives inside instead of the image. Sonarr can't import them, so they sat there forever, and Sonarr then turned down real releases because the queue already met the cutoff.</p>
-<p>I'd seen the same problem on 21 September and never cleared it. It had grown from 17 fakes to 31 in a 33-item queue. I cleared the queue. Every fake came from the same three indexers, and I deprioritised them rather than switch them off. Priority only breaks ties, though, so a fake that's the only match can still get grabbed.</p>
-<p>So I added a queue sweeper that runs every 30 minutes across Sonarr and Radarr. It flags executable payloads, removes them from the torrent client and the seedbox, blocklists the release and kicks off a re-search. If it finds more than 25 fakes in one run it does nothing and errors out. I checked the tests by deliberately breaking the matching to prove they could fail. The first real run caught another fake that had been grabbed after my clear-out. Nothing monitors the sweeper yet.</p>
-<p>I also filled out another rolling release from a smaller mirror. Three more point releases imported, which makes 17 of 40. About ten more exist but fall just under the size minimum, and the first eleven aren't on any indexer at all.</p>
-<h2>On site</h2>
-<p>I got there at 17:38 and plugged the Mac in through a USB Ethernet adapter, on its own macOS network location. The first core switch's web interface let me in. SSH didn't, and that turned out to be me mistyping my login.</p>
-<p>The second core took about half an hour. The Mac kept sending traffic out over Wi-Fi instead of the cable, and the return path was asymmetric. Moving to a port on the management network fixed it. After that I logged into the firewall read-only.</p>
-<p>I had two things wrong going in: which device was acting as multicast querier for the TV network, and my assumption that nothing on that network used multicast at all. The real numbers said otherwise. There's plenty of spare bandwidth, with core-to-core around 3% and the building uplinks between 0 and 10%. One core port is a ready-made spare uplink. The querier sits in the wrong building, so a lot of TV traffic crosses the network for nothing, and fixing that is a firm requirement for the new VLAN.</p>
-<p>I decided the IPTV system gets its own VLAN so the changes can go in stages. I'd also thought about connecting my remote-access travel router to the hotel core, then shelved it until I've done more research, because I don't want to make a mistake on someone else's network. I put a small TP-Link LS105G unmanaged switch behind the travel router instead and reconfigured the router around it. Every piece of the IPTV equipment is now reachable remotely, and I got my first successful SSH login to the second TV switch. One login looked like it had hung, but the Terminal tab was just stuck in raw mode after <code>screen</code>.</p>
-<p>Before leaving I documented everything in as much detail as I could, since I wouldn't be back the next day. At 21:28 I logged out of everything and headed home.</p>
-<h2>The topology map</h2>
-<p>From home at 21:41 I went through the controller once more: 8 switches, 48 access points and about 280 clients. Then I built a topology map of the whole hotel from the day's captures, which came to 92 devices and 100 links.</p>
-<p>A second pass checked 36 facts against the raw captures and found 4 wrong and 3 unsupported, and all seven got fixed. Only 9 of the 100 rooms can be tied to a switch port so far, so the offline click-through HTML page has a room-to-port recorder to fill in on site. There are three versions: the offline page, an internal map and a client copy. The client versions use the real device names instead of my internal nicknames. A spot check caught a few names joined with slashes that had slipped through, and those got fixed too.</p>
+<p>Not much happened today. Everything below was in the evening.</p>
+<h2>Checking the CCNA blueprint against what I've done</h2>
+<p>I went through the CCNA 200-301 blueprint topic by topic and marked each one against the work I've actually done in the homelab and on the hotel IPTV job. The biggest gap is IP routing. I've done plenty of subnetting and VLAN work, but I haven't touched static routes, OSPF or first-hop redundancy like HSRP and VRRP.</p>
+<p>The other gap is hands-on. All my switch CLI time has been on H3C Comware, so I've never configured Cisco IOS. The multicast and IGMP snooping work I did at the hotel is the deepest networking I've done, and it isn't on the exam.</p>
+<p>There are two versions in play. The current one, v1.1, retires at the start of February 2027 and a v2.0 with the same exam code starts the day after. I'm leaning towards v2.0, since four months is tight for sitting the old one. Those dates came from training sites, not Cisco's own pages, so I'll confirm them before booking. The next step is a lab, probably a simulator first, so I can get IOS and routing practice in.</p>
+<h2>The rack, and a decision</h2>
+<p>Late in the evening I took a photo of the rack. Looking at it, the cabling behind the switches and patch panels is a mess, and I've decided to tear the whole thing down in the next few days and redo it properly.</p>
+<p>Before I pull a cable, these can't break:</p>
+<ul>
+<li>The cluster heartbeat links. Each node has a dedicated port for its own isolated ring, separate from the bonded uplink, and those need to go back exactly where they were.</li>
+<li>The Raspberry Pi that holds the cluster's tie-break vote, which sits on a specific port on the gateway.</li>
+<li>The Hue bridge, which has a fixed address and has to stay on the Home network.</li>
+<li>The node that only has a USB network adapter as its uplink.</li>
+</ul>
+<p>Powering the whole rack off also takes down my own workstation VM, since it lives on one of those nodes. Anything I want to do that depends on it has to happen before the shutdown, and the order of the shutdown needs working out first. I haven't started any of this yet.</p>
 <h2>Still open</h2>
-<p>At the hotel, room-to-port mapping sits at 9 of 100, and moving the querier and building the new VLAN still need a staged plan. The queue sweeper has no monitor, so if it stops I won't find out. And at 5am the automated update review flagged a Proxmox kernel update on one node as "ask" instead of applying it, so that one is waiting on me.</p>
+<p>The CCNA lab doesn't exist yet and the v2.0 dates are unconfirmed. The teardown needs a written port map and a shutdown order before I touch anything. And the early-morning update reviews held a kernel update on the main Ubuntu server and one on the first Proxmox node as "ask", so both are waiting on me.</p>
   </article>
   </template>
 <script type="application/json" id="n5-blog-posts">
 {
+  "2026-10-06": {
+    "category": "Homelab",
+    "date": "2026-10-06 · 11:40 PM",
+    "title": "CCNA Gaps and a Rack Teardown Plan",
+    "summary": "A quiet evening. I went through the CCNA blueprint against what I've actually done in the lab and at the hotel job, and IP routing is the biggest hole. Late on I took a photo of the rack and decided to tear it down and redo the cabling in the next few days."
+  },
+  "2026-10-05": {
+    "category": "Homelab",
+    "date": "2026-10-05 · 3:54 AM",
+    "title": "Rack Cabling and Hardening the IPTV Switches Remotely",
+    "summary": "I started after midnight by working out how to recable the home rack and whether a bigger switch is worth buying. Then I got ready to go back to the hotel, checked the set-top boxes over the remote link, pulled backups, and hardened both IPTV switches from home before the call with the hotel's network contractor."
+  },
+  "2026-10-04": {
+    "category": "Homelab",
+    "date": "2026-10-04 · 3:24 PM",
+    "title": "Clearing pve04 and Building a Talos Cluster",
+    "summary": "I started the day on why the gateway keeps going into safe mode, audited the home network and tightened some firewall rules, and broke every light in the house by moving the Hue bridge. By seven in the morning I had emptied pve04 and built a three-node Talos Kubernetes cluster on it."
+  },
+  "2026-10-03": {
+    "category": "Homelab",
+    "date": "2026-10-03 · 11:57 PM",
+    "title": "Hotel Documents, Set-Top Boxes and a New Homepage",
+    "summary": "I spent the small hours finishing the hotel network documents in internal and client versions, checked that every set-top box was getting its own TV stream, and replaced the www homepage with a new design built from a friend's site. The afternoon went on loading the topology into NetBox and a cable tidy at home that took the lab down for a while."
+  },
   "2026-10-02": {
     "category": "Homelab",
     "date": "2026-10-02 · 11:15 PM",

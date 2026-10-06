@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hotel Documents, Set-Top Boxes and a New Homepage — N5HQ</title>
+<meta name="description" content="I spent the small hours finishing the hotel network documents in internal and client versions, checked that every set-top box was getting its own TV stream, and replaced the www homepage with a new design built from a friend&#x27;s site. The afternoon went on loading the topology into NetBox and a cable tidy at home that took the lab down for a while.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-10-03.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Hotel Documents, Set-Top Boxes and a New Homepage — N5HQ">
+<meta property="og:description" content="I spent the small hours finishing the hotel network documents in internal and client versions, checked that every set-top box was getting its own TV stream, and replaced the www homepage with a new design built from a friend&#x27;s site. The afternoon went on loading the topology into NetBox and a cable tidy at home that took the lab down for a while.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-10-03.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Hotel Documents, Set-Top Boxes and a New Homepage</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-10-03 · Saturday · 11:57 PM</span>
+      <span class="chip">5 min read</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Friday ran straight on into Saturday. Most of the work happened after midnight, between about 00:34 and 05:30, and it was three jobs back to back: finishing the hotel network documents, testing the TV boxes, and swapping the homepage. The afternoon and evening were quieter.</p>
+<h2>Finishing the topology documents</h2>
+<p>Just after midnight I finished the 2 October post and got it live, then went back to the hotel topology pages. I wanted them to match the type and layout on my portfolio site, so I changed the fonts, made the body text smaller, and made the big title a lot smaller after it wrapped onto two lines on a phone. I also built a dark version using the same palette as the portfolio's dark mode.</p>
+<p>Next I retitled the pages, swapped in the location codes we already use in NetBox, and added rack positions. Only 40 of the 92 mapped devices had a NetBox entry, and 26 of those had a rack position. For the main rack I went with the layout I recorded on site rather than NetBox, because NetBox had two switches in the wrong slots.</p>
+<p>Then I made the client version, in light and dark. It leaves out anything resolved, anything marked as informational, evidence file names, the on-site checklist, owner details and the proposed new VLAN. The numbering of the observations and open questions was redone, so the final set reads O-01 to O-28 and Q-01 to Q-16 with no gaps that hint at removed items. I added a glossary tab as well, 67 terms in one A to Z list, since most people reading it won't know what IGMP snooping is.</p>
+<p>The first pass at keeping the proposed VLAN out of the client copy went wrong. A multicast section still carried the proposal, and my first fix removed ten observations that were fine to keep. I rewrote the check so it blocks the proposal wording, then restored the ten. Both client files are now clean, and the footer carries the capture date and who prepared it.</p>
+<h2>Do the set-top boxes get their own stream</h2>
+<p>There are seven set-top boxes in the test setup, and six of them were already awake. One was in standby, and it was the only one with a TV plugged in, so I left it alone. I woke the other six, got each past the welcome screen and put each on a different TV channel.</p>
+<p>All six were receiving video, at between about 1 and 7.6 Mbit/s depending on the channel. Then I logged into the second TV switch read-only and looked at the multicast table. Each stream sat on only the port of the box that had asked for it, and nowhere else, so IGMP snooping is doing its job. The standby box's port had no stream, as expected.</p>
+<p>Getting into that switch took two goes. I'd tried to pull the password out of the password manager the wrong way and every attempt was refused. The documented route, a references file run through the wrapper script, worked first time. I'd forgotten my own procedure.</p>
+<h2>A new www homepage</h2>
+<p>I wanted www.n5hq.me to follow the ericli design. I'd been sent a friend's site, which is a good fit, so I forked it and turned it into a homepage that is just "N5HQ", a theme toggle, an email link and the blue terrain along the bottom. A second, separate hosting project keeps it independent of the portfolio, and I checked that the old links still go where they used to: /about, /blog, /portfolio and /dev/v3 land on the portfolio subdomain, and /portal goes to the portal.</p>
+<p>Moving the domains over was the one part I did by hand. I removed them from the old project and added them to the new one in the dashboard, and the site was serving the new page at 05:01. After that I replaced my own logo with the friend's original animated one, cut the headline to a quarter of its size, and added a "Coming soon." line under it that opens a full-screen video. The last push went out at 05:31.</p>
+<h2>Afternoon and evening</h2>
+<p>At about 13:20 I checked whether any of this was in NetBox. It wasn't, so I loaded the topology. Everything it touched carries a tag, the old value of every changed field is saved so I can roll back, and nothing was deleted. I checked the result through the API: 43 devices and 46 cables were created, 89 infrastructure addresses were added, and 9 VLANs went into their own group, without the proposed one. One rack in the separate building can't be tied to a building, because the evidence points two ways, so it has no location and is tagged as unconfirmed.</p>
+<p>I also worked out the next steps for getting the TV system onto the hotel network: get the hotel's contractor to agree the plan first, then prove it on the island (the IPTV kit on its own isolated network), then pilot one building.</p>
+<p>Around 17:15 I did cable maintenance on the home server. I'd meant to keep the nodes online, but the main switches went off at some point and the lab lost power in stages. The nodes rebooted about 18:16, and by 18:35 everything was verified up: quorum 5 of 5, all nine HA services started, all 21 containers running, and the UniFi switches and access points rejoined. One service had started before the seedbox mount was ready, and I fixed that.</p>
+<p>In the evening I was thinking about remote access to the hotel's core switches. A Pi like the one in my lab would do it, as long as it's a new one and not pi02, which is the cluster's tie-break vote and my new DNS box.</p>
+<h2>Still open</h2>
+<ul>
+<li>The queue sweeper from 2 October still has no monitor.</li>
+<li>The hotel's contractor hasn't been sent the follow-up with the VLAN requests, and nothing on the new VLAN can go in until they've set it up.</li>
+<li>Room-to-port mapping is still 9 of 100.</li>
+<li>I don't know which building the separate-building rack belongs to. Reading the switch's front screen on site should settle it.</li>
+<li>The Proxmox kernel update flagged for my approval is still waiting.</li>
+<li>Some older problems turned up in the post-outage check and need a look.</li>
+</ul>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="iptv" href="/blog/?tag=iptv">IPTV</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="netbox" href="/blog/?tag=netbox">Netbox</a><a class="tagchip" data-tag="website" href="/blog/?tag=website">Website</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-02.html">← Mapping the Hotel Network Read-Only</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-04.html">Clearing pve04 and Building a Talos Cluster →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

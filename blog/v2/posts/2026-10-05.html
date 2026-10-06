@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rack Cabling and Hardening the IPTV Switches Remotely — N5HQ</title>
+<meta name="description" content="I started after midnight by working out how to recable the home rack and whether a bigger switch is worth buying. Then I got ready to go back to the hotel, checked the set-top boxes over the remote link, pulled backups, and hardened both IPTV switches from home before the call with the hotel&#x27;s network contractor.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-10-05.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Rack Cabling and Hardening the IPTV Switches Remotely — N5HQ">
+<meta property="og:description" content="I started after midnight by working out how to recable the home rack and whether a bigger switch is worth buying. Then I got ready to go back to the hotel, checked the set-top boxes over the remote link, pulled backups, and hardened both IPTV switches from home before the call with the hotel&#x27;s network contractor.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-10-05.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Rack Cabling and Hardening the IPTV Switches Remotely</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-10-05 · Monday · 3:54 AM</span>
+      <span class="chip">5 min read</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Another late night, roughly 00:06 to 03:54. The first part was about the home rack. The rest was getting the hotel IPTV system ready for a trip back later in the day and a call with the hotel's network contractor.</p>
+<h2>Rethinking the home rack cabling</h2>
+<p>I wrote out every port on the gateway and the three switches to see whether there was a better way to cable a 10 inch rack. Most of the setup was already right. Each Proxmox node has one bond leg on the 2.5G switch and the other straight on the gateway. The weak spot was pve02, whose failover leg goes through a small switch that itself reaches the gateway through the chain it is meant to cover for.</p>
+<p>I then floated a USW-Pro-Max-24 as the main switch, with the NAS and nodes on it, an SFP+ link up to the gateway and another down to the 2.5G PoE switch for the access points. That plan had problems. It is a 19 inch 1U unit, so it won't sit in a 10 inch rack, and only 8 of its ports are 2.5G. Putting both bond legs of every node on one switch would also mean one failure takes everything down, and the bond would only protect against a bad cable.</p>
+<p>My idea for the failovers was to run them through the 2.5G PoE switch, but then the gateway has to do the VLAN routing, which I'd rather avoid. The simpler answer is to plug the failover legs straight into the gateway ports, which keeps them independent of the new switch. I'll probably mount a 3U or 4U vertical rack under a shelf or on the ceiling, and airflow and weight are the things to check before I commit.</p>
+<h2>Getting ready for the contractor call</h2>
+<p>At 02:36 I started on what I needed to do before going back to the hotel. That became an agenda for the call, with each request written out with the reason and which device it changes, and a checklist of what I can do on my side first. Both got filed into the project.</p>
+<h2>Checking the IPTV island remotely</h2>
+<p>The island is the IPTV kit running on its own isolated network until cutover. First I checked the set-top boxes over the remote link. All 7 answer, and 6 are awake on the live player. The seventh is the one connected to a real TV and was asleep, so I left it alone. The awake boxes were pulling 1.2 to 6 Mbps each, all over the wired port. I had expected much more, but a whole broadcast is about 22 Mbps and each box only receives the one channel it is showing.</p>
+<p>Next came screenshots and backups from the IPTV server and the tuner. The server's DHCP page showed the gateway and DNS it hands out are my travel router, which I changed on 30 September. The runsheet and the VLAN plan still had the old values, so I had those wrong and corrected both. That matters on cutover day, because once the travel router leaves, every box would point at nothing.</p>
+<p>The server backup was 536 MB. The first download over the tunnel returned a 503, and opening the download link directly worked, so I noted that in the runsheet. I also moved the tuner's config backup and kernel log onto the NAS.</p>
+<p>The tuner's log showed one network port dropping its link 12 times, which looked worrying until I lined it up with the first switch's own log. The gaps matched to the second, and all of them fell on Thursday and Friday evening while I was re-cabling. Nothing has dropped since Friday night, so I'm treating it as my own cabling and not a fault.</p>
+<h2>Hardening both switches from home</h2>
+<p>I saved a pre-change copy of each config first, then worked through the changes over SSH from home.</p>
+<p>On the first switch I removed the old cloud account that allowed FTP, Telnet and plain HTTP, limited the remaining accounts to SSH and HTTPS, turned off SSH1 compatibility and made the VTY lines SSH-only. I turned spanning tree off, turned the multicast querier off on that switch, put the tuner's port in a port isolation group, and limited SSH and HTTPS logins to two addresses with an ACL.</p>
+<p>On the second switch I shut the uplink port until cutover, turned spanning tree off, and enabled DHCP snooping with only the server's port trusted. I isolated the 7 set-top box ports and the uplink in one group. Then I limited logins with the same kind of ACL.</p>
+<p>Every change went in with a 5 minute commit timer, so anything that locked me out would undo itself. For the login ACLs I opened a second SSH window from an allowed address before committing. The timer never had to roll anything back.</p>
+<p>A box I rebooted still got its address with snooping on, and with isolation on the boxes kept their streams but couldn't ping each other.</p>
+<p>The paste gotcha cost a few attempts. Pasting a whole block at once failed twice. The first time the commit timer was still running from the previous block, so the overwrite prompt swallowed the next pasted lines. The second time I pasted the second half at the user prompt without the first line that enters the config. Either way the final <code>quit</code> logged me out and nothing was applied. Now I paste the timer line, wait for the prompt, then paste the rest.</p>
+<h2>Still open</h2>
+<ul>
+<li>Console locks on both switches need me at the rack with the cable. The second switch's console has also had an admin session logged in since boot, which I need to log out.</li>
+<li>Check from the Mac on the island that SSH to both switches still works, since the login ACLs only allow that address and the travel router.</li>
+<li>Run the proof tests from the Mac after that.</li>
+<li>The DHCP gateway and DNS still need changing on cutover day, and saving that page restarts the server's data port and stops every channel.</li>
+<li>The querier on the second switch and the new VLAN still need the contractor's side of the changes.</li>
+<li>Room-to-port mapping is still at 9 of 100.</li>
+<li>Home rack: decide on the bigger switch, a mount and the final cabling.</li>
+<li>A Proxmox kernel update on one node is waiting for my approval.</li>
+</ul>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="iptv" href="/blog/?tag=iptv">IPTV</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="unifi" href="/blog/?tag=unifi">UniFi</a><a class="tagchip" data-tag="h3c" href="/blog/?tag=h3c">H3c</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-04.html">← Clearing pve04 and Building a Talos Cluster</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-06.html">CCNA Gaps and a Rack Teardown Plan →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Infrastructure — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>
