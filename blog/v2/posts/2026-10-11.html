@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auditing the Hotel Network and Designing a Three-Site Link — N5HQ</title>
+<meta name="description" content="After the weekend&#x27;s house work I opened two new engagements. One is a desk audit and redesign of the hotel network, which turned up 128 findings. The other is a way to link three separate sites with one-way access. I also read the config of a small mesh router that can&#x27;t export one, and checked what powertop could do for the nodes.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-10-11.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Auditing the Hotel Network and Designing a Three-Site Link — N5HQ">
+<meta property="og:description" content="After the weekend&#x27;s house work I opened two new engagements. One is a desk audit and redesign of the hotel network, which turned up 128 findings. The other is a way to link three separate sites with one-way access. I also read the config of a small mesh router that can&#x27;t export one, and checked what powertop could do for the nodes.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-10-11.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Auditing the Hotel Network and Designing a Three-Site Link</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-10-11 · Sunday · 6:54 PM</span>
+      <span class="chip">5 min read</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>I worked mostly from 00:12 to 05:49, with short bursts at 06:00, 08:15, 09:30 and 18:54.</p>
+<h2>Two new engagements</h2>
+<p>Straight after the house job I started two pieces of work. One is a desk audit and redesign of the hotel network. The other is a link between three sites, one of which is the hotel. Both are desk work for now. Apart from reading one router's config, I haven't touched a device.</p>
+<h2>A desk audit of the hotel network</h2>
+<p>I wrote up what I know, then went over every switch, the controller and the firewall configs I captured on the 2nd, criticising everything. The count came to 128 findings: 4 critical, 34 high, 62 medium and 28 low. I'm not going to list them here. Some of the worst I saw on site, and I'm labelling those as observed, since the redacted configs can't prove them.</p>
+<p>I also looked at the extra servers. One unlabelled 1U server is powered on and sends a steady one-way stream on the TV VLAN, and a 2U box is on but nearly silent. I won't touch either until the IPTV cutover and a soak period, and I'd rather not build anything permanent on them. Two Windows hosts seem to be doing very little, but my evidence is one five-minute average. The proper check on the 16th is lifetime byte counters and a 24 hour repeat, and I won't clear the statistics.</p>
+<p>Along the way I checked what the hotel's existing kit can already do. Client isolation, per-guest logins and rate limiting are all possible. Tying logins to the property system needs a third-party portal or a custom service. My first idea, a FreeRADIUS connector, turned out not to exist.</p>
+<p>I turned the findings into a plain-language pack for the owners, written in the first person with no jargon. Each area says what they have, what it allows today, what it should be and why. Free self-hosted options come first, and paid ones come with prices where that's simple. I pushed back on the draft where it was wrong. Hyper-V is free. The cost is Windows Server per physical core whichever hypervisor runs on it. Proxmox support has a production tier at about 370 euros per socket per year, not the cheaper non-production one. I'm reading the pack slowly and will have more questions. I also wrote a 290-line read-only checklist for the visit on the 16th.</p>
+<h2>Linking three sites</h2>
+<p>The second engagement started with a simpler question: how can I see a house network remotely? It has a three-node mesh router behind carrier-grade NAT, so the router's own VPN server and web access can't work. Then the scope grew to a warehouse on another site and the hotel, with this access policy: the house sees the warehouse and the hotel, the warehouse sees the hotel and the house, and the hotel sees neither.</p>
+<p>Several options didn't work. The mesh vendor's site manager needs the same brand at every site, the warehouse router has no VPN features at all, and someone else manages the hotel's firewall. Router-to-router tunnels would have put every home device on the business LAN. I settled on a Tailscale network owned by the business instead of my personal one, with deny-by-default ACLs and one small subnet-router box per site. The ACLs enforce the direction. Before anything gets set up I want the owner's written okay, then a heads-up to the hotel's IT provider.</p>
+<p>To design it I needed the warehouse router's config, and the mobile app can't export it. I cloned an unofficial cloud API client and ran a read-only dump with a verification code. My first attempt failed with a login error I can't explain. The second worked and 27 of 30 calls succeeded. It's a single router, not behind carrier-grade NAT, with a public IPv4 address and about 572 Mbps down and 209 up. Its subnets don't clash with the house or the hotel ranges I know about. UPnP is on, with no port forwards. I wrote the engagement folder and deleted the raw dump.</p>
+<h2>Small things</h2>
+<p>At 08:15 I asked whether a new NBN plan's "twin paths" claim applies to my address. It only covers the provider's own core, not the last mile from my home to the exchange, which is a single path whoever I pick.</p>
+<p>At 18:54 I ran a read-only check of the nodes to see whether powertop would help. It isn't installed anywhere, and all four use the performance governor. The first three reach C10 but pve04 only reaches C3, and PCIe ASPM is off on every link of pve01 and pve03. Three nodes use USB network adapters, including pve02's only uplink. I'd use powertop only to measure and skip its auto-tune, because USB autosuspend could drop corosync links and trigger fencing. The best gain is probably the Dell BIOS ASPM setting, but a BIOS write once reset pve02 instantly, so I'd evacuate each node first. Nothing changed.</p>
+<p>I also fixed a date. The Talos shutdown and the desk power tests were on the 10th, not the 11th, so I corrected the project row, the pve04 runsheet and my notes.</p>
+<h2>Still open</h2>
+<ul>
+<li>The owner pack needs my full read-through, and I may cut it down.</li>
+<li>The follow-up to the IT provider, including who supports the phone system and the storage, isn't drafted.</li>
+<li>On the 16th: byte counters, a 24 hour repeat, firewall log filters and the VPN pages.</li>
+<li>Unknowns: the provider's contract and invoices, what the domain controller VMs do, why a second host exists, the role of the third server, and what an old second WAN port connects to.</li>
+<li>Three-site link: no proposal, hardware, tailnet or pilot yet, and the hotel's full subnet list is missing.</li>
+<li>The house router's hardening changes are still not applied, by my choice.</li>
+<li>A pending Proxmox update on pve01 needs my approval.</li>
+</ul>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="tailscale" href="/blog/?tag=tailscale">Tailscale</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-10.html">← PC Against the Cluster, Real Power Numbers and a Flaky Camera</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-12.html">A Dead Motherboard, a New ISP and Camera Storage Numbers →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Network Architecture — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

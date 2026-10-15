@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Sandbox VM, a Phone That Won&#x27;t Sync and Garage Prep — N5HQ</title>
+<meta name="description" content="Just after midnight I built a throwaway Ubuntu VM on pve02 and fixed some stale runsheet rows on the way. In the evening I looked into why a mailbox won&#x27;t sync on a phone at the hotel, and prepared a visit to a house to fit a garage door controller and reconnect two security cameras.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-10-09.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="A Sandbox VM, a Phone That Won&#x27;t Sync and Garage Prep — N5HQ">
+<meta property="og:description" content="Just after midnight I built a throwaway Ubuntu VM on pve02 and fixed some stale runsheet rows on the way. In the evening I looked into why a mailbox won&#x27;t sync on a phone at the hotel, and prepared a visit to a house to fit a garage door controller and reconnect two security cameras.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-10-09.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">A Sandbox VM, a Phone That Won&#x27;t Sync and Garage Prep</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-10-09 · Friday · 9:51 PM</span>
+      <span class="chip">3 min read</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>A quieter day. I worked from about 00:06 to 01:16, and again from 19:16 to 21:51.</p>
+<h2>A sandbox VM on pve02</h2>
+<p>After midnight I built a general-purpose Ubuntu 24.04 VM on pve02. The lab convention is that the last octet of the IP matches the VM ID minus 100, so VM 139 gets x.x.0.39. Before using it I checked that the ID and address were free. The UniFi client search doesn't match partial IPs, so a search for the neighbouring range came back empty even though several addresses there are live. I tested the lookup against a known-live address before I trusted "free".</p>
+<p>I downloaded the cloud image, checked its SHA256 and built the VM on local-zfs with a static address, guest tools and no HA. I put my lab keys on it and left out the shared pve01 key on purpose, since that one is already on my list to untangle. It starts at 2 vCPUs, which I later raised to 4. It goes into the nightly vzdump job like every other guest, and I added an <code>ssh sandy</code> shortcut on the workstation VM.</p>
+<p>Writing the runsheet turned up some wrong rows in the index. The stopped backup server VM is on pve02, not pve04 as three places said. The pve02 row claimed it ran two guests that actually live on pve01 and pve03. I fixed those. The pve01 and pve03 rows are stale too, and I left them.</p>
+<p>Later I installed Samba and shared the VM's home folder so I could map it as a drive on my PC. Setting the share password failed from my PC, because the VM only trusts the workstation VM's keys. I'll either hop through the workstation VM or add my PC's key.</p>
+<h2>A mailbox that won't sync</h2>
+<p>In the evening I looked at why one of the hotel's mailboxes doesn't arrive on a phone. It was desk work and a few questions. The mail is hosted in Microsoft's cloud, and the address exists. I confirmed that with a lookup, after first proving it could return "not found" for a made-up address. On the phone it's the stock Mail app with an Exchange account, "Use SSL" on and no sync limit. That "Use SSL" toggle suggests the account was added through Configure Manually, a password-only Exchange login that Microsoft no longer allows. I'd delete the account and re-add it with the Microsoft sign-in option. If it turns out to be a shared mailbox, it may need adding differently. I haven't confirmed the cause, and I didn't send a test email.</p>
+<h2>Prep for a garage and camera job</h2>
+<p>I'm going to a house to fit a WiFi garage door controller, and two solar security cameras have dropped off their base station. The house has a three-node mesh router. I read up on each piece.</p>
+<ul>
+<li>The controller is 2.4 GHz only and WPA2 only. It connects with two wires to the wall button, and a short across the button terminals is a quick compatibility test.</li>
+<li>The cameras are also 2.4 GHz only. They pair only with the newer base station and its latest firmware, and work standalone with onboard storage.</li>
+<li>The mesh router is WiFi 6, not 6E. It has an IoT network profile, but I haven't verified it can do 2.4 GHz and WPA2 only.</li>
+<li>One 2.4 GHz network that can reach the LAN is the simplest setup, since isolating IoT would break Apple Home unless it can reach the LAN.</li>
+</ul>
+<p>The account situation changed twice. First I thought the homeowner had forgotten the camera account and everything needed a reset. At 21:51 it turned out the base station is already on an account, so I'll leave it alone and add the two cameras to that account.</p>
+<h2>Still open</h2>
+<ul>
+<li>The Samba password and my PC's drive map for the sandbox VM, and possibly an unpushed runsheet commit.</li>
+<li>The stale pve01 and pve03 rows in the runsheet index.</li>
+<li>The phone email problem is undiagnosed until someone re-adds the account.</li>
+<li>The IPTV server's internet access needs deciding before the 16th.</li>
+<li>Pending package updates for the Ubuntu server and pve01 are waiting on me.</li>
+</ul>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-08.html">← Moving the Pilot and Cloning the IPTV Server</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-10.html">PC Against the Cluster, Real Power Numbers and a Flaky Camera →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Network Architecture — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

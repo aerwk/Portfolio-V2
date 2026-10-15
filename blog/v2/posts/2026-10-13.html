@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Immich, Kuma and Cloudflared Move Off n5ubuntu — N5HQ</title>
+<meta name="description" content="A big lab day. I updated and rebooted n5ubuntu and two Proxmox nodes, moved Immich to its own VM, moved the first Uptime Kuma and cloudflared connector into containers, and sent Matter to a Home Assistant add-on. I also found why a printer and two bridges were unreachable across VLANs.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-10-13.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Immich, Kuma and Cloudflared Move Off n5ubuntu — N5HQ">
+<meta property="og:description" content="A big lab day. I updated and rebooted n5ubuntu and two Proxmox nodes, moved Immich to its own VM, moved the first Uptime Kuma and cloudflared connector into containers, and sent Matter to a Home Assistant add-on. I also found why a printer and two bridges were unreachable across VLANs.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-10-13.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Immich, Kuma and Cloudflared Move Off n5ubuntu</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-10-13 · Tuesday · 10:30 PM</span>
+      <span class="chip">6 min read</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Work started at 03:40 and ran to about 07:30, then picked up at 15:56 and went on until about 22:30.</p>
+<h2>A plan for the Home Assistant dashboard</h2>
+<p>At 03:40 I looked at five screenshots of someone else's wall dashboard and asked what I could build that is like it or better. I did a read-only inventory of Home Assistant and the lab, and wrote a plan. Nothing in Home Assistant has changed. It has 1,389 entities, 214 of them unavailable, no custom cards, theme or calendars, and a UniFi Protect repair waiting. The plan is to clean up the dead entities first, use the native Sections view, add calendars, and add tiles for a "lab healthy" status and what needs attention. I haven't decided which screens it's for. HAOS is also running on pve03, not where the docs said.</p>
+<h2>Updating and rebooting n5ubuntu</h2>
+<p>I updated everything on n5ubuntu and rebooted it, since the reboot was overdue from the 7th. Before touching Immich I took a database dump, because its schema upgrades are one-way. Immich went from 3.1.0 to 3.3.1, along with updates to Radarr, Sonarr, Prowlarr, Bazarr, Tautulli, Seerr, FlareSolverr and a few others. Docker, containerd and openssh moved with the apt upgrade and pruning old images freed 11.5 GB. The reboot took about 20 seconds, 21 of 21 containers came back and the NAS and remote-box mounts were fine.</p>
+<h2>Rolling update on pve02 and pve03</h2>
+<p>I updated both nodes in parallel but rebooted them one at a time. Only a few guests are allowed on those two nodes under the HA rules, so rebooting both at once would have left them nowhere to go and the shutdowns would have hung. With no console on these machines I wasn't keen on that. pve02 went first with its guests migrated off, and was back in 43 seconds. pve03 live-migrated n5ubuntu to pve02 in about 2.5 minutes without a restart, and was back in 35. All five quorum votes held and the whole thing took 13 minutes. I got one thing wrong on the way. I thought n5ubuntu had no replication job and would need a full disk copy, but <code>pvesr status</code> only shows the local node's jobs.</p>
+<h2>Immich gets its own VM</h2>
+<p>I moved Immich off n5ubuntu onto n5immich, VM 139 at x.x.0.39, on pve02 with pve01 as the HA fallback. It has 4 vCPUs, 6 GB of RAM and a 32 GB Debian 13 cloud image, with Immich pinned at 3.3.1. The 158 GB library stays on the NAS. I chose CPU only for machine learning and transcoding so the VM can live-migrate. I ruled out pve04 because it's about to come out and be rebuilt as a node.</p>
+<p>Two things tripped me up. UniFi blocks DNS for new wired devices until their MAC is on an admin allowlist, so I added the VM's before building it, and re-read the list twice because the controller sometimes acknowledges writes it doesn't apply. And my Cloudflare API token couldn't edit tunnels, so I added the tunnel edit permission myself.</p>
+<p>The cutover took about three minutes, from 16:43 to 16:46. I dumped the database, restored it on the VM, and the counts matched exactly: 31,457 assets, 2 users, 630 people, 48 albums. A sample thumbnail, preview and original photo and video all read back. I repointed the public hostname, the Kuma monitor, the Prometheus blackbox target and the backup script. Then I added the HA rule and replication to pve01 every 15 minutes, and tested a live migration and a reboot. The old copy on n5ubuntu is my rollback until about the 20th. Phones need the new Tailscale address, x.x.226.97, and I'll turn off the key expiry on the VM.</p>
+<h2>Kuma and cloudflared into containers</h2>
+<p>Next, the first Uptime Kuma and the first cloudflared connector left n5ubuntu for containers of their own, matching the second pair. cfd1 is CT 148 on pve03, and I did it first with no downtime by adding it as a third connector before removing the old one. kuma1 is CT 145 on pve01 with fallback on pve03. Its cutover stopped monitoring for about 47 seconds. All 59 monitors, 12 push monitors and the heartbeat history copied across, and every monitor came up, including the cameras. A forwarder on n5ubuntu relays stragglers to the new Kuma for about a week. I repointed the vzdump hooks, backups, Prometheus and Home Assistant sensors, and edited seven push URLs in Proton Pass by hand. One backup field went blank in the edit and I fixed it at 21:41. Each container has its own runsheet.</p>
+<h2>The printer and the bridges</h2>
+<p>I spent about 50 minutes on a Canon printer on the IoT VLAN that the PC and phones couldn't reach. I made the printer's address fixed, allowed management and home to it on the printing and scan ports, let it reach the house's SMB only, and blocked it from the internet. The rules didn't help at first, and I worked through several dead ends. The root cause was the "Block IoT to Internal" rule, which matches every connection state. It was rejecting the printer's replies before UniFi's automatic return rules could allow them. The fix was an allow rule for replies on established connections, above the block. After that it loaded in a browser and was added to the PC at 19:16. I also turned off the printer's Wi-Fi Direct.</p>
+<p>The same flaw means nothing on Home can reach IoT devices either. The proper fix is to make the block rule match new and invalid connections only, but 27 IoT devices and five cameras would become reachable from Home, so I previewed it and held off.</p>
+<h2>Matter to a Home Assistant add-on</h2>
+<p>Only two devices depend on the Matter server, a doorbell and a camera hub, both from the same vendor. They'd been offline since 27 August, and the cause was another firewall rule. The bridges are on the Home VLAN, and a "Block Non-admin to Management" rule dropped their replies into the management network. I added a narrow allow rule for those two devices to Home Assistant and n5ubuntu, and both reconnected within 13 seconds. Then I rehearsed the migration on a throwaway server. The add-on assumes a different fabric ID and vendor ID from my existing setup, and the defaults would have started silently with an empty fabric. With override settings the cutover took about 1 minute 40 seconds, with the same pairings and no re-pairing. A secret from the Home Assistant config ended up printed in a log. I shredded the log.</p>
+<h2>n5ubuntu RAM and timezones</h2>
+<p>Proxmox showed n5ubuntu using 11.5 of 12 GB because ballooning was off, so it counted file cache. Inside the VM only 2.7 GB was in use. Now that Immich has left, I cut it to 8 GB with a 4 GB balloon floor and rebooted in about 25 seconds. That frees 4 GB on pve03.</p>
+<p>At 22:18 I made everything run on Perth time. Two VMs and Immich's own container were still on UTC. Six containers still are. The Immich database dump now runs at 02:00.</p>
+<h2>Still open</h2>
+<ul>
+<li>Switch the Immich phone app to the new address, for the second user's phone too.</li>
+<li>Check n5immich wrote its first nightly dump, now due at 02:00.</li>
+<li>Around the 20th: shred the compose backup holding the tunnel token, and remove the forwarder, the old Kuma and the old Matter data and rules.</li>
+<li>UniFi backlog: the block rule fix and two dead rules, previewed but not applied.</li>
+<li>Heartbeat monitors for kuma1's backup and the connectors, and two stale nginx sensors in Home Assistant.</li>
+<li>Six containers still on UTC, and pve01 has a pending kernel update.</li>
+</ul>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="immich" href="/blog/?tag=immich">Immich</a><a class="tagchip" data-tag="home-assistant" href="/blog/?tag=home-assistant">Home Assistant</a><a class="tagchip" data-tag="unifi" href="/blog/?tag=unifi">UniFi</a><a class="tagchip" data-tag="cloudflare" href="/blog/?tag=cloudflare">Cloudflare</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-12.html">← A Dead Motherboard, a New ISP and Camera Storage Numbers</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-14.html">Tearing Down Talos and Moving the Workstation VM →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Network Architecture — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

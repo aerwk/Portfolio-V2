@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PC Against the Cluster, Real Power Numbers and a Flaky Camera — N5HQ</title>
+<meta name="description" content="I benchmarked my PC&#x27;s GPU against a VM on the cluster, measured what each node and my desk really draw from the wall, fixed mislabelled smart plugs, and shut down the idle Talos cluster. In the evening I traced a security camera&#x27;s dropouts at a house to one router setting.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-10-10.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="PC Against the Cluster, Real Power Numbers and a Flaky Camera — N5HQ">
+<meta property="og:description" content="I benchmarked my PC&#x27;s GPU against a VM on the cluster, measured what each node and my desk really draw from the wall, fixed mislabelled smart plugs, and shut down the idle Talos cluster. In the evening I traced a security camera&#x27;s dropouts at a house to one router setting.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-10-10.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">PC Against the Cluster, Real Power Numbers and a Flaky Camera</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-10-10 · Saturday · 7:03 PM</span>
+      <span class="chip">4 min read</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>From about 00:22 to 04:28 I worked on the benchmark and power numbers, with a break for research. From about 16:45 to 19:03 I was at a house fixing a camera.</p>
+<h2>PC against the cluster</h2>
+<p>I wanted to know whether heavy jobs belong on the PC or on the cluster. I ran the same compute benchmark on a self-generated input on the 4 vCPU sandbox VM on pve02 and on the RTX 5080 in my PC. The VM managed about 5,500 operations a second. The GPU did roughly 840,000 to 895,000, about 160 times more. The full run on the PC took about 2 hours 20 minutes at 75 degrees, 92% fan and 100% GPU use, with no throttling.</p>
+<p>That settled the sandbox VM. It was no use for benchmarking, so I stopped it, destroyed it with its disk, and checked that no ZFS remnants were left. I marked its runsheet destroyed. A sed command meant to change two lines in the index indented every line instead. I caught it straight away, restored the file from git and redid the two edits.</p>
+<h2>What the nodes and my desk draw</h2>
+<p>To compare fairly I needed wall power, not CPU package numbers. The smart plugs under the nodes were mislabelled in both Home Assistant (names like the wine fridge and the washer) and UniFi, left over from the recabling. I loaded each node in turn for about 11 minutes while sampling all four plugs, which told me which plug fed which node. Then I renamed the Home Assistant devices to pve01 to pve04 and the UniFi clients to match. UniFi sometimes acknowledges a write it doesn't keep, so I checked the names again a minute later and they held.</p>
+<p>The measurements:</p>
+<ul>
+<li>Each of the three small nodes idles around 11 to 24 W and reaches roughly 47 to 59 W at full load.</li>
+<li>pve04 is a different machine and idles at about 43 W with nothing running but the Talos sandbox. That is double the others.</li>
+<li>All four nodes idle at about 96 W together.</li>
+<li>The PC idles at about 85 W and drew about 440 W under the benchmark. The whole desk is 287 to 300 W idle and about 640 W under load.</li>
+<li>The 49 inch ultrawide is about 120 W by itself, roughly what the four nodes idle at together. The two 27 inch monitors are about 40 W each.</li>
+</ul>
+<p>At an assumed 30 cents a kWh, the three small nodes cost about 140 dollars a year and pve04 alone about 113. So always-on apps belong on the cluster, because idle power dominates, and the PC is only worth using for short heavy jobs. The Talos sandbox was the obvious waste. I shut down all three of its VMs at about 03:26 and pve04 dropped from about 43 W to about 15 W. I updated the project row and the pve04 runsheet with restart instructions.</p>
+<h2>Monitor research</h2>
+<p>The ultrawide's 120 W and the desk space it takes made me look at a 34 inch OLED replacement. The new generation of panel fixes the text fringing of the older ones. The best pick so far is the ASUS ROG Strix XG34WCDMS at 1,399 dollars, which has a three-year burn-in warranty and draws about 34 W. The Alienware AW3426DW is the alternative, and it sold for 1,155 to 1,199 dollars in September. Several retailer sites blocked my lookups, so some prices are partial. I haven't bought anything.</p>
+<h2>A camera dropping off at a house</h2>
+<p>In the evening I went to a house where a solar security camera in the garage showed "Connection Failed" while reporting a full battery. Another camera outside was fine. The garage door controller I'd just fitted also worked, because tiny on/off messages cope with a weak link and video doesn't.</p>
+<p>I first suspected distance, with a concrete slab between floors, and considered moving the base station to the garage. Before buying anything I looked at the router's settings. The 2.4 GHz roaming assistant was on with a cutoff of minus 70 dBm, so the router kicked any 2.4 GHz device whose signal fell below that. A battery camera at the edge of coverage hit it constantly. I changed one thing at a time. Disabling the roaming assistant, synced to all three nodes, got the camera reconnected and staying up. I also set the 2.4 GHz channel width to 20 MHz, which doesn't affect the controller. To rule out distance, I put the base station back in its old spot and the camera still worked. No new switch, port or node is needed.</p>
+<p>I also did a read-only look at the rest of the router settings and wrote up some hardening items for the homeowner to decide on. I won't list them here.</p>
+<h2>Still open</h2>
+<ul>
+<li>The 5 GHz roaming assistant is still at the same cutoff. Only 2.4 GHz caused the dropout.</li>
+<li>I was about to run the firmware update on the mesh nodes, and I haven't confirmed the settings survive it.</li>
+<li>The garage camera needs a recheck tomorrow, since the original dropout happened overnight.</li>
+<li>UniFi shows all four node plugs offline while Home Assistant reads live watts from them. I haven't looked into it. The air purifier's power sensor has also read 0 W since the 6th.</li>
+<li>No decision on the monitor.</li>
+</ul>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="power" href="/blog/?tag=power">Power</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="home-assistant" href="/blog/?tag=home-assistant">Home Assistant</a><a class="tagchip" data-tag="unifi" href="/blog/?tag=unifi">UniFi</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-09.html">← A Sandbox VM, a Phone That Won&#x27;t Sync and Garage Prep</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-11.html">Auditing the Hotel Network and Designing a Three-Site Link →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Network Architecture — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

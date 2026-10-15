@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab Power-Down and a Day Mapping the Hotel Network — N5HQ</title>
+<meta name="description" content="I shut the whole lab down in the early hours and lost Immich to a boot-time mount problem. From midday I was at the hotel proving room-to-port mappings, locking the IPTV switch consoles and running the multicast proof tests. The evening went on a firewall zone for the temporary router and the pilot request for the hotel&#x27;s IT provider.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-10-07.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Lab Power-Down and a Day Mapping the Hotel Network — N5HQ">
+<meta property="og:description" content="I shut the whole lab down in the early hours and lost Immich to a boot-time mount problem. From midday I was at the hotel proving room-to-port mappings, locking the IPTV switch consoles and running the multicast proof tests. The evening went on a firewall zone for the temporary router and the pilot request for the hotel&#x27;s IT provider.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-10-07.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Lab Power-Down and a Day Mapping the Hotel Network</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-10-07 · Wednesday · 11:44 PM</span>
+      <span class="chip">6 min read</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>A long one, from about 00:10 to 23:44. The early hours were a full lab shutdown and its fallout, then a few small jobs, and from about midday to early evening I was on site at the hotel.</p>
+<h2>Shutting the lab down</h2>
+<p>Overnight I shut down the NAS and then all four Proxmox nodes. Before powering anything off I disabled the NAS backup storage on every node, set the HA resources to ignored and stopped the HA services. The local resource managers keep their watchdogs armed for five minutes or more, and I didn't want a node fencing itself on the way down. Guests went down cleanly, then the nodes in order: pve04, pve03, pve02, pve01, the last at about 00:54.</p>
+<p>I believed I had saved a shutdown procedure and couldn't find it. It was only on my PC. Coming back up, I found that HA-managed guests, including my workstation VM, don't start by themselves after a power-up. Each one needs a manual set-to-started from pve01, which I should have known. The order is gateway, switches, the Raspberry Pi with the quorum vote, then the nodes, and check all five votes before re-arming HA.</p>
+<h2>Immich down after the reboot</h2>
+<p>At 04:43 I noticed Immich was down. The main Ubuntu server had restarted at 01:25, tried its two NAS mounts once while the NAS was still off and never retried. Immich then saw an empty library folder and crash-looped. I mounted the shares by hand from pve03 and restarted Immich, and the site came back with all six storage checks passing at 04:46. I also added an automount option to both NAS lines in fstab so the mounts retry on demand. That stays untested until the server next reboots.</p>
+<h2>Smaller jobs</h2>
+<p>Around 02:40 I drafted an introduction email about a role, after talking to someone on the flight home from Malaysia, and updated my CV and LinkedIn text. Nothing is sent yet. I also changed the portfolio tagline to "DevOps &amp; Network Architecture enthusiast". The blog pages still carried the old wording, so I fixed the build script and templates to apply it everywhere. I caught up on four missing journal entries and published them. I also set the Windows SMB client cache lifetimes to zero on my PC, because new files took ages to show up on the mapped drives.</p>
+<h2>Rooms and ports at the hotel</h2>
+<p>My first job on site was proving which core switch port each room's TV lands on, using the controller's port page while my Mac sat in each TV jack. Only a few rooms were free. Room 11 is port 1, room 12 is port 2, room 16 is port 6 and room 18 is port 8. Room 14's jack is dead and I left the occupied rooms alone. I first read room 11 as port 6 and was wrong. The port page lags by up to two minutes, and port 6 was a different TV that had just been switched on. After a refresh it was port 1. Four outdoor access points on that switch are named after rooms, which is a trap if you go by name.</p>
+<p>In the comms room SSH to the cores kept hanging, and I wasted a while blaming routes. The cause was that I was plugged into the other core from the one I thought, on a different port. Checking LLDP first showed it. After that I got DHCP on the right VLAN, added both routes and connected with the legacy key algorithms those switches need. I captured the MAC tables and neighbour lists from both cores and identified most devices from their vendor prefixes. I also wrote down some faults to raise with the hotel's IT provider, which I'm not detailing here.</p>
+<p>In the other building I hand-traced the patch panel to the core switch for all 16 room ports. Two TVs happened to be on, and the ports that lit up matched my trace. One room is unplugged at the panel and I don't know why.</p>
+<h2>Locking down the IPTV island</h2>
+<p>I put authentication on the console of both IPTV switches. Each change went in under a five-minute commit timer, and I saved and checked both configs afterwards.</p>
+<p>Then I ran the proof tests with the uplink port opened briefly:</p>
+<ul>
+<li>With nothing joined, the switch sent a query every 125 seconds, with no spanning tree packets and no channel traffic leaking out.</li>
+<li>Joining a channel on purpose got the stream flowing in 1.3 seconds at about 4.7 Mbps, and leaving stopped it 2.6 seconds later.</li>
+<li>The set-top boxes speak IGMPv2 only.</li>
+<li>A box with a DHCP address was blocked from SSH and HTTPS by the login ACL. A static address was allowed.</li>
+<li>Pulling and replugging the uplink while a box was playing caused no glitch.</li>
+</ul>
+<p>One test was inconclusive, because macOS sends a leave message even when I kill the process. I also found an eighth box that had missed the port isolation group, and added it after confirming the picture was fine. The uplink went back to shut and I saved a config on both switches.</p>
+<h2>A firewall zone on the temporary router</h2>
+<p>Reviewing the pilot plan, I realised that once the island joins the hotel, anything on the new VLAN gets the temporary router as its gateway, in the same zone as management, the tuner and my Tailscale routes. A room jack could have reached the server's admin page, and maybe my home lab. So that evening I built a separate zone for the island that only allows internet out, with a five-minute auto-revert armed. I fumbled it: I pasted markdown fences into the shell and the backticks ran as commands, and my first SSH test ran on the router instead of the Mac. Once I reached both switches from the Mac over Tailscale I cancelled the revert. The boxes had internet through the new zone. I haven't done a lockout test from a room jack or checked the zone survives a router reboot.</p>
+<h2>The pilot request</h2>
+<p>From about 20:00 I wrote the request to the hotel's IT provider for the VLAN 220 pilot. It asks for the VLAN on the core switch with IGMP on but not as querier, the island's port on VLAN 220 only, tagging on the trunk, and fast leave off. That port can't also carry the live TV VLAN, because it would bridge the live network into the island with two DHCP servers and two queriers. The pilot rooms are 11, 16 and 18, since the others are occupied. My contact isn't technical, so I split it into a plain cover note and a technical attachment, then rewrote it as a ticket reply because the provider works through tickets. At 23:44 it was still unsent. It went out just after midnight.</p>
+<h2>Still open</h2>
+<ul>
+<li>Pilot day: confirm the provider's changes, read the IGMP state on the new VLAN, run the lockout test, reboot the router and check the zone, then bring up the uplink and try room 11.</li>
+<li>The faults write-up and a summary of what the owners pay for are both unwritten.</li>
+<li>Questions for the IPTV server's manufacturer about two management ports open on the room-facing side and an unexplained IGMP error counter.</li>
+<li>The Immich automount change is untested, and two apps on the Ubuntu server need a restart to see the remote download box's mount.</li>
+<li>The CV still needs a mobile number, a start year and a PDF, and the email isn't sent.</li>
+</ul>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="iptv" href="/blog/?tag=iptv">IPTV</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="h3c" href="/blog/?tag=h3c">H3c</a><a class="tagchip" data-tag="immich" href="/blog/?tag=immich">Immich</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-06.html">← CCNA Gaps and a Rack Teardown Plan</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-08.html">Moving the Pilot and Cloning the IPTV Server →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Network Architecture — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

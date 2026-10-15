@@ -66,13 +66,61 @@
   <div class="wrap">
     <div class="tagstate" id="tagstate" hidden>Showing posts tagged <span class="tagchip is-active" id="tagstate-name"></span><a class="tagclear" href="/blog/">× clear</a></div>
     <ul class="posts">
-      <li class="postcard rv" data-tags="homelab networking certification ccna cabling">
+      <li class="postcard rv" data-tags="homelab proxmox talos ha">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-14 · 1:32 AM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-10-14.html">Tearing Down Talos and Moving the Workstation VM</a></h3>
+        <p>I destroyed the idle Talos cluster on pve04, shredded its configs, and live-migrated my workstation VM onto that node. The VM had run out of memory and lost several processes, so I raised it to 12 vCPUs and 12 GiB.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="talos" href="/blog/?tag=talos">Talos</a><a class="tagchip" data-tag="ha" href="/blog/?tag=ha">Ha</a></div>
+      </li>
+      <li class="postcard rv-d1" data-tags="homelab proxmox immich home-assistant unifi cloudflare">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-13 · 10:30 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-10-13.html">Immich, Kuma and Cloudflared Move Off n5ubuntu</a></h3>
+        <p>A big lab day. I updated and rebooted n5ubuntu and two Proxmox nodes, moved Immich to its own VM, moved the first Uptime Kuma and cloudflared connector into containers, and sent Matter to a Home Assistant add-on. I also found why a printer and two bridges were unreachable across VLANs.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="immich" href="/blog/?tag=immich">Immich</a><a class="tagchip" data-tag="home-assistant" href="/blog/?tag=home-assistant">Home Assistant</a><a class="tagchip" data-tag="unifi" href="/blog/?tag=unifi">UniFi</a><a class="tagchip" data-tag="cloudflare" href="/blog/?tag=cloudflare">Cloudflare</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab hardware networking unifi ansible">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-12 · 8:33 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-10-12.html">A Dead Motherboard, a New ISP and Camera Storage Numbers</a></h3>
+        <p>I worked out what killed the sim rig&#x27;s old motherboard and which parts might revive it. I moved the house to a new ISP and checked the lab afterwards, which turned up a hung download client on the remote box. I also looked at where Ansible would fit and worked out how long the cameras&#x27; footage will last.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="hardware" href="/blog/?tag=hardware">Hardware</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="unifi" href="/blog/?tag=unifi">UniFi</a><a class="tagchip" data-tag="ansible" href="/blog/?tag=ansible">Ansible</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab client-work networking tailscale proxmox">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-11 · 6:54 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-10-11.html">Auditing the Hotel Network and Designing a Three-Site Link</a></h3>
+        <p>After the weekend&#x27;s house work I opened two new engagements. One is a desk audit and redesign of the hotel network, which turned up 128 findings. The other is a way to link three separate sites with one-way access. I also read the config of a small mesh router that can&#x27;t export one, and checked what powertop could do for the nodes.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="tailscale" href="/blog/?tag=tailscale">Tailscale</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab power proxmox home-assistant unifi networking">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-10 · 7:03 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-10-10.html">PC Against the Cluster, Real Power Numbers and a Flaky Camera</a></h3>
+        <p>I benchmarked my PC&#x27;s GPU against a VM on the cluster, measured what each node and my desk really draw from the wall, fixed mislabelled smart plugs, and shut down the idle Talos cluster. In the evening I traced a security camera&#x27;s dropouts at a house to one router setting.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="power" href="/blog/?tag=power">Power</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="home-assistant" href="/blog/?tag=home-assistant">Home Assistant</a><a class="tagchip" data-tag="unifi" href="/blog/?tag=unifi">UniFi</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab proxmox client-work networking">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-09 · 9:51 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-10-09.html">A Sandbox VM, a Phone That Won&#x27;t Sync and Garage Prep</a></h3>
+        <p>Just after midnight I built a throwaway Ubuntu VM on pve02 and fixed some stale runsheet rows on the way. In the evening I looked into why a mailbox won&#x27;t sync on a phone at the hotel, and prepared a visit to a house to fit a garage door controller and reconnect two security cameras.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab client-work iptv networking h3c">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-08 · 11:15 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-10-08.html">Moving the Pilot and Cloning the IPTV Server</a></h3>
+        <p>The pilot request went out just after midnight, but the hotel&#x27;s IT provider couldn&#x27;t do the work that day, so I moved the pilot to the 16th and sent a prep email instead. In the evening I worked out who really makes the IPTV server, then cloned its disk on site and pulled the clone apart offline.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="iptv" href="/blog/?tag=iptv">IPTV</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="h3c" href="/blog/?tag=h3c">H3c</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab client-work iptv networking proxmox h3c immich">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-07 · 11:44 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-10-07.html">Lab Power-Down and a Day Mapping the Hotel Network</a></h3>
+        <p>I shut the whole lab down in the early hours and lost Immich to a boot-time mount problem. From midday I was at the hotel proving room-to-port mappings, locking the IPTV switch consoles and running the multicast proof tests. The evening went on a firewall zone for the temporary router and the pilot request for the hotel&#x27;s IT provider.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="iptv" href="/blog/?tag=iptv">IPTV</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="h3c" href="/blog/?tag=h3c">H3c</a><a class="tagchip" data-tag="immich" href="/blog/?tag=immich">Immich</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab networking certification ccna cabling">
         <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-06 · 11:40 PM</span></span>
         <h3><a class="stretch" href="/blog/posts/2026-10-06.html">CCNA Gaps and a Rack Teardown Plan</a></h3>
         <p>A quiet evening. I went through the CCNA blueprint against what I&#x27;ve actually done in the lab and at the hotel job, and IP routing is the biggest hole. Late on I took a photo of the rack and decided to tear it down and redo the cabling in the next few days.</p>
         <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="certification" href="/blog/?tag=certification">Certification</a><a class="tagchip" data-tag="ccna" href="/blog/?tag=ccna">Ccna</a><a class="tagchip" data-tag="cabling" href="/blog/?tag=cabling">Cabling</a></div>
       </li>
-      <li class="postcard rv-d1" data-tags="homelab client-work iptv networking unifi h3c">
+      <li class="postcard rv-d2" data-tags="homelab client-work iptv networking unifi h3c">
         <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-05 · 3:54 AM</span></span>
         <h3><a class="stretch" href="/blog/posts/2026-10-05.html">Rack Cabling and Hardening the IPTV Switches Remotely</a></h3>
         <p>I started after midnight by working out how to recable the home rack and whether a bigger switch is worth buying. Then I got ready to go back to the hotel, checked the set-top boxes over the remote link, pulled backups, and hardened both IPTV switches from home before the call with the hotel&#x27;s network contractor.</p>

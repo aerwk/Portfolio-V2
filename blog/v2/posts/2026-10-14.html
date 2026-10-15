@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tearing Down Talos and Moving the Workstation VM — N5HQ</title>
+<meta name="description" content="I destroyed the idle Talos cluster on pve04, shredded its configs, and live-migrated my workstation VM onto that node. The VM had run out of memory and lost several processes, so I raised it to 12 vCPUs and 12 GiB.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-10-14.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Tearing Down Talos and Moving the Workstation VM — N5HQ">
+<meta property="og:description" content="I destroyed the idle Talos cluster on pve04, shredded its configs, and live-migrated my workstation VM onto that node. The VM had run out of memory and lost several processes, so I raised it to 12 vCPUs and 12 GiB.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-10-14.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Tearing Down Talos and Moving the Workstation VM</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-10-14 · Wednesday · 1:32 AM</span>
+      <span class="chip">3 min read</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>A short night of infrastructure work, from about 00:16 to 01:34.</p>
+<h2>Removing the Talos cluster</h2>
+<p>I shut the Talos sandbox down on the 10th to save power. Tonight I removed it. After a read-only look at what was on pve04, I destroyed VMs 1000 to 1002 with their disks and deleted the Talos ISO. I also removed the vzdump exclude entry for those IDs, then confirmed the zvols were gone and no guests were left. There was no final backup because they were already excluded from the nightly job. A sweep for leftovers found nothing on pve04 itself.</p>
+<p>At 01:01 I shredded the talosconfig and kubeconfig files on the workstation VM, removed the empty directories and took the exports out of my bashrc. The runsheet records both steps.</p>
+<p>Some leftovers remain elsewhere. NetBox still has three VMs and three IPs for the cluster. The sync tool never deletes, and its stale-cleanup run would also deprecate unrelated objects, such as pve03's address, so I won't run it blindly. UniFi probably still holds three MAC entries in the admin allowlist and possibly DHCP reservations for the old addresses.</p>
+<h2>Moving the workstation VM to pve04</h2>
+<p>At 01:02 I decided to move my workstation VM, VM 209, onto pve04 for now. The HA rule on it is strict, so pve04 had to be the top priority. I created a ZFS replication job to pve04 on the five minute schedule, and the first 11 GB sync took 59 seconds. Then I changed the node affinity so pve04 ranks first. HA live-migrated the VM and my SSH session survived. After the move the first replication cycle succeeded on both jobs in about 4 seconds each. To revert, set the rule back to pve01 and pve03, lower the CPU count to 6 or fewer, and delete the extra replication job.</p>
+<p>I accepted one risk: the broken self-fence problem I logged earlier is the same on pve04 as it was on pve01.</p>
+<h2>Running out of memory</h2>
+<p>I gave the VM more resources because the old one ran out of memory. It had 5 GiB and many processes running at once, and at about 00:11 the kernel's OOM killer shut down several of them. The reboot at about 01:15 wiped /tmp.</p>
+<p>So I gave it everything: 12 vCPUs and 12 GiB of RAM. pve04 has 12 threads and 15.3 GiB, which leaves roughly 3 GiB for Proxmox and 2 GiB for the ZFS cache. The catch is that pve01 and pve03 have six threads each, so a 12 vCPU VM can't start on either. While it's at 12 vCPUs on pve04, HA failover for the workstation VM is effectively off. Afterwards, peak use was 6.1 GB of 11.9 GB with free memory never below 5.9 GB, and the OOM killer hasn't returned.</p>
+<h2>Still open</h2>
+<ul>
+<li>Remove the Talos objects from NetBox, and the MAC entries and reservations from UniFi.</li>
+<li>Lower the VM back to 6 vCPUs or fewer before reverting it to pve01 and pve03.</li>
+<li>The self-fence problem is still unfixed.</li>
+<li>A pending Proxmox package and kernel update is waiting for a reboot window.</li>
+</ul>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="talos" href="/blog/?tag=talos">Talos</a><a class="tagchip" data-tag="ha" href="/blog/?tag=ha">Ha</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-13.html">← Immich, Kuma and Cloudflared Move Off n5ubuntu</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Network Architecture — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>
