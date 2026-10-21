@@ -1,0 +1,218 @@
+<!doctype html>
+<!-- GENERATED FILE. Produced by scripts/build_dev_preview.py from the design
+     source in `01 Design/design-loop/src` (gitignored). Do not hand-edit this
+     file directly -- edit the source and re-run the generator instead. -->
+<html lang="en" data-theme="ninja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Theme sync (ninja/flashbang, formerly "dark"/"light"): runs before first paint so a
+     visitor who saved flashbang never sees a flash of ninja. Ninja is the default
+     regardless of OS prefers-color-scheme -- the static data-theme="ninja" above already
+     covers the no-JS case; this only overrides it when n5-theme reads "flashbang". Kept a
+     byte-identical copy in every page's <head> (p3/home.html, p4/about.html,
+     p4/projects.html, p4/blog.html, p4/post.html) rather than a shared external file, since
+     an external <script src> would itself block on a network round trip, so inline is the
+     only way to run this before paint. -->
+<script>
+(function(){
+  'use strict';
+  var theme = 'ninja';
+  try {
+    if (window.localStorage.getItem('n5-theme') === 'flashbang') theme = 'flashbang';
+  } catch (e) {}
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+</script>
+<title>Wi-Fi Speed Fix, Gateway Safe Mode and a Core Switch Survey — Eric Li</title>
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-10-16.html">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-10-16.html">
+<meta property="og:title" content="Wi-Fi Speed Fix, Gateway Safe Mode and a Core Switch Survey — Eric Li">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta name="theme-color" content="#12130f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/subpage.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="corner tl n5i-cluster" id="c-tl">
+    <a class="n5i-mark n5i-lockup" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/logo-rest.svg" alt="Eric Li"><img class="lk-hover" src="/assets/logo-hover.svg" alt="" aria-hidden="true"><img class="lk-hover-fb" src="/assets/logo-hover-fb.svg" alt="" aria-hidden="true"></a><script>(function(){var m=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;var a=document.currentScript.previousElementSibling;if(!m&&a&&a.classList.contains("n5i-lockup"))a.classList.add("lk-armed")})()</script>
+
+<span class="role">DevOps &amp; Network Architecture</span>
+
+  <nav class="blog-tree" data-blog-tree aria-label="Blog archive"></nav></div>
+
+
+<div class="corner tr" id="c-tr">
+  <button type="button" class="pill ico theme-toggle" id="theme-toggle" aria-pressed="false" aria-label="Switch to flashbang mode">
+    <span class="pill-l tt-sun"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
+    <span class="pill-c tt-sun" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
+    <span class="pill-l tt-moon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+    <span class="pill-c tt-moon" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+  </button>
+  <nav aria-label="Links">
+    <a class="pill" href="/about/"><span class="pill-l">About ↗</span><span class="pill-c" aria-hidden="true">About ↗</span></a>
+    <a class="pill" href="/portfolio/"><span class="pill-l">Projects ↗</span><span class="pill-c" aria-hidden="true">Projects ↗</span></a>
+    <a class="pill" href="/blog/" aria-current="page"><span class="pill-l">Blog ↗</span><span class="pill-c" aria-hidden="true">Blog ↗</span></a>
+    <a class="pill" href="mailto:helloworld@n5hq.me"><span class="pill-l">EMAIL ↗</span><span class="pill-c" aria-hidden="true">EMAIL ↗</span></a>
+    <div class="n5i-socials" aria-label="Social links">
+      <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="GitHub"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span></a>
+      <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="LinkedIn"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></span></a>
+      <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" class="pill ico" aria-label="Instagram"><span class="pill-l"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span><span class="pill-c" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></span></a>
+    </div>
+    <span class="n5i-nav-rule" aria-hidden="true"></span>
+    <a class="pill" href="https://portal.n5hq.me"><span class="pill-l">Login →</span><span class="pill-c" aria-hidden="true">Login →</span></a>
+  </nav>
+</div>
+
+<main class="page" id="main">
+  <div id="blog-list-view" hidden>
+  <p class="label">Blog</p>
+  <h1 class="page-title">Tech Journey Journal</h1>
+  <p class="lede">What changed, what prompted it, what broke, and what I learned getting it working again. Written as I go, so the record shows the route — where I started, where I am, and where I'm going.</p>
+
+  <section>
+    <p class="label">All posts</p>
+    <div class="post-list">
+      <a class="post-row" href="/blog/posts/2026-10-21.html"><span class="post-meta">Homelab · 2026-10-21</span><span class="post-title">Run Logs, a Rename and Pull Requests for the Leads Tool</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-20.html"><span class="post-meta">Homelab · 2026-10-20</span><span class="post-title">Forgejo 15.0.10, a Failed Backup Job and an Offline Installer</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-19.html"><span class="post-meta">Homelab · 2026-10-19</span><span class="post-title">Hotel VLAN 220 Test, a Frozen pve02 and the Camera Recorder Move</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-18.html"><span class="post-meta">Homelab · 2026-10-18</span><span class="post-title">Finishing the Sim Rig SSD Move and Auditing the Hotel Pilot Plan</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-17.html"><span class="post-meta">Homelab · 2026-10-17</span><span class="post-title">Imaging the Sim Rig for a Smaller Drive</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-16.html"><span class="post-meta">Homelab · 2026-10-16</span><span class="post-title">Wi-Fi Speed Fix, Gateway Safe Mode and a Core Switch Survey</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-14.html"><span class="post-meta">Homelab · 2026-10-14</span><span class="post-title">Tearing Down Talos and Moving the Workstation VM</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-13.html"><span class="post-meta">Homelab · 2026-10-13</span><span class="post-title">Immich, Kuma and Cloudflared Move Off n5ubuntu</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-12.html"><span class="post-meta">Homelab · 2026-10-12</span><span class="post-title">A Dead Motherboard, a New ISP and Camera Storage Numbers</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-11.html"><span class="post-meta">Homelab · 2026-10-11</span><span class="post-title">Auditing the Hotel Network and Designing a Three-Site Link</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-10.html"><span class="post-meta">Homelab · 2026-10-10</span><span class="post-title">PC Against the Cluster, Real Power Numbers and a Flaky Camera</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-09.html"><span class="post-meta">Homelab · 2026-10-09</span><span class="post-title">A Sandbox VM, a Phone That Won't Sync and Garage Prep</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-08.html"><span class="post-meta">Homelab · 2026-10-08</span><span class="post-title">Moving the Pilot and Cloning the IPTV Server</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-07.html"><span class="post-meta">Homelab · 2026-10-07</span><span class="post-title">Lab Power-Down and a Day Mapping the Hotel Network</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-06.html"><span class="post-meta">Homelab · 2026-10-06</span><span class="post-title">CCNA Gaps and a Rack Teardown Plan</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-05.html"><span class="post-meta">Homelab · 2026-10-05</span><span class="post-title">Rack Cabling and Hardening the IPTV Switches Remotely</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-04.html"><span class="post-meta">Homelab · 2026-10-04</span><span class="post-title">Clearing pve04 and Building a Talos Cluster</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-03.html"><span class="post-meta">Homelab · 2026-10-03</span><span class="post-title">Hotel Documents, Set-Top Boxes and a New Homepage</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-02.html"><span class="post-meta">Homelab · 2026-10-02</span><span class="post-title">Mapping the Hotel Network Read-Only</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-01.html"><span class="post-meta">Homelab · 2026-10-01</span><span class="post-title">Every Session Starts Cold</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-30.html"><span class="post-meta">Homelab · 2026-09-30</span><span class="post-title">Fencing That Didn't Fence</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-29.html"><span class="post-meta">Homelab · 2026-09-29</span><span class="post-title">The Cluster After the Rebuild</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-28.html"><span class="post-meta">Homelab · 2026-09-28</span><span class="post-title">Reading Labels in Someone Else's Racks</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-27.html"><span class="post-meta">Homelab · 2026-09-27</span><span class="post-title">Moving the Floor While Standing on It</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-26.html"><span class="post-meta">Homelab · 2026-09-26</span><span class="post-title">The Bond That Didn't Come Back Up</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-25.html"><span class="post-meta">Homelab · 2026-09-25</span><span class="post-title">The Manual That Invented Itself</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-24.html"><span class="post-meta">Homelab · 2026-09-24</span><span class="post-title">A Route That Vanished Every Reboot</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-23.html"><span class="post-meta">Homelab · 2026-09-23</span><span class="post-title">A Wrong Netmask, Two Lost Hours</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-22.html"><span class="post-meta">Homelab · 2026-09-22</span><span class="post-title">Racking the Headend, Minus the Tuner</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-21.html"><span class="post-meta">Homelab · 2026-09-21</span><span class="post-title">Green Dashboards, Two Real Faults</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-16.html"><span class="post-meta">Web · 2026-09-16</span><span class="post-title">Zero Sites in an Empty Category</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-11.html"><span class="post-meta">Web · 2026-09-11</span><span class="post-title">Six Rebuilds to Freeze the Pane</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-10.html"><span class="post-meta">Homelab · 2026-09-10</span><span class="post-title">Planning a Hotel IPTV Replacement From Rack Photos</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-09.html"><span class="post-meta">Web · 2026-09-09</span><span class="post-title">Reconstructing a Day From Git History</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-08.html"><span class="post-meta">Web · 2026-09-08</span><span class="post-title">The Hook's One Blind Spot</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-07.html"><span class="post-meta">Web · 2026-09-07</span><span class="post-title">Seventeen Rounds, Zero Commits</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-06.html"><span class="post-meta">Web · 2026-09-06</span><span class="post-title">A Retint Becomes a Full Rebuild</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-05.html"><span class="post-meta">Homelab · 2026-09-05</span><span class="post-title">The Reboot That Only Worked Once</span></a>
+      <a class="post-row" href="/blog/posts/2026-09-04.html"><span class="post-meta">Homelab · 2026-09-04</span><span class="post-title">82 Percent Free, 99.9 Percent Full</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-28.html"><span class="post-meta">Homelab · 2026-08-28</span><span class="post-title">A Switch Line Misread as Connected</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-27.html"><span class="post-meta">Homelab · 2026-08-27</span><span class="post-title">The Validator Checked the Wrong Path</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-26.html"><span class="post-meta">Homelab · 2026-08-26</span><span class="post-title">A Restart That Reported False Success</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-25.html"><span class="post-meta">Homelab · 2026-08-25</span><span class="post-title">The Safe Idiom That Leaked Tokens</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-24.html"><span class="post-meta">Homelab · 2026-08-24</span><span class="post-title">A 403 Traced Three Files Deep</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-23.html"><span class="post-meta">Homelab · 2026-08-23</span><span class="post-title">A Rule That Saw One User</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-22.html"><span class="post-meta">Homelab · 2026-08-22</span><span class="post-title">Every Baseline Measured the Wrong Thing</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-21.html"><span class="post-meta">Homelab · 2026-08-21</span><span class="post-title">The Hardlink That Never Linked</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-13.html"><span class="post-meta">Web · 2026-08-13</span><span class="post-title">A Regex Quietly Broke the Homepage</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-12.html"><span class="post-meta">Homelab · 2026-08-12</span><span class="post-title">Four Quiet Failures That Looked Fine</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-11.html"><span class="post-meta">Homelab · 2026-08-11</span><span class="post-title">The Redundancy That Shared a Flaw</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-10.html"><span class="post-meta">Homelab · 2026-08-10</span><span class="post-title">Three Nodes, and a Hung NIC</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-09.html"><span class="post-meta">Homelab · 2026-08-09</span><span class="post-title">Three False All Clears Before Breakfast</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-08.html"><span class="post-meta">Homelab · 2026-08-08</span><span class="post-title">Four Green Checks Over Broken Things</span></a>
+      <a class="post-row" href="/blog/posts/2026-08-07.html"><span class="post-meta">Homelab · 2026-08-07</span><span class="post-title">The Repo That Shipped Only Half</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-31.html"><span class="post-meta">Homelab · 2026-07-31</span><span class="post-title">A Model Cannot Report on Itself</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-30.html"><span class="post-meta">Homelab · 2026-07-30</span><span class="post-title">The Backup That Was Still Open</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-29.html"><span class="post-meta">Projects · 2026-07-29</span><span class="post-title">A Downloads Sorter, Bugs and All</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-28.html"><span class="post-meta">Homelab · 2026-07-28</span><span class="post-title">A Second Server, an Open Door</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-27.html"><span class="post-meta">Homelab · 2026-07-27</span><span class="post-title">A Disabled SSID Locked the Channel</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-26.html"><span class="post-meta">Homelab · 2026-07-26</span><span class="post-title">One Outage, Two Different Diagnoses</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-25.html"><span class="post-meta">Projects · 2026-07-25</span><span class="post-title">Twenty-Three Cents to Read One Photo</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-24.html"><span class="post-meta">Homelab · 2026-07-24</span><span class="post-title">From Container Updates to Git Forge</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-16.html"><span class="post-meta">Homelab · 2026-07-16</span><span class="post-title">The Dongle That Would Not Receive</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-14.html"><span class="post-meta">Projects · 2026-07-14</span><span class="post-title">Discord In, Linux ISOs Out</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-13.html"><span class="post-meta">Projects · 2026-07-13</span><span class="post-title">Screenshots Let AI Ship the Redesign</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-12.html"><span class="post-meta">Homelab · 2026-07-12</span><span class="post-title">Two Rooms Learn to Turn Off</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-02.html"><span class="post-meta">Homelab · 2026-07-02</span><span class="post-title">One Button Rebuilds the Smart Home</span></a>
+      <a class="post-row" href="/blog/posts/2026-07-01.html"><span class="post-meta">Homelab · 2026-07-01</span><span class="post-title">Uptime Kuma Catches a NAS Crash</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-30.html"><span class="post-meta">Homelab · 2026-06-30</span><span class="post-title">The Flash Drive That Wasn't Fake</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-29.html"><span class="post-meta">Homelab · 2026-06-29</span><span class="post-title">The Cleanup That Ate My Rollback</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-28.html"><span class="post-meta">Homelab · 2026-06-28</span><span class="post-title">Immich Move, and a Drive Scare</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-21.html"><span class="post-meta">Projects · 2026-06-21</span><span class="post-title">A Logo I Built, Then Reverted</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-20.html"><span class="post-meta">Projects · 2026-06-20</span><span class="post-title">The Copy Ships, Lab Turns Personal</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-13.html"><span class="post-meta">Projects · 2026-06-13</span><span class="post-title">A Copy Pass on the Portfolio</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-12.html"><span class="post-meta">Projects · 2026-06-12</span><span class="post-title">The Domain Cutover and Seedbox Migration</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-11.html"><span class="post-meta">Homelab · 2026-06-11</span><span class="post-title">The Reboot That Bit Back</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-10.html"><span class="post-meta">Homelab · 2026-06-10</span><span class="post-title">Network Fixes and a NIC Upgrade</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-09.html"><span class="post-meta">Projects · 2026-06-09</span><span class="post-title">Automating the Blog and Portfolio Cleanup</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-08.html"><span class="post-meta">Projects · 2026-06-08</span><span class="post-title">Monitoring Stack and Website Launch</span></a>
+      <a class="post-row" href="/blog/posts/2026-06-07.html"><span class="post-meta">Homelab · 2026-06-07</span><span class="post-title">Home Assistant Goes Public</span></a>
+    </div>
+  </section>
+  </div>
+
+  <nav class="post-crumb label" aria-label="Breadcrumb"><button type="button" class="crumb-seg crumb-link" data-crumb-scope='{"type":"root"}'>BLOG</button><span aria-hidden="true"> &gt; </span><button type="button" class="crumb-seg crumb-link" data-crumb-scope='{"type":"year","year":"2026"}'>2026</button><span aria-hidden="true"> &gt; </span><button type="button" class="crumb-seg crumb-link" data-crumb-scope='{"type":"month","year":"2026","month":"10"}'>OCT</button><span aria-hidden="true"> &gt; </span><span class="crumb-seg crumb-current">16</span></nav>
+  <h1 class="post-title-h">Wi-Fi Speed Fix, Gateway Safe Mode and a Core Switch Survey</h1>
+  <p class="post-chips label">Homelab · 2026-10-16 · Friday · 7:07 PM · 4 min read · Eric Li</p>
+
+  <nav class="post-prevnext" aria-label="Post navigation"><span class="pn-prev"><a class="pill" href="/blog/posts/2026-10-14.html" title="Tearing Down Talos and Moving the Workstation VM"><span class="pill-l">‹ Previous</span><span class="pill-c" aria-hidden="true">‹ Previous</span></a></span><span class="pn-next"><a class="pill" href="/blog/posts/2026-10-17.html" title="Imaging the Sim Rig for a Smaller Drive"><span class="pill-l">Next ›</span><span class="pill-c" aria-hidden="true">Next ›</span></a></span></nav>
+
+  <article class="prose">
+<p>A long day, from pilot prep just after midnight to about 19:07 in the hotel's comms room.</p>
+<h2>Pilot-day plan</h2>
+<p>I wrote the plan for the hotel IPTV pilot, then checked it and found three problems. A five minute auto-undo timer on the uplink change would have expired mid-test, so I now confirm straight after the checks pass. Under IGMPv2 a channel only drops about 260 seconds after its last report, so the multicast soak became "past 5 minutes". Three rooms only go ahead if the front desk says they are empty. I decided to accept a second IGMP querier on VLAN 220. The remote read-only checks passed.</p>
+<h2>Gateway in safe mode</h2>
+<p>The UniFi controller said safe mode was active. The UCG Fiber was at 92% memory, with about 241 MB free of 3 GB and 1.25 GB in swap. Safe mode had done one thing, limiting IPS to important signatures. IPS restarted at about 00:12 after a signature update, which is the likely tipping point, though I can't prove it. Protect for the 5 cameras takes roughly 0.6 to 0.75 GB, the Network app 0.54 GB, UniFi OS 0.45 GB and IPS 0.16 GB.</p>
+<p>I turned on SSH to read the process list and changed nothing. My shortlist of ten settings includes dropping the driveway camera from 4K to 2K (it produces 46% of all footage), turning off face and number-plate detection, and trimming IPS from 34 rule categories to about 18. Only three have a measured saving behind them. The longer-term fix is moving Protect to a UNVR Instant.</p>
+<h2>A Windows drive for pve04</h2>
+<p>pve04 has no file sharing and root login is key-only, so I mapped it with SSHFS-Win. It failed twice: Windows' own <code>ssh.exe</code> was being picked up, and the key file SSHFS-Win reads held the wrong key. <code>net use</code> still gave error 67, probably because the launcher service runs as SYSTEM, so I mount the drive from a scheduled task at sign-in. It is untested across a sign-out.</p>
+<p>pve04's log also showed my connections arriving from pve01. My PC was sending all lab traffic through Tailscale because pve01 advertises the lab subnet. I turned off accepting routes on the PC.</p>
+<h2>Wi-Fi speed</h2>
+<p>My PC's Wi-Fi 7 link ran at 188 Mbps up and 142 down, because it had joined the office access point on 2.4 GHz. On 5 GHz it reached 639 and 677. That radio was meant to be on channel 132 at 22 dBm but sat on channel 64 at 15 dBm, probably after radar detection on a DFS channel. A force-provision didn't move it. A reboot did, and the result was 887 up and 806 down. Wired 2.5G gives 1.95 Gbps.</p>
+<p>I also found an open Wi-Fi repeater name that answered pings from my home gateway address. The controller has never seen it as a client, and only the lounge access point hears it, at -93 dBm. It looks like a neighbour's network, but I haven't ruled out a bridge into my home VLAN.</p>
+<h2>The hotel's core switches</h2>
+<p>I arrived at 14:31. The hotel's IT provider hadn't replied, so I used the day for a read-only survey. I plugged into core 1 port 41, confirmed the port from the switch's LLDP announcement, recorded every session, and ran the same counters on both cores twice, an hour apart.</p>
+<ul>
+<li>VLAN 220 exists on both cores with no member ports. Ports 22 and 44, which the pilot needs, aren't configured, so I won't patch into port 22 as it stands.</li>
+<li>In UniFi, room 11's port was already on VLAN 220, but 220 is missing from the IGMP snooping list.</li>
+<li>The cores don't route, so VLAN 220 can't leak into the hotel through them.</li>
+<li>Listening passively, I found the old TV system's encoders still streaming about 81 Mbps. Its two servers sit on different VLANs, so one has been asking for the other's address for 84 days.</li>
+<li>I also matched the firewall's DHCP leases against UniFi's client list to tell guest devices apart from the hotel's own.</li>
+</ul>
+<p>I made two mistakes. My Mac announced itself over IPv6 on the server VLAN until I turned off AirPlay Receiver and IPv6 on the adapter. The other was pasting about 70 lines of switch output back into a terminal. I wasn't in configure mode, and <code>show config status</code> confirmed nothing changed.</p>
+<p>By evening the provider had moved room 11's port to VLAN 220 and was unavailable for the weekend, so that TV was dark. I swapped its lead onto room 14's port, whose jack is dead from the renovation, and logged it. The pilot didn't run.</p>
+<h2>Still open</h2>
+<ul>
+<li>The provider must configure core 1 ports 22 and 44 and add VLAN 220 to IGMP snooping.</li>
+<li>Move room 11 back to port 1 before the pilot restarts.</li>
+<li>Move Protect to the UNVR Instant, then turn SSH off on the gateway and remove the key I added.</li>
+<li>Finish tracing cables from ports 7, 26 and 30 on core 1 and 45 and 46 on core 2.</li>
+<li>Work out who owns the open repeater.</li>
+</ul>
+  </article>
+
+  <section>
+    <div class="social-row">
+      <a class="pill" href="/blog/" data-crumb-scope='{"type":"root"}'><span class="pill-l">All posts ↗</span><span class="pill-c" aria-hidden="true">All posts ↗</span></a>
+    </div>
+  </section>
+</main>
+
+<script>window.__N5_BASE='';</script>
+<script src="/assets/subpage.js"></script>
+</body>
+</html>

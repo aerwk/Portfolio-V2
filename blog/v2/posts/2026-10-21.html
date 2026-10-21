@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Run Logs, a Rename and Pull Requests for the Leads Tool — N5HQ</title>
+<meta name="description" content="I added per-run log files and a new name to the leads tool I&#x27;m building for a function venue client, moved its repo to pull requests, and shipped a fifth release candidate. I also cut my docs drift report from 13 items to 2.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-10-21.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Run Logs, a Rename and Pull Requests for the Leads Tool — N5HQ">
+<meta property="og:description" content="I added per-run log files and a new name to the leads tool I&#x27;m building for a function venue client, moved its repo to pull requests, and shipped a fifth release candidate. I also cut my docs drift report from 13 items to 2.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-10-21.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Run Logs, a Rename and Pull Requests for the Leads Tool</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-10-21 · Wednesday · 10:39 AM</span>
+      <span class="chip">4 min read</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>A long night and morning, from just before 01:00 to about 10:40, mostly on the leads tool I'm building for a function venue client.</p>
+<h2>Getting the tool ready to send</h2>
+<p>I wanted staff to have one place to download from, so builds now go on a release page on my Forgejo, behind a login.</p>
+<h2>Logs and a new name</h2>
+<p>Staff can't tell me what went wrong if the tool leaves nothing behind. Every command now writes its own log with the command line, version and build ID, Windows and Python versions, everything printed, and the full error. A failed run ends with a <code>Log:</code> line giving the path, and <code>run.cmd logs</code> zips the ten newest logs onto the Desktop.</p>
+<p>I also gave the tool a proper name. The install folder, shortcuts and download name changed, and "Pack ID" became "Build ID". The name the tool sends to websites still identifies the venue, because it should say who is responsible for the visits.</p>
+<p>A review of the rename found a real bug. The installer's "don't run from inside the install folder" check matched on the start of the folder name, so a normal download folder with a similar name would have been refused. I fixed it, then installed from exactly that kind of folder on the Windows sandbox VM. It took 66 seconds and all eight smoke steps passed.</p>
+<h2>A Forgejo login trap</h2>
+<p>A staff account kept getting "wrong password". The password was never checked. Forgejo only accepts an email address at sign-in once that address is marked verified, and with no mail server nobody can verify it. Signing in with the username works. I put the trap, and the rule that client accounts are Restricted read-only collaborators, into the Forgejo runsheet.</p>
+<h2>Pull requests</h2>
+<p>Until today I pushed straight to <code>main</code>. With a live version staff will run and a <code>main</code> that keeps moving, that has to stop. <code>main</code> now accepts changes only through pull requests, admins included, and release tags are protected. I also added pre-commit with error-only <code>ruff</code> checks and the full test suite before every push, and wrote a glossary of the tool's terms. One finding: the client's template has a "Date last verified" column that really holds the date a fact was merged in. I can't rename their column, so the help text now says "merged".</p>
+<p>The first push from a separate git worktree switched the shared repo into bare mode and filled its file list with junk. A test helper passes git's repository environment variables to the throwaway repos it creates, and in a worktree they point at the real repo. I restored the repo, fixed the helper, and made the pre-push launcher clear those variables too.</p>
+<h2>Release candidate 5</h2>
+<p>Nine tickets went in as pull requests: plain-English error messages, a "Confirm (Yes/No)" review-sheet column, a cleaner log command line and a slimmer download, down from 225 files to 104 by leaving out tests and developer docs. A release-gate review found three low notes, which I fixed before tagging. The suite passes with 2714 tests, and the sandbox passed all eight smoke steps with a 61-second install.</p>
+<p>The nightly backup started at 02:35 in the middle of the sandbox test, and my shutdown failed with "VM is locked (backup)". I excluded that VM from the job.</p>
+<h2>Drift report and a CI plan</h2>
+<p>My daily docs drift report went from 13 drift items and 4 broken checks to 2 and 0. Three were stale docs and nine were checks that had rotted, for example one still pointing at Kuma on n5ubuntu. I tested each rewritten check to make sure it can still fail. A new daily check at 06:30 fails if a client repo isn't private.</p>
+<p>I also wrote a plan for a Forgejo Actions runner: CT 149 <code>runner1</code> at x.x.0.49 on pve04, with Docker inside an unprivileged container and a firewall that keeps jobs off the LAN. It would serve one repo only.</p>
+<h2>Explaining the hotel room rollout</h2>
+<p>I drafted a plain message for the hotel's owners on why the new TVs can't be enabled in random rooms. Each building has its own switch, and the hotel's IT provider has to configure it and its link to the main cabinet first. That is done for only one wing so far. Each room has a single socket, so switching it ends the old channels there, and the room has to be empty or have the new box and power ready.</p>
+<h2>Still open</h2>
+<ul>
+<li>Send the staff trial note and questionnaire with rc5.</li>
+<li>Decide whether to build the CI runner on pve04.</li>
+<li>Three unused files stay in the repo until tests confirm they are dead.</li>
+<li>Nothing has confirmed that the hotel's first core switch config was saved.</li>
+</ul>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="forgejo" href="/blog/?tag=forgejo">Forgejo</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="development" href="/blog/?tag=development">Development</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-20.html">← Forgejo 15.0.10, a Failed Backup Job and an Offline Installer</a>
+      <span></span>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Network Architecture — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

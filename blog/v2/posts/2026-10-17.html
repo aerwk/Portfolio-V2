@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Imaging the Sim Rig for a Smaller Drive — N5HQ</title>
+<meta name="description" content="I backed up the sim rig, converted the image so it would fit a 1 TB drive, rehearsed the restore on a virtual disk, then restored it for real onto a drive pulled from the gateway. The swap itself is still to do.">
+<link rel="canonical" href="https://ericli.n5hq.me/blog/posts/2026-10-17.html">
+<meta name="theme-color" content="#060507">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="N5HQ">
+<meta property="og:title" content="Imaging the Sim Rig for a Smaller Drive — N5HQ">
+<meta property="og:description" content="I backed up the sim rig, converted the image so it would fit a 1 TB drive, rehearsed the restore on a virtual disk, then restored it for real onto a drive pulled from the gateway. The swap itself is still to do.">
+<meta property="og:url" content="https://ericli.n5hq.me/blog/posts/2026-10-17.html">
+<meta property="og:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N5HQ — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ericli.n5hq.me/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=d28">
+<noscript><style>.rv{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" aria-label="Primary">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/ericlistaticv2.png" alt="" width="125" height="37"><video class="lk-clip" data-role="enter" muted playsinline preload="auto"><source src="/assets/ericlientryv2.webm" type="video/webm"><source src="/assets/ericlientryv2.mp4" type="video/mp4"></video><video class="lk-clip" data-role="hoverin" muted playsinline preload="auto"><source src="/assets/ericlihoverv2.webm" type="video/webm"><source src="/assets/ericlihoverv2.mp4" type="video/mp4"></video></a>
+    <nav aria-label="Sections" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#portfolio">Portfolio</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-violet nav-cta" href="/#contact">Contact <span class="arr" aria-hidden="true">↗</span></a>
+    <details class="mnav">
+      <summary aria-label="Menu">
+        <svg class="ico-burger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ico-x" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </summary>
+      <nav class="mnav-panel" aria-label="Menu">
+        <a href="/#about">About</a>
+        <a href="/#portfolio">Portfolio</a>
+        <a href="/#blog">Blog</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero hero-sm" aria-label="Post header">
+  <div class="wrap hero-in posthead">
+    <a class="crumb rv on" href="/blog/">← The Journey</a>
+    <h1 class="rv on rv-d1">Imaging the Sim Rig for a Smaller Drive</h1>
+    <div class="meta rv on rv-d2">
+      <span class="chip">Homelab</span>
+      <span class="chip">2026-10-17 · Saturday · 11:53 PM</span>
+      <span class="chip">5 min read</span>
+      <span class="chip chip-author">Eric Li</span>
+    </div>
+  </div>
+</section>
+<article class="band band-tight">
+  <div class="wrap">
+    <div class="prose rv on rv-d3">
+<p>Most of today went on moving the sim rig's Windows install from a 2 TB NVMe to a 1 TB one without reinstalling anything.</p>
+<h2>Getting into the sim rig</h2>
+<p>I started in the afternoon by setting up SSH on the sim rig. I made a key on my workstation VM and wrapped the Windows setup commands in a double-click .cmd file, so I didn't have to paste anything into an admin PowerShell. The first login attempt failed because I had the Windows username wrong. Once I corrected it, <code>ssh simrig</code> worked. I also wrote a second .cmd file that maps the four network drives (H, P, S and V) with the same letters I use on my main PC.</p>
+<h2>The backup and the size problem</h2>
+<p>With a Samsung T7 plugged in, I took a full system image of the sim rig using Windows' built-in backup. It wrote 262 GB in about 13 minutes. I opened it read-only to confirm the system files and my Desktop were inside.</p>
+<p>Then I hit a problem. Windows' image restore recreates the original 2 TB layout, and as far as I could verify it won't accept a smaller disk, even though only about 280 GB is used. I read through Microsoft's documentation to see what else was possible. The sim rig has only one M.2 slot, so a direct clone with Hasleo Disk Clone, which I used on my main PC on the 14th, would have needed a USB enclosure.</p>
+<p>So I converted the existing backup. First I mounted it read-only and captured C: as a single compressed Windows image file on the T7. Then I would restore that image onto a 1 TB target with DISM and fix the boot files.</p>
+<p>The first capture failed at 78% with "The handle is invalid". The cause was a OneDrive cloud-only file. I changed how the capture treats those, and the second run finished with a 281 GB image holding 382,153 files. The verify option makes it read everything twice, which is why my time estimates kept being wrong.</p>
+<h2>The rehearsal</h2>
+<p>Before touching the real drive I restored the image onto a virtual 1 TB disk on the T7, using the layout the real drive would get: a 300 MB boot partition, 929 GB for Windows and 1.5 GB for recovery. I compared the result with the original backup:</p>
+<ul>
+<li>All 382,096 files and 131,379 folders came through.</li>
+<li>245 files showed as different. I hashed every one: 243 were identical and only looked different because they were open log files during the backup. The other 2 were boot and recovery settings that a restore rewrites.</li>
+<li>All 45 OneDrive cloud-only files were still cloud-only.</li>
+<li>A sample of 3,000 files had identical permissions.</li>
+</ul>
+<p>I then paused BitLocker, booted the sim rig from a Windows 11 install USB and ran a short script that checked the USB could read the image. It changed nothing. I also tested the restore script's safety checks. It refused the live 2 TB drive, the T7, the USB stick and bad disk numbers, and it stopped on a lowercase "erase".</p>
+<h2>A drive from the gateway</h2>
+<p>Mid-evening I needed an actual 1 TB drive. The NVMe in my UCG Fiber turned out to be an MSI M480 PRO, exactly 1,000,204,886,016 bytes, which is the same size as my virtual test disk. Windows saw four Linux partitions on it. I decided to reuse it, wiped it, and restored onto it while Windows was running instead of from the USB. DISM finished around 23:43. The boot-file step failed, so I used the sim rig's built-in tool instead.</p>
+<p>The check against the image found a stale entry in the restored Windows that still reserved the old 2 TB as C:. That could have made the new drive come up as D:, so I removed it and kept a backup. The final comparison matched the dry run. The swap steps are written down on the T7.</p>
+<p>Switching off the gateway to pull the drive at about 21:00 took the Meross plugs offline. About 19 of them lost their cloud connection and were slow to come back, and I spent a few minutes checking the network before I connected it to that. Pulling the drive also wiped the Protect recordings stored on it.</p>
+<h2>Protect and the NAS</h2>
+<p>Earlier I had also looked at why UniFi Protect stopped archiving to the NAS. The newest archive folder is from 28 August. The pool it writes to went read-only two minutes later in the btrfs corruption incident, and Protect never reconnected. The NAS has been healthy for weeks, with SMB reachable and the share writable. The fault is in Protect's archive target settings, which I couldn't read from my account.</p>
+<h2>Hotel job audit</h2>
+<p>In the evening I compared what the hotel's IT provider had done against what we asked for. They created the IPTV VLAN and turned on IGMP for it, but did not add it to any core switch port. The pilot isn't ready, and I wrote up a list of blockers for Monday.</p>
+<h2>Still open</h2>
+<ul>
+<li>Swap the M480 into the sim rig, with the 2 TB left out for the first boot, then re-enable BitLocker.</li>
+<li>Decide what to do with the old 2 TB drive.</li>
+<li>Point Protect's archive at the NAS again and set up the UNVR Instant, because the cameras probably aren't recording.</li>
+<li>Work out why the gateway rebooted at about 21:00, and why five APs and switches rebooted at 02:04 on the 16th.</li>
+<li>Get a named contact at the hotel's IT provider before Monday's pilot.</li>
+</ul>
+    </div>
+    <div class="tagrow tags-foot" aria-label="Tags"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="windows" href="/blog/?tag=windows">Windows</a><a class="tagchip" data-tag="backup" href="/blog/?tag=backup">Backup</a><a class="tagchip" data-tag="storage" href="/blog/?tag=storage">Storage</a><a class="tagchip" data-tag="unifi" href="/blog/?tag=unifi">UniFi</a></div>
+    <nav class="postfoot rv on" aria-label="Post navigation">
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-16.html">← Wi-Fi Speed Fix, Gateway Safe Mode and a Core Switch Survey</a>
+      <a class="btn btn-ghost" href="/blog/posts/2026-10-18.html">Finishing the Sim Rig SSD Move and Auditing the Hotel Pilot Plan →</a>
+    </nav>
+  </div>
+</article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-card">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a class="brand brand-foot" href="/" aria-label="Eric Li"><img class="lk-rest" src="/assets/foot-ericli.png" alt="" width="74" height="40"></a>
+          <p>DevOps &amp; Network Architecture — Enterprise deployments, network reliability, security and maintenance, bespoke web apps, and local AI implementation.</p>
+        <div class="foot-socials" aria-label="Social links">
+          <a href="https://github.com/aerwk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/eric-li-90a0a3163/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://instagram.com/ericliyk" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <a class="foot-lab" href="https://www.n5hq.me/">Lab dashboard →</a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="/#about">About</a>
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/blog/">Blog</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+        <p class="foot-legal">© 2026 N5HQ. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv:not(.on)');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('on')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+})();
+
+(() => {
+  const m = document.querySelector('.mnav');
+  if (!m) return;
+  m.addEventListener('click', e => { if (e.target.closest('a')) m.removeAttribute('open'); });
+  document.addEventListener('click', e => { if (m.open && !m.contains(e.target)) m.removeAttribute('open'); });
+})();
+</script>
+<script src="/assets/brandmotion.js" defer></script>
+</body>
+</html>

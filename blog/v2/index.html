@@ -66,13 +66,49 @@
   <div class="wrap">
     <div class="tagstate" id="tagstate" hidden>Showing posts tagged <span class="tagchip is-active" id="tagstate-name"></span><a class="tagclear" href="/blog/">× clear</a></div>
     <ul class="posts">
-      <li class="postcard rv" data-tags="homelab proxmox talos ha">
+      <li class="postcard rv" data-tags="homelab forgejo proxmox development">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-21 · 10:39 AM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-10-21.html">Run Logs, a Rename and Pull Requests for the Leads Tool</a></h3>
+        <p>I added per-run log files and a new name to the leads tool I&#x27;m building for a function venue client, moved its repo to pull requests, and shipped a fifth release candidate. I also cut my docs drift report from 13 items to 2.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="forgejo" href="/blog/?tag=forgejo">Forgejo</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="development" href="/blog/?tag=development">Development</a></div>
+      </li>
+      <li class="postcard rv-d1" data-tags="homelab forgejo proxmox backups windows">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-20 · 2:14 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-10-20.html">Forgejo 15.0.10, a Failed Backup Job and an Offline Installer</a></h3>
+        <p>I upgraded Forgejo to 15.0.10 and found that its backup job had been failing for three nights. I also scoped a runbook for the hotel network and got the venue leads tool through a full Windows trial with an offline installer.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="forgejo" href="/blog/?tag=forgejo">Forgejo</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="backups" href="/blog/?tag=backups">Backups</a><a class="tagchip" data-tag="windows" href="/blog/?tag=windows">Windows</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab networking iptv proxmox unifi home-assistant">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-19 · 11:46 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-10-19.html">Hotel VLAN 220 Test, a Frozen pve02 and the Camera Recorder Move</a></h3>
+        <p>I ran the first room test of the hotel&#x27;s IPTV VLAN on site, found the blocker was UniFi&#x27;s multicast list, moved Protect onto the new recorder, and traced the smart plug outage to the plugs themselves.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="iptv" href="/blog/?tag=iptv">IPTV</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="unifi" href="/blog/?tag=unifi">UniFi</a><a class="tagchip" data-tag="home-assistant" href="/blog/?tag=home-assistant">Home Assistant</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab windows networking proxmox">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-18 · 11:40 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-10-18.html">Finishing the Sim Rig SSD Move and Auditing the Hotel Pilot Plan</a></h3>
+        <p>The sim rig now boots from the 1 TB drive and a Windows repair cleared its system file errors. I also audited the hotel IPTV pilot plan, tested a scraper handed to me for a function venue client, and looked at moving an NVMe drive from pve04 into the camera recorder.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="windows" href="/blog/?tag=windows">Windows</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab windows backup storage unifi">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-17 · 11:53 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-10-17.html">Imaging the Sim Rig for a Smaller Drive</a></h3>
+        <p>I backed up the sim rig, converted the image so it would fit a 1 TB drive, rehearsed the restore on a virtual disk, then restored it for real onto a drive pulled from the gateway. The swap itself is still to do.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="windows" href="/blog/?tag=windows">Windows</a><a class="tagchip" data-tag="backup" href="/blog/?tag=backup">Backup</a><a class="tagchip" data-tag="storage" href="/blog/?tag=storage">Storage</a><a class="tagchip" data-tag="unifi" href="/blog/?tag=unifi">UniFi</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab client-work iptv networking unifi wifi">
+        <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-16 · 7:07 PM</span></span>
+        <h3><a class="stretch" href="/blog/posts/2026-10-16.html">Wi-Fi Speed Fix, Gateway Safe Mode and a Core Switch Survey</a></h3>
+        <p>I found out why the UniFi gateway had gone into safe mode, got my PC&#x27;s Wi-Fi from 188 to about 890 Mbps by fixing a radar-stuck access point, and spent the afternoon surveying the hotel&#x27;s two core switches before the IPTV pilot.</p>
+        <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="client-work" href="/blog/?tag=client-work">Client Work</a><a class="tagchip" data-tag="iptv" href="/blog/?tag=iptv">IPTV</a><a class="tagchip" data-tag="networking" href="/blog/?tag=networking">Networking</a><a class="tagchip" data-tag="unifi" href="/blog/?tag=unifi">UniFi</a><a class="tagchip" data-tag="wifi" href="/blog/?tag=wifi">Wifi</a></div>
+      </li>
+      <li class="postcard rv-d2" data-tags="homelab proxmox talos ha">
         <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-14 · 1:32 AM</span></span>
         <h3><a class="stretch" href="/blog/posts/2026-10-14.html">Tearing Down Talos and Moving the Workstation VM</a></h3>
         <p>I destroyed the idle Talos cluster on pve04, shredded its configs, and live-migrated my workstation VM onto that node. The VM had run out of memory and lost several processes, so I raised it to 12 vCPUs and 12 GiB.</p>
         <div class="tagrow"><a class="tagchip" data-tag="homelab" href="/blog/?tag=homelab">Homelab</a><a class="tagchip" data-tag="proxmox" href="/blog/?tag=proxmox">Proxmox</a><a class="tagchip" data-tag="talos" href="/blog/?tag=talos">Talos</a><a class="tagchip" data-tag="ha" href="/blog/?tag=ha">Ha</a></div>
       </li>
-      <li class="postcard rv-d1" data-tags="homelab proxmox immich home-assistant unifi cloudflare">
+      <li class="postcard rv-d2" data-tags="homelab proxmox immich home-assistant unifi cloudflare">
         <span class="postmeta"><span class="cat">Homelab</span><span>2026-10-13 · 10:30 PM</span></span>
         <h3><a class="stretch" href="/blog/posts/2026-10-13.html">Immich, Kuma and Cloudflared Move Off n5ubuntu</a></h3>
         <p>A big lab day. I updated and rebooted n5ubuntu and two Proxmox nodes, moved Immich to its own VM, moved the first Uptime Kuma and cloudflared connector into containers, and sent Matter to a Home Assistant add-on. I also found why a printer and two bridges were unreachable across VLANs.</p>

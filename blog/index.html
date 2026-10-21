@@ -99,6 +99,12 @@
   <section>
     <p class="label">All posts</p>
     <div class="post-list">
+      <a class="post-row" href="/blog/posts/2026-10-21.html"><span class="post-meta">Homelab · 2026-10-21</span><span class="post-title">Run Logs, a Rename and Pull Requests for the Leads Tool</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-20.html"><span class="post-meta">Homelab · 2026-10-20</span><span class="post-title">Forgejo 15.0.10, a Failed Backup Job and an Offline Installer</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-19.html"><span class="post-meta">Homelab · 2026-10-19</span><span class="post-title">Hotel VLAN 220 Test, a Frozen pve02 and the Camera Recorder Move</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-18.html"><span class="post-meta">Homelab · 2026-10-18</span><span class="post-title">Finishing the Sim Rig SSD Move and Auditing the Hotel Pilot Plan</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-17.html"><span class="post-meta">Homelab · 2026-10-17</span><span class="post-title">Imaging the Sim Rig for a Smaller Drive</span></a>
+      <a class="post-row" href="/blog/posts/2026-10-16.html"><span class="post-meta">Homelab · 2026-10-16</span><span class="post-title">Wi-Fi Speed Fix, Gateway Safe Mode and a Core Switch Survey</span></a>
       <a class="post-row" href="/blog/posts/2026-10-14.html"><span class="post-meta">Homelab · 2026-10-14</span><span class="post-title">Tearing Down Talos and Moving the Workstation VM</span></a>
       <a class="post-row" href="/blog/posts/2026-10-13.html"><span class="post-meta">Homelab · 2026-10-13</span><span class="post-title">Immich, Kuma and Cloudflared Move Off n5ubuntu</span></a>
       <a class="post-row" href="/blog/posts/2026-10-12.html"><span class="post-meta">Homelab · 2026-10-12</span><span class="post-title">A Dead Motherboard, a New ISP and Camera Storage Numbers</span></a>
@@ -267,33 +273,78 @@
     <div class="post-list" data-listing-rows></div>
   </div>
 
-  <template id="post-tpl-2026-10-14">
-  <h1>Tearing Down Talos and Moving the Workstation VM</h1>
-  <p class="post-chips label">Homelab · 2026-10-14 · Wednesday · 1:32 AM · 3 min read · Eric Li</p>
+  <template id="post-tpl-2026-10-21">
+  <h1>Run Logs, a Rename and Pull Requests for the Leads Tool</h1>
+  <p class="post-chips label">Homelab · 2026-10-21 · Wednesday · 10:39 AM · 4 min read · Eric Li</p>
 
   <article class="prose">
-<p>A short night of infrastructure work, from about 00:16 to 01:34.</p>
-<h2>Removing the Talos cluster</h2>
-<p>I shut the Talos sandbox down on the 10th to save power. Tonight I removed it. After a read-only look at what was on pve04, I destroyed VMs 1000 to 1002 with their disks and deleted the Talos ISO. I also removed the vzdump exclude entry for those IDs, then confirmed the zvols were gone and no guests were left. There was no final backup because they were already excluded from the nightly job. A sweep for leftovers found nothing on pve04 itself.</p>
-<p>At 01:01 I shredded the talosconfig and kubeconfig files on the workstation VM, removed the empty directories and took the exports out of my bashrc. The runsheet records both steps.</p>
-<p>Some leftovers remain elsewhere. NetBox still has three VMs and three IPs for the cluster. The sync tool never deletes, and its stale-cleanup run would also deprecate unrelated objects, such as pve03's address, so I won't run it blindly. UniFi probably still holds three MAC entries in the admin allowlist and possibly DHCP reservations for the old addresses.</p>
-<h2>Moving the workstation VM to pve04</h2>
-<p>At 01:02 I decided to move my workstation VM, VM 209, onto pve04 for now. The HA rule on it is strict, so pve04 had to be the top priority. I created a ZFS replication job to pve04 on the five minute schedule, and the first 11 GB sync took 59 seconds. Then I changed the node affinity so pve04 ranks first. HA live-migrated the VM and my SSH session survived. After the move the first replication cycle succeeded on both jobs in about 4 seconds each. To revert, set the rule back to pve01 and pve03, lower the CPU count to 6 or fewer, and delete the extra replication job.</p>
-<p>I accepted one risk: the broken self-fence problem I logged earlier is the same on pve04 as it was on pve01.</p>
-<h2>Running out of memory</h2>
-<p>I gave the VM more resources because the old one ran out of memory. It had 5 GiB and many processes running at once, and at about 00:11 the kernel's OOM killer shut down several of them. The reboot at about 01:15 wiped /tmp.</p>
-<p>So I gave it everything: 12 vCPUs and 12 GiB of RAM. pve04 has 12 threads and 15.3 GiB, which leaves roughly 3 GiB for Proxmox and 2 GiB for the ZFS cache. The catch is that pve01 and pve03 have six threads each, so a 12 vCPU VM can't start on either. While it's at 12 vCPUs on pve04, HA failover for the workstation VM is effectively off. Afterwards, peak use was 6.1 GB of 11.9 GB with free memory never below 5.9 GB, and the OOM killer hasn't returned.</p>
+<p>A long night and morning, from just before 01:00 to about 10:40, mostly on the leads tool I'm building for a function venue client.</p>
+<h2>Getting the tool ready to send</h2>
+<p>I wanted staff to have one place to download from, so builds now go on a release page on my Forgejo, behind a login.</p>
+<h2>Logs and a new name</h2>
+<p>Staff can't tell me what went wrong if the tool leaves nothing behind. Every command now writes its own log with the command line, version and build ID, Windows and Python versions, everything printed, and the full error. A failed run ends with a <code>Log:</code> line giving the path, and <code>run.cmd logs</code> zips the ten newest logs onto the Desktop.</p>
+<p>I also gave the tool a proper name. The install folder, shortcuts and download name changed, and "Pack ID" became "Build ID". The name the tool sends to websites still identifies the venue, because it should say who is responsible for the visits.</p>
+<p>A review of the rename found a real bug. The installer's "don't run from inside the install folder" check matched on the start of the folder name, so a normal download folder with a similar name would have been refused. I fixed it, then installed from exactly that kind of folder on the Windows sandbox VM. It took 66 seconds and all eight smoke steps passed.</p>
+<h2>A Forgejo login trap</h2>
+<p>A staff account kept getting "wrong password". The password was never checked. Forgejo only accepts an email address at sign-in once that address is marked verified, and with no mail server nobody can verify it. Signing in with the username works. I put the trap, and the rule that client accounts are Restricted read-only collaborators, into the Forgejo runsheet.</p>
+<h2>Pull requests</h2>
+<p>Until today I pushed straight to <code>main</code>. With a live version staff will run and a <code>main</code> that keeps moving, that has to stop. <code>main</code> now accepts changes only through pull requests, admins included, and release tags are protected. I also added pre-commit with error-only <code>ruff</code> checks and the full test suite before every push, and wrote a glossary of the tool's terms. One finding: the client's template has a "Date last verified" column that really holds the date a fact was merged in. I can't rename their column, so the help text now says "merged".</p>
+<p>The first push from a separate git worktree switched the shared repo into bare mode and filled its file list with junk. A test helper passes git's repository environment variables to the throwaway repos it creates, and in a worktree they point at the real repo. I restored the repo, fixed the helper, and made the pre-push launcher clear those variables too.</p>
+<h2>Release candidate 5</h2>
+<p>Nine tickets went in as pull requests: plain-English error messages, a "Confirm (Yes/No)" review-sheet column, a cleaner log command line and a slimmer download, down from 225 files to 104 by leaving out tests and developer docs. A release-gate review found three low notes, which I fixed before tagging. The suite passes with 2714 tests, and the sandbox passed all eight smoke steps with a 61-second install.</p>
+<p>The nightly backup started at 02:35 in the middle of the sandbox test, and my shutdown failed with "VM is locked (backup)". I excluded that VM from the job.</p>
+<h2>Drift report and a CI plan</h2>
+<p>My daily docs drift report went from 13 drift items and 4 broken checks to 2 and 0. Three were stale docs and nine were checks that had rotted, for example one still pointing at Kuma on n5ubuntu. I tested each rewritten check to make sure it can still fail. A new daily check at 06:30 fails if a client repo isn't private.</p>
+<p>I also wrote a plan for a Forgejo Actions runner: CT 149 <code>runner1</code> at x.x.0.49 on pve04, with Docker inside an unprivileged container and a firewall that keeps jobs off the LAN. It would serve one repo only.</p>
+<h2>Explaining the hotel room rollout</h2>
+<p>I drafted a plain message for the hotel's owners on why the new TVs can't be enabled in random rooms. Each building has its own switch, and the hotel's IT provider has to configure it and its link to the main cabinet first. That is done for only one wing so far. Each room has a single socket, so switching it ends the old channels there, and the room has to be empty or have the new box and power ready.</p>
 <h2>Still open</h2>
 <ul>
-<li>Remove the Talos objects from NetBox, and the MAC entries and reservations from UniFi.</li>
-<li>Lower the VM back to 6 vCPUs or fewer before reverting it to pve01 and pve03.</li>
-<li>The self-fence problem is still unfixed.</li>
-<li>A pending Proxmox package and kernel update is waiting for a reboot window.</li>
+<li>Send the staff trial note and questionnaire with rc5.</li>
+<li>Decide whether to build the CI runner on pve04.</li>
+<li>Three unused files stay in the repo until tests confirm they are dead.</li>
+<li>Nothing has confirmed that the hotel's first core switch config was saved.</li>
 </ul>
   </article>
   </template>
 <script type="application/json" id="n5-blog-posts">
 {
+  "2026-10-21": {
+    "category": "Homelab",
+    "date": "2026-10-21 · 10:39 AM",
+    "title": "Run Logs, a Rename and Pull Requests for the Leads Tool",
+    "summary": "I added per-run log files and a new name to the leads tool I'm building for a function venue client, moved its repo to pull requests, and shipped a fifth release candidate. I also cut my docs drift report from 13 items to 2."
+  },
+  "2026-10-20": {
+    "category": "Homelab",
+    "date": "2026-10-20 · 2:14 PM",
+    "title": "Forgejo 15.0.10, a Failed Backup Job and an Offline Installer",
+    "summary": "I upgraded Forgejo to 15.0.10 and found that its backup job had been failing for three nights. I also scoped a runbook for the hotel network and got the venue leads tool through a full Windows trial with an offline installer."
+  },
+  "2026-10-19": {
+    "category": "Homelab",
+    "date": "2026-10-19 · 11:46 PM",
+    "title": "Hotel VLAN 220 Test, a Frozen pve02 and the Camera Recorder Move",
+    "summary": "I ran the first room test of the hotel's IPTV VLAN on site, found the blocker was UniFi's multicast list, moved Protect onto the new recorder, and traced the smart plug outage to the plugs themselves."
+  },
+  "2026-10-18": {
+    "category": "Homelab",
+    "date": "2026-10-18 · 11:40 PM",
+    "title": "Finishing the Sim Rig SSD Move and Auditing the Hotel Pilot Plan",
+    "summary": "The sim rig now boots from the 1 TB drive and a Windows repair cleared its system file errors. I also audited the hotel IPTV pilot plan, tested a scraper handed to me for a function venue client, and looked at moving an NVMe drive from pve04 into the camera recorder."
+  },
+  "2026-10-17": {
+    "category": "Homelab",
+    "date": "2026-10-17 · 11:53 PM",
+    "title": "Imaging the Sim Rig for a Smaller Drive",
+    "summary": "I backed up the sim rig, converted the image so it would fit a 1 TB drive, rehearsed the restore on a virtual disk, then restored it for real onto a drive pulled from the gateway. The swap itself is still to do."
+  },
+  "2026-10-16": {
+    "category": "Homelab",
+    "date": "2026-10-16 · 7:07 PM",
+    "title": "Wi-Fi Speed Fix, Gateway Safe Mode and a Core Switch Survey",
+    "summary": "I found out why the UniFi gateway had gone into safe mode, got my PC's Wi-Fi from 188 to about 890 Mbps by fixing a radar-stuck access point, and spent the afternoon surveying the hotel's two core switches before the IPTV pilot."
+  },
   "2026-10-14": {
     "category": "Homelab",
     "date": "2026-10-14 · 1:32 AM",
